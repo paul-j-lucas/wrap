@@ -49,5 +49,5 @@ wrapc.o: wrapc.c c_compat.h version.h
 clean:
 	rm -f *.o core
 
-clobber: clean
+distclean: clean
 	rm -f $(TARGET)
