@@ -1,4 +1,3 @@
-#define VERSION "2.9"
 /*
 **	wrap -- text reformatter
 **	wrap.c: implementation
@@ -59,10 +58,7 @@
 
 /* local */
 #include "c_compat.h"
-
-#define	bool		int
-#define	true		1
-#define	false		0
+#include "version.h"
 
 #define	TAB_EQUAL	8		/* tab equivalence in spaces */
 
@@ -116,7 +112,7 @@ main PJL_ARG_LIST(( argc, argv ))
 	*/
 
 	/*
-	** True only if the previous characters was and end-of-sentence
+	** True only if the previous character was an end-of-sentence
 	** character.
 	*/
 	bool was_eos_char	= false;
@@ -339,17 +335,14 @@ process_options PJL_ARG_LIST(( argc, argv ))
 	PJL_ARG_DEF( int argc )
 	PJL_ARG_END( char *argv[] )
 {
-	char const *me;
+	char const *me;			/* executable name */
 	extern char *optarg;
 	extern int optind, opterr;
 	int opt;			/* command-line option */
 	int mirror_tabs = 0, mirror_spaces = 0;
 
-	/* strip pathname from argv[0] */
-	if ( me = strrchr( argv[0], '/' ) )
-		++me;
-	else
-		me = argv[0];
+	me = strrchr( argv[0], '/' );	/* determine base name... */
+	me = me ? me + 1 : argv[0];	/* ...of executable */
 
 #define	SET_OPT( c, option )	case c: option = atoi( optarg ); break
 
@@ -400,6 +393,6 @@ usage:
 	exit( 1 );
 
 version:
-	fprintf( stderr, "%s: version %s\n", me, VERSION );
+	fprintf( stderr, "%s %s\n", me, VERSION );
 	exit( 0 );
 }
