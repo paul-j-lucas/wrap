@@ -23,7 +23,7 @@ SHELL=	/bin/sh
 CC=	cc
 CFLAGS=	-O
 
-########## You shouldn't have to change anything below this line. ##########
+########## You shouldn't have to change anything below this line. #############
 
 TARGET=	wrap wrapc
 
@@ -31,9 +31,6 @@ TARGET=	wrap wrapc
 # Build rules
 ##
  
-.SUFFIXES:
-.SUFFIXES: .c .o
-
 all: $(TARGET)
 
 wrap: wrap.o
@@ -42,14 +39,14 @@ wrap: wrap.o
 wrapc: wrapc.o
 	$(CC) -o $@ $?
 
-wrap.o:  wrap.c  c_compat.h
-wrapc.o: wrapc.c c_compat.h
+wrap.o:  wrap.c  c_compat.h version.h
+wrapc.o: wrapc.c c_compat.h version.h
 
 ##
 # Utility rules
 ##
 
-clean::
+clean:
 	rm -f *.o core
 
 clobber: clean
