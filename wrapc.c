@@ -1,4 +1,3 @@
-#define VERSION "2.9"
 /*
 **	wrapc -- comment reformatter
 **	wrapc.c: implementation
@@ -28,6 +27,7 @@
 
 /* local */
 #include "c_compat.h"
+#include "version.h"
 
 #define	BUF_SIZE	1000		/* hopefully, no one will exceed this */
 #define	TAB_EQUAL	8		/* tabs are equal to 8 spaces */
@@ -36,7 +36,7 @@
 #define	CLOSE( p )	{ close( pipes[p][0] ); close( pipes[p][1] ); }
 #define	REDIRECT( s,p )	{ close( s ); dup( pipes[p][s] ); CLOSE( p ); }
 
-char const	*me;
+char const	*me;			/* executable name */
 int		text_length = 80;	/* wrap text to this length */
 
 void	process_options PJL_PROTO(( int argc, char *argv[] ));
@@ -53,16 +53,16 @@ main PJL_ARG_LIST(( argc, argv ))
 	**            pipes[1] goes between child 2 and parent
 	*/
 	int pipes[2][2];
-	int pid;			/* child process-id */
+	pid_t pid;			/* child process-id */
 	FILE *from_wrap;		/* file used by parent */
 
 	/*
 	** Read the first line of input and obtain a string of leading
 	** characters to be removed from all lines.
 	**
-	** The characters are: spaces and tabs, # (shell comments), / and * (C
-	** and C++ comments), % (PostScript comments), ; (assember and Lisp
-	** comments), and > (mail forward indicator).
+	** The characters are: spaces and tabs, # (Shell and Perl comments), /
+	** and * (C and C++ comments), % (PostScript comments), ; (assember and
+	** Lisp comments), and > (mail forward indicator).
 	*/
 	char *leading_chars = "\t #%*/;>";
 	char leader[ BUF_SIZE ];	/* string segment removed/prepended */
@@ -86,7 +86,7 @@ main PJL_ARG_LIST(( argc, argv ))
 	** Close both ends of pipes[1] since it doesn't use it; read from our
 	** original stdin and write to pipes[0].
 	**
-	** Print first an all subsequent lines with the leading characters
+	** Print first and all subsequent lines with the leading characters
 	** removed from the beginning of each line.  
 	*/
 	if ( ( pid = fork() ) == 0 ) {
@@ -109,24 +109,30 @@ main PJL_ARG_LIST(( argc, argv ))
 	** Child 2
 	**
 	** Compute the actual length of the leader: tabs are equal to 8 spaces
-	** and all other are equal to 1.  Subtract this from 80 to obtain the
-	** wrap length.
+	** minus the number of spaces we're into a tab-stop, and all other are
+	** equal to 1.  Subtract this from 80 to obtain the wrap length.
 	**
 	** Read from pipes[0] and write to pipes[1]; exec into wrap.
 	*/
 	if ( ( pid = fork() ) == 0 ) {
-		char *c, s[4];
+		register char *c;
+		register int spaces = 0;
+		char text_length_arg[4];
 
 		for ( c = leader; *c; ++c )
-			if ( *c == '\t' )
-				text_length -= TAB_EQUAL;
-			else
+			if ( *c == '\t' ) {
+				text_length -= TAB_EQUAL - spaces;
+				spaces = 0;
+			} else {
 				--text_length;
-		sprintf( s, "%d", text_length );
+				spaces = (spaces + 1) % TAB_EQUAL;
+			}
+
+		sprintf( text_length_arg, "%d", text_length );
 
 		REDIRECT( 0, 0 );
 		REDIRECT( 1, 1 );
-		execlp( "wrap", "wrap", "-l", s, (char*)0 );
+		execlp( "wrap", "wrap", "-l", text_length_arg, (char*)0 );
 		ERROR( -21 );
 	} else if ( pid == -1 )
 		ERROR( -20 );
@@ -165,11 +171,8 @@ process_options PJL_ARG_LIST(( argc, argv ))
 	extern int optind, opterr;
 	int opt;			/* command-line option */
 
-	/* strip pathname from argv[0] */
-	if ( me = strrchr( argv[0], '/' ) )
-		++me;
-	else
-		me = argv[0];
+	me = strrchr( argv[0], '/' );	/* determine base name... */
+	me = me ? me + 1 : argv[0];	/* ...of executable */
 
 #define	SET_OPT( c, option )	case c: option = atoi( optarg ); break
 
@@ -181,15 +184,14 @@ process_options PJL_ARG_LIST(( argc, argv ))
 			case '?': goto usage;
 		}
 	argc -= optind, argv += optind;
-	if ( argc )
-		goto usage;
-	return;
-
-version:
-	fprintf( stderr, "%s: version %s\n", me, VERSION );
-	exit( 0 );
+	if ( !argc )
+		return;
 
 usage:
 	fprintf( stderr, "usage: %s [-l text-length]\n", me );
 	exit( 1 );
+
+version:
+	fprintf( stderr, "%s %s\n", me, VERSION );
+	exit( 0 );
 }
