@@ -1,5 +1,5 @@
 /*
-**	xdiff -- graphical diff for X
+**	wrap -- text reformatter
 **	c_compat.h -- Macros to aid in writing K&R C, ANSI C, and C++
 **
 **	Copyright (C) 1996  Paul J. Lucas
@@ -61,6 +61,29 @@
 #	define PJL_ARG_LIST(args)	(	/* open ( -- throw away list */
 #	define PJL_ARG_DEF(arg)		arg ,	/* append , */
 #	define PJL_ARG_END(arg)		arg )	/* last argument -- close ) */
+
+#endif
+
+/*****************************************************************************
+ *
+ *	Macros to deal with bool, true, and false.
+ *
+ *****************************************************************************/
+
+#ifndef __cplusplus
+
+#	ifdef bool
+#		undef bool
+#	endif
+#	ifdef true
+#		undef true
+#	endif
+#	ifdef false
+#		undef false
+#	endif
+#	define bool	int
+#	define true	1
+#	define false	0
 
 #endif
 
