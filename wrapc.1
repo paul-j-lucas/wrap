@@ -1,0 +1,62 @@
+.\"
+.\"	wrapc -- comment reformatter
+.\"	wrapc.1: manual page
+.\"
+.\"	Copyright (C) 1996  Paul J. Lucas
+.\"
+.\"	This program is free software; you can redistribute it and/or modify
+.\"	it under the terms of the GNU General Public License as published by
+.\"	the Free Software Foundation; either version 2 of the Licence, or
+.\"	(at your option) any later version.
+.\" 
+.\"	This program is distributed in the hope that it will be useful,
+.\"	but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\"	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\"	GNU General Public License for more details.
+.\" 
+.\"	You should have received a copy of the GNU General Public License
+.\"	along with this program; if not, write to the Free Software
+.\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.tr ~
+.TH wrapc 1 "" "PJL Tools" "PJL TOOLS"
+.SH NAME
+wrapc \- comment reformatter
+.SH SYNOPSIS
+\f3wrapc\f1 [ \f3\-l \f2line-length\f1 ] [ \f3\-v\f1 ]
+.SH DESCRIPTION
+\f2wrapc\f1 is a filter for reformatting program comments by
+wrapping and filling lines to a given \f2line-length\f1,
+the default for which is 80 characters.
+This can be changed via the \f3\-l\f1 option.
+.P
+Leading white-space and comment delimiters are preserved.
+The characters that are recognized as comment delimeters are:
+.IP "\f3#\f1" 10
+Shell comments.
+.IP "\f3/\f1 and \f3*\f1" 10
+C and C++ comments.
+.IP "\f3%\f1" 10
+PostScript comments.
+.IP "\f3;\f1" 10
+Assember and Lisp comments.
+.IP "\f3>\f1" 10
+Forwarded mail indicator.
+.P
+All other white-space characters are folded
+in the same manner as in \f2wrap\f1.
+.SH OPTIONS
+.IP "\f3\-l\f2 n\f1"
+Set \f2line-length\f1 to \f2n\f1 characters.
+.IP "\f3\-v\f1"
+Print the version number to \f2stderr\f1 and exit.
+.SH EXAMPLE
+While in \f2vi\f1,
+wrap the comment covering the current and subsequent 3 lines.
+.IP ""
+!\f33\f2return\f1wrapc\f1
+.SH SEE ALSO
+.BR vi (1),
+.BR wrap (1)
+.SH AUTHOR
+Paul J. Lucas

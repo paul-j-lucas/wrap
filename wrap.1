@@ -1,0 +1,96 @@
+.\"
+.\"	wrap -- text reformatter
+.\"	wrap.1: manual page
+.\"
+.\"	Copyright (C) 1996  Paul J. Lucas
+.\"
+.\"	This program is free software; you can redistribute it and/or modify
+.\"	it under the terms of the GNU General Public License as published by
+.\"	the Free Software Foundation; either version 2 of the Licence, or
+.\"	(at your option) any later version.
+.\" 
+.\"	This program is distributed in the hope that it will be useful,
+.\"	but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\"	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\"	GNU General Public License for more details.
+.\" 
+.\"	You should have received a copy of the GNU General Public License
+.\"	along with this program; if not, write to the Free Software
+.\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.tr ~
+.TH wrap 1 "February 4, 1996" "PJL Tools" "PJL TOOLS"
+.SH NAME
+wrap \- text reformatter
+.SH SYNOPSIS
+\f3wrap\f1 [ \f3\-\f1{\f3hHiIlmMtS\f1} \f2n\f1 ] [ \f3\-bnNv\f1 ]
+.SH DESCRIPTION
+\f2wrap\f1 is a filter for reformatting text by wrapping and filling lines
+to a given \f2line-length\f1, the default for which is 80 characters.
+.P
+All white-space characters are folded into a single space with the following
+exceptions:
+.IP "1." 3
+Force two spaces after the end of a sentence that ends a line;
+sentences are ended by an ``end-of-sentence'' character, that is, a
+period, question-mark, or an exclamation-point, optionally
+followed by a single-quote, double-quote, or a closing
+parenthesis or bracket.  
+.IP "2." 3
+Allow two spaces after the end of a sentence that does not end a line.
+This distinction is made so as not to put two spaces after
+a period that is an abbreviation and not the end of a sentence;
+periods at the end of a line will hopefully not be abbreviations.
+.IP "3." 3
+If neither the \f3\-n\f1 nor the \f3\-N\f1 option is specified,
+two consecutive newline characters delimit a paragraph and are not folded;
+more than two are folded.
+If \f3\-n\f1 is specified, newlines receive no special treatment.
+If \f3\-N\f1 is specified, every newline delimits a paragraph.
+.IP "4." 3
+If the \f3\-b\f1 option is specified, a line beginning with white-space
+delimits a paragraph.
+.SH OPTIONS
+In general,
+lower-case options are for tabs,
+upper-case options are for spaces.
+.IP "\f3\-b\f1"
+Treat a line beginning with white-space as a paragraph delimiter.
+.IP "\f3\-h\f2 n\f1"
+Hang-indent \f2n\f1 more tabs for all but the first line of each paragraph.
+.IP "\f3\-H\f2 n\f1"
+Hang-indent \f2n\f1 more spaces for all but the first line of each paragraph
+after any tabs.
+.IP "\f3\-i\f2 n\f1"
+Indent \f2n\f1 more tabs for the first line of each paragraph.
+.IP "\f3\-I\f2 n\f1"
+Indent \f2n\f1 more spaces for the first line of each paragraph after any tabs.
+.IP "\f3\-l\f2 n\f1"
+Set \f2line-length\f1 to \f2n\f1 characters.
+.IP "\f3\-m\f2 n\f1"
+Mirror tabs; equivalent to: \f3\-t\f2n \f3\-l\f2m\f1
+where \f2m = line-length \- 8n\f1.
+.IP "\f3\-M\f2 n\f1"
+Mirror spaces; equivalent to: \f3\-S\f2n \f3\-l\f2m\f1
+where \f2m = line-length \- 2n\f1.
+.IP "\f3\-n\f1"
+Do not treat newlines as paragraph delimeters.
+.IP "\f3\-N\f1"
+Treat every newline as a paragraph delimiter.
+This option is useful for line-breaking code prior to printing.
+.IP "\f3\-S\f2 n\f1"
+Prepend \f2n\f1 leading spaces to each line after any leading tabs.
+.IP "\f3\-t\f2 n\f1"
+Prepend \f2n\f1 leading tabs to each line
+.IP "\f3\-v\f1"
+Print the version number to \f2stderr\f1 and exit.
+.SH EXAMPLES
+Wrap text into paragraphs having a line length of 72 characters,
+indenting one tab-stop,
+and further indenting the start of each paragraph by 3 spaces:
+.IP ""
+\f3wrap -m1 -I3\f1
+.SH SEE ALSO
+.BR wrapc (1)
+.SH AUTHOR
+Paul J. Lucas
