@@ -18,22 +18,31 @@
 .\"	along with this program; if not, write to the Free Software
 .\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 .\"
-.tr ~
-.TH wrapc 1 "" "PJL Tools" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "June 30, 2000" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
-\f3wrapc\f1 [ \f3\-l \f2line-length\f1 ] [ \f3\-v\f1 ]
+.B wrapc
+[
+.B \-l
+.I line-length
+] [
+.B \-v
+]
 .SH DESCRIPTION
-\f2wrapc\f1 is a filter for reformatting program comments by
-wrapping and filling lines to a given \f2line-length\f1,
+.B wrapc
+is a filter for reformatting program comments by
+wrapping and filling lines to a given
+.IR line-length ,
 the default for which is 80 characters.
-This can be changed via the \f3\-l\f1 option.
+This can be changed via the
+.B \-l
+option.
 .P
 Leading white-space and comment delimiters are preserved.
 The characters that are recognized as comment delimeters are:
 .IP "\f3#\f1" 10
-Shell comments.
+Shell and Perl comments.
 .IP "\f3/\f1 and \f3*\f1" 10
 C and C++ comments.
 .IP "\f3%\f1" 10
@@ -44,14 +53,22 @@ Assember and Lisp comments.
 Forwarded mail indicator.
 .P
 All other white-space characters are folded
-in the same manner as in \f2wrap\f1.
+in the same manner as in
+.BR wrap .
 .SH OPTIONS
 .IP "\f3\-l\f2 n\f1"
-Set \f2line-length\f1 to \f2n\f1 characters.
+Set
+.I line-length
+to
+.I n
+characters.
 .IP "\f3\-v\f1"
-Print the version number to \f2stderr\f1 and exit.
+Print the version number to
+.I stderr
+and exit.
 .SH EXAMPLE
-While in \f2vi\f1,
+While in
+.IR vi ,
 wrap the comment covering the current and subsequent 3 lines.
 .IP ""
 !\f33\f2return\f1wrapc\f1
@@ -59,4 +76,4 @@ wrap the comment covering the current and subsequent 3 lines.
 .BR vi (1),
 .BR wrap (1)
 .SH AUTHOR
-Paul J. Lucas
+.RI Paul J. Lucas < pjl@best.com >
