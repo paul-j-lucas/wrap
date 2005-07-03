@@ -2,7 +2,7 @@
 .\"	wrapc -- comment reformatter
 .\"	wrapc.1: manual page
 .\"
-.\"	Copyright (C) 1996  Paul J. Lucas
+.\"	Copyright (C) 1996-2005  Paul J. Lucas
 .\"
 .\"	This program is free software; you can redistribute it and/or modify
 .\"	it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 .\"	along with this program; if not, write to the Free Software
 .\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 .\"
-.TH \f3wrapc\f1 1 "June 30, 2000" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "July 3, 2005" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -41,10 +41,12 @@ option.
 .P
 Leading white-space and comment delimiters are preserved.
 The characters that are recognized as comment delimeters are:
+.IP "\f3!\f1" 10
+HTML and XML comments.
 .IP "\f3#\f1" 10
-Shell and Perl comments.
+Shell, Make, and Perl comments.
 .IP "\f3/\f1 and \f3*\f1" 10
-C and C++ comments.
+C, C++, and Java comments.
 .IP "\f3%\f1" 10
 PostScript comments.
 .IP "\f3;\f1" 10
