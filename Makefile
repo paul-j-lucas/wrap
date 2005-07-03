@@ -2,7 +2,7 @@
 #	wrap -- text reformatter
 #	Makefile
 #
-#	Copyright (C) 1996  Paul J. Lucas
+#	Copyright (C) 1996-2005  Paul J. Lucas
 #
 #	This program is free software; you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -51,3 +51,5 @@ clean:
 
 distclean: clean
 	rm -f $(TARGET)
+
+# vim:set noet sw=8 ts=8:
