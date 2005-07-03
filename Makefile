@@ -20,7 +20,7 @@
 ##
 
 CC=	cc
-CFLAGS=	-O
+CFLAGS=	-O2
 
 ########## You shouldn't have to change anything below this line. #############
 
