@@ -23,7 +23,7 @@
 #define C_compat_H
 
 #if !defined(__STDC__) && !defined(__cplusplus)
-#   define KNR_C                        /* K&R "classic" C */
+# define KNR_C                          /* K&R "classic" C */
 #endif
 
 /*****************************************************************************
@@ -50,17 +50,17 @@
 
 #ifdef KNR_C
 
-#   define PJL_PROTO(args)      ()      /* throw away prototype */
-#   define PJL_ARG_LIST(args)   args    /* leave intact */
-#   define PJL_ARG_DEF(arg)     arg ;   /* append ; */
-#   define PJL_ARG_END(arg)     arg ;   /* same as above in K&R C */
+# define PJL_PROTO(args)    ()          /* throw away prototype */
+# define PJL_ARG_LIST(args) args        /* leave intact */
+# define PJL_ARG_DEF(arg)   arg ;       /* append ; */
+# define PJL_ARG_END(arg)   arg ;       /* same as above in K&R C */
 
 #else
 
-#   define PJL_PROTO(args)      args    /* leave intact */
-#   define PJL_ARG_LIST(args)   (       /* open ( -- throw away list */
-#   define PJL_ARG_DEF(arg)     arg ,   /* append , */
-#   define PJL_ARG_END(arg)     arg )   /* last argument -- close ) */
+# define PJL_PROTO(args)    args        /* leave intact */
+# define PJL_ARG_LIST(args) (           /* open ( -- throw away list */
+# define PJL_ARG_DEF(arg)   arg ,       /* append , */
+# define PJL_ARG_END(arg)   arg )       /* last argument -- close ) */
 
 #endif
 
@@ -72,18 +72,18 @@
 
 #ifndef __cplusplus
 
-#   ifdef bool
-#       undef bool
-#   endif
-#   ifdef true
-#       undef true
-#   endif
-#   ifdef false
-#       undef false
-#   endif
-#   define bool     int
-#   define true     1
-#   define false    0
+# ifdef bool
+#   undef bool
+# endif
+# ifdef true
+#   undef true
+# endif
+# ifdef false
+#   undef false
+# endif
+# define bool   int
+# define true   1
+# define false  0
 
 #endif
 
@@ -95,10 +95,10 @@
 
 #ifdef KNR_C
 
-#   define const                        /* throw away const */
-#   define inline                       /* throw away inline */
+# define const                          /* throw away const */
+# define inline                         /* throw away inline */
 
 #endif
 
 #endif  /* C_compat_H */
-/* vim:set et sw=4 ts=4: */
+/* vim:set et sw=2 ts=2: */

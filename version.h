@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      version.h
 **
-**      Copyright (C) 1996-2005  Paul J. Lucas
+**      Copyright (C) 1996-2013  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
 **      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef version_H
-#define version_H
+#ifndef wrap_version_H
+#define wrap_version_H
 
-#define WRAP_VERSION    "2.10"
+#define WRAP_VERSION  "2.11"
 
-#endif  /* C_compat_H */
-/* vim:set et sw=4 ts=4: */
+#endif  /* wrap_version_H */
+/* vim:set et sw=2 ts=2: */
