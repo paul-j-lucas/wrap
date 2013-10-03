@@ -37,10 +37,15 @@
 #define REDIRECT( s,p ) { close( s ); dup( pipes[p][s] ); CLOSE( p ); }
 
 /*
-** The default leading characters are: spaces and tabs, '!' (HTML and XML
-** comments), '#' (Shell, Make, and Perl comments), '/' and '*' (C, C++, and
-** Java comments), '%' (PostScript comments), ':' (XQuery comments), ';'
-** (assember and Lisp comments), and '>' (mail forward indicator).
+** The default leading characters are:
+**  space and tab
+**  '!': HTML & XML comments
+**  '#': Shell, Make, CMake, & Perl comments
+**  '/' & '*': C, C++, & Java comments
+**  '%': PostScript comments
+**  ':': XQuery comments
+**  ';': Assember & Lisp comments
+**  '>': Forward mail indicator
 */
 char        *leading_chars = "\t !#%*/:;>";
 
