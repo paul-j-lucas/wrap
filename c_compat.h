@@ -19,11 +19,11 @@
 **      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef C_compat_H
-#define C_compat_H
+#ifndef PJL_C_compat_H
+#define PJL_C_compat_H
 
 #if !defined(__STDC__) && !defined(__cplusplus)
-# define KNR_C                          /* K&R "classic" C */
+# define PJL_KNR_C                      /* K&R "classic" C */
 #endif
 
 /*****************************************************************************
@@ -48,7 +48,7 @@
  *
  *****************************************************************************/
 
-#ifdef KNR_C
+#ifdef PJL_KNR_C
 
 # define PJL_PROTO(args)    ()          /* throw away prototype */
 # define PJL_ARG_LIST(args) args        /* leave intact */
@@ -62,7 +62,7 @@
 # define PJL_ARG_DEF(arg)   arg ,       /* append , */
 # define PJL_ARG_END(arg)   arg )       /* last argument -- close ) */
 
-#endif
+#endif /* PJL_KNR_C */
 
 /*****************************************************************************
  *
@@ -85,7 +85,7 @@
 # define true   1
 # define false  0
 
-#endif
+#endif /* __cplusplus */
 
 /*****************************************************************************
  *
@@ -93,12 +93,12 @@
  *
  *****************************************************************************/
 
-#ifdef KNR_C
+#ifdef PJL_KNR_C
 
 # define const                          /* throw away const */
 # define inline                         /* throw away inline */
 
-#endif
+#endif /* PJL_KNR_C */
 
-#endif  /* C_compat_H */
+#endif /* PJL_C_compat_H */
 /* vim:set et sw=2 ts=2: */
