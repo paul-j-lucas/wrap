@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      c_compat.h -- Macros to aid in writing K&R C, ANSI C, and C++
 **
-**      Copyright (C) 1996-2005  Paul J. Lucas
+**      Copyright (C) 1996-2013  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
