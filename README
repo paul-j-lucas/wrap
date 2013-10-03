@@ -2,7 +2,7 @@ NAME
 	wrap -- text reformatter
 
 COPYRIGHT
-	Copyright (C) 1996-2005  Paul J. Lucas
+	Copyright (C) 1996-2013  Paul J. Lucas
 	All rights reserved.
 
 LICENSE
@@ -25,4 +25,4 @@ NOTES
 	This sofware compiles under K&R C, ANSI C, or C++.
 
 AUTHOR
-	Paul J. Lucas <pauljlucas@mac.com>
+	Paul J. Lucas <paul@lucasmail.org>
