@@ -18,7 +18,7 @@
 .\"	along with this program; if not, write to the Free Software
 .\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 .\"
-.TH \f3wrapc\f1 1 "October 2, 2013" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "October 3, 2013" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -26,6 +26,9 @@ wrapc \- comment reformatter
 [
 .B \-l
 .I line-length
+] [
+.B \-s
+.I tab-spaces
 ] [
 .B \-v
 ]
@@ -65,11 +68,25 @@ Set
 .I line-length
 to
 .I n
-characters.
+characters
+(default is 80).
+.IP "\f3\-s\f2 n\f1"
+Set
+.I tab-spaces
+(the number of spaces a tab character should be considered the same as)
+to
+.I n
+characters
+(default is 8).
 .IP "\f3\-v\f1"
 Print the version number to
 .I stderr
 and exit.
+.SH EXIT STATUS
+The
+.B wrapc
+utility exits with 0 on success
+and >0 on failure.
 .SH EXAMPLE
 While in
 .IR vi ,
