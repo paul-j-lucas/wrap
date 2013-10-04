@@ -87,7 +87,7 @@ main PJL_ARG_LIST(( argc, argv ))
 
   /* open pipes */
   if ( pipe( pipes[0] ) == -1 || pipe( pipes[1] ) == -1 )
-    ERROR( 1 );
+    ERROR( 2 );
 
   /***************************************************************************/
   /*
@@ -104,7 +104,7 @@ main PJL_ARG_LIST(( argc, argv ))
     CLOSE( 1 );
     if ( !( to_wrap = fdopen( pipes[0][1], "w" ) ) ) {
       fprintf( stderr, "%s: child can't write to pipe\n", me );
-      exit( -11 );
+      exit( 11 );
     }
 
     fputs( buf + lead_length, to_wrap );
@@ -112,7 +112,7 @@ main PJL_ARG_LIST(( argc, argv ))
       fputs( buf + lead_length, to_wrap );
     exit( 0 );
   } else if ( pid == -1 )
-    ERROR( -10 );
+    ERROR( 10 );
 
   /***************************************************************************/
   /*
@@ -148,9 +148,9 @@ main PJL_ARG_LIST(( argc, argv ))
     execlp(
       "wrap", "wrap", "-l", line_length_arg, "-s", tab_spaces_arg, (char*)0
     );
-    ERROR( -21 );
+    ERROR( 21 );
   } else if ( pid == -1 )
-    ERROR( -20 );
+    ERROR( 20 );
 
   /***************************************************************************/
   /*
@@ -168,7 +168,7 @@ main PJL_ARG_LIST(( argc, argv ))
   from_wrap = fdopen( pipes[1][0], "r" );
   if ( !from_wrap ) {
     fprintf( stderr, "%s: parent can't read from pipe\n", me );
-    exit( 1 );
+    exit( 3 );
   }
 
   while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) )
