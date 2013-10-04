@@ -95,7 +95,7 @@ int main( int argc, char *argv[] ) {
   ** Print first and all subsequent lines with the leading characters removed
   ** from the beginning of each line.
   */
-  if ( ( pid = fork() ) == 0 ) {
+  if ( (pid = fork()) == 0 ) {
     FILE *to_wrap;
     CLOSE( 1 );
     if ( !( to_wrap = fdopen( pipes[0][1], "w" ) ) ) {
@@ -121,7 +121,7 @@ int main( int argc, char *argv[] ) {
   **
   ** Read from pipes[0] and write to pipes[1]; exec into wrap.
   */
-  if ( ( pid = fork() ) == 0 ) {
+  if ( (pid = fork()) == 0 ) {
     char *c;
     int spaces = 0;
     char line_length_arg[ INT_BUF_SIZE ];

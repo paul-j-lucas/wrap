@@ -314,10 +314,10 @@ void print_line( int up_to ) {
 
 void process_options( int argc, char *argv[] ) {
   char const *me;                       /* executable name */
+  int mirror_tabs = 0, mirror_spaces = 0;
   extern char *optarg;
   extern int optind, opterr;
   int opt;                              /* command-line option */
-  int mirror_tabs = 0, mirror_spaces = 0;
 
   me = strrchr( argv[0], '/' );         /* determine base name... */
   me = me ? me + 1 : argv[0];           /* ...of executable */
