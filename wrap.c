@@ -210,8 +210,8 @@ delimit_paragraph:
     ** Treat a quote or a closing parenthesis or bracket as an end-of-sentence
     ** character if it was preceded by a regular end-of-sentence character.
     */
-    if ( !( was_eos_char && strchr( "'\")]", c ) ) )
-      was_eos_char = ( strchr( ".?!", c ) != 0 );
+    if ( !(was_eos_char && strchr( "'\")]", c )) )
+      was_eos_char = (strchr( ".?!", c ) != 0);
 
     /*************************************************************************
      *  INSERT SPACES
