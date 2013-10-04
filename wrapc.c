@@ -29,12 +29,12 @@
 #include "c_compat.h"
 #include "version.h"
 
-#define BUF_SIZE    1024                /* hopefully, no one will exceed this */
-#define TAB_EQUAL   8                   /* tabs are equal to 8 spaces */
+#define INT_BUF_SIZE  11                /* to hold INT_MAX as a string */
+#define LINE_BUF_SIZE 1024              /* hopefully, no one will exceed this */
 
-#define ERROR( e )      { perror( argv[0] ); exit( e ); }
-#define CLOSE( p )      { close( pipes[p][0] ); close( pipes[p][1] ); }
-#define REDIRECT( s,p ) { close( s ); dup( pipes[p][s] ); CLOSE( p ); }
+#define ERROR(E)      { perror( argv[0] ); exit( E ); }
+#define CLOSE(P)      { close( pipes[P][0] ); close( pipes[P][1] ); }
+#define REDIRECT(S,P) { close( S ); dup( pipes[P][S] ); CLOSE( P ); }
 
 /*
 ** The default leading characters are:
@@ -47,11 +47,13 @@
 **  ';': Assember & Lisp comments
 **  '>': Forward mail indicator
 */
-char        *leading_chars = "\t !#%*/:;>";
+char*       leading_chars = "\t !#%*/:;>";
 
-char const  *me;                        /* executable name */
-int         text_length = 80;           /* wrap text to this length */
+int         line_length = 80;           /* wrap text to this line length */
+char const* me;                         /* executable name */
+int         tab_spaces = 8;             /* number of spaces a tab equals */
 
+/* local functions */
 void process_options PJL_PROTO(( int argc, char *argv[] ));
 
 /*************************/
@@ -60,7 +62,7 @@ main PJL_ARG_LIST(( argc, argv ))
   PJL_ARG_DEF( int argc )
   PJL_ARG_END( char *argv[] )
 {
-  char buf[ BUF_SIZE ];
+  char buf[ LINE_BUF_SIZE ];
   /*
   ** Two pipes: pipes[0] goes between child 1 and child 2
   **            pipes[1] goes between child 2 and parent
@@ -73,12 +75,12 @@ main PJL_ARG_LIST(( argc, argv ))
   ** Read the first line of input and obtain a string of leading characters to
   ** be removed from all lines.
   */
-  char leader[ BUF_SIZE ];              /* string segment removed/prepended */
+  char leader[ LINE_BUF_SIZE ];         /* string segment removed/prepended */
   int lead_length;                      /* number of leading characters */
 
   process_options( argc, argv );
 
-  if ( !fgets( buf, BUF_SIZE, stdin ) )
+  if ( !fgets( buf, LINE_BUF_SIZE, stdin ) )
     exit( 0 );
   strcpy( leader, buf );
   leader[ lead_length = strspn( buf, leading_chars ) ] = '\0';
@@ -101,12 +103,12 @@ main PJL_ARG_LIST(( argc, argv ))
     FILE *to_wrap;
     CLOSE( 1 );
     if ( !( to_wrap = fdopen( pipes[0][1], "w" ) ) ) {
-      fprintf( stderr, "%s: child can't write to pipe\n", me);
+      fprintf( stderr, "%s: child can't write to pipe\n", me );
       exit( -11 );
     }
 
     fputs( buf + lead_length, to_wrap );
-    while ( fgets( buf, BUF_SIZE, stdin ) )
+    while ( fgets( buf, LINE_BUF_SIZE, stdin ) )
       fputs( buf + lead_length, to_wrap );
     exit( 0 );
   } else if ( pid == -1 )
@@ -116,31 +118,36 @@ main PJL_ARG_LIST(( argc, argv ))
   /*
   ** Child 2
   **
-  ** Compute the actual length of the leader: tabs are equal to 8 spaces minus
-  ** the number of spaces we're into a tab-stop, and all other are equal to 1.
-  ** Subtract this from 80 to obtain the wrap length.
+  ** Compute the actual length of the leader: tabs are equal to <tab_spaces>
+  ** spaces minus the number of spaces we're into a tab-stop, and all others
+  ** are equal to 1.  Subtract this from <line_length> to obtain the wrap
+  ** length.
   **
   ** Read from pipes[0] and write to pipes[1]; exec into wrap.
   */
   if ( ( pid = fork() ) == 0 ) {
     char *c;
     int spaces = 0;
-    char text_length_arg[4];
+    char line_length_arg[ INT_BUF_SIZE ];
+    char tab_spaces_arg[ INT_BUF_SIZE ];
 
     for ( c = leader; *c; ++c )
       if ( *c == '\t' ) {
-        text_length -= TAB_EQUAL - spaces;
+        line_length -= tab_spaces - spaces;
         spaces = 0;
       } else {
-        --text_length;
-        spaces = (spaces + 1) % TAB_EQUAL;
+        --line_length;
+        spaces = (spaces + 1) % tab_spaces;
       }
 
-    sprintf( text_length_arg, "%d", text_length );
+    sprintf( line_length_arg, "%d", line_length );
+    sprintf( tab_spaces_arg, "%d", tab_spaces );
 
     REDIRECT( 0, 0 );
     REDIRECT( 1, 1 );
-    execlp( "wrap", "wrap", "-l", text_length_arg, (char*)0 );
+    execlp(
+      "wrap", "wrap", "-l", line_length_arg, "-s", tab_spaces_arg, (char*)0
+    );
     ERROR( -21 );
   } else if ( pid == -1 )
     ERROR( -20 );
@@ -164,7 +171,7 @@ main PJL_ARG_LIST(( argc, argv ))
     exit( 1 );
   }
 
-  while ( fgets( buf, BUF_SIZE, from_wrap ) )
+  while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) )
     printf( "%s%s", leader, buf );
   exit( 0 );
 }
@@ -183,23 +190,23 @@ process_options PJL_ARG_LIST(( argc, argv ))
   me = me ? me + 1 : argv[0];           /* ...of executable */
 
   opterr = 1;
-  while ( ( opt = getopt( argc, (char**)argv, "l:v" ) ) != EOF )
+  while ( (opt = getopt( argc, argv, "l:s:v" )) != EOF )
     switch ( opt ) {
-      case 'l':
-        text_length = atoi( optarg );
-        break;
-      case 'v':
-        fprintf( stderr, "%s %s\n", me, WRAP_VERSION );
-        exit( 0 );
-      case '?':
-        goto usage;
+      case 'l': line_length = atoi( optarg ); break;
+      case 's': tab_spaces  = atoi( optarg ); break;
+      case 'v': goto version;
+      case '?': goto usage;
     }
   argc -= optind, argv += optind;
   if ( !argc )
     return;
 
 usage:
-  fprintf( stderr, "usage: %s [-l text-length]\n", me );
+  fprintf( stderr, "usage: %s [-l text-length] [-s tab-spaces]\n", me );
   exit( 1 );
+
+version:
+  fprintf( stderr, "%s %s\n", me, WRAP_VERSION );
+  exit( 0 );
 }
 /* vim:set et sw=2 ts=2: */
