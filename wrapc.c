@@ -26,8 +26,7 @@
 #include <unistd.h>                     /* for close(), fork(), ... */
 
 /* local */
-#include "c_compat.h"
-#include "version.h"
+#include "common.h"
 
 #define INT_BUF_SIZE  11                /* to hold INT_MAX as a string */
 #define LINE_BUF_SIZE 1024              /* hopefully, no one will exceed this */
@@ -54,14 +53,11 @@ char const* me;                         /* executable name */
 int         tab_spaces = 8;             /* number of spaces a tab equals */
 
 /* local functions */
-void process_options PJL_PROTO(( int argc, char *argv[] ));
+void process_options( int argc, char *argv[] );
 
-/*************************/
-  int
-main PJL_ARG_LIST(( argc, argv ))
-  PJL_ARG_DEF( int argc )
-  PJL_ARG_END( char *argv[] )
-{
+/*****************************************************************************/
+
+int main( int argc, char *argv[] ) {
   char buf[ LINE_BUF_SIZE ];
   /*
   ** Two pipes: pipes[0] goes between child 1 and child 2
@@ -176,12 +172,9 @@ main PJL_ARG_LIST(( argc, argv ))
   exit( 0 );
 }
 
-/*************************/
-  void
-process_options PJL_ARG_LIST(( argc, argv ))
-  PJL_ARG_DEF( int argc )
-  PJL_ARG_END( char *argv[] )
-{
+/*****************************************************************************/
+
+void process_options( int argc, char *argv[] ) {
   extern char *optarg;
   extern int optind, opterr;
   int opt;                              /* command-line option */
@@ -209,4 +202,7 @@ version:
   fprintf( stderr, "%s %s\n", me, WRAP_VERSION );
   exit( 0 );
 }
+
+/*****************************************************************************/
+
 /* vim:set et sw=2 ts=2: */

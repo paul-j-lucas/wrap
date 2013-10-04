@@ -58,8 +58,7 @@
 #include <unistd.h>                     /* for getopt(3) */
 
 /* local */
-#include "c_compat.h"
-#include "version.h"
+#include "common.h"
 
 /* global variable definitions */
 char  buf[ 1024 ];                      /* hopefully, no one will exceed this */
@@ -72,15 +71,12 @@ int   newlines_delimit = 2;             /* newlines that delimit a paragraph */
 int   tab_spaces = 8;                   /* number of spaces a tab equals */
 
 /* local functions */
-void  print_line PJL_PROTO(( int up_to ));
-void  process_options PJL_PROTO(( int argc, char *argv[] ));
+void  print_line( int up_to );
+void  process_options( int argc, char *argv[] );
 
 /****************************************************************************/
-  int
-main PJL_ARG_LIST(( argc, argv ))
-  PJL_ARG_DEF( int argc )
-  PJL_ARG_END( char *argv[] )
-{
+
+int main( int argc, char *argv[] ) {
   int c;                                /* current character */
   int buf_count = 0;                    /* number of characters in buffer */
   int buf_length = 0;                   /* actual length of buffer */
@@ -305,10 +301,8 @@ delimit_paragraph:
 }
 
 /*****************************************************************************/
-  void
-print_line PJL_ARG_LIST(( up_to ))
-  PJL_ARG_END( int up_to )
-{
+
+void print_line( int up_to ) {
   int i;
   for ( i = 0; i < lead_tabs; ++i )
     putchar( '\t' );
@@ -318,12 +312,7 @@ print_line PJL_ARG_LIST(( up_to ))
   printf( "%s\n", buf );
 }
 
-/*************************/
-  void
-process_options PJL_ARG_LIST(( argc, argv ))
-  PJL_ARG_DEF( int argc )
-  PJL_ARG_END( char *argv[] )
-{
+void process_options( int argc, char *argv[] ) {
   char const *me;                       /* executable name */
   extern char *optarg;
   extern int optind, opterr;
@@ -377,4 +366,7 @@ version:
   fprintf( stderr, "%s %s\n", me, WRAP_VERSION );
   exit( 0 );
 }
+
+/*****************************************************************************/
+
 /* vim:set et sw=2 ts=2: */

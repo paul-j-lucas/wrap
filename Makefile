@@ -39,8 +39,8 @@ wrap: wrap.o
 wrapc: wrapc.o
 	$(CC) -o $@ $?
 
-wrap.o:  wrap.c  c_compat.h version.h
-wrapc.o: wrapc.c c_compat.h version.h
+wrap.o:  wrap.c  common.h
+wrapc.o: wrapc.c common.h
 
 ##
 # Utility rules

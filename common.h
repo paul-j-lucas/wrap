@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      version.h
+**      common.h -- Common declarations.
 **
 **      Copyright (C) 1996-2013  Paul J. Lucas
 **
@@ -19,10 +19,29 @@
 **      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef wrap_version_H
-#define wrap_version_H
+#ifndef PJL_common_H
+#define PJL_common_H
+
+/*****************************************************************************/
 
 #define WRAP_VERSION  "2.12"
 
-#endif  /* wrap_version_H */
+#ifndef __cplusplus
+# ifdef bool
+#   undef bool
+# endif
+# ifdef true
+#   undef true
+# endif
+# ifdef false
+#   undef false
+# endif
+# define bool   int
+# define true   1
+# define false  0
+#endif /* __cplusplus */
+
+/*****************************************************************************/
+
+#endif /* PJL_common_H */
 /* vim:set et sw=2 ts=2: */
