@@ -2,7 +2,7 @@
 #	wrap -- text reformatter
 #	Makefile
 #
-#	Copyright (C) 1996-2005  Paul J. Lucas
+#	Copyright (C) 1996-2013  Paul J. Lucas
 #
 #	This program is free software; you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 CC=	cc
 CFLAGS=	-O3
+RM=	rm -f
 
 ########## You shouldn't have to change anything below this line. #############
 
@@ -46,9 +47,9 @@ wrapc.o: wrapc.c c_compat.h version.h
 ##
 
 clean:
-	rm -f *.o core
+	$(RM) *.o core
 
 distclean: clean
-	rm -f $(TARGET)
+	$(RM) $(TARGET)
 
 # vim:set noet sw=8 ts=8:
