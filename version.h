@@ -22,7 +22,7 @@
 #ifndef wrap_version_H
 #define wrap_version_H
 
-#define WRAP_VERSION  "2.11"
+#define WRAP_VERSION  "2.12"
 
 #endif  /* wrap_version_H */
 /* vim:set et sw=2 ts=2: */
