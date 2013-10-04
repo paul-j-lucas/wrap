@@ -19,8 +19,8 @@
 **      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef PJL_common_H
-#define PJL_common_H
+#ifndef wrap_common_H
+#define wrap_common_H
 
 /*****************************************************************************/
 
@@ -43,5 +43,5 @@
 
 /*****************************************************************************/
 
-#endif /* PJL_common_H */
+#endif /* wrap_common_H */
 /* vim:set et sw=2 ts=2: */
