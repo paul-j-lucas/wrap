@@ -22,13 +22,14 @@
 /*
 ** Options:
 **
-**      -l n  Set <line-length> to n characters; default is 80.
+**      -l n  Set <line_length> to n characters; default is 80.
+**      -s n  Set <tab_spaces> to n; default is 8.
 **
 **      -t n  Put n leading tabs before each line.
 **      -S n  Put n leading spaces before each line after any leading tabs.
 **
-**      -m n  Mirror tabs;   equivalent to: -tn -l<line-length>-n*2*8
-**      -M n  Mirror spaces; equivalent to: -Sn -l<line-length>-n*2
+**      -m n  Mirror tabs;   same as: -tn -l<line_length>-n*2*<tab_spaces>
+**      -M n  Mirror spaces; same as: -Sn -l<line_length>-n*2
 **
 **      -i n  Indent n more tabs for the first line of a paragraph.
 **      -I n  Indent n more spaces for the first line of a paragraph after any
@@ -60,16 +61,15 @@
 #include "c_compat.h"
 #include "version.h"
 
-#define TAB_EQUAL   8                   /* tabs are equal to 8 spaces */
-
 /* global variable definitions */
 char  buf[ 1024 ];                      /* hopefully, no one will exceed this */
+bool  lead_white_delimit = false;       /* leading whitespace delimit para's? */
 int   line_length = 80;                 /* wrap text to this line length */
 int   lead_spaces = 0, lead_tabs = 0;   /* leading spaces and/or tabs */
 int   indt_spaces = 0, indt_tabs = 0;   /* indent spaces and/or tabs */
 int   hang_spaces = 0, hang_tabs = 0;   /* hanging indent spaces and/or tabs */
 int   newlines_delimit = 2;             /* newlines that delimit a paragraph */
-bool  lead_white_delimit = false;       /* leading whitespace delimit para's? */
+int   tab_spaces = 8;                   /* number of spaces a tab equals */
 
 /* local functions */
 void  print_line PJL_PROTO(( int up_to ));
@@ -141,7 +141,7 @@ main PJL_ARG_LIST(( argc, argv ))
 
   process_options( argc, argv );
 
-  while ( ( c = getchar() ) != EOF ) {
+  while ( (c = getchar()) != EOF ) {
 
     /*************************************************************************
      *  HANDLE NEWLINE(s)
@@ -248,7 +248,7 @@ delimit_paragraph:
         buf[ buf_count++ ] = '\t';
       for ( i = 0; i < indt_spaces; ++i )
         buf[ buf_count++ ] = ' ';
-      buf_length += indt_tabs * TAB_EQUAL + indt_spaces;
+      buf_length += indt_tabs * tab_spaces + indt_spaces;
       indent = false;
     }
 
@@ -283,7 +283,7 @@ delimit_paragraph:
       buf[ to++ ] = '\t';
     for ( i = 0; i < hang_spaces; ++i )
       buf[ to++ ] = ' ';
-    buf_length = hang_tabs * TAB_EQUAL + hang_spaces;
+    buf_length = hang_tabs * tab_spaces + hang_spaces;
 
     /*
     ** Now slide the partial word to the left.
@@ -333,28 +333,22 @@ process_options PJL_ARG_LIST(( argc, argv ))
   me = strrchr( argv[0], '/' );         /* determine base name... */
   me = me ? me + 1 : argv[0];           /* ...of executable */
 
-#define SET_OPT( c, option )  case c: option = atoi( optarg ); break
-
   opterr = 1;
-  while ( ( opt = getopt( argc, argv, "bh:H:i:I:l:m:M:nNS:t:v" ) ) != EOF )
+  while ( (opt = getopt( argc, argv, "bh:H:i:I:l:m:M:nNs:S:t:v" )) != EOF )
     switch ( opt ) {
-      SET_OPT( 'h', hang_tabs );
-      SET_OPT( 'H', hang_spaces );
-
-      SET_OPT( 'i', indt_tabs );
-      SET_OPT( 'I', indt_spaces );
-
-      SET_OPT( 'l', line_length );
-
-      SET_OPT( 'm', mirror_tabs );
-      SET_OPT( 'M', mirror_spaces );
-
-      SET_OPT( 't', lead_tabs );
-      SET_OPT( 'S', lead_spaces );
-
-      case 'b': lead_white_delimit = true;  break;
-      case 'n': newlines_delimit = INT_MAX; break;
-      case 'N': newlines_delimit = 1;       break;
+      case 'b': lead_white_delimit = true;           break;
+      case 'h': hang_tabs          = atoi( optarg ); break;
+      case 'H': hang_spaces        = atoi( optarg ); break;
+      case 'i': indt_tabs          = atoi( optarg ); break;
+      case 'I': indt_spaces        = atoi( optarg ); break;
+      case 'l': line_length        = atoi( optarg ); break;
+      case 'm': mirror_tabs        = atoi( optarg ); break;
+      case 'M': mirror_spaces      = atoi( optarg ); break;
+      case 'n': newlines_delimit   = INT_MAX;        break;
+      case 'N': newlines_delimit   = 1;              break;
+      case 's': tab_spaces         = atoi( optarg ); break;
+      case 'S': lead_spaces        = atoi( optarg ); break;
+      case 't': lead_tabs          = atoi( optarg ); break;
       case 'v': goto version;
       case '?': goto usage;
     }
@@ -363,8 +357,8 @@ process_options PJL_ARG_LIST(( argc, argv ))
     goto usage;
 
   line_length -=
-    2 * (mirror_tabs * TAB_EQUAL + mirror_spaces) +
-    lead_tabs * TAB_EQUAL + lead_spaces;
+    2 * (mirror_tabs * tab_spaces + mirror_spaces) +
+    lead_tabs * tab_spaces + lead_spaces;
 
   lead_tabs   += mirror_tabs;
   lead_spaces += mirror_spaces;
@@ -372,7 +366,7 @@ process_options PJL_ARG_LIST(( argc, argv ))
   return;
 
 usage:
-  fprintf( stderr, "usage: %s [-bnNv] [-l line-length]\n", me );
+  fprintf( stderr, "usage: %s [-bnNv] [-l line-length] [-s tab-spaces]\n", me );
   fprintf( stderr, "\t[-t leading-tabs] [-S leading-spaces]\n" );
   fprintf( stderr, "\t[-m mirror-tabs]  [-M mirror-spaces]\n" );
   fprintf( stderr, "\t[-i indent-tabs]  [-I indent-spaces]\n" );
