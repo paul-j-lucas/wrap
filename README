@@ -22,7 +22,7 @@ LICENSE
 	USA.
 
 NOTES
-	This sofware compiles under K&R C, ANSI C, or C++.
+	This sofware compiles under ANSI C or C++.
 
 AUTHOR
 	Paul J. Lucas <paul@lucasmail.org>
