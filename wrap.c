@@ -224,8 +224,7 @@ delimit_paragraph:
         */
         wrap_pos = buf_count;
         do {
-          buf[ buf_count++ ] = ' ';
-          ++buf_length;
+          buf[ buf_count++ ] = ' ', ++buf_length;
         } while ( --put_spaces );
       } else {
         /*
@@ -252,8 +251,8 @@ delimit_paragraph:
      *  INSERT NON-SPACE CHARACTER
      *************************************************************************/
 
-    buf[ buf_count++ ] = c;
-    if ( ++buf_length < line_length ) {
+    buf[ buf_count++ ] = c, ++buf_length;
+    if ( buf_length < line_length ) {
       /*
       ** We haven't exceeded the line length yet.
       */
