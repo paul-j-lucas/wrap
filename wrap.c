@@ -223,8 +223,9 @@ delimit_paragraph:
         ** Mark position at a space to perform a wrap if necessary.
         */
         wrap_pos = buf_count;
+        buf_length += put_spaces;
         do {
-          buf[ buf_count++ ] = ' ', ++buf_length;
+          buf[ buf_count++ ] = ' ';
         } while ( --put_spaces );
       } else {
         /*
