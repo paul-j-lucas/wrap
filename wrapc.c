@@ -28,12 +28,17 @@
 /* local */
 #include "common.h"
 
-#define INT_BUF_SIZE  11                /* to hold INT_MAX as a string */
+#define ARG_BUF_SIZE  22                /* max wrap command-line arg size */
 #define LINE_BUF_SIZE 1024              /* hopefully, no one will exceed this */
+
+#define ARG_SPRINTF(ARG,FMT) \
+  snprintf( arg_##ARG, sizeof arg_##ARG, (FMT), (ARG) )
 
 #define ERROR(E)      { perror( argv[0] ); exit( E ); }
 #define CLOSE(P)      { close( pipes[P][0] ); close( pipes[P][1] ); }
 #define REDIRECT(S,P) { close( S ); dup( pipes[P][S] ); CLOSE( P ); }
+
+typedef char arg_buf[ ARG_BUF_SIZE ];   /* wrap command-line argument buffer */
 
 /*
 ** The default leading characters are:
@@ -46,7 +51,7 @@
 **  ';': Assember & Lisp comments
 **  '>': Forward mail indicator
 */
-char*       leading_chars = "\t !#%*/:;>";
+char const* leading_chars = "\t !#%*/:;>";
 
 int         line_length = 80;           /* wrap text to this line length */
 char const* me;                         /* executable name */
@@ -122,10 +127,10 @@ int main( int argc, char *argv[] ) {
   ** Read from pipes[0] and write to pipes[1]; exec into wrap.
   */
   if ( (pid = fork()) == 0 ) {
+    arg_buf arg_line_length;
+    arg_buf arg_tab_spaces;
     char *c;
     int spaces = 0;
-    char line_length_arg[ INT_BUF_SIZE ];
-    char tab_spaces_arg[ INT_BUF_SIZE ];
 
     for ( c = leader; *c; ++c )
       if ( *c == '\t' ) {
@@ -136,13 +141,13 @@ int main( int argc, char *argv[] ) {
         spaces = (spaces + 1) % tab_spaces;
       }
 
-    sprintf( line_length_arg, "%d", line_length );
-    sprintf( tab_spaces_arg, "%d", tab_spaces );
+    ARG_SPRINTF( line_length, "-l%d" );
+    ARG_SPRINTF( tab_spaces , "-s%d" );
 
     REDIRECT( 0, 0 );
     REDIRECT( 1, 1 );
     execlp(
-      "wrap", "wrap", "-l", line_length_arg, "-s", tab_spaces_arg, (char*)0
+      "wrap", "wrap", "-l", arg_line_length, "-s", arg_tab_spaces, (char*)0
     );
     ERROR( 21 );
   } else if ( pid == -1 )
