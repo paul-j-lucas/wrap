@@ -235,7 +235,7 @@ static void process_options( int argc, char *argv[] ) {
   return;
 
 usage:
-  fprintf( stderr, "usage: %s [-l text-length] [-s tab-spaces]\n", me );
+  fprintf( stderr, "usage: %s [-l line-length] [-s tab-spaces]\n", me );
   fprintf( stderr, "\t[-f input-file]   [-o output-file]\n" );
   exit( EXIT_USAGE );
 
