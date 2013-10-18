@@ -18,12 +18,18 @@
 .\"	along with this program; if not, write to the Free Software
 .\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 .\"
-.TH \f3wrap\f1 1 "October 3, 2013" "PJL TOOLS"
+.TH \f3wrap\f1 1 "October 17, 2013" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
 .B wrap
 [
+.B \-f
+.I input-file
+] [
+.B \-o
+.I output-file
+] [
 .BR \- { hHiIlmMsSt }
 .I n
 ] [
@@ -75,6 +81,10 @@ lower-case options are for tabs,
 upper-case options are for spaces.
 .IP "\f3\-b\f1"
 Treat a line beginning with white-space as a paragraph delimiter.
+.IP "\f3\-f\f2 f\f1"
+Read from file
+.I f
+(default is standard input).
 .IP "\f3\-h\f2 n\f1"
 Hang-indent \f2n\f1 more tabs for all but the first line of each paragraph.
 .IP "\f3\-H\f2 n\f1"
@@ -108,6 +118,10 @@ Do not treat newlines as paragraph delimeters.
 .IP "\f3\-N\f1"
 Treat every newline as a paragraph delimiter.
 This option is useful for line-breaking code prior to printing.
+.IP "\f3\-o\f2 f\f1"
+Write to file
+.I f
+(default is standard output).
 .IP "\f3\-s\f2 n\f1"
 Set
 .I tab-spaces
@@ -132,8 +146,7 @@ and exit.
 The
 .B wrap
 utility exits with 0 on success
-and 1 on failure
-(usage error).
+and >0 on failure.
 .SH EXAMPLES
 Wrap text into paragraphs having a line length of 72 characters,
 indenting one tab-stop,

@@ -20,6 +20,7 @@
 */
 
 /* system */
+#include <errno.h>                      /* for errno */
 #include <stdlib.h>                     /* for exit(), malloc() */
 #include <stdio.h>
 #include <string.h>                     /* for str...() */
@@ -29,14 +30,12 @@
 #include "common.h"
 
 #define ARG_BUF_SIZE  22                /* max wrap command-line arg size */
-#define LINE_BUF_SIZE 1024              /* hopefully, no one will exceed this */
 
 #define ARG_SPRINTF(ARG,FMT) \
   snprintf( arg_##ARG, sizeof arg_##ARG, (FMT), (ARG) )
 
-#define ERROR(E)      { perror( argv[0] ); exit( E ); }
-#define CLOSE(P)      { close( pipes[P][0] ); close( pipes[P][1] ); }
-#define REDIRECT(S,P) { close( S ); dup( pipes[P][S] ); CLOSE( P ); }
+#define CLOSE(P)        { close( pipes[P][0] ); close( pipes[P][1] ); }
+#define REDIRECT(FD,P)  { close( FD ); dup( pipes[P][FD] ); CLOSE( P ); }
 
 typedef char arg_buf[ ARG_BUF_SIZE ];   /* wrap command-line argument buffer */
 
@@ -44,8 +43,8 @@ typedef char arg_buf[ ARG_BUF_SIZE ];   /* wrap command-line argument buffer */
 ** The default leading characters are:
 **  space and tab
 **  '!': HTML & XML comments
-**  '#': Shell, Make, CMake, & Perl comments
-**  '/' & '*': C, C++, & Java comments
+**  '#': CMake, Make, Perl, Python, Ruby, and Shell comments
+**  '/' & '*': C, C++, and Java comments
 **  '%': PostScript comments
 **  ':': XQuery comments
 **  ';': Assember & Lisp comments
@@ -53,67 +52,80 @@ typedef char arg_buf[ ARG_BUF_SIZE ];   /* wrap command-line argument buffer */
 */
 char const* leading_chars = "\t !#%*/:;>";
 
-int         line_length = 80;           /* wrap text to this line length */
+FILE*       fin = NULL;                 /* file in */
+FILE*       fout = NULL;                /* file out */
+int         line_length = DEFAULT_LINE_LENGTH;
 char const* me;                         /* executable name */
-int         tab_spaces = 8;             /* number of spaces a tab equals */
+int         tab_spaces = DEFAULT_TAB_SPACES;
 
 /* local functions */
-void process_options( int argc, char *argv[] );
+static void process_options( int argc, char *argv[] );
 
 /*****************************************************************************/
 
 int main( int argc, char *argv[] ) {
-  char buf[ LINE_BUF_SIZE ];
-  /*
-  ** Two pipes: pipes[0] goes between child 1 and child 2
-  **            pipes[1] goes between child 2 and parent
-  */
-  int pipes[2][2];
+  char  buf[ LINE_BUF_SIZE ];
+  FILE* from_wrap;                      /* file used by parent */
+  char  leader[ LINE_BUF_SIZE ];        /* string segment removed/prepended */
+  int   lead_length;                    /* number of leading characters */
   pid_t pid;                            /* child process-id */
-  FILE *from_wrap;                      /* file used by parent */
+  /*
+  ** Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
+  **            pipes[1] goes between child 2 (wrap) and parent
+  */
+  int   pipes[2][2];
+
+  process_options( argc, argv );
 
   /*
   ** Read the first line of input and obtain a string of leading characters to
   ** be removed from all lines.
   */
-  char leader[ LINE_BUF_SIZE ];         /* string segment removed/prepended */
-  int lead_length;                      /* number of leading characters */
-
-  process_options( argc, argv );
-
-  if ( !fgets( buf, LINE_BUF_SIZE, stdin ) )
-    exit( 0 );
+  if ( !fgets( buf, LINE_BUF_SIZE, fin ) ) {
+    if ( ferror( fin ) )
+      ERROR( EXIT_READ_ERROR );
+    exit( EXIT_OK );
+  }
   strcpy( leader, buf );
   leader[ lead_length = strspn( buf, leading_chars ) ] = '\0';
 
   /* open pipes */
   if ( pipe( pipes[0] ) == -1 || pipe( pipes[1] ) == -1 )
-    ERROR( 2 );
+    ERROR( EXIT_PIPE_ERROR );
 
   /***************************************************************************/
   /*
   ** Child 1
   ** 
   ** Close both ends of pipes[1] since it doesn't use it; read from our
-  ** original stdin and write to pipes[0].
+  ** original stdin and write to pipes[0] (child 2, wrap).
   **
-  ** Print first and all subsequent lines with the leading characters removed
-  ** from the beginning of each line.
+  ** Print the first and all subsequent lines with the leading characters
+  ** removed from the beginning of each line.
   */
   if ( (pid = fork()) == 0 ) {
     FILE *to_wrap;
     CLOSE( 1 );
     if ( !( to_wrap = fdopen( pipes[0][1], "w" ) ) ) {
-      fprintf( stderr, "%s: child can't write to pipe\n", me );
-      exit( 11 );
+      fprintf(
+        stderr, "%s: child can't open pipe for writing: %s\n",
+        me, strerror( errno )
+      );
+      exit( EXIT_OPEN_WRITE );
     }
 
-    fputs( buf + lead_length, to_wrap );
-    while ( fgets( buf, LINE_BUF_SIZE, stdin ) )
+    if ( fputs( buf + lead_length, to_wrap ) == EOF )
+      ERROR( EXIT_WRITE_ERROR );
+    while ( fgets( buf, LINE_BUF_SIZE, fin ) ) {
       fputs( buf + lead_length, to_wrap );
-    exit( 0 );
+      if ( ferror( to_wrap ) )
+        ERROR( EXIT_WRITE_ERROR );
+    }
+    if ( ferror( fin ) )
+      ERROR( EXIT_READ_ERROR );
+    exit( EXIT_OK );
   } else if ( pid == -1 )
-    ERROR( 10 );
+    ERROR( EXIT_FORK_ERROR );
 
   /***************************************************************************/
   /*
@@ -124,7 +136,8 @@ int main( int argc, char *argv[] ) {
   ** are equal to 1.  Subtract this from <line_length> to obtain the wrap
   ** length.
   **
-  ** Read from pipes[0] and write to pipes[1]; exec into wrap.
+  ** Read from pipes[0] (child 1) and write to pipes[1] (parent); exec into
+  ** wrap.
   */
   if ( (pid = fork()) == 0 ) {
     arg_buf arg_line_length;
@@ -144,14 +157,14 @@ int main( int argc, char *argv[] ) {
     ARG_SPRINTF( line_length, "-l%d" );
     ARG_SPRINTF( tab_spaces , "-s%d" );
 
-    REDIRECT( 0, 0 );
-    REDIRECT( 1, 1 );
+    REDIRECT( STDIN_FILENO, 0 );
+    REDIRECT( STDOUT_FILENO, 1 );
     execlp(
       "wrap", "wrap", "-l", arg_line_length, "-s", arg_tab_spaces, (char*)0
     );
-    ERROR( 21 );
+    ERROR( EXIT_EXEC_ERROR );
   } else if ( pid == -1 )
-    ERROR( 20 );
+    ERROR( EXIT_FORK_ERROR );
 
   /***************************************************************************/
   /*
@@ -160,26 +173,33 @@ int main( int argc, char *argv[] ) {
   ** Close both ends of pipes[0] since it doesn't use it; close the write end
   ** of pipes[1].
   **
-  ** Read from pipes[1] (the output from wrap) and prepend the leading text to
-  ** each line.
+  ** Read from pipes[1] (child 2, wrap) and prepend the leading text to each
+  ** line.
   */
   CLOSE( 0 );
   close( pipes[1][1] );
 
-  from_wrap = fdopen( pipes[1][0], "r" );
-  if ( !from_wrap ) {
-    fprintf( stderr, "%s: parent can't read from pipe\n", me );
-    exit( 3 );
+  if ( !(from_wrap = fdopen( pipes[1][0], "r" )) ) {
+    fprintf(
+      stderr, "%s: parent can't open pipe for reading: %s\n",
+      me, strerror( errno )
+    );
+    exit( EXIT_READ_ERROR );
   }
 
-  while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) )
-    printf( "%s%s", leader, buf );
-  exit( 0 );
+  while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) ) {
+    fprintf( fout, "%s%s", leader, buf );
+    if ( ferror( fout ) )
+      ERROR( EXIT_WRITE_ERROR );
+  }
+  if ( ferror( from_wrap ) )
+    ERROR( EXIT_READ_ERROR );
+  exit( EXIT_OK );
 }
 
 /*****************************************************************************/
 
-void process_options( int argc, char *argv[] ) {
+static void process_options( int argc, char *argv[] ) {
   extern char *optarg;
   extern int optind, opterr;
   int opt;                              /* command-line option */
@@ -188,24 +208,40 @@ void process_options( int argc, char *argv[] ) {
   me = me ? me + 1 : argv[0];           /* ...of executable */
 
   opterr = 1;
-  while ( (opt = getopt( argc, argv, "l:s:v" )) != EOF )
+  while ( (opt = getopt( argc, argv, "f:l:o:s:v" )) != EOF )
     switch ( opt ) {
+      case 'f':
+        if ( !(fin = fopen( optarg, "r" )) )
+          ERROR( EXIT_OPEN_READ );
+        break;
       case 'l': line_length = atoi( optarg ); break;
+      case 'o':
+        if ( !(fout = fopen( optarg, "w" )) )
+          ERROR( EXIT_OPEN_WRITE );
+        break;
       case 's': tab_spaces  = atoi( optarg ); break;
       case 'v': goto version;
       case '?': goto usage;
     }
   argc -= optind, argv += optind;
-  if ( !argc )
-    return;
+  if ( argc )
+    goto usage;
+
+  if ( !fin )
+    fin = fdopen( STDIN_FILENO, "r");
+  if ( !fout )
+    fout = fdopen( STDOUT_FILENO, "w" );
+
+  return;
 
 usage:
   fprintf( stderr, "usage: %s [-l text-length] [-s tab-spaces]\n", me );
-  exit( 1 );
+  fprintf( stderr, "\t[-f input-file]   [-o output-file]\n" );
+  exit( EXIT_USAGE );
 
 version:
   fprintf( stderr, "%s %s\n", me, WRAP_VERSION );
-  exit( 0 );
+  exit( EXIT_OK );
 }
 
 /*****************************************************************************/

@@ -24,7 +24,22 @@
 
 /*****************************************************************************/
 
-#define WRAP_VERSION  "2.12"
+#define DEFAULT_LINE_LENGTH 80          /* wrap text to this line length */
+#define DEFAULT_TAB_SPACES  8           /* number of spaces a tab equals */
+#define ERROR(E)            { perror( me ); exit( E ); }
+#define LINE_BUF_SIZE       1024        /* hopefully, no one will exceed this */
+#define WRAP_VERSION        "3.0"
+
+/* exit(3) status codes */
+#define EXIT_OK           0
+#define EXIT_USAGE        1
+#define EXIT_EXEC_ERROR   2
+#define EXIT_FORK_ERROR   3
+#define EXIT_OPEN_READ    4
+#define EXIT_OPEN_WRITE   5
+#define EXIT_PIPE_ERROR   6
+#define EXIT_READ_ERROR   7
+#define EXIT_WRITE_ERROR  8
 
 #ifndef __cplusplus
 # ifdef bool

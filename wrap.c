@@ -41,10 +41,12 @@
 **            paragraph after any tabs.
 **
 **      -b    Treat a line beginning with white-space as a paragraph delimiter.
+**      -f    Specify file to read from.
 **      -n    Do not treat 2 or more consecutive newlines as paragraph
 **            delimiters.
 **      -N    Treat every newline as a paragraph delimiter.  (This option
 **            subsumes -bhHiIn.)
+**      -o    Specify file to write to.
 **
 **      -v    Print version to stderr and exit.
 */
@@ -55,24 +57,30 @@
 #include <stdio.h>
 #include <stdlib.h>                     /* for atoi(), exit(), ... */
 #include <string.h>
-#include <unistd.h>                     /* for getopt(3) */
+#include <unistd.h>                     /* for getopt(3), STDIN_FILENO, ... */
 
 /* local */
 #include "common.h"
 
 /* global variable definitions */
-char  buf[ 1024 ];                      /* hopefully, no one will exceed this */
-bool  lead_white_delimit = false;       /* leading whitespace delimit para's? */
-int   line_length = 80;                 /* wrap text to this line length */
-int   lead_spaces = 0, lead_tabs = 0;   /* leading spaces and/or tabs */
-int   indt_spaces = 0, indt_tabs = 0;   /* indent spaces and/or tabs */
-int   hang_spaces = 0, hang_tabs = 0;   /* hanging indent spaces and/or tabs */
-int   newlines_delimit = 2;             /* newlines that delimit a paragraph */
-int   tab_spaces = 8;                   /* number of spaces a tab equals */
+char        buf[ LINE_BUF_SIZE ];
+FILE*       fin = NULL;                 /* file in */
+FILE*       fout = NULL;                /* file out */
+int         hang_spaces = 0;            /* hanging-indent spaces */
+int         hang_tabs = 0;              /* hanging-indent tabs */
+int         indt_spaces = 0;            /* indent spaces */
+int         indt_tabs = 0;              /* indent tabs */
+int         lead_spaces = 0;            /* leading spaces */
+int         lead_tabs = 0;              /* leading tabs */
+bool        lead_white_delimit = false; /* leading whitespace delimit para's? */
+int         line_length = DEFAULT_LINE_LENGTH;
+char const* me;                         /* executable name */
+int         newlines_delimit = 2;       /* newlines that delimit a paragraph */
+int         tab_spaces = DEFAULT_TAB_SPACES;
 
 /* local functions */
-void  print_line( int up_to );
-void  process_options( int argc, char *argv[] );
+static void print_line( int up_to );
+static void process_options( int argc, char *argv[] );
 
 /****************************************************************************/
 
@@ -137,7 +145,7 @@ int main( int argc, char *argv[] ) {
 
   process_options( argc, argv );
 
-  while ( (c = getchar()) != EOF ) {
+  while ( (c = getc( fin )) != EOF ) {
 
     /*************************************************************************
      *  HANDLE NEWLINE(s)
@@ -156,8 +164,11 @@ delimit_paragraph:
           buf_count = buf_length = 0;
         }
         if ( consec_newlines == 2 || 
-            (consec_newlines > 2 && newlines_delimit == 1) )
-          putchar( c );
+            (consec_newlines > 2 && newlines_delimit == 1) ) {
+          putc( c, fout );
+          if ( ferror( fout ) )
+            ERROR( EXIT_WRITE_ERROR );
+        }
         was_eos_char = false;
         put_spaces = 0;
         indent = true;
@@ -294,26 +305,29 @@ delimit_paragraph:
 
     /*************************************************************************/
   } /* while */
+  if ( ferror( fin ) )
+    ERROR( EXIT_READ_ERROR );
 
   if ( buf_count )                      /* print left-over text */
     print_line( buf_count );
-  exit( 0 );
+  exit( EXIT_OK );
 }
 
 /*****************************************************************************/
 
-void print_line( int up_to ) {
+static void print_line( int up_to ) {
   int i;
   for ( i = 0; i < lead_tabs; ++i )
-    putchar( '\t' );
+    putc( '\t', fout );
   for ( i = 0; i < lead_spaces; ++i )
-    putchar( ' ' );
+    putc( ' ', fout );
   buf[ up_to ] = '\0';
-  printf( "%s\n", buf );
+  fprintf( fout, "%s\n", buf );
+  if ( ferror( fout ) )
+    ERROR( EXIT_WRITE_ERROR );
 }
 
-void process_options( int argc, char *argv[] ) {
-  char const *me;                       /* executable name */
+static void process_options( int argc, char *argv[] ) {
   int mirror_tabs = 0, mirror_spaces = 0;
   extern char *optarg;
   extern int optind, opterr;
@@ -323,9 +337,13 @@ void process_options( int argc, char *argv[] ) {
   me = me ? me + 1 : argv[0];           /* ...of executable */
 
   opterr = 1;
-  while ( (opt = getopt( argc, argv, "bh:H:i:I:l:m:M:nNs:S:t:v" )) != EOF )
+  while ( (opt = getopt( argc, argv, "bf:h:H:i:I:l:m:M:nNo:s:S:t:v" )) != EOF )
     switch ( opt ) {
       case 'b': lead_white_delimit = true;           break;
+      case 'f':
+        if ( !(fin = fopen( optarg, "r" )) )
+          ERROR( EXIT_OPEN_READ );
+        break;
       case 'h': hang_tabs          = atoi( optarg ); break;
       case 'H': hang_spaces        = atoi( optarg ); break;
       case 'i': indt_tabs          = atoi( optarg ); break;
@@ -335,6 +353,10 @@ void process_options( int argc, char *argv[] ) {
       case 'M': mirror_spaces      = atoi( optarg ); break;
       case 'n': newlines_delimit   = INT_MAX;        break;
       case 'N': newlines_delimit   = 1;              break;
+      case 'o':
+        if ( !(fout = fopen( optarg, "w" )) )
+          ERROR( EXIT_OPEN_WRITE );
+        break;
       case 's': tab_spaces         = atoi( optarg ); break;
       case 'S': lead_spaces        = atoi( optarg ); break;
       case 't': lead_tabs          = atoi( optarg ); break;
@@ -344,6 +366,11 @@ void process_options( int argc, char *argv[] ) {
   argc -= optind, argv += optind;
   if ( argc )
     goto usage;
+
+  if ( !fin )
+    fin = fdopen( STDIN_FILENO, "r");
+  if ( !fout )
+    fout = fdopen( STDOUT_FILENO, "w" );
 
   line_length -=
     2 * (mirror_tabs * tab_spaces + mirror_spaces) +
@@ -356,15 +383,16 @@ void process_options( int argc, char *argv[] ) {
 
 usage:
   fprintf( stderr, "usage: %s [-bnNv] [-l line-length] [-s tab-spaces]\n", me );
+  fprintf( stderr, "\t[-f input-file]   [-o output-file]\n" );
   fprintf( stderr, "\t[-t leading-tabs] [-S leading-spaces]\n" );
   fprintf( stderr, "\t[-m mirror-tabs]  [-M mirror-spaces]\n" );
   fprintf( stderr, "\t[-i indent-tabs]  [-I indent-spaces]\n" );
   fprintf( stderr, "\t[-h hanging-tabs] [-H hanging-spaces]\n" );
-  exit( 1 );
+  exit( EXIT_USAGE );
 
 version:
   fprintf( stderr, "%s %s\n", me, WRAP_VERSION );
-  exit( 0 );
+  exit( EXIT_OK );
 }
 
 /*****************************************************************************/
