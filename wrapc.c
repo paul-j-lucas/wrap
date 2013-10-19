@@ -21,9 +21,10 @@
 
 /* system */
 #include <errno.h>                      /* for errno */
-#include <stdlib.h>                     /* for exit(), malloc() */
 #include <stdio.h>
+#include <stdlib.h>                     /* for exit(), malloc() */
 #include <string.h>                     /* for str...() */
+#include <sys/wait.h>                   /* for wait() */
 #include <unistd.h>                     /* for close(), fork(), ... */
 
 /* local */
@@ -60,6 +61,7 @@ int         tab_spaces = DEFAULT_TAB_SPACES;
 
 /* local functions */
 static void process_options( int argc, char *argv[] );
+static char const* str_status( int status );
 
 /*****************************************************************************/
 
@@ -74,6 +76,7 @@ int main( int argc, char *argv[] ) {
   **            pipes[1] goes between child 2 (wrap) and parent
   */
   int   pipes[2][2];
+  int   wait_status;                    /* child process wait status */
 
   process_options( argc, argv );
 
@@ -106,12 +109,12 @@ int main( int argc, char *argv[] ) {
   if ( (pid = fork()) == 0 ) {
     FILE *to_wrap;
     CLOSE( 1 );
-    if ( !( to_wrap = fdopen( pipes[0][1], "w" ) ) ) {
+    if ( !(to_wrap = fdopen( pipes[0][1], "w" )) ) {
       fprintf(
         stderr, "%s: child can't open pipe for writing: %s\n",
         me, strerror( errno )
       );
-      exit( EXIT_OPEN_WRITE );
+      exit( EXIT_WRITE_OPEN );
     }
 
     if ( fputs( buf + lead_length, to_wrap ) == EOF )
@@ -194,6 +197,32 @@ int main( int argc, char *argv[] ) {
   }
   if ( ferror( from_wrap ) )
     ERROR( EXIT_READ_ERROR );
+
+  /*
+  ** Wait for child processes.
+  */
+  while ( (pid = wait( &wait_status )) > 0 ) {
+    if ( WIFEXITED( wait_status ) ) {
+      int exit_status = WEXITSTATUS( wait_status );
+      if ( exit_status != 0 ) {
+        fprintf(
+          stderr,
+          "%s: child process exited with status %d: %s\n",
+          me, exit_status, str_status( exit_status )
+        );
+        exit( exit_status );
+      }
+    } else if ( WIFSIGNALED( wait_status ) ) {
+      int signal = WTERMSIG( wait_status );
+      fprintf(
+        stderr,
+        "%s: child process terminated with signal %d: %s\n",
+        me, signal, strsignal( signal )
+      );
+      exit( EXIT_CHILD_SIGNAL );
+    }
+  }
+
   exit( EXIT_OK );
 }
 
@@ -212,12 +241,12 @@ static void process_options( int argc, char *argv[] ) {
     switch ( opt ) {
       case 'f':
         if ( !(fin = fopen( optarg, "r" )) )
-          ERROR( EXIT_OPEN_READ );
+          ERROR( EXIT_READ_OPEN );
         break;
       case 'l': line_length = atoi( optarg ); break;
       case 'o':
         if ( !(fout = fopen( optarg, "w" )) )
-          ERROR( EXIT_OPEN_WRITE );
+          ERROR( EXIT_WRITE_OPEN );
         break;
       case 's': tab_spaces  = atoi( optarg ); break;
       case 'v': goto version;
@@ -228,7 +257,7 @@ static void process_options( int argc, char *argv[] ) {
     goto usage;
 
   if ( !fin )
-    fin = fdopen( STDIN_FILENO, "r");
+    fin = fdopen( STDIN_FILENO, "r" );
   if ( !fout )
     fout = fdopen( STDOUT_FILENO, "w" );
 
@@ -242,6 +271,22 @@ usage:
 version:
   fprintf( stderr, "%s %s\n", me, WRAP_VERSION );
   exit( EXIT_OK );
+}
+
+static char const* str_status( int status ) {
+  switch ( status ) {
+    case EXIT_OK          : return "OK";
+    case EXIT_USAGE       : return "usage error";
+    case EXIT_READ_OPEN   : return "error opening file for reading";
+    case EXIT_READ_ERROR  : return "read error";
+    case EXIT_WRITE_OPEN  : return "error opening file for writing";
+    case EXIT_WRITE_ERROR : return "write error";
+    case EXIT_FORK_ERROR  : return "fork() failed";
+    case EXIT_EXEC_ERROR  : return "exec() failed";
+    case EXIT_CHILD_SIGNAL: return "child process terminated by signal";
+    case EXIT_PIPE_ERROR  : return "pipe() failed";
+    default               : return "unknown status";
+  }
 }
 
 /*****************************************************************************/
