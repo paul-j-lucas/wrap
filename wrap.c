@@ -339,7 +339,7 @@ static void process_options( int argc, char *argv[] ) {
   opterr = 1;
   while ( (opt = getopt( argc, argv, "bf:h:H:i:I:l:m:M:nNo:s:S:t:v" )) != EOF )
     switch ( opt ) {
-      case 'b': lead_white_delimit = true;           break;
+      case 'b': lead_white_delimit = true;                  break;
       case 'f':
         if ( !(fin = fopen( optarg, "r" )) )
           ERROR( EXIT_READ_OPEN );
