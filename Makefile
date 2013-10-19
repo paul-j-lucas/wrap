@@ -21,7 +21,6 @@
 
 CC=	cc
 CFLAGS=	-O3
-RM=	rm -f
 
 ########## You shouldn't have to change anything below this line. #############
 
@@ -33,23 +32,24 @@ TARGET=	wrap wrapc
  
 all: $(TARGET)
 
-wrap: wrap.o
-	$(CC) -o $@ $?
+wrap: common.o wrap.o
+	$(CC) -o $@ $^
 
-wrapc: wrapc.o
-	$(CC) -o $@ $?
+wrapc: common.o wrapc.o
+	$(CC) -o $@ $^
 
-wrap.o:  wrap.c  common.h
-wrapc.o: wrapc.c common.h
+common.o:	common.c common.h
+wrap.o:  	wrap.c   common.h
+wrapc.o: 	wrapc.c  common.h
 
 ##
 # Utility rules
 ##
 
 clean:
-	$(RM) *.o core
+	rm -f *.o core*
 
 distclean: clean
-	$(RM) $(TARGET)
+	rm -f $(TARGET)
 
 # vim:set noet sw=8 ts=8:

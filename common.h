@@ -57,6 +57,8 @@
 # define false  0
 #endif /* __cplusplus */
 
+int check_atoi( char const* );
+
 /*****************************************************************************/
 
 #endif /* wrap_common_H */

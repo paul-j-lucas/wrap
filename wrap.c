@@ -55,7 +55,7 @@
 #include <ctype.h>
 #include <limits.h>                     /* for INT_MAX */
 #include <stdio.h>
-#include <stdlib.h>                     /* for atoi(), exit(), ... */
+#include <stdlib.h>                     /* for exit(), ... */
 #include <string.h>
 #include <unistd.h>                     /* for getopt(3), STDIN_FILENO, ... */
 
@@ -344,22 +344,22 @@ static void process_options( int argc, char *argv[] ) {
         if ( !(fin = fopen( optarg, "r" )) )
           ERROR( EXIT_READ_OPEN );
         break;
-      case 'h': hang_tabs          = atoi( optarg ); break;
-      case 'H': hang_spaces        = atoi( optarg ); break;
-      case 'i': indt_tabs          = atoi( optarg ); break;
-      case 'I': indt_spaces        = atoi( optarg ); break;
-      case 'l': line_length        = atoi( optarg ); break;
-      case 'm': mirror_tabs        = atoi( optarg ); break;
-      case 'M': mirror_spaces      = atoi( optarg ); break;
-      case 'n': newlines_delimit   = INT_MAX;        break;
-      case 'N': newlines_delimit   = 1;              break;
+      case 'h': hang_tabs          = check_atoi( optarg );  break;
+      case 'H': hang_spaces        = check_atoi( optarg );  break;
+      case 'i': indt_tabs          = check_atoi( optarg );  break;
+      case 'I': indt_spaces        = check_atoi( optarg );  break;
+      case 'l': line_length        = check_atoi( optarg );  break;
+      case 'm': mirror_tabs        = check_atoi( optarg );  break;
+      case 'M': mirror_spaces      = check_atoi( optarg );  break;
+      case 'n': newlines_delimit   = INT_MAX;               break;
+      case 'N': newlines_delimit   = 1;                     break;
       case 'o':
         if ( !(fout = fopen( optarg, "w" )) )
           ERROR( EXIT_WRITE_OPEN );
         break;
-      case 's': tab_spaces         = atoi( optarg ); break;
-      case 'S': lead_spaces        = atoi( optarg ); break;
-      case 't': lead_tabs          = atoi( optarg ); break;
+      case 's': tab_spaces         = check_atoi( optarg );  break;
+      case 'S': lead_spaces        = check_atoi( optarg );  break;
+      case 't': lead_tabs          = check_atoi( optarg );  break;
       case 'v': goto version;
       case '?': goto usage;
     }
@@ -368,9 +368,9 @@ static void process_options( int argc, char *argv[] ) {
     goto usage;
 
   if ( !fin )
-    fin = fdopen( STDIN_FILENO, "r" );
+    fin = stdin;
   if ( !fout )
-    fout = fdopen( STDOUT_FILENO, "w" );
+    fout = stdout;
 
   line_length -=
     2 * (mirror_tabs * tab_spaces + mirror_spaces) +

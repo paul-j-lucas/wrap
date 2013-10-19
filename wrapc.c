@@ -162,9 +162,7 @@ int main( int argc, char *argv[] ) {
 
     REDIRECT( STDIN_FILENO, 0 );
     REDIRECT( STDOUT_FILENO, 1 );
-    execlp(
-      "wrap", "wrap", "-l", arg_line_length, "-s", arg_tab_spaces, (char*)0
-    );
+    execlp( "wrap", "wrap", arg_line_length, arg_tab_spaces, (char*)0 );
     ERROR( EXIT_EXEC_ERROR );
   } else if ( pid == -1 )
     ERROR( EXIT_FORK_ERROR );
@@ -243,12 +241,12 @@ static void process_options( int argc, char *argv[] ) {
         if ( !(fin = fopen( optarg, "r" )) )
           ERROR( EXIT_READ_OPEN );
         break;
-      case 'l': line_length = atoi( optarg ); break;
+      case 'l': line_length = check_atoi( optarg ); break;
       case 'o':
         if ( !(fout = fopen( optarg, "w" )) )
           ERROR( EXIT_WRITE_OPEN );
         break;
-      case 's': tab_spaces  = atoi( optarg ); break;
+      case 's': tab_spaces  = check_atoi( optarg ); break;
       case 'v': goto version;
       case '?': goto usage;
     }
@@ -257,9 +255,9 @@ static void process_options( int argc, char *argv[] ) {
     goto usage;
 
   if ( !fin )
-    fin = fdopen( STDIN_FILENO, "r" );
+    fin = stdin;
   if ( !fout )
-    fout = fdopen( STDOUT_FILENO, "w" );
+    fout = stdout;
 
   return;
 
