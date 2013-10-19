@@ -21,6 +21,7 @@
 
 /* system */
 #include <errno.h>                      /* for errno */
+#include <signal.h>                     /* for kill() */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit(), malloc() */
 #include <string.h>                     /* for str...() */
@@ -70,7 +71,7 @@ int main( int argc, char *argv[] ) {
   FILE* from_wrap;                      /* file used by parent */
   char  leader[ LINE_BUF_SIZE ];        /* string segment removed/prepended */
   int   lead_length;                    /* number of leading characters */
-  pid_t pid;                            /* child process-id */
+  pid_t pid, pid_1;                     /* child process-IDs */
   /*
   ** Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
   **            pipes[1] goes between child 2 (wrap) and parent
@@ -106,7 +107,9 @@ int main( int argc, char *argv[] ) {
   ** Print the first and all subsequent lines with the leading characters
   ** removed from the beginning of each line.
   */
-  if ( (pid = fork()) == 0 ) {
+  if ( (pid_1 = fork()) == -1 )
+    ERROR( EXIT_FORK_ERROR );
+  if ( !pid_1 ) {
     FILE *to_wrap;
     CLOSE( 1 );
     if ( !(to_wrap = fdopen( pipes[0][1], "w" )) ) {
@@ -127,8 +130,7 @@ int main( int argc, char *argv[] ) {
     if ( ferror( fin ) )
       ERROR( EXIT_READ_ERROR );
     exit( EXIT_OK );
-  } else if ( pid == -1 )
-    ERROR( EXIT_FORK_ERROR );
+  }
 
   /***************************************************************************/
   /*
@@ -142,7 +144,11 @@ int main( int argc, char *argv[] ) {
   ** Read from pipes[0] (child 1) and write to pipes[1] (parent); exec into
   ** wrap.
   */
-  if ( (pid = fork()) == 0 ) {
+  if ( (pid = fork()) == -1 ) {
+    kill( pid_1, SIGTERM );
+    ERROR( EXIT_FORK_ERROR );
+  }
+  if ( !pid ) {
     arg_buf arg_line_length;
     arg_buf arg_tab_spaces;
     char *c;
@@ -164,8 +170,7 @@ int main( int argc, char *argv[] ) {
     REDIRECT( STDOUT_FILENO, 1 );
     execlp( "wrap", "wrap", arg_line_length, arg_tab_spaces, (char*)0 );
     ERROR( EXIT_EXEC_ERROR );
-  } else if ( pid == -1 )
-    ERROR( EXIT_FORK_ERROR );
+  }
 
   /***************************************************************************/
   /*
