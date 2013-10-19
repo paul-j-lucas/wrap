@@ -33,13 +33,14 @@
 /* exit(3) status codes */
 #define EXIT_OK           0
 #define EXIT_USAGE        1
-#define EXIT_EXEC_ERROR   2
-#define EXIT_FORK_ERROR   3
-#define EXIT_OPEN_READ    4
-#define EXIT_OPEN_WRITE   5
-#define EXIT_PIPE_ERROR   6
-#define EXIT_READ_ERROR   7
-#define EXIT_WRITE_ERROR  8
+#define EXIT_READ_OPEN    10
+#define EXIT_READ_ERROR   11
+#define EXIT_WRITE_OPEN   12
+#define EXIT_WRITE_ERROR  13
+#define EXIT_FORK_ERROR   20
+#define EXIT_EXEC_ERROR   21
+#define EXIT_CHILD_SIGNAL 30
+#define EXIT_PIPE_ERROR   40
 
 #ifndef __cplusplus
 # ifdef bool

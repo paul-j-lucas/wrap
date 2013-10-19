@@ -342,7 +342,7 @@ static void process_options( int argc, char *argv[] ) {
       case 'b': lead_white_delimit = true;           break;
       case 'f':
         if ( !(fin = fopen( optarg, "r" )) )
-          ERROR( EXIT_OPEN_READ );
+          ERROR( EXIT_READ_OPEN );
         break;
       case 'h': hang_tabs          = atoi( optarg ); break;
       case 'H': hang_spaces        = atoi( optarg ); break;
@@ -355,7 +355,7 @@ static void process_options( int argc, char *argv[] ) {
       case 'N': newlines_delimit   = 1;              break;
       case 'o':
         if ( !(fout = fopen( optarg, "w" )) )
-          ERROR( EXIT_OPEN_WRITE );
+          ERROR( EXIT_WRITE_OPEN );
         break;
       case 's': tab_spaces         = atoi( optarg ); break;
       case 'S': lead_spaces        = atoi( optarg ); break;
@@ -368,7 +368,7 @@ static void process_options( int argc, char *argv[] ) {
     goto usage;
 
   if ( !fin )
-    fin = fdopen( STDIN_FILENO, "r");
+    fin = fdopen( STDIN_FILENO, "r" );
   if ( !fout )
     fout = fdopen( STDOUT_FILENO, "w" );
 
