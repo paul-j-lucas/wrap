@@ -190,7 +190,7 @@ int main( int argc, char *argv[] ) {
       stderr, "%s: parent can't open pipe for reading: %s\n",
       me, strerror( errno )
     );
-    exit( EXIT_READ_ERROR );
+    exit( EXIT_READ_OPEN );
   }
 
   while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) ) {
