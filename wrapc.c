@@ -224,7 +224,7 @@ int main( int argc, char *argv[] ) {
       );
       exit( EXIT_CHILD_SIGNAL );
     }
-  }
+  } /* while */
 
   exit( EXIT_OK );
 }
@@ -254,7 +254,7 @@ static void process_options( int argc, char *argv[] ) {
       case 's': tab_spaces  = check_atoi( optarg ); break;
       case 'v': goto version;
       case '?': goto usage;
-    }
+    } /* switch */
   argc -= optind, argv += optind;
   if ( argc )
     goto usage;

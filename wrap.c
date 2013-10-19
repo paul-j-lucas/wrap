@@ -362,7 +362,7 @@ static void process_options( int argc, char *argv[] ) {
       case 't': lead_tabs          = check_atoi( optarg );  break;
       case 'v': goto version;
       case '?': goto usage;
-    }
+    } /* switch */
   argc -= optind, argv += optind;
   if ( argc )
     goto usage;
