@@ -26,7 +26,7 @@
 
 #define DEFAULT_LINE_LENGTH 80          /* wrap text to this line length */
 #define DEFAULT_TAB_SPACES  8           /* number of spaces a tab equals */
-#define ERROR(E)            { perror( me ); exit( E ); }
+#define ERROR(E)            do { perror( me ); exit( E ); } while (0)
 #define LINE_BUF_SIZE       1024        /* hopefully, no one will exceed this */
 #define WRAP_VERSION        "3.0"
 
