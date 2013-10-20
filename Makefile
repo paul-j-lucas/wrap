@@ -19,8 +19,9 @@
 #	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ##
 
-CC=	cc
-CFLAGS=	-O3
+CC=	gcc
+WARN=	-Wall -Wextra -Wc++-compat -Wredundant-decls -Wshadow -Wwrite-strings
+CFLAGS=	-ansi -pedantic-errors $(WARN) -O3
 
 ########## You shouldn't have to change anything below this line. #############
 
