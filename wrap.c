@@ -66,20 +66,22 @@
 
 /* global variable definitions */
 char        buf[ LINE_BUF_SIZE ];
-bool        eos_delimit = false;        /* end-of-sentence delimits para's */
 FILE*       fin = NULL;                 /* file in */
 FILE*       fout = NULL;                /* file out */
-int         hang_spaces = 0;            /* hanging-indent spaces */
-int         hang_tabs = 0;              /* hanging-indent tabs */
-int         indt_spaces = 0;            /* indent spaces */
-int         indt_tabs = 0;              /* indent tabs */
-int         lead_spaces = 0;            /* leading spaces */
-int         lead_tabs = 0;              /* leading tabs */
-bool        lead_white_delimit = false; /* leading whitespace delimit para's? */
 int         line_length = DEFAULT_LINE_LENGTH;
 char const* me;                         /* executable name */
-int         newlines_delimit = 2;       /* newlines that delimit a paragraph */
+int         newlines_delimit = 2;       /* # newlines that delimit a para */
 int         tab_spaces = DEFAULT_TAB_SPACES;
+
+/* option definitions */
+bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
+int         opt_hang_spaces = 0;        /* hanging-indent spaces */
+int         opt_hang_tabs = 0;          /* hanging-indent tabs */
+int         opt_indt_spaces = 0;        /* indent spaces */
+int         opt_indt_tabs = 0;          /* indent tabs */
+int         opt_lead_spaces = 0;        /* leading spaces */
+int         opt_lead_tabs = 0;          /* leading tabs */
+bool        opt_lead_ws_delimit = false;/* leading whitespace delimit para's? */
 
 /* local functions */
 static void print_line( int up_to );
@@ -128,7 +130,7 @@ int main( int argc, char *argv[] ) {
 
   /*
   ** Set to 1 when a newline is encountered; decremented otherwise.  Used and
-  ** valid only if lead_white_delimit is true.
+  ** valid only if opt_lead_ws_delimit is true.
   */
   int  newline_counter  = 0;
 
@@ -141,7 +143,7 @@ int main( int argc, char *argv[] ) {
 
   /*
   ** Flag to signal when we should do indenting: set initially to indent the
-  ** first line of a paragraph and after 'newlines_delimit' or more consecutive
+  ** first line of a paragraph and after newlines_delimit or more consecutive
   ** newlines for subsequent paragraphs.
   */
   bool indent             = true;
@@ -158,8 +160,8 @@ int main( int argc, char *argv[] ) {
       newline_counter = 1;
       if ( ++consec_newlines >= newlines_delimit ) {
         /*
-        ** At least 'newlines_delimit' consecutive newlines: print text, if
-        ** any; also set up for indenting.
+        ** At least newlines_delimit consecutive newlines: print text, if any;
+        ** also set up for indenting.
         */
 delimit_paragraph:
         if ( buf_count ) {
@@ -198,13 +200,13 @@ delimit_paragraph:
       ** If newline_counter == 0, the previous character was a newline;
       ** therefore, this white-space character is at the beginning of a line.
       */
-      if ( lead_white_delimit && newline_counter == 0 )
+      if ( opt_lead_ws_delimit && newline_counter == 0 )
         goto delimit_paragraph;
       /*
       ** If end-of-sentence characters delimit paragraphs and the previous
       ** character was an end-of-sentence character, delimit the paragraph.
       */
-      if ( eos_delimit && was_eos_char )
+      if ( opt_eos_delimit && was_eos_char )
         goto delimit_paragraph;
       /*
       ** Only if we are not at the beginning of a line, remember to insert 1
@@ -260,11 +262,11 @@ delimit_paragraph:
      *************************************************************************/
 
     if ( indent ) {
-      for ( i = 0; i < indt_tabs; ++i )
+      for ( i = 0; i < opt_indt_tabs; ++i )
         buf[ buf_count++ ] = '\t';
-      for ( i = 0; i < indt_spaces; ++i )
+      for ( i = 0; i < opt_indt_spaces; ++i )
         buf[ buf_count++ ] = ' ';
-      buf_length += indt_tabs * tab_spaces + indt_spaces;
+      buf_length += opt_indt_tabs * tab_spaces + opt_indt_spaces;
       indent = false;
     }
 
@@ -295,11 +297,11 @@ delimit_paragraph:
     /*
     ** Perform hang indentation first.
     */
-    for ( i = 0; i < hang_tabs; ++i )
+    for ( i = 0; i < opt_hang_tabs; ++i )
       buf[ to++ ] = '\t';
-    for ( i = 0; i < hang_spaces; ++i )
+    for ( i = 0; i < opt_hang_spaces; ++i )
       buf[ to++ ] = ' ';
-    buf_length = hang_tabs * tab_spaces + hang_spaces;
+    buf_length = opt_hang_tabs * tab_spaces + opt_hang_spaces;
 
     /*
     ** Now slide the partial word to the left.
@@ -326,9 +328,9 @@ delimit_paragraph:
 
 static void print_line( int up_to ) {
   int i;
-  for ( i = 0; i < lead_tabs; ++i )
+  for ( i = 0; i < opt_lead_tabs; ++i )
     putc( '\t', fout );
-  for ( i = 0; i < lead_spaces; ++i )
+  for ( i = 0; i < opt_lead_spaces; ++i )
     putc( ' ', fout );
   buf[ up_to ] = '\0';
   fprintf( fout, "%s\n", buf );
@@ -337,7 +339,7 @@ static void print_line( int up_to ) {
 }
 
 static void process_options( int argc, char *argv[] ) {
-  int mirror_tabs = 0, mirror_spaces = 0;
+  int opt_mirror_tabs = 0, opt_mirror_spaces = 0;
   extern char *optarg;
   extern int optind, opterr;
   int opt;                              /* command-line option */
@@ -348,28 +350,28 @@ static void process_options( int argc, char *argv[] ) {
   opterr = 1;
   while ( (opt = getopt( argc, argv, "bef:h:H:i:I:l:m:M:nNo:s:S:t:v" )) != EOF )
     switch ( opt ) {
-      case 'b': lead_white_delimit = true;                  break;
-      case 'e': eos_delimit        = true;                  break;
+      case 'b': opt_lead_ws_delimit = true;                 break;
+      case 'e': opt_eos_delimit     = true;                 break;
       case 'f':
         if ( !(fin = fopen( optarg, "r" )) )
           ERROR( EXIT_READ_OPEN );
         break;
-      case 'h': hang_tabs          = check_atoi( optarg );  break;
-      case 'H': hang_spaces        = check_atoi( optarg );  break;
-      case 'i': indt_tabs          = check_atoi( optarg );  break;
-      case 'I': indt_spaces        = check_atoi( optarg );  break;
-      case 'l': line_length        = check_atoi( optarg );  break;
-      case 'm': mirror_tabs        = check_atoi( optarg );  break;
-      case 'M': mirror_spaces      = check_atoi( optarg );  break;
-      case 'n': newlines_delimit   = INT_MAX;               break;
-      case 'N': newlines_delimit   = 1;                     break;
+      case 'h': opt_hang_tabs       = check_atoi( optarg ); break;
+      case 'H': opt_hang_spaces     = check_atoi( optarg ); break;
+      case 'i': opt_indt_tabs       = check_atoi( optarg ); break;
+      case 'I': opt_indt_spaces     = check_atoi( optarg ); break;
+      case 'l': line_length         = check_atoi( optarg ); break;
+      case 'm': opt_mirror_tabs     = check_atoi( optarg ); break;
+      case 'M': opt_mirror_spaces   = check_atoi( optarg ); break;
+      case 'n': newlines_delimit    = INT_MAX;              break;
+      case 'N': newlines_delimit    = 1;                    break;
       case 'o':
         if ( !(fout = fopen( optarg, "w" )) )
           ERROR( EXIT_WRITE_OPEN );
         break;
-      case 's': tab_spaces         = check_atoi( optarg );  break;
-      case 'S': lead_spaces        = check_atoi( optarg );  break;
-      case 't': lead_tabs          = check_atoi( optarg );  break;
+      case 's': tab_spaces          = check_atoi( optarg ); break;
+      case 'S': opt_lead_spaces     = check_atoi( optarg ); break;
+      case 't': opt_lead_tabs       = check_atoi( optarg ); break;
       case 'v': goto version;
       case '?': goto usage;
     } /* switch */
@@ -383,11 +385,11 @@ static void process_options( int argc, char *argv[] ) {
     fout = stdout;
 
   line_length -=
-    2 * (mirror_tabs * tab_spaces + mirror_spaces) +
-    lead_tabs * tab_spaces + lead_spaces;
+    2 * (opt_mirror_tabs * tab_spaces + opt_mirror_spaces) +
+    opt_lead_tabs * tab_spaces + opt_lead_spaces;
 
-  lead_tabs   += mirror_tabs;
-  lead_spaces += mirror_spaces;
+  opt_lead_tabs   += opt_mirror_tabs;
+  opt_lead_spaces += opt_mirror_spaces;
 
   return;
 

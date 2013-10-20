@@ -33,11 +33,17 @@
 
 #define ARG_BUF_SIZE  22                /* max wrap command-line arg size */
 
+/* String-ify a command-line argument. */
 #define ARG_SPRINTF(ARG,FMT) \
   snprintf( arg_##ARG, sizeof arg_##ARG, (FMT), (ARG) )
 
-#define CLOSE(P)        { close( pipes[P][0] ); close( pipes[P][1] ); }
-#define REDIRECT(FD,P)  { close( FD ); dup( pipes[P][FD] ); CLOSE( P ); }
+/* Close both ends of pipe P. */
+#define CLOSE(P) \
+  do { close( pipes[P][0] ); close( pipes[P][1] ); } while (0)
+
+/* Redirect file-descriptor FD to/from pipe P. */
+#define REDIRECT(FD,P) \
+  do { close( FD ); dup( pipes[P][FD] ); CLOSE( P ); } while (0)
 
 typedef char arg_buf[ ARG_BUF_SIZE ];   /* wrap command-line argument buffer */
 
@@ -54,12 +60,14 @@ typedef char arg_buf[ ARG_BUF_SIZE ];   /* wrap command-line argument buffer */
 */
 char const* leading_chars = "\t !#%*/:;>";
 
-bool        eos_delimit = false;        /* end-of-sentence delimits para's */
 FILE*       fin = NULL;                 /* file in */
 FILE*       fout = NULL;                /* file out */
 int         line_length = DEFAULT_LINE_LENGTH;
 char const* me;                         /* executable name */
 int         tab_spaces = DEFAULT_TAB_SPACES;
+
+/* option definitions */
+bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
 
 /* local functions */
 static void process_options( int argc, char *argv[] );
@@ -172,7 +180,7 @@ int main( int argc, char *argv[] ) {
     argv[ argc++ ] = strdup( "wrap" );  /* 0 */
     argv[ argc++ ] = arg_line_length;   /* 1 */
     argv[ argc++ ] = arg_tab_spaces;    /* 2 */
-    if ( eos_delimit )
+    if ( opt_eos_delimit )
       argv[ argc++ ] = strdup( "-e" );  /* 3 */
     argv[ argc ] = (char*)0;            /* 3 or 4 */
 
@@ -252,7 +260,7 @@ static void process_options( int argc, char *argv[] ) {
   opterr = 1;
   while ( (opt = getopt( argc, argv, "ef:l:o:s:v" )) != EOF )
     switch ( opt ) {
-      case 'e': eos_delimit = true;                 break;
+      case 'e': opt_eos_delimit = true;             break;
       case 'f':
         if ( !(fin = fopen( optarg, "r" )) )
           ERROR( EXIT_READ_OPEN );
