@@ -222,7 +222,7 @@ delimit_paragraph:
     ** character if it was preceded by a regular end-of-sentence character.
     */
     if ( !(was_eos_char && strchr( "'\")]", c )) )
-      was_eos_char = (strchr( ".?!", c ) != 0);
+      was_eos_char = (strchr( ".?!", c ) != NULL);
 
     /*************************************************************************
      *  INSERT SPACES
@@ -278,8 +278,8 @@ delimit_paragraph:
     print_line( wrap_pos );
 
     /*
-    ** Prepare to slide the partial word to the left we can pick up from where
-    ** we left off the next time around.
+    ** Prepare to slide the partial word to the left where we can pick up from
+    ** where we left off the next time around.
     */
     to = 0;
 
