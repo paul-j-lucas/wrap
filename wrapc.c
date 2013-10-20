@@ -54,6 +54,7 @@ typedef char arg_buf[ ARG_BUF_SIZE ];   /* wrap command-line argument buffer */
 */
 char const* leading_chars = "\t !#%*/:;>";
 
+bool        eos_delimit = false;        /* end-of-sentence delimits para's */
 FILE*       fin = NULL;                 /* file in */
 FILE*       fout = NULL;                /* file out */
 int         line_length = DEFAULT_LINE_LENGTH;
@@ -151,7 +152,9 @@ int main( int argc, char *argv[] ) {
   if ( !pid ) {
     arg_buf arg_line_length;
     arg_buf arg_tab_spaces;
-    char *c;
+    int argc = 0;
+    char *argv[5];                      /* must be +1 of greatest arg below */
+    char const *c;
     int spaces = 0;
 
     for ( c = leader; *c; ++c )
@@ -166,9 +169,16 @@ int main( int argc, char *argv[] ) {
     ARG_SPRINTF( line_length, "-l%d" );
     ARG_SPRINTF( tab_spaces , "-s%d" );
 
+    argv[ argc++ ] = strdup( "wrap" );  /* 0 */
+    argv[ argc++ ] = arg_line_length;   /* 1 */
+    argv[ argc++ ] = arg_tab_spaces;    /* 2 */
+    if ( eos_delimit )
+      argv[ argc++ ] = strdup( "-e" );  /* 3 */
+    argv[ argc ] = (char*)0;            /* 3 or 4 */
+
     REDIRECT( STDIN_FILENO, 0 );
     REDIRECT( STDOUT_FILENO, 1 );
-    execlp( "wrap", "wrap", arg_line_length, arg_tab_spaces, (char*)0 );
+    execvp( "wrap", argv );
     ERROR( EXIT_EXEC_ERROR );
   }
 
@@ -240,8 +250,9 @@ static void process_options( int argc, char *argv[] ) {
   me = me ? me + 1 : argv[0];           /* ...of executable */
 
   opterr = 1;
-  while ( (opt = getopt( argc, argv, "f:l:o:s:v" )) != EOF )
+  while ( (opt = getopt( argc, argv, "ef:l:o:s:v" )) != EOF )
     switch ( opt ) {
+      case 'e': eos_delimit = true;                 break;
       case 'f':
         if ( !(fin = fopen( optarg, "r" )) )
           ERROR( EXIT_READ_OPEN );
@@ -267,7 +278,7 @@ static void process_options( int argc, char *argv[] ) {
   return;
 
 usage:
-  fprintf( stderr, "usage: %s [-l line-length] [-s tab-spaces]\n", me );
+  fprintf( stderr, "usage: %s [-e] [-l line-length] [-s tab-spaces]\n", me );
   fprintf( stderr, "\t[-f input-file]   [-o output-file]\n" );
   exit( EXIT_USAGE );
 

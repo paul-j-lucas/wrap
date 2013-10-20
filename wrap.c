@@ -41,6 +41,8 @@
 **            paragraph after any tabs.
 **
 **      -b    Treat a line beginning with white-space as a paragraph delimiter.
+**      -e    Treat white-space after an end-of-sentence character as a
+**            paragraph delimiter.
 **      -f    Specify file to read from.
 **      -n    Do not treat 2 or more consecutive newlines as paragraph
 **            delimiters.
@@ -64,6 +66,7 @@
 
 /* global variable definitions */
 char        buf[ LINE_BUF_SIZE ];
+bool        eos_delimit = false;        /* end-of-sentence delimits para's */
 FILE*       fin = NULL;                 /* file in */
 FILE*       fout = NULL;                /* file out */
 int         hang_spaces = 0;            /* hanging-indent spaces */
@@ -196,6 +199,12 @@ delimit_paragraph:
       ** therefore, this white-space character is at the beginning of a line.
       */
       if ( lead_white_delimit && newline_counter == 0 )
+        goto delimit_paragraph;
+      /*
+      ** If end-of-sentence characters delimit paragraphs and the previous
+      ** character was an end-of-sentence character, delimit the paragraph.
+      */
+      if ( eos_delimit && was_eos_char )
         goto delimit_paragraph;
       /*
       ** Only if we are not at the beginning of a line, remember to insert 1
@@ -337,9 +346,10 @@ static void process_options( int argc, char *argv[] ) {
   me = me ? me + 1 : argv[0];           /* ...of executable */
 
   opterr = 1;
-  while ( (opt = getopt( argc, argv, "bf:h:H:i:I:l:m:M:nNo:s:S:t:v" )) != EOF )
+  while ( (opt = getopt( argc, argv, "bef:h:H:i:I:l:m:M:nNo:s:S:t:v" )) != EOF )
     switch ( opt ) {
       case 'b': lead_white_delimit = true;                  break;
+      case 'e': eos_delimit        = true;                  break;
       case 'f':
         if ( !(fin = fopen( optarg, "r" )) )
           ERROR( EXIT_READ_OPEN );
@@ -382,7 +392,7 @@ static void process_options( int argc, char *argv[] ) {
   return;
 
 usage:
-  fprintf( stderr, "usage: %s [-bnNv] [-l line-length] [-s tab-spaces]\n", me );
+  fprintf( stderr, "usage: %s [-benNv] [-l line-length] [-s tab-spaces]\n", me );
   fprintf( stderr, "\t[-f input-file]   [-o output-file]\n" );
   fprintf( stderr, "\t[-t leading-tabs] [-S leading-spaces]\n" );
   fprintf( stderr, "\t[-m mirror-tabs]  [-M mirror-spaces]\n" );

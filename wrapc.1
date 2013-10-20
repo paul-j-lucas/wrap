@@ -18,7 +18,7 @@
 .\"	along with this program; if not, write to the Free Software
 .\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 .\"
-.TH \f3wrapc\f1 1 "October 17, 2013" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "October 19, 2013" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -36,7 +36,7 @@ wrapc \- comment reformatter
 .B \-s
 .I tab-spaces
 ] [
-.B \-v
+.B \-ev
 ]
 .SH DESCRIPTION
 .B wrapc
@@ -69,6 +69,8 @@ All other white-space characters are folded
 in the same manner as in
 .BR wrap .
 .SH OPTIONS
+.IP "\f3\-e\f1"
+Treat white-space after an end-of-sentence character as a paragraph delimiter.
 .IP "\f3\-f\f2 f\f1"
 Read from file
 .I f

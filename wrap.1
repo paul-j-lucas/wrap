@@ -18,7 +18,7 @@
 .\"	along with this program; if not, write to the Free Software
 .\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 .\"
-.TH \f3wrap\f1 1 "October 17, 2013" "PJL TOOLS"
+.TH \f3wrap\f1 1 "October 19, 2013" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -33,7 +33,7 @@ wrap \- text reformatter
 .BR \- { hHiIlmMsSt }
 .I n
 ] [
-.B \-bnNv
+.B \-benNv
 ]
 .SH DESCRIPTION
 .B
@@ -81,6 +81,8 @@ lower-case options are for tabs,
 upper-case options are for spaces.
 .IP "\f3\-b\f1"
 Treat a line beginning with white-space as a paragraph delimiter.
+.IP "\f3\-e\f1"
+Treat white-space after an end-of-sentence character as a paragraph delimiter.
 .IP "\f3\-f\f2 f\f1"
 Read from file
 .I f
