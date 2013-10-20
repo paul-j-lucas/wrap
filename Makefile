@@ -20,7 +20,7 @@
 ##
 
 CC=	gcc
-WARN=	-Wall -Wextra -Wc++-compat -Wredundant-decls -Wshadow -Wwrite-strings
+WARN=	-Wall -Wextra -Wc++-compat -Wredundant-decls -Wwrite-strings
 CFLAGS=	-ansi -pedantic-errors $(WARN) -O3
 
 ########## You shouldn't have to change anything below this line. #############
