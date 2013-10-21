@@ -42,7 +42,7 @@
 **
 **      -b    Treat a line beginning with white-space as a paragraph delimiter.
 **      -d    Do not alter lines that begin with a '.' presumed to be [nt]roff
-*             control lines.
+**            control lines.
 **      -e    Treat white-space after an end-of-sentence character as a
 **            paragraph delimiter.
 **      -f    Specify file to read from.
