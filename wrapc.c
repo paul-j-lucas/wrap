@@ -68,6 +68,7 @@ int         tab_spaces = DEFAULT_TAB_SPACES;
 
 /* option definitions */
 bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
+char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
 
 /* local functions */
 static void process_options( int argc, char *argv[] );
@@ -159,9 +160,10 @@ int main( int argc, char *argv[] ) {
   }
   if ( !pid ) {
     arg_buf arg_line_length;
+    arg_buf arg_opt_para_delimiters;
     arg_buf arg_tab_spaces;
     int argc = 0;
-    char *argv[5];                      /* must be +1 of greatest arg below */
+    char *argv[6];                      /* must be +1 of greatest arg below */
     char const *c;
     int spaces = 0;
 
@@ -178,11 +180,15 @@ int main( int argc, char *argv[] ) {
     ARG_SPRINTF( tab_spaces , "-s%d" );
 
     argv[ argc++ ] = strdup( "wrap" );  /* 0 */
-    argv[ argc++ ] = arg_line_length;   /* 1 */
-    argv[ argc++ ] = arg_tab_spaces;    /* 2 */
-    if ( opt_eos_delimit )
-      argv[ argc++ ] = strdup( "-e" );  /* 3 */
-    argv[ argc ] = (char*)0;            /* 3 or 4 */
+    if ( opt_eos_delimit )              /* 1: -e */
+      argv[ argc++ ] = strdup( "-e" );
+    argv[ argc++ ] = arg_line_length;   /* 2: -l */
+    if ( opt_para_delimiters ) {        /* 3: -p */
+      ARG_SPRINTF( opt_para_delimiters, "-p%s" );
+      argv[ argc++ ] = arg_opt_para_delimiters;
+    }
+    argv[ argc++ ] = arg_tab_spaces;    /* 4: -s */
+    argv[ argc ] = (char*)0;            /* 5 */
 
     REDIRECT( STDIN_FILENO, 0 );
     REDIRECT( STDOUT_FILENO, 1 );
@@ -253,12 +259,13 @@ static void process_options( int argc, char *argv[] ) {
   extern char *optarg;
   extern int optind, opterr;
   int opt;                              /* command-line option */
+  char const opts[] = "ef:l:o:p:s:v";
 
   me = strrchr( argv[0], '/' );         /* determine base name... */
   me = me ? me + 1 : argv[0];           /* ...of executable */
 
   opterr = 1;
-  while ( (opt = getopt( argc, argv, "ef:l:o:s:v" )) != EOF )
+  while ( (opt = getopt( argc, argv, opts )) != EOF )
     switch ( opt ) {
       case 'e': opt_eos_delimit = true;             break;
       case 'f':
@@ -270,6 +277,7 @@ static void process_options( int argc, char *argv[] ) {
         if ( !(fout = fopen( optarg, "w" )) )
           ERROR( EXIT_WRITE_OPEN );
         break;
+      case 'p': opt_para_delimiters = optarg;       break;
       case 's': tab_spaces  = check_atoi( optarg ); break;
       case 'v': goto version;
       case '?': goto usage;
@@ -286,7 +294,7 @@ static void process_options( int argc, char *argv[] ) {
   return;
 
 usage:
-  fprintf( stderr, "usage: %s [-e] [-l line-length] [-s tab-spaces]\n", me );
+  fprintf( stderr, "usage: %s [-e] [-l line-length] [-p para-delim-chars] [-s tab-spaces]\n", me );
   fprintf( stderr, "\t[-f input-file]   [-o output-file]\n" );
   exit( EXIT_USAGE );
 

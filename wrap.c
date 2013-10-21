@@ -49,6 +49,7 @@
 **      -N    Treat every newline as a paragraph delimiter.  (This option
 **            subsumes -bhHiIn.)
 **      -o    Specify file to write to.
+**      -p s  Treat the given characters as paragraph delimiters.
 **
 **      -v    Print version to stderr and exit.
 */
@@ -82,6 +83,7 @@ int         opt_indt_tabs = 0;          /* indent tabs */
 int         opt_lead_spaces = 0;        /* leading spaces */
 int         opt_lead_tabs = 0;          /* leading tabs */
 bool        opt_lead_ws_delimit = false;/* leading whitespace delimit para's? */
+char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
 
 /* local functions */
 static void print_line( int up_to );
@@ -119,34 +121,41 @@ int main( int argc, char *argv[] ) {
   */
 
   /*
-  ** True only if the previous character was an end-of-sentence character.
-  */
-  bool was_eos_char     = false;
-
-  /*
   ** Number of consecutive newlines.
   */
-  int  consec_newlines  = 0;
+  int  consec_newlines = 0;
 
   /*
   ** Set to 1 when a newline is encountered; decremented otherwise.  Used and
   ** valid only if opt_lead_ws_delimit is true.
   */
-  int  newline_counter  = 0;
+  int  newline_counter = 0;
 
   /*
   ** Number of spaces to output before the next non-white-space character: set
   ** to 1 when we encounter a white-space character and 2 when was_eos_char is
   ** true so as to put 2 characters after the end of a sentence.
   */
-  int  put_spaces       = 0;
+  int  put_spaces = 0;
 
   /*
   ** Flag to signal when we should do indenting: set initially to indent the
   ** first line of a paragraph and after newlines_delimit or more consecutive
   ** newlines for subsequent paragraphs.
   */
-  bool indent             = true;
+  bool indent = true;
+
+  /*
+  ** True only if the previous character was an end-of-sentence character.
+  */
+  bool was_eos_char = false;
+
+  /*
+  ** True only if the previous character was a paragraph-delimiter character.
+  */
+  bool was_para_delim_char = false;
+
+  /***************************************************************************/
 
   process_options( argc, argv );
 
@@ -174,7 +183,7 @@ delimit_paragraph:
           if ( ferror( fout ) )
             ERROR( EXIT_WRITE_ERROR );
         }
-        was_eos_char = false;
+        was_eos_char = was_para_delim_char = false;
         put_spaces = 0;
         indent = true;
         continue;
@@ -209,6 +218,12 @@ delimit_paragraph:
       if ( opt_eos_delimit && was_eos_char )
         goto delimit_paragraph;
       /*
+      ** If the previous character was a paragraph-delimiter character (this is
+      ** set only if opt_para_delimiters was set), delimit the paragraph.
+      */
+      if ( was_para_delim_char )
+        goto delimit_paragraph;
+      /*
       ** Only if we are not at the beginning of a line, remember to insert 1
       ** space later; allow 2 after the end of a sentence.
       */
@@ -225,7 +240,7 @@ delimit_paragraph:
       continue;
 
     /*************************************************************************
-     *  HANDLE EOS CHARACTERS
+     *  HANDLE END-OF-SENTENCE AND PARAGRAPH-DELIMITER CHARACTERS
      *************************************************************************/
 
     /*
@@ -234,6 +249,9 @@ delimit_paragraph:
     */
     if ( !(was_eos_char && strchr( "'\")]", c )) )
       was_eos_char = (strchr( ".?!", c ) != NULL);
+
+    if ( opt_para_delimiters )
+      was_para_delim_char = (strchr( opt_para_delimiters, c ) != NULL);
 
     /*************************************************************************
      *  INSERT SPACES
@@ -343,12 +361,13 @@ static void process_options( int argc, char *argv[] ) {
   extern char *optarg;
   extern int optind, opterr;
   int opt;                              /* command-line option */
+  char const opts[] = "bef:h:H:i:I:l:m:M:nNo:p:s:S:t:v";
 
   me = strrchr( argv[0], '/' );         /* determine base name... */
   me = me ? me + 1 : argv[0];           /* ...of executable */
 
   opterr = 1;
-  while ( (opt = getopt( argc, argv, "bef:h:H:i:I:l:m:M:nNo:s:S:t:v" )) != EOF )
+  while ( (opt = getopt( argc, argv, opts )) != EOF )
     switch ( opt ) {
       case 'b': opt_lead_ws_delimit = true;                 break;
       case 'e': opt_eos_delimit     = true;                 break;
@@ -369,6 +388,7 @@ static void process_options( int argc, char *argv[] ) {
         if ( !(fout = fopen( optarg, "w" )) )
           ERROR( EXIT_WRITE_OPEN );
         break;
+      case 'p': opt_para_delimiters = optarg;               break;
       case 's': tab_spaces          = check_atoi( optarg ); break;
       case 'S': opt_lead_spaces     = check_atoi( optarg ); break;
       case 't': opt_lead_tabs       = check_atoi( optarg ); break;
@@ -394,7 +414,7 @@ static void process_options( int argc, char *argv[] ) {
   return;
 
 usage:
-  fprintf( stderr, "usage: %s [-benNv] [-l line-length] [-s tab-spaces]\n", me );
+  fprintf( stderr, "usage: %s [-benNv] [-l line-length] [-p para-delim-chars] [-s tab-spaces]\n", me );
   fprintf( stderr, "\t[-f input-file]   [-o output-file]\n" );
   fprintf( stderr, "\t[-t leading-tabs] [-S leading-spaces]\n" );
   fprintf( stderr, "\t[-m mirror-tabs]  [-M mirror-spaces]\n" );

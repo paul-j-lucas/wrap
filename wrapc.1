@@ -18,7 +18,7 @@
 .\"	along with this program; if not, write to the Free Software
 .\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 .\"
-.TH \f3wrapc\f1 1 "October 19, 2013" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "October 20, 2013" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -29,6 +29,8 @@ wrapc \- comment reformatter
 .IR output-file ]
 .RB [ \-l
 .IR line-length ]
+.RB [ \-p
+.IR chars ]
 .RB [ \-s
 .IR tab-spaces ]
 .RB [ \-ev ]
@@ -80,6 +82,10 @@ characters
 Write to file
 .I f
 (default is standard output).
+.IP "\f3\-p\f2 s\f1"
+Treat the given characters in
+.I s
+as paragraph delimiters.
 .IP "\f3\-s\f2 n\f1"
 Set
 .I tab-spaces
