@@ -41,6 +41,8 @@
 **            paragraph after any tabs.
 **
 **      -b    Treat a line beginning with white-space as a paragraph delimiter.
+**      -d    Do not alter lines that begin with a '.' presumed to be [nt]roff
+*             control lines.
 **      -e    Treat white-space after an end-of-sentence character as a
 **            paragraph delimiter.
 **      -f    Specify file to read from.
@@ -80,6 +82,7 @@ int         opt_hang_spaces = 0;        /* hanging-indent spaces */
 int         opt_hang_tabs = 0;          /* hanging-indent tabs */
 int         opt_indt_spaces = 0;        /* indent spaces */
 int         opt_indt_tabs = 0;          /* indent tabs */
+bool        opt_lead_dot_ignore = false;/* ignore lines starting with '.'? */
 int         opt_lead_spaces = 0;        /* leading spaces */
 int         opt_lead_tabs = 0;          /* leading tabs */
 bool        opt_lead_ws_delimit = false;/* leading whitespace delimit para's? */
@@ -92,7 +95,7 @@ static void process_options( int argc, char *argv[] );
 /****************************************************************************/
 
 int main( int argc, char *argv[] ) {
-  int c;                                /* current character */
+  int c, prev_c = '\0';                 /* current/previous character */
   int buf_count = 0;                    /* number of characters in buffer */
   int buf_length = 0;                   /* actual length of buffer */
   int wrap_pos = 0;                     /* position at which we can wrap */
@@ -126,6 +129,12 @@ int main( int argc, char *argv[] ) {
   int  consec_newlines = 0;
 
   /*
+  ** True only when opt_lead_dot_ignore = true, the current character is a '.',
+  ** and the previous character was a '\n' (i.e., the line starts with a '.').
+  */
+  bool ignore_lead_dot = false;
+
+  /*
   ** Set to 1 when a newline is encountered; decremented otherwise.  Used and
   ** valid only if opt_lead_ws_delimit is true.
   */
@@ -139,8 +148,8 @@ int main( int argc, char *argv[] ) {
   int  put_spaces = 0;
 
   /*
-  ** Flag to signal when we should do indenting: set initially to indent the
-  ** first line of a paragraph and after newlines_delimit or more consecutive
+  ** True only when we should do indenting: set initially to indent the first
+  ** line of a paragraph and after newlines_delimit or more consecutive
   ** newlines for subsequent paragraphs.
   */
   bool indent = true;
@@ -159,7 +168,7 @@ int main( int argc, char *argv[] ) {
 
   process_options( argc, argv );
 
-  while ( (c = getc( fin )) != EOF ) {
+  for ( ; (c = getc( fin )) != EOF; prev_c = c ) {
 
     /*************************************************************************
      *  HANDLE NEWLINE(s)
@@ -233,8 +242,13 @@ int main( int argc, char *argv[] ) {
       continue;
 
     /*************************************************************************
-     *  HANDLE END-OF-SENTENCE AND PARAGRAPH-DELIMITER CHARACTERS
+     *  HANDLE LEADING-DOT, END-OF-SENTENCE, AND PARAGRAPH-DELIMITERS
      *************************************************************************/
+
+    if ( opt_lead_dot_ignore && c == '.' && prev_c == '\n' ) {
+      ignore_lead_dot = true;
+      goto delimit_paragraph;
+    }
 
     /*
     ** Treat a quote or a closing parenthesis or bracket as an end-of-sentence
@@ -334,15 +348,31 @@ delimit_paragraph:
       print_line( buf_count );
       buf_count = buf_length = 0;
     }
-    if ( consec_newlines == 2 || 
-        (consec_newlines > 2 && newlines_delimit == 1) ) {
-      putc( c, fout );
+    put_spaces = 0;
+    was_eos_char = was_para_delim_char = false;
+    if ( ignore_lead_dot ) {
+      /*
+      ** The line starts with a leading dot and opt_lead_dot_ignore = true:
+      ** read/write the line as-is.
+      */
+      buf[0] = '.';
+      if ( !fgets( buf + 1, LINE_BUF_SIZE - 1, fin ) ) {
+        if ( ferror( fin ) )
+          ERROR( EXIT_READ_ERROR );
+        continue;
+      }
+      fputs( buf, fout );
       if ( ferror( fout ) )
         ERROR( EXIT_WRITE_ERROR );
+    } else {
+      if ( consec_newlines == 2 || 
+          (consec_newlines > 2 && newlines_delimit == 1) ) {
+        putc( c, fout );
+        if ( ferror( fout ) )
+          ERROR( EXIT_WRITE_ERROR );
+      }
+      indent = true;
     }
-    was_eos_char = was_para_delim_char = false;
-    put_spaces = 0;
-    indent = true;
   } /* while */
 
   if ( ferror( fin ) )
@@ -371,7 +401,7 @@ static void process_options( int argc, char *argv[] ) {
   extern char *optarg;
   extern int optind, opterr;
   int opt;                              /* command-line option */
-  char const opts[] = "bef:h:H:i:I:l:m:M:nNo:p:s:S:t:v";
+  char const opts[] = "bdef:h:H:i:I:l:m:M:nNo:p:s:S:t:v";
 
   me = strrchr( argv[0], '/' );         /* determine base name... */
   me = me ? me + 1 : argv[0];           /* ...of executable */
@@ -380,6 +410,7 @@ static void process_options( int argc, char *argv[] ) {
   while ( (opt = getopt( argc, argv, opts )) != EOF )
     switch ( opt ) {
       case 'b': opt_lead_ws_delimit = true;                 break;
+      case 'd': opt_lead_dot_ignore = true;                 break;
       case 'e': opt_eos_delimit     = true;                 break;
       case 'f':
         if ( !(fin = fopen( optarg, "r" )) )
@@ -424,7 +455,7 @@ static void process_options( int argc, char *argv[] ) {
   return;
 
 usage:
-  fprintf( stderr, "usage: %s [-benNv] [-l line-length] [-p para-delim-chars] [-s tab-spaces]\n", me );
+  fprintf( stderr, "usage: %s [-bdenNv] [-l line-length] [-p para-delim-chars] [-s tab-spaces]\n", me );
   fprintf( stderr, "\t[-f input-file]   [-o output-file]\n" );
   fprintf( stderr, "\t[-t leading-tabs] [-S leading-spaces]\n" );
   fprintf( stderr, "\t[-m mirror-tabs]  [-M mirror-spaces]\n" );

@@ -31,7 +31,7 @@ wrap \- text reformatter
 .IR n ]
 .RB [ \-p
 .IR chars ]
-.RB [ \-benNv ]
+.RB [ \-bdenNv ]
 .SH DESCRIPTION
 .B wrap
 is a filter for reformatting text by wrapping and filling lines
@@ -77,6 +77,10 @@ lower-case options are for tabs,
 upper-case options are for spaces.
 .IP "\f3\-b\f1"
 Treat a line beginning with white-space as a paragraph delimiter.
+.IP "\f3\-d\f1"
+Do not alter lines that begin with a `\f3.\f1' (dot) presumed to be
+.BR [nt]roff (1)
+control lines.
 .IP "\f3\-e\f1"
 Treat white-space after an end-of-sentence character as a paragraph delimiter.
 .IP "\f3\-f\f2 f\f1"
