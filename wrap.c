@@ -172,21 +172,14 @@ int main( int argc, char *argv[] ) {
         ** At least newlines_delimit consecutive newlines: print text, if any;
         ** also set up for indenting.
         */
-delimit_paragraph:
-        if ( buf_count ) {
-          print_line( buf_count );
-          buf_count = buf_length = 0;
-        }
-        if ( consec_newlines == 2 || 
-            (consec_newlines > 2 && newlines_delimit == 1) ) {
-          putc( c, fout );
-          if ( ferror( fout ) )
-            ERROR( EXIT_WRITE_ERROR );
-        }
-        was_eos_char = was_para_delim_char = false;
-        put_spaces = 0;
-        indent = true;
-        continue;
+        goto delimit_paragraph;
+      }
+      if ( opt_eos_delimit && was_eos_char ) {
+        /*
+        ** If end-of-sentence characters delimit paragraphs and the previous
+        ** character was an end-of-sentence character, delimit the paragraph.
+        */
+        goto delimit_paragraph;
       }
       if ( was_eos_char ) {
         /*
@@ -332,11 +325,28 @@ delimit_paragraph:
     buf_count = to;
     wrap_pos = 0;
 
+    continue;
+
     /*************************************************************************/
+
+delimit_paragraph:
+    if ( buf_count ) {
+      print_line( buf_count );
+      buf_count = buf_length = 0;
+    }
+    if ( consec_newlines == 2 || 
+        (consec_newlines > 2 && newlines_delimit == 1) ) {
+      putc( c, fout );
+      if ( ferror( fout ) )
+        ERROR( EXIT_WRITE_ERROR );
+    }
+    was_eos_char = was_para_delim_char = false;
+    put_spaces = 0;
+    indent = true;
   } /* while */
+
   if ( ferror( fin ) )
     ERROR( EXIT_READ_ERROR );
-
   if ( buf_count )                      /* print left-over text */
     print_line( buf_count );
   exit( EXIT_OK );
