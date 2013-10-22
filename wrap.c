@@ -58,6 +58,7 @@
 
 /* system */
 #include <ctype.h>
+#include <errno.h>
 #include <limits.h>                     /* for INT_MAX */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit(), ... */
@@ -413,8 +414,10 @@ static void process_options( int argc, char *argv[] ) {
       case 'd': opt_lead_dot_ignore = true;                 break;
       case 'e': opt_eos_delimit     = true;                 break;
       case 'f':
-        if ( !(fin = fopen( optarg, "r" )) )
-          ERROR( EXIT_READ_OPEN );
+        if ( !(fin = fopen( optarg, "r" )) ) {
+          fprintf( stderr, "%s: \"%s\": %s\n", me, optarg, strerror( errno ) );
+          exit( EXIT_READ_OPEN );
+        }
         break;
       case 'h': opt_hang_tabs       = check_atoi( optarg ); break;
       case 'H': opt_hang_spaces     = check_atoi( optarg ); break;
@@ -426,8 +429,10 @@ static void process_options( int argc, char *argv[] ) {
       case 'n': newlines_delimit    = INT_MAX;              break;
       case 'N': newlines_delimit    = 1;                    break;
       case 'o':
-        if ( !(fout = fopen( optarg, "w" )) )
-          ERROR( EXIT_WRITE_OPEN );
+        if ( !(fout = fopen( optarg, "w" )) ) {
+          fprintf( stderr, "%s: \"%s\": %s\n", me, optarg, strerror( errno ) );
+          exit( EXIT_WRITE_OPEN );
+        }
         break;
       case 'p': opt_para_delimiters = optarg;               break;
       case 's': tab_spaces          = check_atoi( optarg ); break;
