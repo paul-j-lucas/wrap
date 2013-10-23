@@ -33,6 +33,7 @@
 /* exit(3) status codes */
 #define EXIT_OK           0
 #define EXIT_USAGE        1
+#define EXIT_CONFIG_ERROR 2
 #define EXIT_READ_OPEN    10
 #define EXIT_READ_ERROR   11
 #define EXIT_WRITE_OPEN   12
@@ -57,7 +58,7 @@
 # define false  0
 #endif /* __cplusplus */
 
-int check_atoi( char const* );
+int check_atou( char const* );
 
 /*****************************************************************************/
 

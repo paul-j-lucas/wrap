@@ -272,13 +272,13 @@ static void process_options( int argc, char *argv[] ) {
         if ( !(fin = fopen( optarg, "r" )) )
           ERROR( EXIT_READ_OPEN );
         break;
-      case 'l': line_length = check_atoi( optarg ); break;
+      case 'l': line_length = check_atou( optarg ); break;
       case 'o':
         if ( !(fout = fopen( optarg, "w" )) )
           ERROR( EXIT_WRITE_OPEN );
         break;
       case 'p': opt_para_delimiters = optarg;       break;
-      case 's': tab_spaces  = check_atoi( optarg ); break;
+      case 's': tab_spaces  = check_atou( optarg ); break;
       case 'v': goto version;
       case '?': goto usage;
     } /* switch */

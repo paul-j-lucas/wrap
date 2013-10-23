@@ -29,9 +29,9 @@
 
 extern char const *me;
 
-/****************************************************************************/
+/*****************************************************************************/
 
-int check_atoi( char const *s ) {
+int check_atou( char const *s ) {
   if ( strspn( s, "0123456789" ) != strlen( s ) ) {
     fprintf( stderr, "%s: \"%s\": invalid integer\n", me, s );
     exit( EXIT_USAGE );

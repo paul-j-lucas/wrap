@@ -93,7 +93,7 @@ char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
 static void print_line( int up_to );
 static void process_options( int argc, char *argv[] );
 
-/****************************************************************************/
+/*****************************************************************************/
 
 int main( int argc, char *argv[] ) {
   int c, prev_c = '\0';                 /* current/previous character */
@@ -419,13 +419,13 @@ static void process_options( int argc, char *argv[] ) {
           exit( EXIT_READ_OPEN );
         }
         break;
-      case 'h': opt_hang_tabs       = check_atoi( optarg ); break;
-      case 'H': opt_hang_spaces     = check_atoi( optarg ); break;
-      case 'i': opt_indt_tabs       = check_atoi( optarg ); break;
-      case 'I': opt_indt_spaces     = check_atoi( optarg ); break;
-      case 'l': line_length         = check_atoi( optarg ); break;
-      case 'm': opt_mirror_tabs     = check_atoi( optarg ); break;
-      case 'M': opt_mirror_spaces   = check_atoi( optarg ); break;
+      case 'h': opt_hang_tabs       = check_atou( optarg ); break;
+      case 'H': opt_hang_spaces     = check_atou( optarg ); break;
+      case 'i': opt_indt_tabs       = check_atou( optarg ); break;
+      case 'I': opt_indt_spaces     = check_atou( optarg ); break;
+      case 'l': line_length         = check_atou( optarg ); break;
+      case 'm': opt_mirror_tabs     = check_atou( optarg ); break;
+      case 'M': opt_mirror_spaces   = check_atou( optarg ); break;
       case 'n': newlines_delimit    = INT_MAX;              break;
       case 'N': newlines_delimit    = 1;                    break;
       case 'o':
@@ -435,9 +435,9 @@ static void process_options( int argc, char *argv[] ) {
         }
         break;
       case 'p': opt_para_delimiters = optarg;               break;
-      case 's': tab_spaces          = check_atoi( optarg ); break;
-      case 'S': opt_lead_spaces     = check_atoi( optarg ); break;
-      case 't': opt_lead_tabs       = check_atoi( optarg ); break;
+      case 's': tab_spaces          = check_atou( optarg ); break;
+      case 'S': opt_lead_spaces     = check_atou( optarg ); break;
+      case 't': opt_lead_tabs       = check_atou( optarg ); break;
       case 'v': goto version;
       case '?': goto usage;
     } /* switch */
