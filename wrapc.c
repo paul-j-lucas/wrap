@@ -1,6 +1,6 @@
 /*
 **      wrapc -- comment reformatter
-**      wrapc.c: implementation
+**      wrapc.c
 **
 **      Copyright (C) 1996-2013  Paul J. Lucas
 **
@@ -21,21 +21,19 @@
 
 /* system */
 #include <errno.h>                      /* for errno */
+#include <limits.h>                     /* for PATH_MAX */
 #include <signal.h>                     /* for kill() */
 #include <stdio.h>
-#include <stdlib.h>                     /* for exit(), malloc() */
+#include <stdlib.h>                     /* for exit() */
 #include <string.h>                     /* for str...() */
 #include <sys/wait.h>                   /* for wait() */
 #include <unistd.h>                     /* for close(), fork(), ... */
 
 /* local */
 #include "common.h"
+#include "getopt.h"
 
 #define ARG_BUF_SIZE  22                /* max wrap command-line arg size */
-
-/* String-ify a command-line argument. */
-#define ARG_SPRINTF(ARG,FMT) \
-  snprintf( arg_##ARG, sizeof arg_##ARG, (FMT), (ARG) )
 
 /* Close both ends of pipe P. */
 #define CLOSE(P) \
@@ -67,16 +65,21 @@ char const* me;                         /* executable name */
 int         tab_spaces = DEFAULT_TAB_SPACES;
 
 /* option definitions */
+char const* opt_alias = NULL;
+char const* opt_config_file = NULL;
 bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
+char const* opt_fin_name = NULL;        /* file in name */
+bool        opt_no_config = false;      /* do not read config file */
 char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
 
 /* local functions */
-static void process_options( int argc, char *argv[] );
+static void process_options( int argc, char const *argv[] );
 static char const* str_status( int status );
+static void usage();
 
 /*****************************************************************************/
 
-int main( int argc, char *argv[] ) {
+int main( int argc, char const *argv[] ) {
   char  buf[ LINE_BUF_SIZE ];
   FILE* from_wrap;                      /* file used by parent */
   char  leader[ LINE_BUF_SIZE ];        /* string segment removed/prepended */
@@ -155,19 +158,23 @@ int main( int argc, char *argv[] ) {
   ** wrap.
   */
   if ( (pid = fork()) == -1 ) {
-    kill( pid_1, SIGTERM );
+    kill( pid_1, SIGTERM );             /* we failed, so kill child 1 */
     ERROR( EXIT_FORK_ERROR );
   }
   if ( !pid ) {
     arg_buf arg_line_length;
+    arg_buf arg_opt_alias;
+    arg_buf arg_opt_config_file;
+    char    arg_opt_fin_name[ PATH_MAX ];
     arg_buf arg_opt_para_delimiters;
     arg_buf arg_tab_spaces;
+
     int argc = 0;
-    char *argv[6];                      /* must be +1 of greatest arg below */
+    char *argv[10];                     /* must be +1 of greatest arg below */
     char const *c;
     int spaces = 0;
 
-    for ( c = leader; *c; ++c )
+    for ( c = leader; *c; ++c ) {
       if ( *c == '\t' ) {
         line_length -= tab_spaces - spaces;
         spaces = 0;
@@ -175,24 +182,35 @@ int main( int argc, char *argv[] ) {
         --line_length;
         spaces = (spaces + 1) % tab_spaces;
       }
+    } /* for */
 
-    ARG_SPRINTF( line_length, "-l%d" );
-    ARG_SPRINTF( tab_spaces , "-s%d" );
+#define ARG_SPRINTF(ARG,FMT) \
+  snprintf( arg_##ARG, sizeof arg_##ARG, (FMT), (ARG) )
 
-    argv[ argc++ ] = strdup( "wrap" );  /* 0 */
-    if ( opt_eos_delimit )              /* 1: -e */
-      argv[ argc++ ] = strdup( "-e" );
-    argv[ argc++ ] = arg_line_length;   /* 2: -l */
-    if ( opt_para_delimiters ) {        /* 3: -p */
-      ARG_SPRINTF( opt_para_delimiters, "-p%s" );
-      argv[ argc++ ] = arg_opt_para_delimiters;
-    }
-    argv[ argc++ ] = arg_tab_spaces;    /* 4: -s */
-    argv[ argc ] = (char*)0;            /* 5 */
+#define ARG_DUP(FMT)        argv[ argc++ ] = strdup( FMT )
+#define IF_ARG_DUP(ARG,FMT) if ( ARG ) ARG_DUP( FMT )
+
+#define ARG_FMT(ARG,FMT) \
+  do { ARG_SPRINTF( ARG, (FMT) ); argv[ argc++ ] = arg_##ARG; } while (0)
+
+#define IF_ARG_FMT(ARG,FMT) if ( ARG ) ARG_FMT(ARG,FMT)
+
+    /* Quoting string arguments is unnecessary since no shell is involved. */
+
+    /* 0 */    ARG_DUP(                      WRAP_NAME );
+    /* 1 */ IF_ARG_FMT( opt_alias          , "-a%s"    );
+    /* 2 */ IF_ARG_FMT( opt_config_file    , "-c%s"    );
+    /* 3 */ IF_ARG_DUP( opt_no_config      , "-C"      );
+    /* 4 */ IF_ARG_DUP( opt_eos_delimit    , "-e"      );
+    /* 5 */ IF_ARG_FMT( opt_fin_name       , "-F%s"    );
+    /* 6 */    ARG_FMT( line_length        , "-l%d"    );
+    /* 7 */ IF_ARG_FMT( opt_para_delimiters, "-p%s"    );
+    /* 8 */    ARG_FMT( tab_spaces         , "-s%d"    );
+    /* 9 */ argv[ argc ] = NULL;
 
     REDIRECT( STDIN_FILENO, 0 );
     REDIRECT( STDOUT_FILENO, 1 );
-    execvp( "wrap", argv );
+    execvp( WRAP_NAME, argv );
     ERROR( EXIT_EXEC_ERROR );
   }
 
@@ -255,52 +273,47 @@ int main( int argc, char *argv[] ) {
 
 /*****************************************************************************/
 
-static void process_options( int argc, char *argv[] ) {
+static void process_options( int argc, char const *argv[] ) {
   extern char *optarg;
   extern int optind, opterr;
   int opt;                              /* command-line option */
-  char const opts[] = "ef:l:o:p:s:v";
+  char const opts[] = "a:c:Cef:F:l:o:p:s:v";
 
-  me = strrchr( argv[0], '/' );         /* determine base name... */
-  me = me ? me + 1 : argv[0];           /* ...of executable */
+  me = base_name( argv[0] );
 
   opterr = 1;
-  while ( (opt = getopt( argc, argv, opts )) != EOF )
+  while ( (opt = pjl_getopt( argc, argv, opts )) != EOF )
     switch ( opt ) {
-      case 'e': opt_eos_delimit = true;             break;
+      case 'a': opt_alias           = optarg;               break;
+      case 'c': opt_config_file     = optarg;               break;
+      case 'C': opt_no_config       = true;                 break;
+      case 'e': opt_eos_delimit     = true;                 break;
       case 'f':
         if ( !(fin = fopen( optarg, "r" )) )
           ERROR( EXIT_READ_OPEN );
-        break;
-      case 'l': line_length = check_atou( optarg ); break;
+        /* no break; */
+      case 'F': opt_fin_name        = base_name( optarg );  break;
+      case 'l': line_length         = check_atou( optarg ); break;
       case 'o':
         if ( !(fout = fopen( optarg, "w" )) )
           ERROR( EXIT_WRITE_OPEN );
         break;
-      case 'p': opt_para_delimiters = optarg;       break;
-      case 's': tab_spaces  = check_atou( optarg ); break;
-      case 'v': goto version;
-      case '?': goto usage;
+      case 'p': opt_para_delimiters = optarg;               break;
+      case 's': tab_spaces          = check_atou( optarg ); break;
+      case 'v':
+        fprintf( stderr, "%s %s\n", me, WRAP_VERSION );
+        exit( EXIT_OK );
+      default:
+        usage();
     } /* switch */
   argc -= optind, argv += optind;
   if ( argc )
-    goto usage;
+    usage();
 
   if ( !fin )
     fin = stdin;
   if ( !fout )
     fout = stdout;
-
-  return;
-
-usage:
-  fprintf( stderr, "usage: %s [-ev] [-l line-length] [-p para-delim-chars] [-s tab-spaces]\n", me );
-  fprintf( stderr, "\t[-f input-file] [-o output-file]\n" );
-  exit( EXIT_USAGE );
-
-version:
-  fprintf( stderr, "%s %s\n", me, WRAP_VERSION );
-  exit( EXIT_OK );
 }
 
 static char const* str_status( int status ) {
@@ -317,6 +330,13 @@ static char const* str_status( int status ) {
     case EXIT_PIPE_ERROR  : return "pipe() failed";
     default               : return "unknown status";
   }
+}
+
+static void usage() {
+  fprintf( stderr, "usage: %s [-a alias] [-eCv] [-l line-length]\n", me );
+  fprintf( stderr, "\t[-{fF} input-file] [-o output-file] [-c config_file]\n" );
+  fprintf( stderr, "\t[-p para-delim-chars] [-s tab-spaces]\n" );
+  exit( EXIT_USAGE );
 }
 
 /*****************************************************************************/

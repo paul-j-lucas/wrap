@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      common.c
+**      pattern.h
 **
 **      Copyright (C) 1996-2013  Paul J. Lucas
 **
@@ -19,39 +19,45 @@
 **      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-/* system */
-#include <stdio.h>
-#include <stdlib.h>                     /* for atoi(), ... */
-#include <string.h>
+#ifndef wrap_pattern_H
+#define wrap_pattern_H
 
-/* local */
-#include "common.h"
-
-extern char const *me;
+#include "alias.h"
 
 /*****************************************************************************/
 
-char const* base_name( char const *path_name ) {
-  char const *const slash = strrchr( path_name, '/' );
-  if ( slash )
-    return slash[1] ? slash + 1 : slash;
-  return path_name;
-}
+struct pattern_s {
+  char const* pattern;
+  alias_t const* alias;
+};
+typedef struct pattern_s pattern_t;
 
-int check_atou( char const *s ) {
-  if ( strspn( s, "0123456789" ) != strlen( s ) ) {
-    fprintf( stderr, "%s: \"%s\": invalid integer\n", me, s );
-    exit( EXIT_USAGE );
-  }
-  return atoi( s );
-}
+/**
+ * Cleans-up all pattern data.
+ */
+void pattern_cleanup();
 
-void* check_realloc( void *p, size_t size ) {
-  if ( !(p = realloc( p, size )) )
-    ERROR( EXIT_OUT_OF_MEMORY );
-  return p;
-}
+/**
+ * Attempts to find a pattern from the internal list of patterns that matches
+ * the given file-name and return the alias associated with that pattern.
+ *
+ * @param file_name The file-name to match.
+ * @return Returns the alias associated with the pattern that matches
+ * \a file-name or \c NULL if no matching pattern is found.
+ */
+alias_t const* pattern_find( char const *file_name );
+
+/**
+ * Parses a pattern from the given line and adds it to the internal list of
+ * patterns.
+ *
+ * @param line The line from a config-file to parse a pattern from.
+ * @param config_file The config-file path-name.
+ * @param line_no The line-number of \a line from \a config_file.
+ */
+void pattern_parse( char const *line, char const *config_file, int line_no );
 
 /*****************************************************************************/
 
+#endif /* wrap_pattern_H */
 /* vim:set et sw=2 ts=2: */

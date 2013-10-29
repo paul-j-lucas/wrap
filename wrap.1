@@ -18,20 +18,12 @@
 .\"	along with this program; if not, write to the Free Software
 .\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 .\"
-.TH \f3wrap\f1 1 "October 20, 2013" "PJL TOOLS"
+.TH \f3wrap\f1 1 "October 28, 2013" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
 .B wrap
-.RB [ \-f
-.IR input-file ]
-.RB [ \-o
-.IR output-file ]
-.RB [ \- { hHiIlmMsSt }
-.IR n ]
-.RB [ \-p
-.IR chars ]
-.RB [ \-bdenNv ]
+.BI [ options ]
 .SH DESCRIPTION
 .B wrap
 is a filter for reformatting text by wrapping and filling lines
@@ -74,7 +66,7 @@ delimits a paragraph.
 .IP "5." 3
 If the
 .B \-d
-option is specified, a line beginning with a `\f3.\f1' (dot),
+option is specified, a line beginning with a `\f(CW.\f1' (dot),
 presumed to be an
 .BR [nt]roff (1)
 control line,
@@ -83,61 +75,103 @@ is not altered.
 In general,
 lower-case options are for tabs,
 upper-case options are for spaces.
+An option argument
+.I f
+means
+.IR file ,
+.I n
+means
+.IR "unsigned integer" ,
+and
+.I s
+means
+.IR string .
+.IP "\f3\-a\f2 s\f1"
+Specifies the alias name
+.I s
+from the configuration file to be used.
+This overrides any alias
+from a matched pattern
+via either the
+.B \-f
+or
+.B \-F
+options.
 .IP "\f3\-b\f1"
-Treat a line beginning with white-space as a paragraph delimiter.
+Treats a line beginning with white-space as a paragraph delimiter.
+.IP "\f3\-c\f2 f\f1"
+Specifies the configuration file
+.I f
+to read
+(default is
+.BR ~/.wraprc .)
+.IP "\f3\-C\f1"
+Suppresses reading of any configuration file,
+even one explicitly specified via
+.BR \-c .
 .IP "\f3\-d\f1"
-Do not alter lines that begin with a `\f3.\f1' (dot) presumed to be
+Does not alter lines that begin with a `\f3.\f1' (dot) presumed to be
 .BR [nt]roff (1)
 control lines.
 .IP "\f3\-e\f1"
-Treat white-space after an end-of-sentence character as a paragraph delimiter.
+Treats white-space after an end-of-sentence character as a paragraph delimiter.
 .IP "\f3\-f\f2 f\f1"
-Read from file
+Reads from file
 .I f
 (default is standard input).
+.IP "\f3\-F\f2 f\f1"
+Sets the file-name to
+.I f
+as if it were being read from
+but still reads from standard input.
+(This allows the file-name to be matched against a pattern
+in a configuration file to use an alias
+while still allowing
+.B wrap
+to be used as part of a shell pipeline.)
 .IP "\f3\-h\f2 n\f1"
-Hang-indent \f2n\f1 more tabs for all but the first line of each paragraph.
+Hang-indents \f2n\f1 more tabs for all but the first line of each paragraph.
 .IP "\f3\-H\f2 n\f1"
-Hang-indent \f2n\f1 more spaces for all but the first line of each paragraph
+Hang-indents \f2n\f1 more spaces for all but the first line of each paragraph
 after any tabs.
 .IP "\f3\-i\f2 n\f1"
-Indent \f2n\f1 more tabs for the first line of each paragraph.
+Indents \f2n\f1 more tabs for the first line of each paragraph.
 .IP "\f3\-I\f2 n\f1"
-Indent \f2n\f1 more spaces for the first line of each paragraph after any tabs.
+Indents \f2n\f1 more spaces for the first line of each paragraph after any tabs.
 .IP "\f3\-l\f2 n\f1"
-Set
+Sets
 .I line-length
 to
 .I n
 characters
 (default is 80).
 .IP "\f3\-m\f2 n\f1"
-Mirror tabs; equivalent to:
+Mirrors tabs; equivalent to:
 .BI \-t n
 .BI \-l m
 where
 .IR "m = line-length \- tab-spaces * n" .
 .IP "\f3\-M\f2 n\f1"
-Mirror spaces; equivalent to:
+Mirrors spaces; equivalent to:
 .BI \-S n
 .BI \-l m
 where
 .IR "m = line-length \- 2n" .
 .IP "\f3\-n\f1"
-Do not treat newlines as paragraph delimeters.
+Does not treat newlines as paragraph delimeters.
 .IP "\f3\-N\f1"
-Treat every newline as a paragraph delimiter.
+Treats every newline as a paragraph delimiter.
 This option is useful for line-breaking code prior to printing.
 .IP "\f3\-o\f2 f\f1"
-Write to file
+Writes to file
 .I f
 (default is standard output).
 .IP "\f3\-p\f2 s\f1"
-Treat the given characters in
+Treats the given characters in
 .I s
 as paragraph delimiters.
 .IP "\f3\-s\f2 n\f1"
-Set
+Sets
 .I tab-spaces
 (the number of spaces a tab character should be considered the same as)
 to
@@ -145,15 +179,15 @@ to
 characters
 (default is 8).
 .IP "\f3\-S\f2 n\f1"
-Prepend
+Prepends
 .I n
 leading spaces to each line after any leading tabs.
 .IP "\f3\-t\f2 n\f1"
-Prepend
+Prepends
 .I n
 leading tabs to each line.
 .IP "\f3\-v\f1"
-Print the version number to
+Prints the version number to
 .I stderr
 and exit.
 .SH EXIT STATUS
@@ -161,15 +195,28 @@ The
 .B wrap
 utility exits with 0 on success
 and >0 on failure.
-.SH EXAMPLES
+.SH ENVIRONMENT
+.IP "\f3$HOME\f1"
+The user's home directory:
+used to locate the default configuration file.
+If unset,
+the home directory is obtained from the password database entry
+for the effective user.
+If that fails,
+no configuration file is read.
+.SH FILES
+.IP "\f3~/.wraprc\f1"
+The default configuration file.
+.SH EXAMPLE
 Wrap text into paragraphs having a line length of 72 characters,
 indenting one tab-stop,
 and further indenting the start of each paragraph by 3 spaces:
 .IP ""
 .B "wrap -m1 -I3"
-.SH SEE ALSO
-.BR fmt (1),
-.BR wrapc (1)
 .SH AUTHOR
 Paul J. Lucas
 .RI < paul@lucasmail.org >
+.SH SEE ALSO
+.BR fmt (1),
+.BR wrapc (1),
+.BR wraprc (5)

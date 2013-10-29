@@ -18,22 +18,12 @@
 .\"	along with this program; if not, write to the Free Software
 .\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 .\"
-.TH \f3wrapc\f1 1 "October 20, 2013" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "October 28, 2013" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
 .B wrapc
-.RB [ \-f
-.IR input-file ]
-.RB [ \-o
-.IR output-file ]
-.RB [ \-l
-.IR line-length ]
-.RB [ \-p
-.IR chars ]
-.RB [ \-s
-.IR tab-spaces ]
-.RB [ \-ev ]
+.BI [ options ]
 .SH DESCRIPTION
 .B wrapc
 is a filter for reformatting program comments by
@@ -65,29 +55,71 @@ All other white-space characters are folded
 in the same manner as in
 .BR wrap .
 .SH OPTIONS
+An option argument
+.I f
+means
+.IR file ,
+.I n
+means
+.IR "unsigned integer" ,
+and
+.I s
+means
+.IR string .
+.IP "\f3\-a\f2 s\f1"
+Specifies the alias name
+.I s
+from the configuration file to be used.
+This overrides any alias
+from a matched pattern
+via either the
+.B \-f
+or
+.B \-F
+options.
+.IP "\f3\-c\f2 f\f1"
+Specifies the configuration file
+.I f
+to read
+(default is
+.BR ~/.wraprc .)
+.IP "\f3\-C\f1"
+Suppresses reading of any configuration file,
+even one explicitly specified via
+.BR \-c .
 .IP "\f3\-e\f1"
-Treat white-space after an end-of-sentence character as a paragraph delimiter.
+Treats white-space after an end-of-sentence character as a paragraph delimiter.
 .IP "\f3\-f\f2 f\f1"
-Read from file
+Reads from file
 .I f
 (default is standard input).
+.IP "\f3\-F\f2 f\f1"
+Sets the file-name to
+.I f
+as if it were being read from
+but still reads from standard input.
+(This allows the file-name to be matched against a pattern
+in a configuration file to use an alias
+while still allowing
+.B wrapc
+to be used as part of a shell pipeline.)
 .IP "\f3\-l\f2 n\f1"
-Set
+Sets
 .I line-length
 to
 .I n
 characters
 (default is 80).
 .IP "\f3\-o\f2 f\f1"
-Write to file
+Writes to file
 .I f
 (default is standard output).
 .IP "\f3\-p\f2 s\f1"
-Treat the given characters in
+Treats the given characters in
 .I s
 as paragraph delimiters.
 .IP "\f3\-s\f2 n\f1"
-Set
+Sets
 .I tab-spaces
 (the number of spaces a tab character should be considered the same as)
 to
@@ -95,7 +127,7 @@ to
 characters
 (default is 8).
 .IP "\f3\-v\f1"
-Print the version number to
+Prints the version number to
 .I stderr
 and exit.
 .SH EXIT STATUS

@@ -1,0 +1,176 @@
+.\"
+.\"	wrap -- text reformatter
+.\"	wraprc.5 manual page
+.\"
+.\"	Copyright (C) 1996-2013  Paul J. Lucas
+.\"
+.\"	This program is free software; you can redistribute it and/or modify
+.\"	it under the terms of the GNU General Public License as published by
+.\"	the Free Software Foundation; either version 2 of the Licence, or
+.\"	(at your option) any later version.
+.\" 
+.\"	This program is distributed in the hope that it will be useful,
+.\"	but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\"	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\"	GNU General Public License for more details.
+.\" 
+.\"	You should have received a copy of the GNU General Public License
+.\"	along with this program; if not, write to the Free Software
+.\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.\" ---------------------------------------------------------------------------
+.\" define code-start macro
+.de cS
+.sp
+.nf
+.RS 5
+.ft CW
+.ta .5i 1i 1.5i 2i 2.5i 3i 3.5i 4i 4.5i 5i 5.5i
+..
+.\" define code-end macro
+.de cE
+.ft 1
+.RE
+.fi
+.if !'\\$1'0' .sp
+..
+.\" ---------------------------------------------------------------------------
+.TH \f3wraprc\f1 1 "October 25, 2013" "PJL TOOLS"
+.SH NAME
+wraprc \- text reformatter runtime configuration file
+.SH DESCRIPTION
+The
+.B wraprc
+file is used to configure
+.BR wrap (1)
+and
+.BR wrapc (1).
+The file is line-oriened with different line types:
+.IP "\(bu" 3
+Blank lines (that are ignored).
+.IP "\(bu" 3
+Section lines.
+.IP "\(bu" 3
+Configuration lines.
+.P
+Additionally,
+all leading and trailing whitespace characters
+as well as all characters starting with
+.B #
+to the end of the line (which are comments)
+are ignored.
+.P
+The file is broken down into sections
+where each section is started by a line of the form:
+.P
+.RS 5
+.RI [ section-name ]
+.RE
+.P
+that is a left bracket,
+a section name,
+and a right bracket.
+There must be no whitespace between the brackets.
+.SS Aliases section
+The
+.I "aliases section"
+is started by a line:
+.cS
+[ALIASES]
+.cE
+An
+.I alias
+is a short-hand name
+for command-line options
+that are frequently used together.
+For example:
+.cS
+html = -ep,;:
+.cE
+creates an alias named
+\f(CWhtml\f1
+for the options shown.
+Once specified,
+an alias can be requested via the
+.B \-a
+option
+to either
+.B wrap
+or
+.BR wrapc .
+For example:
+.cS
+wrap -a html
+.cE
+would be the same as:
+.cS
+wrap -ep',;:'
+.cE
+Note that some options don't make sense
+in a configuration file
+and are therefore forbidden there.
+Those options are:
+.B \-a
+(alias),
+.B \-c
+(configuration file),
+.B \-C
+(suppress configuration file),
+.B \-f
+(input file),
+.B \-F
+(input file name),
+.B \-o
+(output file),
+and
+.B \-v
+(version).
+.SS Patterns section
+The
+.I "patterns section"
+is started by a line:
+.cS
+[PATTERNS]
+.cE
+A
+.I pattern
+is used to apply aliases automatially
+when a file matching that pattern is wrapped
+using the
+.B \-f
+or
+.B \-F
+option.
+For example:
+.cS
+*.html = html
+.cE
+creates a pattern that matches all files ending in
+\f(CW.html\f1
+(HTML files)
+and will apply the options specified by the previously defined
+\f(CWhtml\f1
+alias.
+.SH FILES
+.IP "\f3~/.wraprc\f1" 5
+The default configuration file.
+.SH EXAMPLE
+.nf
+.ft CW
+[ALIASES]
+html = -ep,:;
+man  = -dep,:;
+
+[PATTERNS]
+*.htm = html
+*.html = html
+*.[123456789] = man
+.ft 1
+.fi
+.SH AUTHOR
+Paul J. Lucas
+.RI < paul@lucasmail.org >
+.SH SEE ALSO
+.BR wrap (1),
+.BR wrapc (1),
+.BR fnmatch (3)

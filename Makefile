@@ -33,15 +33,19 @@ TARGET=	wrap wrapc
  
 all: $(TARGET)
 
-wrap: common.o wrap.o
+wrap: alias.o common.o config.o getopt.o pattern.o wrap.o
 	$(CC) -o $@ $^
 
-wrapc: common.o wrapc.o
+wrapc: common.o getopt.o wrapc.o
 	$(CC) -o $@ $^
 
-common.o:	common.c common.h
-wrap.o:  	wrap.c   common.h
-wrapc.o: 	wrapc.c  common.h
+alias.o:	alias.c	  alias.h
+config.o:	config.c  config.h  alias.h   common.h  pattern.h
+common.o:	common.c  common.h
+getopt.o:	getopt.c
+pattern.o:	pattern.c pattern.h common.h
+wrap.o:  	wrap.c    alias.h   common.h  config.h  getopt.h  pattern.h
+wrapc.o: 	wrapc.c   common.h  getopt.h
 
 ##
 # Utility rules

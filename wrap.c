@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      wrap.c: implementation
+**      wrap.c
 **
 **      Copyright (C) 1996-2013  Paul J. Lucas
 **
@@ -19,43 +19,6 @@
 **      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-/*
-** Options:
-**
-**      -l n  Set <line_length> to n characters; default is 80.
-**      -s n  Set <tab_spaces> to n; default is 8.
-**
-**      -t n  Put n leading tabs before each line.
-**      -S n  Put n leading spaces before each line after any leading tabs.
-**
-**      -m n  Mirror tabs;   same as: -tn -l<line_length>-n*2*<tab_spaces>
-**      -M n  Mirror spaces; same as: -Sn -l<line_length>-n*2
-**
-**      -i n  Indent n more tabs for the first line of a paragraph.
-**      -I n  Indent n more spaces for the first line of a paragraph after any
-**            tabs.
-**
-**      -h n  Hang-indent n more tabs for all but the first line of a
-**            paragraph.
-**      -H n  Hang-indent n more spaces for all but the first line of a
-**            paragraph after any tabs.
-**
-**      -b    Treat a line beginning with white-space as a paragraph delimiter.
-**      -d    Do not alter lines that begin with a '.' presumed to be [nt]roff
-**            control lines.
-**      -e    Treat white-space after an end-of-sentence character as a
-**            paragraph delimiter.
-**      -f    Specify file to read from.
-**      -n    Do not treat 2 or more consecutive newlines as paragraph
-**            delimiters.
-**      -N    Treat every newline as a paragraph delimiter.  (This option
-**            subsumes -bhHiIn.)
-**      -o    Specify file to write to.
-**      -p s  Treat the given characters as paragraph delimiters.
-**
-**      -v    Print version to stderr and exit.
-*/
-
 /* system */
 #include <ctype.h>
 #include <errno.h>
@@ -63,10 +26,14 @@
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit(), ... */
 #include <string.h>
-#include <unistd.h>                     /* for getopt(3), STDIN_FILENO, ... */
+#include <unistd.h>                     /* for STDIN_FILENO, ... */
 
 /* local */
+#include "alias.h"
 #include "common.h"
+#include "config.h"
+#include "getopt.h"
+#include "pattern.h"
 
 /* global variable definitions */
 char        buf[ LINE_BUF_SIZE ];
@@ -78,7 +45,10 @@ int         newlines_delimit = 2;       /* # newlines that delimit a para */
 int         tab_spaces = DEFAULT_TAB_SPACES;
 
 /* option definitions */
+char const* opt_alias = NULL;
+char const* opt_config_file = NULL;
 bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
+char const* opt_fin_name = NULL;        /* file in name */
 int         opt_hang_spaces = 0;        /* hanging-indent spaces */
 int         opt_hang_tabs = 0;          /* hanging-indent tabs */
 int         opt_indt_spaces = 0;        /* indent spaces */
@@ -87,15 +57,22 @@ bool        opt_lead_dot_ignore = false;/* ignore lines starting with '.'? */
 int         opt_lead_spaces = 0;        /* leading spaces */
 int         opt_lead_tabs = 0;          /* leading tabs */
 bool        opt_lead_ws_delimit = false;/* leading whitespace delimit para's? */
+int         opt_mirror_spaces = 0;
+int         opt_mirror_tabs = 0;
+bool        opt_no_config = false;      /* do not read config file */
 char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
 
 /* local functions */
+static void clean_up();
+static void init( int argc, char const *argv[] );
 static void print_line( int up_to );
-static void process_options( int argc, char *argv[] );
+static void process_options( int argc, char const *argv[], char const *opts,
+                             int line_no );
+static void usage();
 
 /*****************************************************************************/
 
-int main( int argc, char *argv[] ) {
+int main( int argc, char const *argv[] ) {
   int c, prev_c = '\0';                 /* current/previous character */
   int buf_count = 0;                    /* number of characters in buffer */
   int buf_length = 0;                   /* actual length of buffer */
@@ -167,7 +144,7 @@ int main( int argc, char *argv[] ) {
 
   /***************************************************************************/
 
-  process_options( argc, argv );
+  init( argc, argv );
 
   for ( ; (c = getc( fin )) != EOF; prev_c = c ) {
 
@@ -380,10 +357,57 @@ delimit_paragraph:
     ERROR( EXIT_READ_ERROR );
   if ( buf_count )                      /* print left-over text */
     print_line( buf_count );
+  clean_up();
   exit( EXIT_OK );
 }
 
 /*****************************************************************************/
+
+static void clean_up() {
+  alias_cleanup();
+  pattern_cleanup();
+}
+
+static void init( int argc, char const *argv[] ) {
+  char const opts[] = "a:bc:Cdef:F:h:H:i:I:l:m:M:nNo:p:s:S:t:v";
+
+  me = base_name( argv[0] );
+  process_options( argc, argv, opts, 0 );
+  atexit( clean_up );
+  argc -= optind, argv += optind;
+  if ( argc )
+    usage();
+
+  if ( !opt_no_config && (opt_alias || opt_fin_name ) ) {
+    alias_t const *alias = NULL;
+    opt_config_file = read_config( opt_config_file );
+    if ( opt_alias ) {
+      if ( !(alias = alias_find( opt_alias )) ) {
+        fprintf(
+          stderr, "%s: \"%s\": no such alias in %s\n",
+          me, opt_alias, opt_config_file
+        );
+        exit( EXIT_USAGE );
+      }
+    } else if ( opt_fin_name ) {
+      alias = pattern_find( opt_fin_name );
+    }
+    if ( alias )
+      process_options( alias->argc, alias->argv, opts, alias->line_no );
+  }
+
+  if ( !fin )
+    fin = stdin;
+  if ( !fout )
+    fout = stdout;
+
+  line_length -=
+    2 * (opt_mirror_tabs * tab_spaces + opt_mirror_spaces) +
+    opt_lead_tabs * tab_spaces + opt_lead_spaces;
+
+  opt_lead_tabs   += opt_mirror_tabs;
+  opt_lead_spaces += opt_mirror_spaces;
+}
 
 static void print_line( int up_to ) {
   int i;
@@ -397,20 +421,25 @@ static void print_line( int up_to ) {
     ERROR( EXIT_WRITE_ERROR );
 }
 
-static void process_options( int argc, char *argv[] ) {
-  int opt_mirror_tabs = 0, opt_mirror_spaces = 0;
-  extern char *optarg;
-  extern int optind, opterr;
-  int opt;                              /* command-line option */
-  char const opts[] = "bdef:h:H:i:I:l:m:M:nNo:p:s:S:t:v";
-
-  me = strrchr( argv[0], '/' );         /* determine base name... */
-  me = me ? me + 1 : argv[0];           /* ...of executable */
-
+static void process_options( int argc, char const *argv[], char const *opts,
+                             int line_no ) {
+  int opt;
+  optind = 1;
   opterr = 1;
-  while ( (opt = getopt( argc, argv, opts )) != EOF )
+
+  while ( (opt = pjl_getopt( argc, argv, opts )) != EOF ) {
+    if ( line_no && strchr( "acCfFov", opt ) ) {
+      fprintf(
+        stderr, "%s: %s:%d: '%c': option not allowed in config file\n",
+        me, opt_config_file, line_no, opt
+      );
+      exit( EXIT_CONFIG_ERROR );
+    }
     switch ( opt ) {
+      case 'a': opt_alias           = optarg;               break;
       case 'b': opt_lead_ws_delimit = true;                 break;
+      case 'c': opt_config_file     = optarg;               break;
+      case 'C': opt_no_config       = true;                 break;
       case 'd': opt_lead_dot_ignore = true;                 break;
       case 'e': opt_eos_delimit     = true;                 break;
       case 'f':
@@ -418,7 +447,8 @@ static void process_options( int argc, char *argv[] ) {
           fprintf( stderr, "%s: \"%s\": %s\n", me, optarg, strerror( errno ) );
           exit( EXIT_READ_OPEN );
         }
-        break;
+        /* no break; */
+      case 'F': opt_fin_name        = base_name( optarg );  break;
       case 'h': opt_hang_tabs       = check_atou( optarg ); break;
       case 'H': opt_hang_spaces     = check_atou( optarg ); break;
       case 'i': opt_indt_tabs       = check_atou( optarg ); break;
@@ -438,39 +468,23 @@ static void process_options( int argc, char *argv[] ) {
       case 's': tab_spaces          = check_atou( optarg ); break;
       case 'S': opt_lead_spaces     = check_atou( optarg ); break;
       case 't': opt_lead_tabs       = check_atou( optarg ); break;
-      case 'v': goto version;
-      case '?': goto usage;
+      case 'v':
+        fprintf( stderr, "%s %s\n", me, WRAP_VERSION );
+        exit( EXIT_OK );
+      default:
+        usage();
     } /* switch */
-  argc -= optind, argv += optind;
-  if ( argc )
-    goto usage;
+  } /* while */
+}
 
-  if ( !fin )
-    fin = stdin;
-  if ( !fout )
-    fout = stdout;
-
-  line_length -=
-    2 * (opt_mirror_tabs * tab_spaces + opt_mirror_spaces) +
-    opt_lead_tabs * tab_spaces + opt_lead_spaces;
-
-  opt_lead_tabs   += opt_mirror_tabs;
-  opt_lead_spaces += opt_mirror_spaces;
-
-  return;
-
-usage:
-  fprintf( stderr, "usage: %s [-bdenNv] [-l line-length] [-p para-delim-chars] [-s tab-spaces]\n", me );
-  fprintf( stderr, "\t[-f input-file]   [-o output-file]\n" );
-  fprintf( stderr, "\t[-t leading-tabs] [-S leading-spaces]\n" );
-  fprintf( stderr, "\t[-m mirror-tabs]  [-M mirror-spaces]\n" );
-  fprintf( stderr, "\t[-i indent-tabs]  [-I indent-spaces]\n" );
-  fprintf( stderr, "\t[-h hanging-tabs] [-H hanging-spaces]\n" );
+static void usage() {
+  fprintf( stderr, "usage: %s [-bCdenNv] [-l line-length] [-p para-delim-chars] [-s tab-spaces]\n", me );
+  fprintf( stderr, "\t[-{fF} input-file] [-o output-file]    [-c config-file]\n" );
+  fprintf( stderr, "\t[-t leading-tabs]  [-S leading-spaces]\n" );
+  fprintf( stderr, "\t[-m mirror-tabs]   [-M mirror-spaces]\n" );
+  fprintf( stderr, "\t[-i indent-tabs]   [-I indent-spaces]\n" );
+  fprintf( stderr, "\t[-h hanging-tabs]  [-H hanging-spaces]\n" );
   exit( EXIT_USAGE );
-
-version:
-  fprintf( stderr, "%s %s\n", me, WRAP_VERSION );
-  exit( EXIT_OK );
 }
 
 /*****************************************************************************/
