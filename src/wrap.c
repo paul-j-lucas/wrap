@@ -357,7 +357,6 @@ delimit_paragraph:
     ERROR( EXIT_READ_ERROR );
   if ( buf_count )                      /* print left-over text */
     print_line( buf_count );
-  clean_up();
   exit( EXIT_OK );
 }
 

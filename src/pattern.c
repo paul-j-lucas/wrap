@@ -49,7 +49,7 @@ static void pattern_free( pattern_t *pattern ) {
 void pattern_cleanup() {
   while ( n_patterns )
     pattern_free( &patterns[ --n_patterns ] );
-  /* free( patterns ); */
+  free( patterns );
 }
 
 alias_t const* pattern_find( char const *file_name ) {

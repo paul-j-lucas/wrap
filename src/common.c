@@ -47,9 +47,10 @@ int check_atou( char const *s ) {
 }
 
 void* check_realloc( void *p, size_t size ) {
-  if ( !(p = realloc( p, size )) )
+  void *const r = realloc( p, size );
+  if ( !r )
     ERROR( EXIT_OUT_OF_MEMORY );
-  return p;
+  return r;
 }
 
 /*****************************************************************************/

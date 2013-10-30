@@ -70,7 +70,7 @@ static void alias_free( alias_t *alias ) {
 void alias_cleanup() {
   while ( n_aliases )
     alias_free( &aliases[ --n_aliases ] );
-  /*free( aliases );*/
+  free( aliases );
 }
 
 alias_t const* alias_find( char const *name ) {
