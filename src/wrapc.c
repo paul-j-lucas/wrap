@@ -66,10 +66,10 @@ int         tab_spaces = DEFAULT_TAB_SPACES;
 
 /* option definitions */
 char const* opt_alias = NULL;
-char const* opt_config_file = NULL;
+char const* opt_conf_file = NULL;
 bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
 char const* opt_fin_name = NULL;        /* file in name */
-bool        opt_no_config = false;      /* do not read config file */
+bool        opt_no_conf = false;        /* do not read conf file */
 char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
 
 /* local functions */
@@ -164,7 +164,7 @@ int main( int argc, char const *argv[] ) {
   if ( !pid ) {
     arg_buf arg_line_length;
     arg_buf arg_opt_alias;
-    arg_buf arg_opt_config_file;
+    arg_buf arg_opt_conf_file;
     char    arg_opt_fin_name[ PATH_MAX ];
     arg_buf arg_opt_para_delimiters;
     arg_buf arg_tab_spaces;
@@ -199,8 +199,8 @@ int main( int argc, char const *argv[] ) {
 
     /* 0 */    ARG_DUP(                      WRAP_NAME );
     /* 1 */ IF_ARG_FMT( opt_alias          , "-a%s"    );
-    /* 2 */ IF_ARG_FMT( opt_config_file    , "-c%s"    );
-    /* 3 */ IF_ARG_DUP( opt_no_config      , "-C"      );
+    /* 2 */ IF_ARG_FMT( opt_conf_file      , "-c%s"    );
+    /* 3 */ IF_ARG_DUP( opt_no_conf        , "-C"      );
     /* 4 */ IF_ARG_DUP( opt_eos_delimit    , "-e"      );
     /* 5 */ IF_ARG_FMT( opt_fin_name       , "-F%s"    );
     /* 6 */    ARG_FMT( line_length        , "-l%d"    );
@@ -285,8 +285,8 @@ static void process_options( int argc, char const *argv[] ) {
   while ( (opt = pjl_getopt( argc, argv, opts )) != EOF )
     switch ( opt ) {
       case 'a': opt_alias           = optarg;               break;
-      case 'c': opt_config_file     = optarg;               break;
-      case 'C': opt_no_config       = true;                 break;
+      case 'c': opt_conf_file       = optarg;               break;
+      case 'C': opt_no_conf         = true;                 break;
       case 'e': opt_eos_delimit     = true;                 break;
       case 'f':
         if ( !(fin = fopen( optarg, "r" )) )
@@ -334,7 +334,7 @@ static char const* str_status( int status ) {
 
 static void usage() {
   fprintf( stderr, "usage: %s [-a alias] [-eCv] [-l line-length]\n", me );
-  fprintf( stderr, "\t[-{fF} input-file] [-o output-file] [-c config_file]\n" );
+  fprintf( stderr, "\t[-{fF} input-file] [-o output-file] [-c conf-file]\n" );
   fprintf( stderr, "\t[-p para-delim-chars] [-s tab-spaces]\n" );
   exit( EXIT_USAGE );
 }

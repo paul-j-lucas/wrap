@@ -43,7 +43,7 @@ static int          n_aliases_alloc = 0;
 
 /*****************************************************************************/
 
-static void alias_check_dup( char const *config_file, int line_no ) {
+static void alias_check_dup( char const *conf_file, int line_no ) {
   if ( n_aliases > 1 ) {
     int i = n_aliases - 1;
     alias_t const *const last = &aliases[i];
@@ -52,9 +52,9 @@ static void alias_check_dup( char const *config_file, int line_no ) {
         fprintf(
           stderr,
           "%s: %s:%d: \"%s\": duplicate alias name (previous one on line %d)\n",
-          me, config_file, line_no, last->argv[0], last->line_no
+          me, conf_file, line_no, last->argv[0], last->line_no
         );
-        exit( EXIT_CONFIG_ERROR );
+        exit( EXIT_CONF_ERROR );
       }
   }
 }
@@ -81,7 +81,7 @@ alias_t const* alias_find( char const *name ) {
   return NULL;
 }
 
-void alias_parse( char const *line, char const *config_file, int line_no ) {
+void alias_parse( char const *line, char const *conf_file, int line_no ) {
   alias_t *alias;
   int n_argv_alloc = ALIAS_ARGV_ALLOC_DEFAULT;
   size_t span;
@@ -104,23 +104,23 @@ void alias_parse( char const *line, char const *config_file, int line_no ) {
   alias->argv[0] = strndup( line, span );
   line += span;
 
-  alias_check_dup( config_file, line_no );
+  alias_check_dup( conf_file, line_no );
 
   line += strspn( line, " \t" );
   if ( !*line ) {
     fprintf(
       stderr, "%s: %s:%d: '=' expected\n",
-      me, config_file, line_no
+      me, conf_file, line_no
     );
-    exit( EXIT_CONFIG_ERROR );
+    exit( EXIT_CONF_ERROR );
   }
 
   if ( *line != '=' ) {
     fprintf(
       stderr, "%s: %s:%d: '%c': unexpected character; '=' expected\n",
-      me, config_file, line_no, *line
+      me, conf_file, line_no, *line
     );
-    exit( EXIT_CONFIG_ERROR );
+    exit( EXIT_CONF_ERROR );
   }
   ++line;                               /* skip '=' */
 
@@ -130,9 +130,9 @@ void alias_parse( char const *line, char const *config_file, int line_no ) {
       if ( !alias->argc ) {
         fprintf(
           stderr, "%s: %s:%d: option(s) expected after '='\n",
-          me, config_file, line_no
+          me, conf_file, line_no
         );
-        exit( EXIT_CONFIG_ERROR );
+        exit( EXIT_CONF_ERROR );
       }
       break;
     }

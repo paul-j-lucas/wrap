@@ -51,11 +51,11 @@ alias_t const* pattern_find( char const *file_name );
  * Parses a pattern from the given line and adds it to the internal list of
  * patterns.
  *
- * @param line The line from a config-file to parse a pattern from.
- * @param config_file The config-file path-name.
- * @param line_no The line-number of \a line from \a config_file.
+ * @param line The line from a configuration file to parse a pattern from.
+ * @param conf_file The configuration file path-name.
+ * @param line_no The line-number of \a line from \a conf_file.
  */
-void pattern_parse( char const *line, char const *config_file, int line_no );
+void pattern_parse( char const *line, char const *conf_file, int line_no );
 
 /*****************************************************************************/
 

@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      config.h
+**      read_conf.h
 **
 **      Copyright (C) 1996-2013  Paul J. Lucas
 **
@@ -19,22 +19,22 @@
 **      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef wrap_config_H
-#define wrap_config_H
+#ifndef wrap_read_conf_H
+#define wrap_read_conf_H
 
 /*****************************************************************************/
 
 /**
  * Reads the configuration file.
  *
- * @param config_file The full-path of the configuration file to read.  If
- * NULL, then the user's home directory is checked for the presence of the
- * default configuration file.  If found, that file is read.
+ * @param conf_file The full-path of the configuration file to read.  If NULL,
+ * then the user's home directory is checked for the presence of the default
+ * configuration file.  If found, that file is read.
  * @return Returns the full-path of the configuration file that was read.
  */
-char const* read_config( char const *config_file );
+char const* read_conf( char const *conf_file );
 
 /*****************************************************************************/
 
-#endif /* wrap_config_H */
+#endif /* wrap_read_conf_H */
 /* vim:set et sw=2 ts=2: */

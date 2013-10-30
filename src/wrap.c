@@ -31,9 +31,9 @@
 /* local */
 #include "alias.h"
 #include "common.h"
-#include "config.h"
 #include "getopt.h"
 #include "pattern.h"
+#include "read_conf.h"
 
 /* global variable definitions */
 char        buf[ LINE_BUF_SIZE ];
@@ -46,7 +46,7 @@ int         tab_spaces = DEFAULT_TAB_SPACES;
 
 /* option definitions */
 char const* opt_alias = NULL;
-char const* opt_config_file = NULL;
+char const* opt_conf_file = NULL;
 bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
 char const* opt_fin_name = NULL;        /* file in name */
 int         opt_hang_spaces = 0;        /* hanging-indent spaces */
@@ -59,7 +59,7 @@ int         opt_lead_tabs = 0;          /* leading tabs */
 bool        opt_lead_ws_delimit = false;/* leading whitespace delimit para's? */
 int         opt_mirror_spaces = 0;
 int         opt_mirror_tabs = 0;
-bool        opt_no_config = false;      /* do not read config file */
+bool        opt_no_conf = false;        /* do not read conf file */
 char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
 
 /* local functions */
@@ -378,14 +378,14 @@ static void init( int argc, char const *argv[] ) {
   if ( argc )
     usage();
 
-  if ( !opt_no_config && (opt_alias || opt_fin_name ) ) {
+  if ( !opt_no_conf && (opt_alias || opt_fin_name ) ) {
     alias_t const *alias = NULL;
-    opt_config_file = read_config( opt_config_file );
+    opt_conf_file = read_conf( opt_conf_file );
     if ( opt_alias ) {
       if ( !(alias = alias_find( opt_alias )) ) {
         fprintf(
           stderr, "%s: \"%s\": no such alias in %s\n",
-          me, opt_alias, opt_config_file
+          me, opt_alias, opt_conf_file
         );
         exit( EXIT_USAGE );
       }
@@ -430,16 +430,16 @@ static void process_options( int argc, char const *argv[], char const *opts,
   while ( (opt = pjl_getopt( argc, argv, opts )) != EOF ) {
     if ( line_no && strchr( "acCfFov", opt ) ) {
       fprintf(
-        stderr, "%s: %s:%d: '%c': option not allowed in config file\n",
-        me, opt_config_file, line_no, opt
+        stderr, "%s: %s:%d: '%c': option not allowed in configuration file\n",
+        me, opt_conf_file, line_no, opt
       );
-      exit( EXIT_CONFIG_ERROR );
+      exit( EXIT_CONF_ERROR );
     }
     switch ( opt ) {
       case 'a': opt_alias           = optarg;               break;
       case 'b': opt_lead_ws_delimit = true;                 break;
-      case 'c': opt_config_file     = optarg;               break;
-      case 'C': opt_no_config       = true;                 break;
+      case 'c': opt_conf_file       = optarg;               break;
+      case 'C': opt_no_conf         = true;                 break;
       case 'd': opt_lead_dot_ignore = true;                 break;
       case 'e': opt_eos_delimit     = true;                 break;
       case 'f':
@@ -479,7 +479,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
 
 static void usage() {
   fprintf( stderr, "usage: %s [-bCdenNv] [-l line-length] [-p para-delim-chars] [-s tab-spaces]\n", me );
-  fprintf( stderr, "\t[-{fF} input-file] [-o output-file]    [-c config-file]\n" );
+  fprintf( stderr, "\t[-{fF} input-file] [-o output-file]    [-c conf-file]\n" );
   fprintf( stderr, "\t[-t leading-tabs]  [-S leading-spaces]\n" );
   fprintf( stderr, "\t[-m mirror-tabs]   [-M mirror-spaces]\n" );
   fprintf( stderr, "\t[-i indent-tabs]   [-I indent-spaces]\n" );

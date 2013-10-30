@@ -60,7 +60,7 @@ alias_t const* pattern_find( char const *file_name ) {
   return NULL;
 }
 
-void pattern_parse( char const *line, char const *config_file, int line_no ) {
+void pattern_parse( char const *line, char const *conf_file, int line_no ) {
   alias_t const *alias;
   pattern_t *pattern;
   size_t span;
@@ -80,16 +80,16 @@ void pattern_parse( char const *line, char const *config_file, int line_no ) {
 
   line += strspn( line, " \t" );
   if ( !*line ) {
-    fprintf( stderr, "%s: %s:%d: '=' expected\n", me, config_file, line_no );
-    exit( EXIT_CONFIG_ERROR );
+    fprintf( stderr, "%s: %s:%d: '=' expected\n", me, conf_file, line_no );
+    exit( EXIT_CONF_ERROR );
   }
 
   if ( *line != '=' ) {
     fprintf(
       stderr, "%s: %s:%d: '%c': unexpected character; '=' expected\n",
-      me, config_file, line_no, *line
+      me, conf_file, line_no, *line
     );
-    exit( EXIT_CONFIG_ERROR );
+    exit( EXIT_CONF_ERROR );
   }
   ++line;                               /* skip '=' */
 
@@ -97,15 +97,15 @@ void pattern_parse( char const *line, char const *config_file, int line_no ) {
   if ( !*line ) {
     fprintf(
       stderr, "%s: %s:%d: pattern expected after '='\n",
-      me, config_file, line_no
+      me, conf_file, line_no
     );
-    exit( EXIT_CONFIG_ERROR );
+    exit( EXIT_CONF_ERROR );
   }
 
   if ( !(alias = alias_find( line )) ) {
     fprintf(
       stderr, "%s: %s:%d: \"%s\": no such alias\n",
-      me, config_file, line_no, line
+      me, conf_file, line_no, line
     );
     exit( EXIT_USAGE );
   }

@@ -25,7 +25,7 @@
 /*****************************************************************************/
 
 struct alias_s {
-  int line_no;                          /* line in config file defined on */
+  int line_no;                          /* line in conf file defined on */
   int argc;                             /* number of arguments + 1 */
   char const** argv;                    /* argv[0] = alias name */
 };
@@ -50,11 +50,11 @@ alias_t const* alias_find( char const *name );
  * Parses an alias from the given line and adds it to the internal list of
  * aliases.
  *
- * @param line The line from a config-file to parse an alias from.
- * @param config_file The config-file path-name.
- * @param line_no The line-number of \a line from \a config_file.
+ * @param line The line from a configuration file to parse an alias from.
+ * @param conf_file The configuration file path-name.
+ * @param line_no The line-number of \a line from \a conf_file.
  */
-void alias_parse( char const *line, char const *config_file, int line_no );
+void alias_parse( char const *line, char const *conf_file, int line_no );
 
 /*****************************************************************************/
 

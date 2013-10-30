@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      config.c
+**      read_conf.c
 **
 **      Copyright (C) 1996-2013  Paul J. Lucas
 **
@@ -34,7 +34,7 @@
 #include "common.h"
 #include "pattern.h"
 
-#define CONFIG_FILE_NAME ".wraprc"
+#define CONF_FILE_NAME ".wraprc"
 
 extern char const *me;
 
@@ -68,17 +68,17 @@ static char* trim_ws( char *s ) {
 
 /*****************************************************************************/
 
-char const* read_config( char const *config_file ) {
-  static char config_path_buf[ PATH_MAX ];
-  bool const explicit_config_file = (config_file != NULL);
-  FILE *fconfig;
+char const* read_conf( char const *conf_file ) {
+  static char conf_path_buf[ PATH_MAX ];
+  bool const explicit_conf_file = (conf_file != NULL);
+  FILE *fconf;
   char line_buf[ LINE_BUF_SIZE ];
   int line_no = 0;
 
   enum section { NONE, ALIASES, PATTERNS };
   enum section section = NONE;
 
-  if ( !config_file ) {
+  if ( !conf_file ) {
     char const *home = getenv( "HOME" );
     if ( !home ) {
       struct passwd *const pw = getpwuid( geteuid() );
@@ -86,19 +86,19 @@ char const* read_config( char const *config_file ) {
         return NULL;
       home = pw->pw_dir;
     }
-    strcpy( config_path_buf, home );
-    path_append( config_path_buf, CONFIG_FILE_NAME ); config_file = config_path_buf;
+    strcpy( conf_path_buf, home );
+    path_append( conf_path_buf, CONF_FILE_NAME ); conf_file = conf_path_buf;
   }
 
-  if ( !(fconfig = fopen( config_file, "r" )) ) {
-    if ( explicit_config_file ) {
-      fprintf( stderr, "%s: %s: %s\n", me, config_file, strerror( errno ) );
-      exit( EXIT_CONFIG_ERROR );
+  if ( !(fconf = fopen( conf_file, "r" )) ) {
+    if ( explicit_conf_file ) {
+      fprintf( stderr, "%s: %s: %s\n", me, conf_file, strerror( errno ) );
+      exit( EXIT_CONF_ERROR );
     }
     return NULL;
   }
 
-  while ( fgets( line_buf, LINE_BUF_SIZE, fconfig ) ) {
+  while ( fgets( line_buf, LINE_BUF_SIZE, fconf ) ) {
     char const *const line = trim_ws( strip_comment( line_buf ) );
     ++line_no;
     if ( !*line )
@@ -112,25 +112,25 @@ char const* read_config( char const *config_file ) {
         case NONE:
           fprintf(
             stderr, "%s: %s:%d: \"%s\": line not within any section\n",
-            me, config_file, line_no, line
+            me, conf_file, line_no, line
           );
-          exit( EXIT_CONFIG_ERROR );
+          exit( EXIT_CONF_ERROR );
         case ALIASES:
-          alias_parse( line, config_file, line_no );
+          alias_parse( line, conf_file, line_no );
           break;
         case PATTERNS:
-          pattern_parse( line, config_file, line_no );
+          pattern_parse( line, conf_file, line_no );
           break;
       } /* switch */
     } /* else */
   } /* while */
 
-  if ( ferror( fconfig ) ) {
-    fprintf( stderr, "%s: %s: %s\n", me, config_file, strerror( errno ) );
+  if ( ferror( fconf ) ) {
+    fprintf( stderr, "%s: %s: %s\n", me, conf_file, strerror( errno ) );
     exit( EXIT_READ_ERROR );
   }
-  fclose( fconfig );
-  return config_file;
+  fclose( fconf );
+  return conf_file;
 }
 
 /*****************************************************************************/
