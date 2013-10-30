@@ -18,7 +18,24 @@
 .\"	along with this program; if not, write to the Free Software
 .\"	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 .\"
-.TH \f3wrapc\f1 1 "October 28, 2013" "PJL TOOLS"
+.\" ---------------------------------------------------------------------------
+.\" define code-start macro
+.de cS
+.sp
+.nf
+.RS 5
+.ft CW
+.ta .5i 1i 1.5i 2i 2.5i 3i 3.5i 4i 4.5i 5i 5.5i
+..
+.\" define code-end macro
+.de cE
+.ft 1
+.RE
+.fi
+.if !'\\$1'0' .sp
+..
+.\" ---------------------------------------------------------------------------
+.TH \f3wrapc\f1 1 "October 29, 2013" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -36,19 +53,19 @@ option.
 .P
 Leading white-space and comment delimiters are preserved.
 The characters that are recognized as comment delimeters are:
-.IP "\f3!\f1" 10
+.IP "\f(CW!\f1" 10
 HTML and XML comments.
-.IP "\f3#\f1" 10
+.IP "\f(CW#\f1" 10
 CMake, Make, Perl, Python, Ruby, and Shell comments.
-.IP "\f3/\f1 and \f3*\f1" 10
+.IP "\f(CW/\f1 and \f(CW*\f1" 10
 C, C++, and Java comments.
-.IP "\f3%\f1" 10
+.IP "\f(CW%\f1" 10
 PostScript comments.
-.IP "\f3:\f1" 10
+.IP "\f(CW:\f1" 10
 XQuery comments.
-.IP "\f3;\f1" 10
+.IP "\f(CW;\f1" 10
 Assember and Lisp comments.
-.IP "\f3>\f1" 10
+.IP "\f(CW>\f1" 10
 Forwarded mail indicator.
 .P
 All other white-space characters are folded
@@ -137,10 +154,24 @@ utility exits with 0 on success
 and >0 on failure.
 .SH EXAMPLE
 While in
-.IR vi ,
-wrap the comment covering the current and subsequent 3 lines.
-.IP ""
-!\f33\f2return\f1wrapc\f1
+.BR vi ,
+wrap the comment from the current line to the end of the paragraph:
+.cS
+!}wrapc -F'%'
+.cE
+The \f(CW%\f1 argument to the
+.B \-F
+option is expaned by
+.B vi
+to be the file's path name.
+To lessen typing,
+the above can be mapped to a key sequence in
+.BR vi 's
+\f(CW.exrc\f1
+file:
+.cS
+map `c !}wrap -F'%'\f3^M\f1
+.cE
 .SH SEE ALSO
 .BR vi (1),
 .BR wrap (1)
