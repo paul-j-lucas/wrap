@@ -15,8 +15,7 @@
 **      GNU General Public License for more details.
 ** 
 **      You should have received a copy of the GNU General Public License
-**      along with this program; if not, write to the Free Software
-**      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+**      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /* system */
@@ -47,7 +46,17 @@ int check_atou( char const *s ) {
 }
 
 void* check_realloc( void *p, size_t size ) {
-  void *const r = realloc( p, size );
+  void *r;
+  /*
+  ** Autoconf, 5.5.1:
+  **
+  ** realloc
+  **    The C standard says a call realloc(NULL, size) is equivalent to
+  **    malloc(size), but some old systems don't support this (e.g., NextStep).
+  */
+  if ( !size )
+    ++size;
+  r = p ? realloc( p, size ) : malloc( size );
   if ( !r )
     ERROR( EXIT_OUT_OF_MEMORY );
   return r;
