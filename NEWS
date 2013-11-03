@@ -1,0 +1,58 @@
+Wrap NEWS -- history of user-visible changes.
+
+Copyright (C) 1996-2013 Paul J. Lucas.
+See the end of the file for license conditions.
+
+* Changes in Wrap 3.0
+
+** Added command-line option aliases.
+Both wrap and wrapc now support aliases.  An alias is a user-defined,
+short-hand name for command-line options that are frequently used together.
+
+** Added configuration file.
+Both wrap and wrapc now read a configuration file (if present) on startup that
+defines aliases and patterns.
+
+** Added end-of-sentence option.
+Both wrap and wrapc now have a -e command-line option for specifying that a
+white-space after an end-of-sentence character delimites a paragraph.
+
+** Added input/output file options.
+Both wrap and wrapc now have -f and -o command-line options for specifying the
+input file to read from and the output file to write to, respectively.
+
+** Added [nt]roff/man-page file support.
+Wrap now had the -d command-line option that does not alter lines that begin
+with a `.' (dot) presumed to be [nt]roff control lines.
+
+** Added paragraph-delimiter option.
+Both wrap and wrapc now have a -p command-line option that allows additional
+characters to be specified as paragraph delimiters.
+
+** Added file-matching patterns.
+Both wrap and wrapc can now apply command-line options (via aliases) to files
+automatically based on their names matching a pattern.
+
+** Added tab-spaces option.
+Both wrap and wrapc now have a -s command-line option for specifying the number
+of spaces that a tab character should be considered the same as.
+
+* Changes in Wrap 1.0
+
+** Initial version.
+
+----------------------------------------------------------------------
+The file is part of Wrap.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the Licence, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
