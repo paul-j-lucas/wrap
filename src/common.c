@@ -20,7 +20,7 @@
 
 /* system */
 #include <stdio.h>
-#include <stdlib.h>                     /* for atoi(), ... */
+#include <stdlib.h>                     /* for atoi(), malloc(), ... */
 #include <string.h>
 
 /* local */

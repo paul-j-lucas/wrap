@@ -196,20 +196,20 @@ int main( int argc, char const *argv[] ) {
 
     /* Quoting string arguments is unnecessary since no shell is involved. */
 
-    /* 0 */    ARG_DUP(                      WRAP_NAME );
-    /* 1 */ IF_ARG_FMT( opt_alias          , "-a%s"    );
-    /* 2 */ IF_ARG_FMT( opt_conf_file      , "-c%s"    );
-    /* 3 */ IF_ARG_DUP( opt_no_conf        , "-C"      );
-    /* 4 */ IF_ARG_DUP( opt_eos_delimit    , "-e"      );
-    /* 5 */ IF_ARG_FMT( opt_fin_name       , "-F%s"    );
-    /* 6 */    ARG_FMT( line_length        , "-l%d"    );
-    /* 7 */ IF_ARG_FMT( opt_para_delimiters, "-p%s"    );
-    /* 8 */    ARG_FMT( tab_spaces         , "-s%d"    );
+    /* 0 */    ARG_DUP(                      PACKAGE );
+    /* 1 */ IF_ARG_FMT( opt_alias          , "-a%s"  );
+    /* 2 */ IF_ARG_FMT( opt_conf_file      , "-c%s"  );
+    /* 3 */ IF_ARG_DUP( opt_no_conf        , "-C"    );
+    /* 4 */ IF_ARG_DUP( opt_eos_delimit    , "-e"    );
+    /* 5 */ IF_ARG_FMT( opt_fin_name       , "-F%s"  );
+    /* 6 */    ARG_FMT( line_length        , "-l%d"  );
+    /* 7 */ IF_ARG_FMT( opt_para_delimiters, "-p%s"  );
+    /* 8 */    ARG_FMT( tab_spaces         , "-s%d"  );
     /* 9 */ argv[ argc ] = NULL;
 
     REDIRECT( STDIN_FILENO, 0 );
     REDIRECT( STDOUT_FILENO, 1 );
-    execvp( WRAP_NAME, argv );
+    execvp( PACKAGE, argv );
     ERROR( EXIT_EXEC_ERROR );
   }
 
@@ -300,7 +300,7 @@ static void process_options( int argc, char const *argv[] ) {
       case 'p': opt_para_delimiters = optarg;               break;
       case 's': tab_spaces          = check_atou( optarg ); break;
       case 'v':
-        fprintf( stderr, "%s %s\n", me, WRAP_VERSION );
+        fprintf( stderr, "%s\n", me, PACKAGE_STRING );
         exit( EXIT_OK );
       default:
         usage();

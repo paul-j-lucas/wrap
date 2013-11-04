@@ -21,13 +21,15 @@
 #ifndef wrap_common_H
 #define wrap_common_H
 
+#include "config.h"
+
+#include <stddef.h>                     /* for size_t */
+
 /*****************************************************************************/
 
 #define DEFAULT_LINE_LENGTH 80          /* wrap text to this line length */
 #define DEFAULT_TAB_SPACES  8           /* number of spaces a tab equals */
 #define LINE_BUF_SIZE       1024        /* hopefully, no one will exceed this */
-#define WRAP_NAME           "wrap"      /* for exec(2) in wrapc */
-#define WRAP_VERSION        "3.0"
 
 /* exit(3) status codes */
 #define EXIT_OK             0
@@ -43,20 +45,21 @@
 #define EXIT_CHILD_SIGNAL   30
 #define EXIT_PIPE_ERROR     40
 
-#ifndef __cplusplus
-# ifdef bool
-#   undef bool
-# endif
-# ifdef true
-#   undef true
-# endif
-# ifdef false
-#   undef false
-# endif
-# define bool   int
-# define true   1
+#ifdef HAVE_STDBOOL_H
+# include <stdbool.h>
+#else
+# ifndef HAVE__BOOL
+#   ifdef __cplusplus
+typedef bool _Bool;
+#   else
+#     define _Bool signed char
+#   endif /* __cplusplus */
+# endif /* HAVE__BOOL */
+# define bool   _Bool
 # define false  0
-#endif /* __cplusplus */
+# define true   1
+# define __bool_true_false_are_defined 1
+#endif /* HAVE_STDBOOL_H */
 
 #define ERROR(E)            do { perror( me ); exit( E ); } while (0)
 

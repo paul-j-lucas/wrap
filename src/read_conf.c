@@ -18,11 +18,15 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "common.h"
+
 /* system */
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>                     /* for PATH_MAX */
-#include <pwd.h>                        /* for getpwuid() */
+#if HAVE_PWD_H
+# include <pwd.h>                       /* for getpwuid() */
+#endif /* HAVE_PWD_H */
 #include <stdio.h>
 #include <stdlib.h>                     /* for atoi(), ... */
 #include <string.h>
@@ -30,7 +34,6 @@
 
 /* local */
 #include "alias.h"
-#include "common.h"
 #include "pattern.h"
 
 #define CONF_FILE_NAME ".wraprc"
@@ -80,10 +83,14 @@ char const* read_conf( char const *conf_file ) {
   if ( !conf_file ) {
     char const *home = getenv( "HOME" );
     if ( !home ) {
+#if HAVE_GETEUID && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR
       struct passwd *const pw = getpwuid( geteuid() );
       if ( !pw )
         return NULL;
       home = pw->pw_dir;
+#else
+      return NULL;
+#endif /* HAVE_GETEUID && && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR */
     }
     strcpy( conf_path_buf, home );
     path_append( conf_path_buf, CONF_FILE_NAME ); conf_file = conf_path_buf;
