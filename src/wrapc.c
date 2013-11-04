@@ -300,7 +300,7 @@ static void process_options( int argc, char const *argv[] ) {
       case 'p': opt_para_delimiters = optarg;               break;
       case 's': tab_spaces          = check_atou( optarg ); break;
       case 'v':
-        fprintf( stderr, "%s\n", me, PACKAGE_STRING );
+        fprintf( stderr, "%s\n", PACKAGE_STRING );
         exit( EXIT_OK );
       default:
         usage();

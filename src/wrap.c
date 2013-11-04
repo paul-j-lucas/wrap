@@ -467,7 +467,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'S': opt_lead_spaces     = check_atou( optarg ); break;
       case 't': opt_lead_tabs       = check_atou( optarg ); break;
       case 'v':
-        fprintf( stderr, "%s\n", me, PACKAGE_STRING );
+        fprintf( stderr, "%s\n", PACKAGE_STRING );
         exit( EXIT_OK );
       default:
         usage();
