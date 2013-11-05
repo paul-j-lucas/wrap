@@ -1,7 +1,7 @@
 #! /bin/sh
 ##
 #       wrap -- text reformatter
-#       test/test.sh
+#       test/run_tests.sh
 #
 #       Copyright (C) 2013  Paul J. Lucas
 #
@@ -31,11 +31,11 @@ trap "x=$?; rm -f /tmp/*_$$_* 2>/dev/null; exit $x" EXIT HUP INT TERM
 for TEST_FILE in test-*
 do
   IFS='|' read CONFIG OPTIONS INPUT < $TEST_FILE
-  CONFIG=`echo $CONFIG`
+  CONFIG=`echo $CONFIG`                 # trims whitespace
   if [ "$CONFIG" != /dev/null ]
   then CONFIG="data/$CONFIG"
   fi
-  INPUT=`echo $INPUT`
+  INPUT=`echo $INPUT`                   # trims whitespace
   EXPECTED="expected/${TEST_FILE}.txt"
 
   #echo $WRAP -c $CONFIG $OPTIONS -f data/$INPUT -o $OUTPUT

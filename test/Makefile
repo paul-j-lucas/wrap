@@ -25,7 +25,7 @@ WRAP=	$(SRC)/wrap
 all: test
 
 test tests: $(WRAP)
-	@WRAP=$(WRAP) ./test.sh
+	@WRAP=$(WRAP) ./run_tests.sh
 
 $(WRAP): $(SRC)/Makefile
 	cd $(SRC) && make
