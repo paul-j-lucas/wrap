@@ -25,6 +25,7 @@ AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 # Checks for programs.
 AC_PROG_CC
+AC_LANG(C)
 AC_PROG_INSTALL
 
 # Checks for libraries.
@@ -51,8 +52,17 @@ AC_FUNC_FORK
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([geteuid getpwuid strerror strndup])
 
-AC_LANG(C)
+# If fnmatch(3) is defined, define an automake variable that can be used to
+# compile pattern.c conditionally.
+AM_CONDITIONAL([am_WITH_PATTERNS], [test x$ac_cv_func_fnmatch_works = xyes])
 
+# If fnmatch(3) is defined, define a C macro in config.h that has a more
+# intuitive name that HAS_FN_MATCH.
+if test x$ac_cv_func_fnmatch_works = xyes
+then AC_DEFINE([WITH_PATTERNS],[1],[Define to 1 if patterns via fnmatch(3) are supported.])
+fi
+
+# Generate files.
 AH_TOP([#ifndef wrap_config_H
 #define wrap_config_H])
 AH_BOTTOM([#endif /* wrap_config_H */])

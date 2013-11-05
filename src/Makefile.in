@@ -95,6 +95,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = wrap$(EXEEXT) wrapc$(EXEEXT)
+@am_WITH_PATTERNS_TRUE@am__append_1 = pattern.c
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(srcdir)/config.h.in $(top_srcdir)/depcomp
@@ -108,8 +109,11 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
+am__wrap_SOURCES_DIST = alias.c common.c getopt.c read_conf.c wrap.c \
+	pattern.c
+@am_WITH_PATTERNS_TRUE@am__objects_1 = pattern.$(OBJEXT)
 am_wrap_OBJECTS = alias.$(OBJEXT) common.$(OBJEXT) getopt.$(OBJEXT) \
-	pattern.$(OBJEXT) read_conf.$(OBJEXT) wrap.$(OBJEXT)
+	read_conf.$(OBJEXT) wrap.$(OBJEXT) $(am__objects_1)
 wrap_OBJECTS = $(am_wrap_OBJECTS)
 wrap_LDADD = $(LDADD)
 am_wrapc_OBJECTS = common.$(OBJEXT) getopt.$(OBJEXT) wrapc.$(OBJEXT)
@@ -144,7 +148,7 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(wrap_SOURCES) $(wrapc_SOURCES)
-DIST_SOURCES = $(wrap_SOURCES) $(wrapc_SOURCES)
+DIST_SOURCES = $(am__wrap_SOURCES_DIST) $(wrapc_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -260,7 +264,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 WARN = -Wall -Wextra -Wc++-compat -Wredundant-decls -Wwrite-strings
 AM_CFLAGS = -ansi -pedantic-errors $(WARN)
-wrap_SOURCES = alias.c common.c getopt.c pattern.c read_conf.c wrap.c
+wrap_SOURCES = alias.c common.c getopt.c read_conf.c wrap.c \
+	$(am__append_1)
 wrapc_SOURCES = common.c getopt.c wrapc.c
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am

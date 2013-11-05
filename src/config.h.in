@@ -118,6 +118,9 @@
 /* Version number of package */
 #undef VERSION
 
+/* Define to 1 if patterns via fnmatch(3) are supported. */
+#undef WITH_PATTERNS
+
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
 

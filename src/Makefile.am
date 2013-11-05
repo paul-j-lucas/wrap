@@ -23,7 +23,11 @@ AM_CFLAGS = -ansi -pedantic-errors $(WARN)
 
 bin_PROGRAMS = wrap wrapc
 
-wrap_SOURCES = alias.c common.c getopt.c pattern.c read_conf.c wrap.c
+wrap_SOURCES = alias.c common.c getopt.c read_conf.c wrap.c
+if am_WITH_PATTERNS
+wrap_SOURCES += pattern.c
+endif
+
 wrapc_SOURCES = common.c getopt.c wrapc.c
 
 # vim:set noet sw=8 ts=8:

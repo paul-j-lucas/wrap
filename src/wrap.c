@@ -31,7 +31,9 @@
 #include "alias.h"
 #include "common.h"
 #include "getopt.h"
-#include "pattern.h"
+#ifdef WITH_PATTERNS
+# include "pattern.h"
+#endif /* WITH_PATTERNS */
 #include "read_conf.h"
 
 /* global variable definitions */
@@ -363,7 +365,9 @@ delimit_paragraph:
 
 static void clean_up() {
   alias_cleanup();
+#ifdef WITH_PATTERNS
   pattern_cleanup();
+#endif /* WITH_PATTERNS */
 }
 
 static void init( int argc, char const *argv[] ) {
@@ -387,9 +391,11 @@ static void init( int argc, char const *argv[] ) {
         );
         exit( EXIT_USAGE );
       }
-    } else if ( opt_fin_name ) {
-      alias = pattern_find( opt_fin_name );
     }
+#ifdef WITH_PATTERNS
+    else if ( opt_fin_name )
+      alias = pattern_find( opt_fin_name );
+#endif /* WITH_PATTERNS */
     if ( alias )
       process_options( alias->argc, alias->argv, opts, alias->line_no );
   }

@@ -34,7 +34,9 @@
 
 /* local */
 #include "alias.h"
-#include "pattern.h"
+#ifdef WITH_PATTERNS
+# include "pattern.h"
+#endif /* WITH_PATTERNS */
 
 #define CONF_FILE_NAME ".wraprc"
 
@@ -124,9 +126,11 @@ char const* read_conf( char const *conf_file ) {
         case ALIASES:
           alias_parse( line, conf_file, line_no );
           break;
+#ifdef WITH_PATTERNS
         case PATTERNS:
           pattern_parse( line, conf_file, line_no );
           break;
+#endif /* WITH_PATTERNS */
       } /* switch */
     } /* else */
   } /* while */
