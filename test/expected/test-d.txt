@@ -1,0 +1,18 @@
+.SH DESCRIPTION
+.B wrap
+is a filter for reformatting text by wrapping and filling lines to a given
+.IR line-length ,
+the default for which is 80 characters.
+.P
+All white-space characters are folded into a single space with the following
+exceptions:
+.IP "1." 3
+Force two spaces after the end of a sentence that ends a line; sentences are
+ended by an ``end-of-sentence'' character, that is, a period, question-mark, or
+an exclamation-point, optionally followed by a single-quote, double-quote, or a
+closing parenthesis or bracket.
+.IP "2." 3
+Allow two spaces after the end of a sentence that does not end a line.  This
+distinction is made so as not to put two spaces after a period that is an
+abbreviation and not the end of a sentence; periods at the end of a line will
+hopefully not be abbreviations.
