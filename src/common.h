@@ -21,9 +21,11 @@
 #ifndef wrap_common_H
 #define wrap_common_H
 
-#include "config.h"
-
+/* standard */
 #include <stddef.h>                     /* for size_t */
+
+/* local */
+#include "config.h"
 
 /*****************************************************************************/
 
