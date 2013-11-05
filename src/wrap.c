@@ -330,6 +330,7 @@ delimit_paragraph:
     put_spaces = 0;
     was_eos_char = was_para_delim_char = false;
     if ( ignore_lead_dot ) {
+      ignore_lead_dot = false;
       /*
       ** The line starts with a leading dot and opt_lead_dot_ignore = true:
       ** read/write the line as-is.
