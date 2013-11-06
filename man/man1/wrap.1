@@ -29,7 +29,20 @@ is a filter for reformatting text by wrapping and filling lines
 to a given
 .IR line-length ,
 the default for which is 80 characters.
-Lines are wrapped at white-space characters.
+Lines are wrapped at
+.I white-space
+characters.
+A white-space character is any character for which
+.BR isspace (3)
+returns non-zero
+and always includes:
+space (ASCII 32),
+tab (9),
+line-feed (10),
+vertical-tab (11),
+form-feed (12),
+and
+carriage-return (13).
 .P
 All white-space characters are folded into a single space with the following
 exceptions:
@@ -219,4 +232,5 @@ Paul J. Lucas
 .SH SEE ALSO
 .BR fmt (1),
 .BR wrapc (1),
+.BR isspace (3),
 .BR wraprc (5)
