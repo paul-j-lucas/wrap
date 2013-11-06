@@ -1,0 +1,1 @@
+/dev/null | -b -I2 | data-01a.txt
