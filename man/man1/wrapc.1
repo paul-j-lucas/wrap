@@ -151,6 +151,27 @@ The
 .B wrapc
 utility exits with 0 on success
 and >0 on failure.
+.SH BUGS
+The first comment line is used at the prototype for all subsequent lines.
+The number of characters comprising
+the leading white-space and comment delimiters
+of the first comment line
+is removed from the start of each line
+before being passed to
+.B wrap
+for reformatting.
+After reformatting,
+the previously removed characters
+are inserted at the start of each line.
+.P
+This works fine if all the comment lines
+have the same leading white-space and comment delimiters;
+if not,
+the result is strange.
+Typically,
+subsequent lines' leading characters
+become the same
+as those of the first.
 .SH EXAMPLE
 While in
 .BR vi ,
