@@ -82,7 +82,8 @@ and
 .I s
 means
 .IR string .
-.IP "\f3\-a\f2 s\f1"
+.TP
+.BI \-a " s"
 Specifies the alias name
 .I s
 from the configuration file to be used.
@@ -93,23 +94,28 @@ via either the
 or
 .B \-F
 options.
-.IP "\f3\-c\f2 f\f1"
+.TP
+.BI \-c " f"
 Specifies the configuration file
 .I f
 to read
 (default is
 .BR ~/.wraprc .)
-.IP "\f3\-C\f1"
+.TP
+.B \-C
 Suppresses reading of any configuration file,
 even one explicitly specified via
 .BR \-c .
-.IP "\f3\-e\f1"
+.TP
+.B \-e
 Treats white-space after an end-of-sentence character as a paragraph delimiter.
-.IP "\f3\-f\f2 f\f1"
+.TP
+.BI \-f " f"
 Reads from file
 .I f
 (default is standard input).
-.IP "\f3\-F\f2 f\f1"
+.TP
+.BI \-F " f"
 Sets the file-name to
 .I f
 as if it were being read from
@@ -119,22 +125,26 @@ in a configuration file to use an alias
 while still allowing
 .B wrapc
 to be used as part of a shell pipeline.)
-.IP "\f3\-l\f2 n\f1"
+.TP
+.BI \-l " n"
 Sets
 .I line-length
 to
 .I n
 characters
 (default is 80).
-.IP "\f3\-o\f2 f\f1"
+.TP
+.BI \-o " f"
 Writes to file
 .I f
 (default is standard output).
-.IP "\f3\-p\f2 s\f1"
+.TP
+.BI \-p " s"
 Treats the given characters in
 .I s
 as paragraph delimiters.
-.IP "\f3\-s\f2 n\f1"
+.TP
+.BI \-s " n"
 Sets
 .I tab-spaces
 (the number of spaces a tab character should be considered the same as)
@@ -142,7 +152,8 @@ to
 .I n
 characters
 (default is 8).
-.IP "\f3\-v\f1"
+.TP
+.B \-v
 Prints the version number to
 .I stderr
 and exit.
@@ -191,7 +202,7 @@ the above can be mapped to a key sequence in
 file:
 .cS
 map `c !}wrap -F'%'\f3^M\f1
-.cE
+.cE 0
 .SH AUTHOR
 Paul J. Lucas
 .RI < paul@lucasmail.org >

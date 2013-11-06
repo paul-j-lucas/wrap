@@ -17,7 +17,24 @@
 .\"	You should have received a copy of the GNU General Public License
 .\"	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .\"
-.TH \f3wrap\f1 1 "November 5, 2013" "PJL TOOLS"
+.\" ---------------------------------------------------------------------------
+.\" define code-start macro
+.de cS
+.sp
+.nf
+.RS 5
+.ft CW
+.ta .5i 1i 1.5i 2i 2.5i 3i 3.5i 4i 4.5i 5i 5.5i
+..
+.\" define code-end macro
+.de cE
+.ft 1
+.RE
+.fi
+.if !'\\$1'0' .sp
+..
+.\" ---------------------------------------------------------------------------
+.TH \f3wrap\f1 1 "November 6, 2013" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -85,9 +102,6 @@ presumed to be an
 control line,
 is not altered.
 .SH OPTIONS
-In general,
-lower-case options are for tabs,
-upper-case options are for spaces.
 An option argument
 .I f
 means
@@ -99,7 +113,8 @@ and
 .I s
 means
 .IR string .
-.IP "\f3\-a\f2 s\f1"
+.TP
+.BI \-a " s"
 Specifies the alias name
 .I s
 from the configuration file to be used.
@@ -110,29 +125,36 @@ via either the
 or
 .B \-F
 options.
-.IP "\f3\-b\f1"
+.TP
+.B \-b
 Treats a line beginning with white-space as a paragraph delimiter.
-.IP "\f3\-c\f2 f\f1"
+.TP
+.BI \-c " f"
 Specifies the configuration file
 .I f
 to read
 (default is
 .BR ~/.wraprc .)
-.IP "\f3\-C\f1"
+.TP
+.B \-C
 Suppresses reading of any configuration file,
 even one explicitly specified via
 .BR \-c .
-.IP "\f3\-d\f1"
+.TP
+.B \-d
 Does not alter lines that begin with a `\f3.\f1' (dot) presumed to be
 .BR [nt]roff (1)
 control lines.
-.IP "\f3\-e\f1"
+.TP
+.B \-e
 Treats white-space after an end-of-sentence character as a paragraph delimiter.
-.IP "\f3\-f\f2 f\f1"
+.TP
+.BI \-f " f"
 Reads from file
 .I f
 (default is standard input).
-.IP "\f3\-F\f2 f\f1"
+.TP
+.BI \-F " f"
 Sets the file-name to
 .I f
 as if it were being read from
@@ -142,48 +164,60 @@ in a configuration file to use an alias
 while still allowing
 .B wrap
 to be used as part of a shell pipeline.)
-.IP "\f3\-h\f2 n\f1"
+.TP
+.BI \-h " n"
 Hang-indents \f2n\f1 more tabs for all but the first line of each paragraph.
-.IP "\f3\-H\f2 n\f1"
+.TP
+.BI \-H " n"
 Hang-indents \f2n\f1 more spaces for all but the first line of each paragraph
 after any tabs.
-.IP "\f3\-i\f2 n\f1"
+.TP
+.BI \-i " n"
 Indents \f2n\f1 more tabs for the first line of each paragraph.
-.IP "\f3\-I\f2 n\f1"
+.TP
+.BI \-I " n"
 Indents \f2n\f1 more spaces for the first line of each paragraph after any tabs.
-.IP "\f3\-l\f2 n\f1"
+.TP
+.BI \-l " n"
 Sets
 .I line-length
 to
 .I n
 characters
 (default is 80).
-.IP "\f3\-m\f2 n\f1"
+.TP
+.BI \-m " n"
 Mirrors tabs; equivalent to:
 .BI \-t n
 .BI \-l m
 where
 .IR "m = line-length \- tab-spaces * n" .
-.IP "\f3\-M\f2 n\f1"
+.TP
+.BI \-M " n"
 Mirrors spaces; equivalent to:
 .BI \-S n
 .BI \-l m
 where
 .IR "m = line-length \- 2n" .
-.IP "\f3\-n\f1"
+.TP
+.B \-n
 Does not treat newlines as paragraph delimeters.
-.IP "\f3\-N\f1"
+.TP
+.B \-N
 Treats every newline as a paragraph delimiter.
 This option is useful for line-breaking code prior to printing.
-.IP "\f3\-o\f2 f\f1"
+.TP
+.BI \-o " f"
 Writes to file
 .I f
 (default is standard output).
-.IP "\f3\-p\f2 s\f1"
+.TP
+.BI \-p " s"
 Treats the given characters in
 .I s
 as paragraph delimiters.
-.IP "\f3\-s\f2 n\f1"
+.TP
+.BI \-s " n"
 Sets
 .I tab-spaces
 (the number of spaces a tab character should be considered the same as)
@@ -191,15 +225,18 @@ to
 .I n
 characters
 (default is 8).
-.IP "\f3\-S\f2 n\f1"
+.TP
+.BI \-S " n"
 Prepends
 .I n
 leading spaces to each line after any leading tabs.
-.IP "\f3\-t\f2 n\f1"
+.TP
+.BI \-t " n"
 Prepends
 .I n
 leading tabs to each line.
-.IP "\f3\-v\f1"
+.TP
+.B \-v
 Prints the version number to
 .I stderr
 and exit.
@@ -209,7 +246,8 @@ The
 utility exits with 0 on success
 and >0 on failure.
 .SH ENVIRONMENT
-.IP "\f3$HOME\f1"
+.TP
+.B $HOME
 The user's home directory:
 used to locate the default configuration file.
 If unset,
@@ -218,14 +256,16 @@ for the effective user.
 If that fails,
 no configuration file is read.
 .SH FILES
-.IP "\f3~/.wraprc\f1"
+.TP
+.B ~/.wraprc
 The default configuration file.
 .SH EXAMPLE
 Wrap text into paragraphs having a line length of 72 characters,
 indenting one tab-stop,
 and further indenting the start of each paragraph by 3 spaces:
-.IP ""
-.B "wrap -m1 -I3"
+.cS
+wrap -m1 -I3
+.cE 0
 .SH AUTHOR
 Paul J. Lucas
 .RI < paul@lucasmail.org >
