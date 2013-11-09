@@ -28,7 +28,7 @@ fi
 OUTPUT=/tmp/wrap_test_output_$$_
 trap "x=$?; rm -f /tmp/*_$$_* 2>/dev/null; exit $x" EXIT HUP INT TERM
 
-for TEST_FILE in test-*
+for TEST_FILE in *.test
 do
   IFS='|' read CONFIG OPTIONS INPUT < $TEST_FILE
   CONFIG=`echo $CONFIG`                 # trims whitespace
@@ -36,7 +36,7 @@ do
   then CONFIG="data/$CONFIG"
   fi
   INPUT=`echo $INPUT`                   # trims whitespace
-  EXPECTED="expected/${TEST_FILE}.txt"
+  EXPECTED="expected/`echo $TEST_FILE | sed 's/test$/txt/'`"
 
   #echo $WRAP -c $CONFIG $OPTIONS -f data/$INPUT -o $OUTPUT
   if $WRAP -c $CONFIG $OPTIONS -f data/$INPUT -o $OUTPUT
