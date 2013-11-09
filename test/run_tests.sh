@@ -42,8 +42,8 @@ do
   if $WRAP -c $CONFIG $OPTIONS -f data/$INPUT -o $OUTPUT
   then
     if diff $OUTPUT $EXPECTED
-    then echo "$TEST_FILE passed"
-    else echo "$TEST_FILE FAILED"
+    then echo "PASS: $TEST_FILE"
+    else echo "FAIL: $TEST_FILE"
     fi
   fi
 done
