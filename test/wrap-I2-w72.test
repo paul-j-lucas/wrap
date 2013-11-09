@@ -1,0 +1,1 @@
+/dev/null | -I2 -w72 | data-01.txt

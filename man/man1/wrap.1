@@ -44,7 +44,7 @@ wrap \- text reformatter
 .B wrap
 is a filter for reformatting text by wrapping and filling lines
 to a given
-.IR line-length ,
+.IR line-width ,
 the default for which is 80 characters.
 Lines are wrapped at
 .I white-space
@@ -183,26 +183,23 @@ Indents \f2n\f1 more tabs for the first line of each paragraph.
 Indents \f2n\f1 more spaces for the first line of each paragraph after any tabs.
 .TP
 .BI \-l " n"
-Sets
-.I line-length
-to
-.I n
-characters
-(default is 80).
+Deprecated.
+Now a synonym for
+.BR \-w .
 .TP
 .BI \-m " n"
 Mirrors tabs; equivalent to:
 .BI \-t n
-.BI \-l m
+.BI \-q m
 where
-.IR "m = line-length \- tab-spaces * n" .
+.IR "m = line-width \- tab-spaces * n" .
 .TP
 .BI \-M " n"
 Mirrors spaces; equivalent to:
 .BI \-S n
-.BI \-l m
+.BI \-w m
 where
-.IR "m = line-length \- 2n" .
+.IR "m = line-width \- 2n" .
 .TP
 .B \-n
 Does not treat newlines as paragraph delimeters.
@@ -244,6 +241,14 @@ leading tabs to each line.
 Prints the version number to
 .I stderr
 and exit.
+.TP
+.BI \-w " n"
+Sets
+.I line-width
+to
+.I n
+characters
+(default is 80).
 .SH EXIT STATUS
 The
 .B wrap
@@ -264,7 +269,7 @@ no configuration file is read.
 .B ~/.wraprc
 The default configuration file.
 .SH EXAMPLE
-Wrap text into paragraphs having a line length of 72 characters,
+Wrap text into paragraphs having a line width of 72 characters,
 indenting one tab-stop,
 and further indenting the start of each paragraph by 3 spaces:
 .cS

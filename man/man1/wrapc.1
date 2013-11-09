@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\f1 1 "November 6, 2013" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "November 9, 2013" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -44,10 +44,10 @@ wrapc \- comment reformatter
 .B wrapc
 is a filter for reformatting program comments by
 wrapping and filling lines to a given
-.IR line-length ,
+.IR line-width ,
 the default for which is 80 characters.
 This can be changed via the
-.B \-l
+.B \-w
 option.
 .P
 Leading white-space and comment delimiters are preserved.
@@ -127,12 +127,9 @@ while still allowing
 to be used as part of a shell pipeline.)
 .TP
 .BI \-l " n"
-Sets
-.I line-length
-to
-.I n
-characters
-(default is 80).
+Deprecated.
+Now a synonym for
+.BR \-w .
 .TP
 .BI \-o " f"
 Writes to file
@@ -157,6 +154,14 @@ characters
 Prints the version number to
 .I stderr
 and exit.
+.TP
+.BI \-w " n"
+Sets
+.I line-width
+to
+.I n
+characters
+(default is 80).
 .SH EXIT STATUS
 The
 .B wrapc

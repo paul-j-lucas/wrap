@@ -59,7 +59,7 @@ char const* leading_chars = "\t !#%*/:;>";
 
 FILE*       fin = NULL;                 /* file in */
 FILE*       fout = NULL;                /* file out */
-int         line_length = DEFAULT_LINE_LENGTH;
+int         line_width = DEFAULT_LINE_WIDTH;
 char const* me;                         /* executable name */
 int         tab_spaces = DEFAULT_TAB_SPACES;
 
@@ -82,7 +82,7 @@ int main( int argc, char const *argv[] ) {
   char  buf[ LINE_BUF_SIZE ];
   FILE* from_wrap;                      /* file used by parent */
   char  leader[ LINE_BUF_SIZE ];        /* string segment removed/prepended */
-  int   lead_length;                    /* number of leading characters */
+  int   lead_width;                     /* number of leading characters */
   pid_t pid, pid_1;                     /* child process-IDs */
   /*
   ** Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
@@ -103,7 +103,7 @@ int main( int argc, char const *argv[] ) {
     exit( EXIT_OK );
   }
   strcpy( leader, buf );
-  leader[ lead_length = strspn( buf, leading_chars ) ] = '\0';
+  leader[ lead_width = strspn( buf, leading_chars ) ] = '\0';
 
   /* open pipes */
   if ( pipe( pipes[0] ) == -1 || pipe( pipes[1] ) == -1 )
@@ -132,10 +132,10 @@ int main( int argc, char const *argv[] ) {
       exit( EXIT_WRITE_OPEN );
     }
 
-    if ( fputs( buf + lead_length, to_wrap ) == EOF )
+    if ( fputs( buf + lead_width, to_wrap ) == EOF )
       ERROR( EXIT_WRITE_ERROR );
     while ( fgets( buf, LINE_BUF_SIZE, fin ) ) {
-      fputs( buf + lead_length, to_wrap );
+      fputs( buf + lead_width, to_wrap );
       if ( ferror( to_wrap ) )
         ERROR( EXIT_WRITE_ERROR );
     }
@@ -148,10 +148,9 @@ int main( int argc, char const *argv[] ) {
   /*
   ** Child 2
   **
-  ** Compute the actual length of the leader: tabs are equal to <tab_spaces>
+  ** Compute the actual width of the leader: tabs are equal to <tab_spaces>
   ** spaces minus the number of spaces we're into a tab-stop, and all others
-  ** are equal to 1.  Subtract this from <line_length> to obtain the wrap
-  ** length.
+  ** are equal to 1.  Subtract this from <line_width> to obtain the wrap width.
   **
   ** Read from pipes[0] (child 1) and write to pipes[1] (parent); exec into
   ** wrap.
@@ -161,7 +160,7 @@ int main( int argc, char const *argv[] ) {
     ERROR( EXIT_FORK_ERROR );
   }
   if ( !pid ) {
-    arg_buf arg_line_length;
+    arg_buf arg_line_width;
     arg_buf arg_opt_alias;
     arg_buf arg_opt_conf_file;
     char    arg_opt_fin_name[ PATH_MAX ];
@@ -175,10 +174,10 @@ int main( int argc, char const *argv[] ) {
 
     for ( c = leader; *c; ++c ) {
       if ( *c == '\t' ) {
-        line_length -= tab_spaces - spaces;
+        line_width -= tab_spaces - spaces;
         spaces = 0;
       } else {
-        --line_length;
+        --line_width;
         spaces = (spaces + 1) % tab_spaces;
       }
     } /* for */
@@ -202,9 +201,9 @@ int main( int argc, char const *argv[] ) {
     /* 3 */ IF_ARG_DUP( opt_no_conf        , "-C"    );
     /* 4 */ IF_ARG_DUP( opt_eos_delimit    , "-e"    );
     /* 5 */ IF_ARG_FMT( opt_fin_name       , "-F%s"  );
-    /* 6 */    ARG_FMT( line_length        , "-l%d"  );
-    /* 7 */ IF_ARG_FMT( opt_para_delimiters, "-p%s"  );
-    /* 8 */    ARG_FMT( tab_spaces         , "-s%d"  );
+    /* 6 */ IF_ARG_FMT( opt_para_delimiters, "-p%s"  );
+    /* 7 */    ARG_FMT( tab_spaces         , "-s%d"  );
+    /* 8 */    ARG_FMT( line_width         , "-w%d"  );
     /* 9 */ argv[ argc ] = NULL;
 
     REDIRECT( STDIN_FILENO, 0 );
@@ -276,7 +275,7 @@ static void process_options( int argc, char const *argv[] ) {
   extern char *optarg;
   extern int optind, opterr;
   int opt;                              /* command-line option */
-  char const opts[] = "a:c:Cef:F:l:o:p:s:v";
+  char const opts[] = "a:c:Cef:F:l:o:p:s:vw:";
 
   me = base_name( argv[0] );
 
@@ -292,7 +291,6 @@ static void process_options( int argc, char const *argv[] ) {
           ERROR( EXIT_READ_OPEN );
         /* no break; */
       case 'F': opt_fin_name        = base_name( optarg );  break;
-      case 'l': line_length         = check_atou( optarg ); break;
       case 'o':
         if ( !(fout = fopen( optarg, "w" )) )
           ERROR( EXIT_WRITE_OPEN );
@@ -302,6 +300,8 @@ static void process_options( int argc, char const *argv[] ) {
       case 'v':
         fprintf( stderr, "%s\n", PACKAGE_STRING );
         exit( EXIT_OK );
+      case 'l': /* deprecated: now synonym for -w */
+      case 'w': line_width          = check_atou( optarg ); break;
       default:
         usage();
     } /* switch */
@@ -332,7 +332,7 @@ static char const* str_status( int status ) {
 }
 
 static void usage() {
-  fprintf( stderr, "usage: %s [-a alias] [-eCv] [-l line-length]\n", me );
+  fprintf( stderr, "usage: %s [-a alias] [-eCv] [-w line-width]\n", me );
   fprintf( stderr, "\t[-{fF} input-file] [-o output-file] [-c conf-file]\n" );
   fprintf( stderr, "\t[-p para-delim-chars] [-s tab-spaces]\n" );
   exit( EXIT_USAGE );

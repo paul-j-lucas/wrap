@@ -41,6 +41,11 @@ of spaces that a tab character should be considered the same as.
 Wrap now correctly handles UTF-8 encoded text by always considering multi-byte
 characters as having a width of 1.
 
+** Changed "length" to "width".
+With the addition of UTF-8 support, it sounds better to use "width" (as in
+character and line width) rather than "length."  Consequently, the -l option
+has been deprecated in favor of the new -w option.
+
 * Changes in Wrap 1.0
 
 ** Initial version.

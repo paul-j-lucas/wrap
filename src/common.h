@@ -29,7 +29,7 @@
 
 /*****************************************************************************/
 
-#define DEFAULT_LINE_LENGTH 80          /* wrap text to this line length */
+#define DEFAULT_LINE_WIDTH  80          /* wrap text to this line width */
 #define DEFAULT_TAB_SPACES  8           /* number of spaces a tab equals */
 #define LINE_BUF_SIZE       1024        /* hopefully, no one will exceed this */
 

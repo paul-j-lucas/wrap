@@ -40,7 +40,7 @@
 char        buf[ LINE_BUF_SIZE ];
 FILE*       fin = NULL;                 /* file in */
 FILE*       fout = NULL;                /* file out */
-int         line_length = DEFAULT_LINE_LENGTH;
+int         line_width = DEFAULT_LINE_WIDTH;
 char const* me;                         /* executable name */
 int         newlines_delimit = 2;       /* # newlines that delimit a para */
 int         tab_spaces = DEFAULT_TAB_SPACES;
@@ -100,7 +100,7 @@ static void usage();
 int main( int argc, char const *argv[] ) {
   int c, prev_c = '\0';                 /* current/previous character */
   int buf_count = 0;                    /* number of characters in buffer */
-  int buf_length = 0;                   /* actual length of buffer */
+  int buf_width = 0;                    /* actual width of buffer */
   int tmp_buf_count;
   int utf8_len;                         /* bytes comprising UTF-8 character */
   int wrap_pos = 0;                     /* position at which we can wrap */
@@ -275,7 +275,7 @@ int main( int argc, char const *argv[] ) {
         ** Mark position at a space to perform a wrap if necessary.
         */
         wrap_pos = buf_count;
-        buf_length += put_spaces;
+        buf_width += put_spaces;
         do {
           buf[ buf_count++ ] = ' ';
         } while ( --put_spaces );
@@ -296,7 +296,7 @@ int main( int argc, char const *argv[] ) {
         buf[ buf_count++ ] = '\t';
       for ( i = 0; i < opt_indt_spaces; ++i )
         buf[ buf_count++ ] = ' ';
-      buf_length += opt_indt_tabs * tab_spaces + opt_indt_spaces;
+      buf_width += opt_indt_tabs * tab_spaces + opt_indt_spaces;
       indent = false;
     }
 
@@ -314,7 +314,7 @@ int main( int argc, char const *argv[] ) {
     /*
     ** If we've just read the start byte of a multi-byte UTF-8 character, read
     ** the remaining bytes comprising the character.  The entire muti-byte
-    ** UTF-8 character is always treated as having a "length" of 1.
+    ** UTF-8 character is always treated as having a width of 1.
     */
     for ( i = utf8_len; i > 1; --i ) {
       if ( (c = getc( fin )) == EOF )
@@ -332,15 +332,15 @@ int main( int argc, char const *argv[] ) {
       }
     }
 
-    if ( ++buf_length < line_length ) {
+    if ( ++buf_width < line_width ) {
       /*
-      ** We haven't exceeded the line length yet.
+      ** We haven't exceeded the line width yet.
       */
       continue;
     }
 
     /*************************************************************************
-     *  EXCEEDED LINE LENGTH; PRINT LINE OUT
+     *  EXCEEDED LINE WIDTH; PRINT LINE OUT
      *************************************************************************/
 
     print_line( wrap_pos );
@@ -358,7 +358,7 @@ int main( int argc, char const *argv[] ) {
       buf[ to++ ] = '\t';
     for ( i = 0; i < opt_hang_spaces; ++i )
       buf[ to++ ] = ' ';
-    buf_length = opt_hang_tabs * tab_spaces + opt_hang_spaces;
+    buf_width = opt_hang_tabs * tab_spaces + opt_hang_spaces;
 
     /*
     ** Now slide the partial word to the left.
@@ -366,7 +366,7 @@ int main( int argc, char const *argv[] ) {
     for ( from = wrap_pos + 1; from < buf_count; ++from ) {
       buf[ to ] = buf[ from ];
       if ( !isspace( buf[ to ] ) )
-        ++to, ++buf_length;
+        ++to, ++buf_width;
     }
     buf_count = to;
     wrap_pos = 0;
@@ -379,7 +379,7 @@ continue_outer_loop:
 delimit_paragraph:
     if ( buf_count ) {
       print_line( buf_count );
-      buf_count = buf_length = 0;
+      buf_count = buf_width = 0;
     }
     put_spaces = 0;
     was_eos_char = was_para_delim_char = false;
@@ -427,7 +427,7 @@ static void clean_up() {
 }
 
 static void init( int argc, char const *argv[] ) {
-  char const opts[] = "a:bc:Cdef:F:h:H:i:I:l:m:M:nNo:p:s:S:t:v";
+  char const opts[] = "a:bc:Cdef:F:h:H:i:I:l:m:M:nNo:p:s:S:t:vw:";
 
   me = base_name( argv[0] );
   process_options( argc, argv, opts, 0 );
@@ -461,7 +461,7 @@ static void init( int argc, char const *argv[] ) {
   if ( !fout )
     fout = stdout;
 
-  line_length -=
+  line_width -=
     2 * (opt_mirror_tabs * tab_spaces + opt_mirror_spaces) +
     opt_lead_tabs * tab_spaces + opt_lead_spaces;
 
@@ -513,7 +513,6 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'H': opt_hang_spaces     = check_atou( optarg ); break;
       case 'i': opt_indt_tabs       = check_atou( optarg ); break;
       case 'I': opt_indt_spaces     = check_atou( optarg ); break;
-      case 'l': line_length         = check_atou( optarg ); break;
       case 'm': opt_mirror_tabs     = check_atou( optarg ); break;
       case 'M': opt_mirror_spaces   = check_atou( optarg ); break;
       case 'n': newlines_delimit    = INT_MAX;              break;
@@ -531,6 +530,8 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'v':
         fprintf( stderr, "%s\n", PACKAGE_STRING );
         exit( EXIT_OK );
+      case 'l': /* deprecated: now synonym for -w */
+      case 'w': line_width          = check_atou( optarg ); break;
       default:
         usage();
     } /* switch */
@@ -538,7 +539,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
 }
 
 static void usage() {
-  fprintf( stderr, "usage: %s [-bCdenNv] [-l line-length] [-p para-delim-chars] [-s tab-spaces]\n", me );
+  fprintf( stderr, "usage: %s [-bCdenNv] [-w line-width] [-p para-delim-chars] [-s tab-spaces]\n", me );
   fprintf( stderr, "\t[-{fF} input-file] [-o output-file]    [-c conf-file]\n" );
   fprintf( stderr, "\t[-t leading-tabs]  [-S leading-spaces]\n" );
   fprintf( stderr, "\t[-m mirror-tabs]   [-M mirror-spaces]\n" );
