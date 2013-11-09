@@ -23,7 +23,7 @@ input file to read from and the output file to write to, respectively.
 
 ** Added [nt]roff/man-page file support.
 Wrap now had the -d command-line option that does not alter lines that begin
-with a `.' (dot) presumed to be [nt]roff control lines.
+with a '.' (dot) presumed to be [nt]roff control lines.
 
 ** Added paragraph-delimiter option.
 Both wrap and wrapc now have a -p command-line option that allows additional
@@ -36,6 +36,10 @@ automatically based on their names matching a pattern.
 ** Added tab-spaces option.
 Both wrap and wrapc now have a -s command-line option for specifying the number
 of spaces that a tab character should be considered the same as.
+
+** Added UTF-8 support.
+Wrap now correctly handles UTF-8 encoded text by always considering multi-byte
+characters as having a width of 1.
 
 * Changes in Wrap 1.0
 

@@ -63,6 +63,30 @@ int         opt_mirror_tabs = 0;
 bool        opt_no_conf = false;        /* do not read conf file */
 char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
 
+static char const utf8_len_table[] = {
+  /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */ 
+  /* 0 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  /* 1 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  /* 2 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  /* 3 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  /* 4 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  /* 5 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  /* 6 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  /* 7 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+  /* 8 */ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  /* continuation bytes         */
+  /* 9 */ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  /*        |                   */
+  /* A */ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  /*        |                   */
+  /* B */ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  /*        |                   */
+  /* C */ 0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,  /* C0 & C1 are overlong ASCII */
+  /* D */ 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+  /* E */ 3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
+  /* F */ 4,4,4,4,4,4,4,4,5,5,5,5,6,6,0,0
+};
+
+#define UTF8_BOM            "\xEF\xBB\xBF"
+#define UTF8_BOM_LEN        (sizeof( UTF8_BOM ) - 1 /* terminating null */)
+#define UTF8_LEN(C)         ((int)utf8_len_table[ (unsigned char)(C) ])
+
 /* local functions */
 static void clean_up();
 static void init( int argc, char const *argv[] );
@@ -77,6 +101,8 @@ int main( int argc, char const *argv[] ) {
   int c, prev_c = '\0';                 /* current/previous character */
   int buf_count = 0;                    /* number of characters in buffer */
   int buf_length = 0;                   /* actual length of buffer */
+  int tmp_buf_count;
+  int utf8_len;                         /* bytes comprising UTF-8 character */
   int wrap_pos = 0;                     /* position at which we can wrap */
   int i, from, to;                      /* work variables */
   /*
@@ -278,8 +304,35 @@ int main( int argc, char const *argv[] ) {
      *  INSERT NON-SPACE CHARACTER
      *************************************************************************/
 
-    buf[ buf_count++ ] = c, ++buf_length;
-    if ( buf_length < line_length ) {
+    utf8_len = UTF8_LEN( c );
+    if ( !utf8_len )                    /* unexpected UTF-8 continuation byte */
+      continue;
+
+    tmp_buf_count = buf_count;          /* save count in case invalid UTF-8 */
+    buf[ tmp_buf_count++ ] = c;
+
+    /*
+    ** If we've just read the start byte of a multi-byte UTF-8 character, read
+    ** the remaining bytes comprising the character.  The entire muti-byte
+    ** UTF-8 character is always treated as having a "length" of 1.
+    */
+    for ( i = utf8_len; i > 1; --i ) {
+      if ( (c = getc( fin )) == EOF )
+        goto done;                      /* premature end of UTF-8 character */
+      buf[ tmp_buf_count++ ] = c;
+      if ( UTF8_LEN( c ) )              /* unexpected UTF-8 start byte */
+        goto continue_outer_loop;       /* skip entire UTF-8 character */
+    }
+    buf_count = tmp_buf_count;          /* UTF-8 is valid */
+
+    if ( utf8_len == UTF8_BOM_LEN ) {
+      int const utf8_start_pos = buf_count - UTF8_BOM_LEN;
+      if ( strncmp( buf + utf8_start_pos, UTF8_BOM, UTF8_BOM_LEN ) == 0 ) {
+        continue;
+      }
+    }
+
+    if ( ++buf_length < line_length ) {
       /*
       ** We haven't exceeded the line length yet.
       */
@@ -318,6 +371,7 @@ int main( int argc, char const *argv[] ) {
     buf_count = to;
     wrap_pos = 0;
 
+continue_outer_loop:
     continue;
 
     /*************************************************************************/
@@ -353,8 +407,9 @@ delimit_paragraph:
       }
       indent = true;
     }
-  } /* while */
+  } /* for */
 
+done:
   if ( ferror( fin ) )
     ERROR( EXIT_READ_ERROR );
   if ( buf_count )                      /* print left-over text */
