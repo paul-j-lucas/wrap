@@ -18,9 +18,6 @@
 #	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-WARN = -Wall -Wextra -Wc++-compat -Wredundant-decls -Wwrite-strings
-AM_CFLAGS = -ansi -pedantic-errors $(WARN)
-
 bin_PROGRAMS = wrap wrapc
 
 wrap_SOURCES = alias.c common.c getopt.c read_conf.c wrap.c

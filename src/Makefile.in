@@ -100,7 +100,10 @@ subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(srcdir)/config.h.in $(top_srcdir)/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_append_flag.m4 \
+	$(top_srcdir)/m4/ax_cflags_warn_all.m4 \
+	$(top_srcdir)/m4/ax_check_compile_flag.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -262,8 +265,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-WARN = -Wall -Wextra -Wc++-compat -Wredundant-decls -Wwrite-strings
-AM_CFLAGS = -ansi -pedantic-errors $(WARN)
 wrap_SOURCES = alias.c common.c getopt.c read_conf.c wrap.c \
 	$(am__append_1)
 wrapc_SOURCES = common.c getopt.c wrapc.c
