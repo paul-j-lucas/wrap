@@ -24,7 +24,7 @@ WRAP=	$(SRC)/wrap
 
 all: test
 
-test tests: $(WRAP)
+check test tests: $(WRAP)
 	@WRAP=$(WRAP) ./run_tests.sh
 
 $(WRAP): $(SRC)/Makefile
@@ -32,5 +32,13 @@ $(WRAP): $(SRC)/Makefile
 
 $(SRC)/Makefile:
 	cd $(ROOT) && ./configure
+
+# automake-required targets
+distdir:
+install install-data install-exec uninstall:
+install-dvi install-html install-info install-ps install-pdf:
+check installcheck:
+mostlyclean clean distclean maintainer-clean:
+dvi pdf ps info html tags ctags:
 
 # vim:set noet sw=8 ts=8:
