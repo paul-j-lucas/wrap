@@ -191,7 +191,7 @@ int main( int argc, char const *argv[] ) {
 #define ARG_FMT(ARG,FMT) \
   do { ARG_SPRINTF( ARG, (FMT) ); argv[ argc++ ] = arg_##ARG; } while (0)
 
-#define IF_ARG_FMT(ARG,FMT) if ( ARG ) ARG_FMT(ARG,FMT)
+#define IF_ARG_FMT(ARG,FMT) if ( ARG ) ARG_FMT( ARG, FMT )
 
     /* Quoting string arguments is unnecessary since no shell is involved. */
 
