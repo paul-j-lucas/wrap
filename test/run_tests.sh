@@ -35,11 +35,11 @@ do
   if [ "$CONFIG" != /dev/null ]
   then CONFIG="data/$CONFIG"
   fi
-  INPUT=`echo $INPUT`                   # trims whitespace
+  INPUT="data/`echo $INPUT`"            # trims whitespace
   EXPECTED="expected/`echo $TEST_FILE | sed 's/test$/txt/'`"
 
-  #echo $WRAP -c $CONFIG $OPTIONS -f data/$INPUT -o $OUTPUT
-  if $WRAP -c $CONFIG $OPTIONS -f data/$INPUT -o $OUTPUT
+  #echo $WRAP -c $CONFIG $OPTIONS -f $INPUT -o $OUTPUT
+  if $WRAP -c $CONFIG $OPTIONS -f $INPUT -o $OUTPUT
   then
     if diff $OUTPUT $EXPECTED
     then echo "PASS: $TEST_FILE"
