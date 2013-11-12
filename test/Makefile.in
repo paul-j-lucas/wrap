@@ -422,6 +422,7 @@ TESTS = tests/utf8-w77.test \
 	tests/wrap-alias-no_equal.test \
 	tests/wrap-alias-options_exp.test \
 	tests/wrap-alias-unexp_char.test \
+	tests/wrap-a.test \
 	tests/wrap-bI2.test \
 	tests/wrap-conf-no_section.test \
 	tests/wrap-conf-not_found.test \
