@@ -45,13 +45,13 @@ static int          n_aliases_alloc = 0;
 static void alias_check_dup( char const *conf_file, int line_no ) {
   if ( n_aliases > 1 ) {
     int i = n_aliases - 1;
-    alias_t const *const last = &aliases[i];
+    char const *const last_name = aliases[i].argv[0];
     while ( --i >= 0 )
-      if ( strcmp( aliases[i].argv[0], last->argv[0] ) == 0 ) {
+      if ( strcmp( aliases[i].argv[0], last_name ) == 0 ) {
         fprintf(
           stderr,
-          "%s: %s:%d: \"%s\": duplicate alias name (previous one on line %d)\n",
-          me, conf_file, line_no, last->argv[0], last->line_no
+          "%s: %s:%d: \"%s\": duplicate alias name (first is on line %d)\n",
+          me, conf_file, line_no, last_name, aliases[i].line_no
         );
         exit( EXIT_CONF_ERROR );
       }
