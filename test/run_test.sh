@@ -31,12 +31,22 @@ fi
 
 ########## Functions ##########################################################
 
+local_basename() {
+  #
+  # Autoconf, 11.15:
+  #
+  # basename
+  #   Not all hosts have a working basename. You can use expr instead.
+  #
+  expr "//$1" : '.*/\(.*\)'
+}
+
 pass() {
   print_result PASS $TEST_NAME
   {
     echo ":test-result: PASS"
     echo ":copy-in-global-log: no"
-  } >> $TRS_FILE
+  } > $TRS_FILE
 }
 
 fail() {
@@ -44,7 +54,7 @@ fail() {
   {
     echo ":test-result: FAIL"
     echo ":copy-in-global-log: yes"
-  } >> $TRS_FILE
+  } > $TRS_FILE
   exit $ACTUAL_EXIT
 }
 
@@ -139,8 +149,6 @@ TEST=$1
 
 ########## Initialize #########################################################
 
-rm -f $LOG_FILE $TRS_FILE
-
 PASS=0
 XPASS=1
 FAIL=2
@@ -179,6 +187,7 @@ esac
 
 DATA_DIR="$srcdir/data"
 EXPECTED_DIR="$srcdir/expected"
+TEST_NAME=`local_basename $TEST_NAME`
 
 ########## Run test ###########################################################
 

@@ -18,18 +18,18 @@
 #	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-TESTS =	utf8-w77.test \
-	utf8-w78.test \
-	utf8-w79.test \
-	utf8-w80.test \
-	wrap-H3.test \
-	wrap-I2-m1.test \
-	wrap-I2-w72.test \
-	wrap-bI2.test \
-	wrap-d.test \
-	wrap-dep.test \
-	wrap-no_options.test \
-	wrap-t1.test
+TESTS =	tests/utf8-w77.test \
+	tests/utf8-w78.test \
+	tests/utf8-w79.test \
+	tests/utf8-w80.test \
+	tests/wrap-H3.test \
+	tests/wrap-I2-m1.test \
+	tests/wrap-I2-w72.test \
+	tests/wrap-bI2.test \
+	tests/wrap-d.test \
+	tests/wrap-dep.test \
+	tests/wrap-no_options.test \
+	tests/wrap-t1.test
 
 AM_TESTS_ENVIRONMENT = WRAP=$(top_builddir)/src/wrap ;
 TEST_EXTENSIONS = .test
