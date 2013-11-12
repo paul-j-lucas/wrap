@@ -22,13 +22,15 @@ TESTS =	tests/utf8-w77.test \
 	tests/utf8-w78.test \
 	tests/utf8-w79.test \
 	tests/utf8-w80.test \
+	tests/wrap-bI2.test \
+	tests/wrap-conf-not_found.test \
+	tests/wrap-dep.test \
+	tests/wrap-d.test \
 	tests/wrap-H3.test \
 	tests/wrap-I2-m1.test \
 	tests/wrap-I2-w72.test \
-	tests/wrap-bI2.test \
-	tests/wrap-d.test \
-	tests/wrap-dep.test \
 	tests/wrap-no_options.test \
+	tests/wrap-n.test \
 	tests/wrap-t1.test
 
 AM_TESTS_ENVIRONMENT = WRAP=$(top_builddir)/src/wrap ;
