@@ -19,6 +19,6 @@
 ##
 
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = src man
+SUBDIRS = src man test
 
 # vim:set noet sw=8 ts=8:

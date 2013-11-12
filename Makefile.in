@@ -296,7 +296,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = src man
+SUBDIRS = src man test
 all: all-recursive
 
 .SUFFIXES:
