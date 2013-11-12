@@ -42,7 +42,7 @@ local_basename() {
 }
 
 pass() {
-  print_result PASS $TEST_NAME
+  print_result $PASS $TEST_NAME
   {
     echo ":test-result: PASS"
     echo ":copy-in-global-log: no"
@@ -50,7 +50,7 @@ pass() {
 }
 
 fail() {
-  print_result FAIL $TEST_NAME
+  print_result $FAIL $TEST_NAME
   {
     echo ":test-result: FAIL"
     echo ":copy-in-global-log: yes"
@@ -188,8 +188,11 @@ esac
 DATA_DIR="$srcdir/data"
 EXPECTED_DIR="$srcdir/expected"
 TEST_NAME=`local_basename $TEST_NAME`
+OUTPUT=/tmp/wrap_test_output_$$_
 
 ########## Run test ###########################################################
+
+trap "x=$?; rm -f /tmp/*_$$_* 2>/dev/null; exit $x" EXIT HUP INT TERM
 
 IFS='|' read CONFIG OPTIONS INPUT EXPECTED_EXIT < $TEST
 CONFIG=`echo $CONFIG`                   # trims whitespace
@@ -198,12 +201,12 @@ INPUT="$DATA_DIR/`echo $INPUT`"         # trims whitespace
 EXPECTED_EXIT=`echo $EXPECTED_EXIT`     # trims whitespace
 EXPECTED_OUTPUT="$EXPECTED_DIR/`echo $TEST_NAME | sed 's/test$/txt/'`"
 
-if $WRAP -c $CONFIG $OPTIONS -f $INPUT > $LOG_FILE 2>&1
+if $WRAP -c $CONFIG $OPTIONS -f $INPUT -o $OUTPUT 2> $LOG_FILE
 then
   if [ 0 -eq $EXPECTED_EXIT ]
   then
-    if diff $LOG_FILE $EXPECTED_OUTPUT >/dev/null
-    then pass
+    if diff $OUTPUT $EXPECTED_OUTPUT > $LOG_FILE
+    then pass; mv $OUTPUT $LOG_FILE
     else fail
     fi
   else
