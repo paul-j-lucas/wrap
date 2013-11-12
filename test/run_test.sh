@@ -23,21 +23,26 @@
 
 ME=$0; ME=`expr $ME : '.*/\(.*\)'`
 
-if [ -z "$WRAP" ]
-then
-  echo "$ME: error: \$WRAP not set" >&2
+[ "$WRAP" ] || {
+  echo "$ME: \$WRAP not set" >&2
   exit 2
-fi
+}
+
+##
+# The automake framework sets $srcdir. If it's empty, it means this script was
+# called by hand, so set it ourselves.
+##
+[ "$srcdir" ] || srcdir="."
 
 ########## Functions ##########################################################
 
 local_basename() {
-  #
+  ##
   # Autoconf, 11.15:
   #
   # basename
   #   Not all hosts have a working basename. You can use expr instead.
-  #
+  ##
   expr "//$1" : '.*/\(.*\)'
 }
 
@@ -69,11 +74,7 @@ print_result() {
 }
 
 usage() {
-  if [ "$1" ]
-  then
-    echo "$ME: $*" >&2
-    usage
-  fi
+  [ "$1" ] && { echo "$ME: $*" >&2; usage; }
   cat >&2 <<END
 usage: $ME --test-name=NAME --log-file=PATH --trs-file=PATH [options] TEST-COMMAND
 options:
