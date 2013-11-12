@@ -1,0 +1,5 @@
+[ALIASES]
+man = -dep,:;
+
+[PATTERNS]
+*.[123456789] =

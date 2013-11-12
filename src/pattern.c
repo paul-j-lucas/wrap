@@ -95,7 +95,7 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
   line += strspn( line, " \t" );
   if ( !*line ) {
     fprintf(
-      stderr, "%s: %s:%d: pattern expected after '='\n",
+      stderr, "%s: %s:%d: alias name expected after '='\n",
       me, conf_file, line_no
     );
     exit( EXIT_CONF_ERROR );
