@@ -46,7 +46,7 @@ static void alias_check_dup( char const *conf_file, int line_no ) {
   if ( n_aliases > 1 ) {
     int i = n_aliases - 1;
     alias_t const *const last = &aliases[i];
-    while ( --i )
+    while ( --i >= 0 )
       if ( strcmp( aliases[i].argv[0], last->argv[0] ) == 0 ) {
         fprintf(
           stderr,
