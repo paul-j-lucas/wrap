@@ -149,6 +149,7 @@ TEST=$1
 
 ########## Initialize #########################################################
 
+# Mnemonic array indicies.
 PASS=0
 XPASS=1
 FAIL=2
