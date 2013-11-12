@@ -429,6 +429,7 @@ TESTS = tests/utf8-w77.test \
 	tests/wrap-dep.test \
 	tests/wrap-d.test \
 	tests/wrap-file-not_found.test \
+	tests/wrap-h1-I5.test \
 	tests/wrap-H3.test \
 	tests/wrap-I2-m1.test \
 	tests/wrap-I2-w72.test \
