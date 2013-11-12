@@ -126,7 +126,7 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
   while ( true ) {
     line += strspn( line, " \t" );
     if ( !*line ) {
-      if ( !alias->argc ) {
+      if ( alias->argc == 1 ) {
         fprintf(
           stderr, "%s: %s:%d: option(s) expected after '='\n",
           me, conf_file, line_no
