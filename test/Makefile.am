@@ -22,7 +22,9 @@ TESTS =	tests/utf8-w77.test \
 	tests/utf8-w78.test \
 	tests/utf8-w79.test \
 	tests/utf8-w80.test \
+	tests/wrap-alias-dup.test \
 	tests/wrap-bI2.test \
+	tests/wrap-conf-no_section.test \
 	tests/wrap-conf-not_found.test \
 	tests/wrap-dep.test \
 	tests/wrap-d.test \

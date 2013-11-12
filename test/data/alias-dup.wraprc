@@ -1,0 +1,3 @@
+[ALIASES]
+man = -dep,:;
+man = -dep,:;
