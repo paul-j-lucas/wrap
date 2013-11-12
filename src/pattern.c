@@ -106,7 +106,7 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
       stderr, "%s: %s:%d: \"%s\": no such alias\n",
       me, conf_file, line_no, line
     );
-    exit( EXIT_USAGE );
+    exit( EXIT_CONF_ERROR );
   }
   pattern->alias = alias;
 }
