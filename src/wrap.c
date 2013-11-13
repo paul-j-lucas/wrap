@@ -126,6 +126,9 @@ int main( int argc, char const *argv[] ) {
   **
   ** 4. If the -b option is specified, a line beginning with white-space
   **    delimits a paragraph.
+  **
+  ** 5. If the -d option is specified, a line beginning with a '.' (dot),
+  **    presumed to be an [nt]roff(1) control line, is not altered.
   */
 
   /*
