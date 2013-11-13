@@ -327,9 +327,8 @@ int main( int argc, char const *argv[] ) {
 
     if ( utf8_len == UTF8_BOM_LEN ) {
       int const utf8_start_pos = buf_count - UTF8_BOM_LEN;
-      if ( strncmp( buf + utf8_start_pos, UTF8_BOM, UTF8_BOM_LEN ) == 0 ) {
-        continue;
-      }
+      if ( strncmp( buf + utf8_start_pos, UTF8_BOM, UTF8_BOM_LEN ) == 0 )
+        continue;                       /* discard UTF-8 BOM */
     }
 
     if ( ++buf_width < line_width ) {
