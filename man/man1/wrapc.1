@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\f1 1 "November 9, 2013" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "November 14, 2013" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -52,6 +52,8 @@ option.
 .P
 Leading white-space and comment delimiters are preserved.
 The characters that are recognized as comment delimeters are:
+.P
+.PD 0
 .IP "\f(CW!\f1" 10
 HTML and XML comments.
 .IP "\f(CW#\f1" 10
@@ -66,6 +68,7 @@ XQuery comments.
 Assember and Lisp comments.
 .IP "\f(CW>\f1" 10
 Forwarded mail indicator.
+.PD
 .P
 All other white-space characters are folded
 in the same manner as in
