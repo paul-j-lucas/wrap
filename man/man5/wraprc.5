@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wraprc\f1 1 "November 2, 2013" "PJL TOOLS"
+.TH \f3wraprc\f1 1 "November 14, 2013" "PJL TOOLS"
 .SH NAME
 wraprc \- text reformatter runtime configuration file
 .SH DESCRIPTION
@@ -45,12 +45,15 @@ file is used to configure
 and
 .BR wrapc (1).
 The file is line-oriened with different line types:
+.P
+.PD 0
 .IP "\(bu" 3
 Blank lines (that are ignored).
 .IP "\(bu" 3
 Section lines.
 .IP "\(bu" 3
 Configuration lines.
+.PD
 .P
 Additionally,
 all leading and trailing whitespace characters
@@ -70,7 +73,7 @@ that is a left bracket,
 a section name,
 and a right bracket.
 There must be no whitespace between the brackets.
-.SS Aliases section
+.SS Aliases Section
 The
 .I "aliases section"
 is started by a line:
@@ -124,7 +127,7 @@ Those options are:
 and
 .B \-v
 (version).
-.SS Patterns section
+.SS Patterns Section
 The
 .I "patterns section"
 is started by a line:
