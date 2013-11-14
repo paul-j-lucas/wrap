@@ -166,10 +166,35 @@ to
 characters
 (default is 80).
 .SH EXIT STATUS
-The
-.B wrapc
-utility exits with 0 on success
-and >0 on failure.
+.PD 0
+.IP 0
+Success.
+.IP 1
+Error in command-line.
+.IP 2
+Error in configuration file.
+.IP 3
+Out of memory.
+.IP 10
+Error opening file for reading.
+.IP 11
+Read error.
+.IP 12
+Error opening file for writing.
+.IP 13
+Write error.
+.IP 20
+.BR fork (2)
+failed.
+.IP 21
+.BR exec (2)
+failed.
+.IP 30
+Caught signal from child process.
+.IP 40
+.BR pipe (2)
+failed.
+.PD
 .SH BUGS
 The first comment line is used at the prototype for all subsequent lines.
 The number of characters comprising
