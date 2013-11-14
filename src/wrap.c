@@ -143,8 +143,8 @@ int main( int argc, char const *argv[] ) {
   bool ignore_lead_dot = false;
 
   /*
-  ** Set to 1 when a newline is encountered; decremented otherwise.  Used and
-  ** valid only if opt_lead_ws_delimit is true.
+  ** Set to 1 when a newline is encountered; decremented otherwise.  Used only
+  ** when opt_lead_ws_delimit is true.
   */
   int  newline_counter = 0;
 
