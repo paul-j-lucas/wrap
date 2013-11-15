@@ -274,43 +274,44 @@ int main( int argc, char const *argv[] ) {
 /*****************************************************************************/
 
 static void process_options( int argc, char const *argv[] ) {
-  extern char *optarg;
-  extern int optind, opterr;
   int opt;                              /* command-line option */
+  char const* opt_fin = NULL;           /* file in name */
+  char const* opt_fout = NULL;          /* file out name */
   char const opts[] = "a:c:Cef:F:l:o:p:s:Tvw:";
 
   me = base_name( argv[0] );
 
   opterr = 1;
-  while ( (opt = pjl_getopt( argc, argv, opts )) != EOF )
+  while ( (opt = pjl_getopt( argc, argv, opts )) != EOF ) {
     switch ( opt ) {
       case 'a': opt_alias           = optarg;               break;
       case 'c': opt_conf_file       = optarg;               break;
       case 'C': opt_no_conf         = true;                 break;
       case 'e': opt_eos_delimit     = true;                 break;
-      case 'f':
-        if ( !(fin = fopen( optarg, "r" )) )
-          ERROR( EXIT_READ_OPEN );
-        /* no break; */
+      case 'f': opt_fin             = optarg;         /* no break; */
       case 'F': opt_fin_name        = base_name( optarg );  break;
-      case 'o':
-        if ( !(fout = fopen( optarg, "w" )) )
-          ERROR( EXIT_WRITE_OPEN );
-        break;
+      case 'o': opt_fout            = optarg;               break;
       case 'p': opt_para_delimiters = optarg;               break;
       case 's': tab_spaces          = check_atou( optarg ); break;
       case 'T': opt_title_line      = true;                 break;
-      case 'v':
-        fprintf( stderr, "%s\n", PACKAGE_STRING );
-        exit( EXIT_OK );
+      case 'v': fprintf( stderr, "%s\n", PACKAGE_STRING );  exit( EXIT_OK );
       case 'l': /* deprecated: now synonym for -w */
       case 'w': line_width          = check_atou( optarg ); break;
-      default:
-        usage();
+      default : usage();
     } /* switch */
+  } /* while */
   argc -= optind, argv += optind;
   if ( argc )
     usage();
+
+  if ( opt_fin && !(fin = fopen( opt_fin, "r" )) ) {
+    fprintf( stderr, "%s: \"%s\": %s\n", me, optarg, strerror( errno ) );
+    exit( EXIT_READ_OPEN );
+  }
+  if ( opt_fout && !(fout = fopen( optarg, "w" )) ) {
+    fprintf( stderr, "%s: \"%s\": %s\n", me, optarg, strerror( errno ) );
+    exit( EXIT_WRITE_OPEN );
+  }
 
   if ( !fin )
     fin = stdin;
