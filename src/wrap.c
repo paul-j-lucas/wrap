@@ -506,10 +506,11 @@ static void print_line( int up_to ) {
 
 static void process_options( int argc, char const *argv[], char const *opts,
                              int line_no ) {
-  int opt;
-  optind = 1;
-  opterr = 1;
+  int opt;                              /* command-line option */
+  char const* opt_fin = NULL;           /* file in name */
+  char const* opt_fout = NULL;          /* file out name */
 
+  optind = opterr = 1;
   while ( (opt = pjl_getopt( argc, argv, opts )) != EOF ) {
     if ( line_no && strchr( "acCfFov", opt ) ) {
       fprintf(
@@ -525,12 +526,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'C': opt_no_conf         = true;                 break;
       case 'd': opt_lead_dot_ignore = true;                 break;
       case 'e': opt_eos_delimit     = true;                 break;
-      case 'f':
-        if ( !(fin = fopen( optarg, "r" )) ) {
-          fprintf( stderr, "%s: \"%s\": %s\n", me, optarg, strerror( errno ) );
-          exit( EXIT_READ_OPEN );
-        }
-        /* no break; */
+      case 'f': opt_fin             = optarg;         /* no break; */
       case 'F': opt_fin_name        = base_name( optarg );  break;
       case 'h': opt_hang_tabs       = check_atou( optarg ); break;
       case 'H': opt_hang_spaces     = check_atou( optarg ); break;
@@ -540,26 +536,27 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'M': opt_mirror_spaces   = check_atou( optarg ); break;
       case 'n': newlines_delimit    = INT_MAX;              break;
       case 'N': newlines_delimit    = 1;                    break;
-      case 'o':
-        if ( !(fout = fopen( optarg, "w" )) ) {
-          fprintf( stderr, "%s: \"%s\": %s\n", me, optarg, strerror( errno ) );
-          exit( EXIT_WRITE_OPEN );
-        }
-        break;
+      case 'o': opt_fout            = optarg;               break;
       case 'p': opt_para_delimiters = optarg;               break;
       case 's': tab_spaces          = check_atou( optarg ); break;
       case 'S': opt_lead_spaces     = check_atou( optarg ); break;
       case 't': opt_lead_tabs       = check_atou( optarg ); break;
       case 'T': opt_title_line      = true;                 break;
-      case 'v':
-        fprintf( stderr, "%s\n", PACKAGE_STRING );
-        exit( EXIT_OK );
+      case 'v': fprintf( stderr, "%s\n", PACKAGE_STRING );  exit( EXIT_OK );
       case 'l': /* deprecated: now synonym for -w */
       case 'w': line_width          = check_atou( optarg ); break;
-      default:
-        usage();
+      default : usage();
     } /* switch */
   } /* while */
+
+  if ( opt_fin && !(fin = fopen( opt_fin, "r" )) ) {
+    fprintf( stderr, "%s: \"%s\": %s\n", me, optarg, strerror( errno ) );
+    exit( EXIT_READ_OPEN );
+  }
+  if ( opt_fout && !(fout = fopen( optarg, "w" )) ) {
+    fprintf( stderr, "%s: \"%s\": %s\n", me, optarg, strerror( errno ) );
+    exit( EXIT_WRITE_OPEN );
+  }
 }
 
 static void usage() {
