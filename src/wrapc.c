@@ -70,6 +70,7 @@ bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
 char const* opt_fin_name = NULL;        /* file in name */
 bool        opt_no_conf = false;        /* do not read conf file */
 char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
+bool        opt_title_line = false;     /* 1st para line is title? */
 
 /* local functions */
 static void process_options( int argc, char const *argv[] );
@@ -168,7 +169,7 @@ int main( int argc, char const *argv[] ) {
     arg_buf arg_tab_spaces;
 
     int argc = 0;
-    char *argv[10];                     /* must be +1 of greatest arg below */
+    char *argv[11];                     /* must be +1 of greatest arg below */
     char const *c;
     int spaces = 0;
 
@@ -195,16 +196,17 @@ int main( int argc, char const *argv[] ) {
 
     /* Quoting string arguments is unnecessary since no shell is involved. */
 
-    /* 0 */    ARG_DUP(                      PACKAGE );
-    /* 1 */ IF_ARG_FMT( opt_alias          , "-a%s"  );
-    /* 2 */ IF_ARG_FMT( opt_conf_file      , "-c%s"  );
-    /* 3 */ IF_ARG_DUP( opt_no_conf        , "-C"    );
-    /* 4 */ IF_ARG_DUP( opt_eos_delimit    , "-e"    );
-    /* 5 */ IF_ARG_FMT( opt_fin_name       , "-F%s"  );
-    /* 6 */ IF_ARG_FMT( opt_para_delimiters, "-p%s"  );
-    /* 7 */    ARG_FMT( tab_spaces         , "-s%d"  );
-    /* 8 */    ARG_FMT( line_width         , "-w%d"  );
-    /* 9 */ argv[ argc ] = NULL;
+    /*  0 */    ARG_DUP(                      PACKAGE );
+    /*  1 */ IF_ARG_FMT( opt_alias          , "-a%s"  );
+    /*  2 */ IF_ARG_FMT( opt_conf_file      , "-c%s"  );
+    /*  3 */ IF_ARG_DUP( opt_no_conf        , "-C"    );
+    /*  4 */ IF_ARG_DUP( opt_eos_delimit    , "-e"    );
+    /*  5 */ IF_ARG_FMT( opt_fin_name       , "-F%s"  );
+    /*  6 */ IF_ARG_FMT( opt_para_delimiters, "-p%s"  );
+    /*  7 */    ARG_FMT( tab_spaces         , "-s%d"  );
+    /*  8 */ IF_ARG_DUP( opt_title_line     , "-T"    );
+    /*  9 */    ARG_FMT( line_width         , "-w%d"  );
+    /* 10 */ argv[ argc ] = NULL;
 
     REDIRECT( STDIN_FILENO, 0 );
     REDIRECT( STDOUT_FILENO, 1 );
@@ -275,7 +277,7 @@ static void process_options( int argc, char const *argv[] ) {
   extern char *optarg;
   extern int optind, opterr;
   int opt;                              /* command-line option */
-  char const opts[] = "a:c:Cef:F:l:o:p:s:vw:";
+  char const opts[] = "a:c:Cef:F:l:o:p:s:Tvw:";
 
   me = base_name( argv[0] );
 
@@ -297,6 +299,7 @@ static void process_options( int argc, char const *argv[] ) {
         break;
       case 'p': opt_para_delimiters = optarg;               break;
       case 's': tab_spaces          = check_atou( optarg ); break;
+      case 'T': opt_title_line      = true;                 break;
       case 'v':
         fprintf( stderr, "%s\n", PACKAGE_STRING );
         exit( EXIT_OK );
@@ -332,7 +335,7 @@ static char const* str_status( int status ) {
 }
 
 static void usage() {
-  fprintf( stderr, "usage: %s [-a alias] [-eCv] [-w line-width]\n", me );
+  fprintf( stderr, "usage: %s [-a alias] [-CeTv] [-w line-width]\n", me );
   fprintf( stderr, "\t[-{fF} input-file] [-o output-file] [-c conf-file]\n" );
   fprintf( stderr, "\t[-p para-delim-chars] [-s tab-spaces]\n" );
   exit( EXIT_USAGE );

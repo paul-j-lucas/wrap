@@ -62,6 +62,7 @@ int         opt_mirror_spaces = 0;
 int         opt_mirror_tabs = 0;
 bool        opt_no_conf = false;        /* do not read conf file */
 char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
+bool        opt_title_line = false;     /* 1st para line is title? */
 
 static char const utf8_len_table[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */ 
@@ -89,6 +90,7 @@ static char const utf8_len_table[] = {
 
 /* local functions */
 static void clean_up();
+static void hang_indent( int *count, int *width );
 static void init( int argc, char const *argv[] );
 static void print_line( int up_to );
 static void process_options( int argc, char const *argv[], char const *opts,
@@ -104,32 +106,7 @@ int main( int argc, char const *argv[] ) {
   int tmp_buf_count;
   int utf8_len;                         /* bytes comprising UTF-8 character */
   int wrap_pos = 0;                     /* position at which we can wrap */
-  int i, from, to;                      /* work variables */
-  /*
-  ** Fold all white-space (perhaps multiple characters) to a single space with
-  ** the following exceptions:
-  **
-  ** 1. Force 2 spaces after the end of a sentence that ends a line; sentences
-  **    are ended by an "end-of-sentence" character, that is, a period,
-  **    question-mark, or an exclamation-point, optionally followed by a
-  **    single-quote, double-quote, or a closing parenthesis or bracket.
-  **
-  ** 2. Allow 2 spaces after the end of a sentence that does not end a line.
-  **    This distinction is made so as not to put 2 spaces after a period that
-  **    is an abbreviation and not the end of a sentence; periods at the end of
-  **    a line will hopefully not be abbreviations.
-  **
-  ** 3. If neither the -n or -N option is specified, 2 consecutive newline
-  **    characters delimit a paragraph and are not folded; more than 2 are
-  **    folded.  If -n is specified, newlines receive no special treatment;
-  **    if -N is specified, every newline delimits a paragraph.
-  **
-  ** 4. If the -b option is specified, a line beginning with white-space
-  **    delimits a paragraph.
-  **
-  ** 5. If the -d option is specified, a line beginning with a '.' (dot),
-  **    presumed to be an [nt]roff(1) control line, is not altered.
-  */
+  int i, from;                          /* work variables */
 
   /*
   ** Number of consecutive newlines.
@@ -137,16 +114,33 @@ int main( int argc, char const *argv[] ) {
   int  consec_newlines = 0;
 
   /*
+  ** True only when we should do hang-indenting after a title line.
+  */
+  bool do_hang_indent = false;
+
+  /*
   ** True only when opt_lead_dot_ignore = true, the current character is a '.',
   ** and the previous character was a '\n' (i.e., the line starts with a '.').
   */
-  bool ignore_lead_dot = false;
+  bool do_ignore_lead_dot = false;
+
+  /*
+  ** True only when we should do indenting: set initially to indent the first
+  ** line of a paragraph and after newlines_delimit or more consecutive
+  ** newlines for subsequent paragraphs.
+  */
+  bool do_indent = true;
 
   /*
   ** Set to 1 when a newline is encountered; decremented otherwise.  Used only
-  ** when opt_lead_ws_delimit is true.
+  ** when opt_lead_ws_delimit (-b) is true.
   */
   int  newline_counter = 0;
+
+  /*
+  ** True when the next line to be read will be a title line.
+  */
+  bool next_line_is_title;
 
   /*
   ** Number of spaces to output before the next non-white-space character: set
@@ -154,13 +148,6 @@ int main( int argc, char const *argv[] ) {
   ** true so as to put 2 characters after the end of a sentence.
   */
   int  put_spaces = 0;
-
-  /*
-  ** True only when we should do indenting: set initially to indent the first
-  ** line of a paragraph and after newlines_delimit or more consecutive
-  ** newlines for subsequent paragraphs.
-  */
-  bool indent = true;
 
   /*
   ** True only if the previous character was an end-of-sentence character.
@@ -176,6 +163,12 @@ int main( int argc, char const *argv[] ) {
 
   init( argc, argv );
 
+  /*
+  ** The first non-all-whitespace line of the first paragraph is a title line
+  ** only if opt_title_line (-T) is true.
+  */
+  next_line_is_title = opt_title_line;
+
   for ( ; (c = getc( fin )) != EOF; prev_c = c ) {
 
     /*************************************************************************
@@ -186,17 +179,29 @@ int main( int argc, char const *argv[] ) {
       newline_counter = 1;
       if ( ++consec_newlines >= newlines_delimit ) {
         /*
-        ** At least newlines_delimit consecutive newlines: print text, if any;
-        ** also set up for indenting.
+        ** At least newlines_delimit consecutive newlines: set that the next
+        ** line is a title line and delimit the paragraph.
         */
+        next_line_is_title = opt_title_line;
         goto delimit_paragraph;
       }
       if ( opt_eos_delimit && was_eos_char ) {
         /*
-        ** If end-of-sentence characters delimit paragraphs and the previous
-        ** character was an end-of-sentence character, delimit the paragraph.
+        ** End-of-sentence characters delimit paragraphs and the previous
+        ** character was an end-of-sentence character: delimit the paragraph.
         */
         goto delimit_paragraph;
+      }
+      if ( next_line_is_title && buf_count ) {
+        /*
+        ** The first line of the next paragraph is title line and the buffer
+        ** isn't empty (there is a title): print the title.
+        */
+        print_line( buf_count );
+        buf_count = buf_width = 0;
+        do_hang_indent = true;
+        next_line_is_title = false;
+        continue;
       }
       if ( was_eos_char ) {
         /*
@@ -215,30 +220,34 @@ int main( int argc, char const *argv[] ) {
      *************************************************************************/
 
     if ( isspace( c ) ) {
-      /*
-      ** If newline_counter == 0, the previous character was a newline;
-      ** therefore, this white-space character is at the beginning of a line.
-      */
-      if ( opt_lead_ws_delimit && newline_counter == 0 )
+      if ( opt_lead_ws_delimit && newline_counter == 0 ) {
+        /*
+        ** If newline_counter == 0, the previous character was a newline;
+        ** therefore, this white-space character is at the beginning of a line.
+        */
         goto delimit_paragraph;
-      /*
-      ** If end-of-sentence characters delimit paragraphs and the previous
-      ** character was an end-of-sentence character, delimit the paragraph.
-      */
-      if ( opt_eos_delimit && was_eos_char )
+      }
+      if ( opt_eos_delimit && was_eos_char ) {
+        /*
+        ** End-of-sentence characters delimit paragraphs and the previous
+        ** character was an end-of-sentence character: delimit the paragraph.
+        */
         goto delimit_paragraph;
-      /*
-      ** If the previous character was a paragraph-delimiter character (this is
-      ** set only if opt_para_delimiters was set), delimit the paragraph.
-      */
-      if ( was_para_delim_char )
+      }
+      if ( was_para_delim_char ) {
+        /*
+        ** The previous character was a paragraph-delimiter character (set only
+        ** if opt_para_delimiters was set): delimit the paragraph.
+        */
         goto delimit_paragraph;
-      /*
-      ** Only if we are not at the beginning of a line, remember to insert 1
-      ** space later; allow 2 after the end of a sentence.
-      */
-      if ( buf_count && put_spaces < 1 + was_eos_char )
+      }
+      if ( buf_count && put_spaces < 1 + was_eos_char ) {
+        /*
+        ** We are not at the beginning of a line: remember to insert 1 space
+        ** later amd allow 2 after the end of a sentence.
+        */
         ++put_spaces;
+      }
       continue;
     }
 
@@ -254,7 +263,7 @@ int main( int argc, char const *argv[] ) {
      *************************************************************************/
 
     if ( opt_lead_dot_ignore && c == '.' && prev_c == '\n' ) {
-      ignore_lead_dot = true;
+      do_ignore_lead_dot = true;
       goto delimit_paragraph;
     }
 
@@ -291,16 +300,22 @@ int main( int argc, char const *argv[] ) {
     }
 
     /*************************************************************************
-     *  PERFORM FIRST-LINE-OF-PARAGRAPH INDENTATION
+     *  PERFORM INDENTATION
      *************************************************************************/
 
-    if ( indent ) {
+    if ( do_indent ) {
+      buf_count = 0;
       for ( i = 0; i < opt_indt_tabs; ++i )
         buf[ buf_count++ ] = '\t';
       for ( i = 0; i < opt_indt_spaces; ++i )
         buf[ buf_count++ ] = ' ';
-      buf_width += opt_indt_tabs * tab_spaces + opt_indt_spaces;
-      indent = false;
+      buf_width = opt_indt_tabs * tab_spaces + opt_indt_spaces;
+      do_indent = false;
+    }
+
+    if ( do_hang_indent ) {
+      hang_indent( &buf_count, &buf_width );
+      do_hang_indent = false;
     }
 
     /*************************************************************************
@@ -351,31 +366,23 @@ int main( int argc, char const *argv[] ) {
     ** Prepare to slide the partial word to the left where we can pick up from
     ** where we left off the next time around.
     */
-    to = 0;
-
-    /*
-    ** Perform hang indentation first.
-    */
-    for ( i = 0; i < opt_hang_tabs; ++i )
-      buf[ to++ ] = '\t';
-    for ( i = 0; i < opt_hang_spaces; ++i )
-      buf[ to++ ] = ' ';
-    buf_width = opt_hang_tabs * tab_spaces + opt_hang_spaces;
+    tmp_buf_count = buf_count;
+    buf_count = buf_width = 0;
+    hang_indent( &buf_count, &buf_width );
 
     /*
     ** Now slide the partial word to the left.
     */
-    for ( from = wrap_pos + 1; from < buf_count; ++from ) {
-      char const c = buf[ from ];
+    for ( from = wrap_pos + 1; from < tmp_buf_count; ++from ) {
+      c = buf[ from ];
       if ( !isspace( c ) ) {
-        buf[ to++ ] = c;
+        buf[ buf_count++ ] = c;
         ++buf_width;
         for ( utf8_len = UTF8_LEN( c ); utf8_len > 1; --utf8_len )
-          buf[ to++ ] = buf[ ++from ];
+          buf[ buf_count++ ] = buf[ ++from ];
       }
     }
 
-    buf_count = to;
     wrap_pos = 0;
 
 continue_outer_loop:
@@ -390,8 +397,8 @@ delimit_paragraph:
     }
     put_spaces = 0;
     was_eos_char = was_para_delim_char = false;
-    if ( ignore_lead_dot ) {
-      ignore_lead_dot = false;
+    if ( do_ignore_lead_dot ) {
+      do_ignore_lead_dot = false;
       /*
       ** The line starts with a leading dot and opt_lead_dot_ignore = true:
       ** read/write the line as-is.
@@ -412,7 +419,7 @@ delimit_paragraph:
         if ( ferror( fout ) )
           ERROR( EXIT_WRITE_ERROR );
       }
-      indent = true;
+      do_indent = true;
     }
   } /* for */
 
@@ -433,8 +440,17 @@ static void clean_up() {
 #endif /* WITH_PATTERNS */
 }
 
+static void hang_indent( int *count, int *width ) {
+  int i;
+  for ( i = 0; i < opt_hang_tabs; ++i )
+    buf[ (*count)++ ] = '\t';
+  for ( i = 0; i < opt_hang_spaces; ++i )
+    buf[ (*count)++ ] = ' ';
+  *width += opt_hang_tabs * tab_spaces + opt_hang_spaces;
+}
+
 static void init( int argc, char const *argv[] ) {
-  char const opts[] = "a:bc:Cdef:F:h:H:i:I:l:m:M:nNo:p:s:S:t:vw:";
+  char const opts[] = "a:bc:Cdef:F:h:H:i:I:l:m:M:nNo:p:s:S:t:Tvw:";
 
   me = base_name( argv[0] );
   process_options( argc, argv, opts, 0 );
@@ -534,6 +550,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 's': tab_spaces          = check_atou( optarg ); break;
       case 'S': opt_lead_spaces     = check_atou( optarg ); break;
       case 't': opt_lead_tabs       = check_atou( optarg ); break;
+      case 'T': opt_title_line      = true;                 break;
       case 'v':
         fprintf( stderr, "%s\n", PACKAGE_STRING );
         exit( EXIT_OK );
@@ -546,7 +563,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
 }
 
 static void usage() {
-  fprintf( stderr, "usage: %s [-bCdenNv] [-w line-width] [-p para-delim-chars] [-s tab-spaces]\n", me );
+  fprintf( stderr, "usage: %s [-bCdenNTv] [-w line-width] [-p para-delim-chars] [-s tab-spaces]\n", me );
   fprintf( stderr, "\t[-{fF} input-file] [-o output-file]    [-c conf-file]\n" );
   fprintf( stderr, "\t[-t leading-tabs]  [-S leading-spaces]\n" );
   fprintf( stderr, "\t[-m mirror-tabs]   [-M mirror-spaces]\n" );
