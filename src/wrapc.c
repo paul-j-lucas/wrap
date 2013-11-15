@@ -321,17 +321,19 @@ static void process_options( int argc, char const *argv[] ) {
 
 static char const* str_status( int status ) {
   switch ( status ) {
-    case EXIT_OK          : return "OK";
-    case EXIT_USAGE       : return "usage error";
-    case EXIT_READ_OPEN   : return "error opening file for reading";
-    case EXIT_READ_ERROR  : return "read error";
-    case EXIT_WRITE_OPEN  : return "error opening file for writing";
-    case EXIT_WRITE_ERROR : return "write error";
-    case EXIT_FORK_ERROR  : return "fork() failed";
-    case EXIT_EXEC_ERROR  : return "exec() failed";
-    case EXIT_CHILD_SIGNAL: return "child process terminated by signal";
-    case EXIT_PIPE_ERROR  : return "pipe() failed";
-    default               : return "unknown status";
+    case EXIT_OK            : return "OK";
+    case EXIT_USAGE         : return "usage error";
+    case EXIT_CONF_ERROR    : return "configuration file error";
+    case EXIT_OUT_OF_MEMORY : return "out of memory";
+    case EXIT_READ_OPEN     : return "error opening file for reading";
+    case EXIT_READ_ERROR    : return "read error";
+    case EXIT_WRITE_OPEN    : return "error opening file for writing";
+    case EXIT_WRITE_ERROR   : return "write error";
+    case EXIT_FORK_ERROR    : return "fork() failed";
+    case EXIT_EXEC_ERROR    : return "exec() failed";
+    case EXIT_CHILD_SIGNAL  : return "child process terminated by signal";
+    case EXIT_PIPE_ERROR    : return "pipe() failed";
+    default                 : return "unknown status";
   }
 }
 
