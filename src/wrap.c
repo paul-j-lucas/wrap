@@ -366,10 +366,15 @@ int main( int argc, char const *argv[] ) {
     ** Now slide the partial word to the left.
     */
     for ( from = wrap_pos + 1; from < buf_count; ++from ) {
-      buf[ to ] = buf[ from ];
-      if ( !isspace( buf[ to ] ) )
-        ++to, ++buf_width;
+      char const c = buf[ from ];
+      if ( !isspace( c ) ) {
+        buf[ to++ ] = c;
+        ++buf_width;
+        for ( utf8_len = UTF8_LEN( c ); utf8_len > 1; --utf8_len )
+          buf[ to++ ] = buf[ ++from ];
+      }
     }
+
     buf_count = to;
     wrap_pos = 0;
 
