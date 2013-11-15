@@ -44,6 +44,12 @@ extern char const *me;
 
 /*****************************************************************************/
 
+/**
+ * Appends a component to a path ensuring that exactly one \c / separates them.
+ *
+ * @param path The path to append to.
+ * @param component The component to append.
+ */
 static void path_append( char *path, char const *component ) {
   size_t len = strlen( path );
   if ( len ) {
@@ -54,13 +60,25 @@ static void path_append( char *path, char const *component ) {
   }
 }
 
-static char* strip_comment( char *s ) {
-  char *const comment = strchr( s, '#' );
+/**
+ * Strips a \c # comment from a line.
+ *
+ * @param line The line to strip the comment from.
+ * @return Returns \a line for convenience.
+ */
+static char* strip_comment( char *line ) {
+  char *const comment = strchr( line, '#' );
   if ( comment )
     *comment = '\0';
-  return s;
+  return line;
 }
 
+/**
+ * Trims both leading and trailing whitespace from a string.
+ *
+ * @param s The string to trim whitespace from.
+ * @return Returns a pointer to within \a s having all whitespace trimmed.
+ */
 static char* trim_ws( char *s ) {
   size_t len;
   s += strspn( s, " \t" );
@@ -80,8 +98,9 @@ char const* read_conf( char const *conf_file ) {
   int line_no = 0;
 
   enum section { NONE, ALIASES, PATTERNS };
-  enum section section = NONE;
+  enum section section = NONE;          /* section we're in */
 
+  /* locate default configuration file */
   if ( !conf_file ) {
     char const *home = getenv( "HOME" );
     if ( !home ) {
@@ -95,9 +114,11 @@ char const* read_conf( char const *conf_file ) {
 #endif /* HAVE_GETEUID && && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR */
     }
     strcpy( conf_path_buf, home );
-    path_append( conf_path_buf, CONF_FILE_NAME ); conf_file = conf_path_buf;
+    path_append( conf_path_buf, CONF_FILE_NAME );
+    conf_file = conf_path_buf;
   }
 
+  /* open configuration file */
   if ( !(fconf = fopen( conf_file, "r" )) ) {
     if ( explicit_conf_file ) {
       fprintf( stderr, "%s: %s: %s\n", me, conf_file, strerror( errno ) );
@@ -106,33 +127,46 @@ char const* read_conf( char const *conf_file ) {
     return NULL;
   }
 
+  /* parse configuration file */
   while ( fgets( line_buf, LINE_BUF_SIZE, fconf ) ) {
     char const *const line = trim_ws( strip_comment( line_buf ) );
     ++line_no;
     if ( !*line )
       continue;
-    if ( strcmp( line, "[ALIASES]" ) == 0 )
-      section = ALIASES;
-    else if ( strcmp( line, "[PATTERNS]" ) == 0 )
-      section = PATTERNS;
-    else {
-      switch ( section ) {
-        case NONE:
-          fprintf(
-            stderr, "%s: %s:%d: \"%s\": line not within any section\n",
-            me, conf_file, line_no, line
-          );
-          exit( EXIT_CONF_ERROR );
-        case ALIASES:
-          alias_parse( line, conf_file, line_no );
-          break;
+
+    /* parse section line */
+    if ( line[0] == '[' ) {
+      if ( strcmp( line, "[ALIASES]" ) == 0 )
+        section = ALIASES;
+      else if ( strcmp( line, "[PATTERNS]" ) == 0 )
+        section = PATTERNS;
+      else {
+        fprintf(
+          stderr, "%s: %s:%d: \"%s\": invalid section\n",
+          me, conf_file, line_no, line
+        );
+        exit( EXIT_CONF_ERROR );
+      }
+      continue;
+    }
+
+    /* parse line within section */
+    switch ( section ) {
+      case NONE:
+        fprintf(
+          stderr, "%s: %s:%d: \"%s\": line not within any section\n",
+          me, conf_file, line_no, line
+        );
+        exit( EXIT_CONF_ERROR );
+      case ALIASES:
+        alias_parse( line, conf_file, line_no );
+        break;
 #ifdef WITH_PATTERNS
-        case PATTERNS:
-          pattern_parse( line, conf_file, line_no );
-          break;
+      case PATTERNS:
+        pattern_parse( line, conf_file, line_no );
+        break;
 #endif /* WITH_PATTERNS */
-      } /* switch */
-    } /* else */
+    } /* switch */
   } /* while */
 
   if ( ferror( fconf ) ) {

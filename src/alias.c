@@ -34,14 +34,19 @@
 #define ALIAS_NAME_CHARS \
   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
 
+static alias_t*     aliases = NULL;     /* global list of aliases */
 extern char const*  me;
-
-static alias_t*     aliases = NULL;
-static int          n_aliases = 0;
-static int          n_aliases_alloc = 0;
+static int          n_aliases = 0;      /* number of aliases */
 
 /*****************************************************************************/
 
+/**
+ * Checks the most-recently-added alias against all previous aliases for a
+ * duplicate name.
+ *
+ * @param conf_file The configuration file path-name.
+ * @param line_no The line-number within \a conf_file.
+ */
 static void alias_check_dup( char const *conf_file, int line_no ) {
   if ( n_aliases > 1 ) {
     int i = n_aliases - 1;
@@ -58,6 +63,11 @@ static void alias_check_dup( char const *conf_file, int line_no ) {
   }
 }
 
+/**
+ * Frees all memory used by an alias.
+ *
+ * @paran alias The alias to free.
+ */
 static void alias_free( alias_t *alias ) {
   while ( alias->argc >= 0 )
     free( (void*)alias->argv[ alias->argc-- ] );
@@ -81,8 +91,9 @@ alias_t const* alias_find( char const *name ) {
 }
 
 void alias_parse( char const *line, char const *conf_file, int line_no ) {
-  alias_t *alias;
+  alias_t *alias;                     /* current alias being parsed into */
   int n_argv_alloc = ALIAS_ARGV_ALLOC_DEFAULT;
+  static int n_aliases_alloc = 0;     /* number of aliases allocated */
   size_t span;
 
   if ( !n_aliases_alloc ) {
@@ -99,12 +110,17 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
   alias->line_no = line_no;
   alias->argc = 1;
   alias->argv = MALLOC( char const*, n_argv_alloc );
+
+  /* alias line: <name>[<ws>]={[<ws>]<options>}... */
+  /*      parts:   1     2  3    4       5         */
+
+  /* part 1: name */
   span = strspn( line, ALIAS_NAME_CHARS );
   alias->argv[0] = strndup( line, span );
+  alias_check_dup( conf_file, line_no );
   line += span;
 
-  alias_check_dup( conf_file, line_no );
-
+  /* part 2: whitespace */
   line += strspn( line, " \t" );
   if ( !*line ) {
     fprintf(
@@ -114,6 +130,7 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
     exit( EXIT_CONF_ERROR );
   }
 
+  /* part 3: = */
   if ( *line != '=' ) {
     fprintf(
       stderr, "%s: %s:%d: '%c': unexpected character; '=' expected\n",
@@ -123,6 +140,7 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
   }
   ++line;                               /* skip '=' */
 
+  /* parts 4 & 5: whitespace, options */
   while ( true ) {
     line += strspn( line, " \t" );
     if ( !*line ) {

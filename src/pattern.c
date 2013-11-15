@@ -32,13 +32,16 @@
 #define PATTERN_ALLOC_INCREMENT     10
 
 extern char const*  me;
-
-static pattern_t*   patterns = NULL;
-static int          n_patterns = 0;
-static int          n_patterns_alloc = 0;
+static int          n_patterns = 0;     /* number of patterns */
+static pattern_t*   patterns = NULL;    /* global list of patterns */
 
 /*****************************************************************************/
 
+/**
+ * Frees all memory used by a pattern.
+ *
+ * @paran pattern The pattern to free.
+ */
 static void pattern_free( pattern_t *pattern ) {
   free( (void*)pattern->pattern );
 }
@@ -61,7 +64,8 @@ alias_t const* pattern_find( char const *file_name ) {
 
 void pattern_parse( char const *line, char const *conf_file, int line_no ) {
   alias_t const *alias;
-  pattern_t *pattern;
+  static int n_patterns_alloc = 0;      /* number of patterns allocated */
+  pattern_t *pattern;                   /* current pattern being parsed into */
   size_t span;
 
   if ( !n_patterns_alloc ) {
@@ -71,18 +75,27 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
     n_patterns_alloc += PATTERN_ALLOC_INCREMENT;
     REALLOC( patterns, pattern_t, n_patterns_alloc );
   }
+  if ( !patterns )
+    ERROR( EXIT_OUT_OF_MEMORY );
 
   pattern = &patterns[ n_patterns++ ];
+
+  /* pattern line: <pattern>[<ws>]=[<ws>]<alias> */
+  /*        parts:     1      2   3  4      5    */
+
+  /* part 1: pattern */
   span = strcspn( line, " \t=" );
   pattern->pattern = strndup( line, span );
   line += span;
 
+  /* part 2: whitespace */
   line += strspn( line, " \t" );
   if ( !*line ) {
     fprintf( stderr, "%s: %s:%d: '=' expected\n", me, conf_file, line_no );
     exit( EXIT_CONF_ERROR );
   }
 
+  /* part 3: = */
   if ( *line != '=' ) {
     fprintf(
       stderr, "%s: %s:%d: '%c': unexpected character; '=' expected\n",
@@ -92,6 +105,7 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
   }
   ++line;                               /* skip '=' */
 
+  /* part 4: whitespace */
   line += strspn( line, " \t" );
   if ( !*line ) {
     fprintf(
@@ -101,6 +115,7 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
     exit( EXIT_CONF_ERROR );
   }
 
+  /* part 5: alias */
   if ( !(alias = alias_find( line )) ) {
     fprintf(
       stderr, "%s: %s:%d: \"%s\": no such alias\n",
