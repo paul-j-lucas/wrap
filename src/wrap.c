@@ -255,7 +255,7 @@ int main( int argc, char const *argv[] ) {
      *  HANDLE LEADING-DOT, END-OF-SENTENCE, AND PARAGRAPH-DELIMITERS
      *************************************************************************/
 
-    if ( opt_lead_dot_ignore && c == '.' && prev_c == '\n' ) {
+    if ( opt_lead_dot_ignore && prev_c == '\n' && c == '.' ) {
       do_ignore_lead_dot = true;
       goto delimit_paragraph;
     }
