@@ -305,11 +305,11 @@ static void process_options( int argc, char const *argv[] ) {
     usage();
 
   if ( opt_fin && !(fin = fopen( opt_fin, "r" )) ) {
-    fprintf( stderr, "%s: \"%s\": %s\n", me, optarg, strerror( errno ) );
+    fprintf( stderr, "%s: \"%s\": %s\n", me, opt_fin, strerror( errno ) );
     exit( EXIT_READ_OPEN );
   }
-  if ( opt_fout && !(fout = fopen( optarg, "w" )) ) {
-    fprintf( stderr, "%s: \"%s\": %s\n", me, optarg, strerror( errno ) );
+  if ( opt_fout && !(fout = fopen( opt_fout, "w" )) ) {
+    fprintf( stderr, "%s: \"%s\": %s\n", me, opt_fout, strerror( errno ) );
     exit( EXIT_WRITE_OPEN );
   }
 
