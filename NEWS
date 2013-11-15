@@ -14,8 +14,12 @@ Both wrap and wrapc now read a configuration file (if present) on startup that
 defines aliases and patterns.
 
 ** Added end-of-sentence option.
-Both wrap and wrapc now have a -e command-line option for specifying that a
+Both wrap and wrapc now have a -e command-line option for specifying that
 white-space after an end-of-sentence character delimites a paragraph.
+
+** Added file-matching patterns.
+Both wrap and wrapc can now apply command-line options (via aliases) to files
+automatically based on their names matching a pattern.
 
 ** Added input/output file options.
 Both wrap and wrapc now have -f and -o command-line options for specifying the
@@ -29,13 +33,13 @@ with a '.' (dot) presumed to be [nt]roff control lines.
 Both wrap and wrapc now have a -p command-line option that allows additional
 characters to be specified as paragraph delimiters.
 
-** Added file-matching patterns.
-Both wrap and wrapc can now apply command-line options (via aliases) to files
-automatically based on their names matching a pattern.
-
 ** Added tab-spaces option.
 Both wrap and wrapc now have a -s command-line option for specifying the number
 of spaces that a tab character should be considered the same as.
+
+** Added title option.
+Both wrap and wrapc now have a -T command-line option that treats the first
+line of every paragraph as a title and puts it on a line by itself.
 
 ** Added UTF-8 support.
 Wrap now correctly handles UTF-8 encoded text by always considering multi-byte
