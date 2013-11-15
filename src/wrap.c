@@ -132,12 +132,6 @@ int main( int argc, char const *argv[] ) {
   bool do_indent = true;
 
   /*
-  ** Set to 1 when a newline is encountered; decremented otherwise.  Used only
-  ** when opt_lead_ws_delimit (-b) is true.
-  */
-  int  newline_counter = 0;
-
-  /*
   ** True when the next line to be read will be a title line.
   */
   bool next_line_is_title;
@@ -176,7 +170,6 @@ int main( int argc, char const *argv[] ) {
      *************************************************************************/
 
     if ( c == '\n' ) {
-      newline_counter = 1;
       if ( ++consec_newlines >= newlines_delimit ) {
         /*
         ** At least newlines_delimit consecutive newlines: set that the next
@@ -212,7 +205,6 @@ int main( int argc, char const *argv[] ) {
       }
     } else {
       consec_newlines = 0;
-      --newline_counter;
     }
 
     /*************************************************************************
@@ -220,10 +212,11 @@ int main( int argc, char const *argv[] ) {
      *************************************************************************/
 
     if ( isspace( c ) ) {
-      if ( opt_lead_ws_delimit && newline_counter == 0 ) {
+      if ( opt_lead_ws_delimit && prev_c == '\n' ) {
         /*
-        ** If newline_counter == 0, the previous character was a newline;
-        ** therefore, this white-space character is at the beginning of a line.
+        ** Leading whitespace characters delimit paragraphs and the previous
+        ** character was a newline which means this white-space character is at
+        ** the beginning of a line: delimit the paragraph.
         */
         goto delimit_paragraph;
       }
