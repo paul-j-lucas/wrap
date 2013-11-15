@@ -248,7 +248,7 @@ int main( int argc, char const *argv[] ) {
   */
   while ( (pid = wait( &wait_status )) > 0 ) {
     if ( WIFEXITED( wait_status ) ) {
-      int exit_status = WEXITSTATUS( wait_status );
+      int const exit_status = WEXITSTATUS( wait_status );
       if ( exit_status != 0 ) {
         fprintf(
           stderr,
@@ -258,7 +258,7 @@ int main( int argc, char const *argv[] ) {
         exit( exit_status );
       }
     } else if ( WIFSIGNALED( wait_status ) ) {
-      int signal = WTERMSIG( wait_status );
+      int const signal = WTERMSIG( wait_status );
       fprintf(
         stderr,
         "%s: child process terminated with signal %d: %s\n",
