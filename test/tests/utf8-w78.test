@@ -1,1 +1,1 @@
-/dev/null | -w78 | utf8-01.txt | 0
+wrap | /dev/null | -w78 | utf8-01.txt | 0

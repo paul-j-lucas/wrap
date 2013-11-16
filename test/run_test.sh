@@ -23,8 +23,8 @@
 
 ME=$0; ME=`expr $ME : '.*/\(.*\)'`
 
-[ "$WRAP" ] || {
-  echo "$ME: \$WRAP not set" >&2
+[ "$BUILD_SRC" ] || {
+  echo "$ME: \$BUILD_SRC not set" >&2
   exit 2
 }
 
@@ -197,14 +197,15 @@ OUTPUT=/tmp/wrap_test_output_$$_
 
 trap "x=$?; rm -f /tmp/*_$$_* 2>/dev/null; exit $x" EXIT HUP INT TERM
 
-IFS='|' read CONFIG OPTIONS INPUT EXPECTED_EXIT < $TEST
+IFS='|' read PROG CONFIG OPTIONS INPUT EXPECTED_EXIT < $TEST
+PROG=`echo $PROG`                       # trims whitespace
 CONFIG=`echo $CONFIG`                   # trims whitespace
 [ "$CONFIG" != /dev/null ] && CONFIG="$DATA_DIR/$CONFIG"
 INPUT="$DATA_DIR/`echo $INPUT`"         # trims whitespace
 EXPECTED_EXIT=`echo $EXPECTED_EXIT`     # trims whitespace
 EXPECTED_OUTPUT="$EXPECTED_DIR/`echo $TEST_NAME | sed 's/test$/txt/'`"
 
-if $WRAP -c $CONFIG $OPTIONS -f $INPUT -o $OUTPUT 2> $LOG_FILE
+if $BUILD_SRC/$PROG -c $CONFIG $OPTIONS -f $INPUT -o $OUTPUT 2> $LOG_FILE
 then
   if [ 0 -eq $EXPECTED_EXIT ]
   then

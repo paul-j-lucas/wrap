@@ -1,1 +1,1 @@
-/dev/null | -h1 -I5 | data-02.txt | 0
+wrap | /dev/null | -h1 -I5 | data-02.txt | 0

@@ -1,1 +1,1 @@
-/dev/null | -bI2 | data-01a.txt | 0
+wrap | /dev/null | -bI2 | data-01a.txt | 0
