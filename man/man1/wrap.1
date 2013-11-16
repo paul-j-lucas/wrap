@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\f1 1 "November 14, 2013" "PJL TOOLS"
+.TH \f3wrap\f1 1 "November 15, 2013" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -60,6 +60,11 @@ vertical-tab (11),
 form-feed (12),
 and
 carriage-return (13).
+.P
+Non-whitespace control characters are discarded.
+A control character is any character for which
+.BR iscntrl (3)
+returns non-zero.
 .SS White-space Folding
 Consecutive white-space characters
 are folded into a single space
@@ -102,11 +107,6 @@ presumed to be an
 .BR [nt]roff (1)
 control line,
 is not altered.
-.P
-Non-whitespace control characters are discarded.
-A control character is any character for which
-.BR iscntrl (3)
-returns non-zero.
 .SS Character Encoding
 Text is assumed to be encoded in UTF-8.
 All multi-byte, UTF-8-encoded characters
