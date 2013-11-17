@@ -49,7 +49,9 @@ int         tab_spaces = DEFAULT_TAB_SPACES;
 char const* opt_alias = NULL;
 char const* opt_conf_file = NULL;
 bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
-char const* opt_fin_name = NULL;        /* file in name */
+char const* opt_fin = NULL;             /* file in path */
+char const* opt_fin_name = NULL;        /* file in name (only) */
+char const* opt_fout = NULL;            /* file out path */
 int         opt_hang_spaces = 0;        /* hanging-indent spaces */
 int         opt_hang_tabs = 0;          /* hanging-indent tabs */
 int         opt_indt_spaces = 0;        /* indent spaces */
@@ -470,6 +472,11 @@ static void init( int argc, char const *argv[] ) {
       process_options( alias->argc, alias->argv, opts, alias->line_no );
   }
 
+  if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
+    PMESSAGE_EXIT( READ_OPEN, "\"%s\": %s\n", optarg, strerror( errno ) );
+  if ( opt_fout && !(fout = fopen( optarg, "w" )) )
+    PMESSAGE_EXIT( WRITE_OPEN, "\"%s\": %s\n", optarg, strerror( errno ) );
+
   if ( !fin )
     fin = stdin;
   if ( !fout )
@@ -498,8 +505,6 @@ static void print_line( int up_to ) {
 static void process_options( int argc, char const *argv[], char const *opts,
                              int line_no ) {
   int opt;                              /* command-line option */
-  char const* opt_fin = NULL;           /* file in name */
-  char const* opt_fout = NULL;          /* file out name */
 
   optind = opterr = 1;
   while ( (opt = pjl_getopt( argc, argv, opts )) != EOF ) {
@@ -537,11 +542,6 @@ static void process_options( int argc, char const *argv[], char const *opts,
       default : usage();
     } /* switch */
   } /* while */
-
-  if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
-    PMESSAGE_EXIT( READ_OPEN, "\"%s\": %s\n", optarg, strerror( errno ) );
-  if ( opt_fout && !(fout = fopen( optarg, "w" )) )
-    PMESSAGE_EXIT( WRITE_OPEN, "\"%s\": %s\n", optarg, strerror( errno ) );
 }
 
 static void usage() {
