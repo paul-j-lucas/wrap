@@ -159,14 +159,14 @@ XFAIL=3
 SKIP=4
 ERROR=5
 
-RESULT_STR[ $ERROR ]="ERROR"
-RESULT_STR[ $FAIL  ]="FAIL"
-RESULT_STR[ $PASS  ]="PASS"
-RESULT_STR[ $SKIP  ]="SKIP"
-RESULT_STR[ $XFAIL ]="XFAIL"
-RESULT_STR[ $XPASS ]="XPASS"
+RESULT_STR[ $ERROR ]=ERROR
+RESULT_STR[ $FAIL  ]=FAIL
+RESULT_STR[ $PASS  ]=PASS
+RESULT_STR[ $SKIP  ]=SKIP
+RESULT_STR[ $XFAIL ]=XFAIL
+RESULT_STR[ $XPASS ]=XPASS
 
-if [ "$COLOR_TESTS" = "yes" ]
+if [ "$COLOR_TESTS" = yes ]
 then
   COLOR_BLUE="[1;34m"
   COLOR_GREEN="[0;32m"
@@ -188,8 +188,8 @@ yes) EXPECT_FAILURE=1 ;;
   *) EXPECT_FAILURE=0 ;;
 esac
 
-DATA_DIR="$srcdir/data"
-EXPECTED_DIR="$srcdir/expected"
+DATA_DIR=$srcdir/data
+EXPECTED_DIR=$srcdir/expected
 TEST_NAME=`local_basename $TEST_NAME`
 OUTPUT=/tmp/wrap_test_output_$$_
 
@@ -200,8 +200,8 @@ trap "x=$?; rm -f /tmp/*_$$_* 2>/dev/null; exit $x" EXIT HUP INT TERM
 IFS='|' read PROG CONFIG OPTIONS INPUT EXPECTED_EXIT < $TEST
 PROG=`echo $PROG`                       # trims whitespace
 CONFIG=`echo $CONFIG`                   # trims whitespace
-[ "$CONFIG" != /dev/null ] && CONFIG="$DATA_DIR/$CONFIG"
-INPUT="$DATA_DIR/`echo $INPUT`"         # trims whitespace
+[ "$CONFIG" != /dev/null ] && CONFIG=$DATA_DIR/$CONFIG
+INPUT=$DATA_DIR/`echo $INPUT`           # trims whitespace
 EXPECTED_EXIT=`echo $EXPECTED_EXIT`     # trims whitespace
 EXPECTED_OUTPUT="$EXPECTED_DIR/`echo $TEST_NAME | sed 's/test$/txt/'`"
 
