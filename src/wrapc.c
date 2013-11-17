@@ -338,9 +338,12 @@ static char const* str_status( int status ) {
 }
 
 static void usage() {
-  fprintf( stderr, "usage: %s [-a alias] [-CeTv] [-w line-width]\n", me );
-  fprintf( stderr, "\t[-{fF} input-file] [-o output-file] [-c conf-file]\n" );
-  fprintf( stderr, "\t[-p para-delim-chars] [-s tab-spaces]\n" );
+  fprintf( stderr,
+"usage: %s [-a alias] [-CeTv] [-w line-width]\n"
+"       [-{fF} input-file] [-o output-file] [-c conf-file]\n"
+"       [-p para-delim-chars] [-s tab-spaces]\n"
+    "", me
+  );
   exit( EXIT_USAGE );
 }
 

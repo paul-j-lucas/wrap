@@ -553,12 +553,15 @@ static void process_options( int argc, char const *argv[], char const *opts,
 }
 
 static void usage() {
-  fprintf( stderr, "usage: %s [-bCdenNTv] [-w line-width] [-p para-delim-chars] [-s tab-spaces]\n", me );
-  fprintf( stderr, "\t[-{fF} input-file] [-o output-file]    [-c conf-file]\n" );
-  fprintf( stderr, "\t[-t leading-tabs]  [-S leading-spaces]\n" );
-  fprintf( stderr, "\t[-m mirror-tabs]   [-M mirror-spaces]\n" );
-  fprintf( stderr, "\t[-i indent-tabs]   [-I indent-spaces]\n" );
-  fprintf( stderr, "\t[-h hanging-tabs]  [-H hanging-spaces]\n" );
+  fprintf( stderr,
+"usage: %s [-bCdenNTv] [-w line-width] [-p para-delim-chars] [-s tab-spaces]\n"
+"       [-{fF} input-file] [-o output-file]    [-c conf-file]\n"
+"       [-t leading-tabs]  [-S leading-spaces]\n"
+"       [-m mirror-tabs]   [-M mirror-spaces]\n"
+"       [-i indent-tabs]   [-I indent-spaces]\n"
+"       [-h hanging-tabs]  [-H hanging-spaces]\n"
+    "", me
+  );
   exit( EXIT_USAGE );
 }
 
