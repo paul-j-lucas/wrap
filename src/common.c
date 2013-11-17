@@ -58,7 +58,7 @@ void* check_realloc( void *p, size_t size ) {
     ++size;
   r = p ? realloc( p, size ) : malloc( size );
   if ( !r )
-    ERROR( EXIT_OUT_OF_MEMORY );
+    PERROR_EXIT( OUT_OF_MEMORY );
   return r;
 }
 

@@ -63,7 +63,8 @@ typedef bool _Bool;
 # define __bool_true_false_are_defined 1
 #endif /* HAVE_STDBOOL_H */
 
-#define ERROR(E)            do { perror( me ); exit( E ); } while (0)
+#define PERROR_EXIT(STATUS) \
+  do { perror( me ); exit( EXIT_##STATUS ); } while (0)
 
 #define MALLOC(TYPE,N) \
   (TYPE*)check_realloc( NULL, sizeof(TYPE) * (N) )

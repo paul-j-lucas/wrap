@@ -399,18 +399,18 @@ delimit_paragraph:
       buf[0] = '.';
       if ( !fgets( buf + 1, LINE_BUF_SIZE - 1, fin ) ) {
         if ( ferror( fin ) )
-          ERROR( EXIT_READ_ERROR );
+          PERROR_EXIT( READ_ERROR );
         continue;
       }
       fputs( buf, fout );
       if ( ferror( fout ) )
-        ERROR( EXIT_WRITE_ERROR );
+        PERROR_EXIT( WRITE_ERROR );
     } else {
       if ( consec_newlines == 2 || 
           (consec_newlines > 2 && newlines_delimit == 1) ) {
         putc( c, fout );
         if ( ferror( fout ) )
-          ERROR( EXIT_WRITE_ERROR );
+          PERROR_EXIT( WRITE_ERROR );
       }
       do_indent = true;
     }
@@ -418,7 +418,7 @@ delimit_paragraph:
 
 done:
   if ( ferror( fin ) )
-    ERROR( EXIT_READ_ERROR );
+    PERROR_EXIT( READ_ERROR );
   if ( buf_count )                      /* print left-over text */
     print_line( buf_count );
   exit( EXIT_OK );
@@ -494,7 +494,7 @@ static void print_line( int up_to ) {
   buf[ up_to ] = '\0';
   fprintf( fout, "%s\n", buf );
   if ( ferror( fout ) )
-    ERROR( EXIT_WRITE_ERROR );
+    PERROR_EXIT( WRITE_ERROR );
 }
 
 static void process_options( int argc, char const *argv[], char const *opts,

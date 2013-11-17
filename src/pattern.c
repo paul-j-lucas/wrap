@@ -76,7 +76,7 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
     REALLOC( patterns, pattern_t, n_patterns_alloc );
   }
   if ( !patterns )
-    ERROR( EXIT_OUT_OF_MEMORY );
+    PERROR_EXIT( OUT_OF_MEMORY );
 
   pattern = &patterns[ n_patterns++ ];
 

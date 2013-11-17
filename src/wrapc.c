@@ -100,7 +100,7 @@ int main( int argc, char const *argv[] ) {
   */
   if ( !fgets( buf, LINE_BUF_SIZE, fin ) ) {
     if ( ferror( fin ) )
-      ERROR( EXIT_READ_ERROR );
+      PERROR_EXIT( READ_ERROR );
     exit( EXIT_OK );
   }
   strcpy( leader, buf );
@@ -108,7 +108,7 @@ int main( int argc, char const *argv[] ) {
 
   /* open pipes */
   if ( pipe( pipes[0] ) == -1 || pipe( pipes[1] ) == -1 )
-    ERROR( EXIT_PIPE_ERROR );
+    PERROR_EXIT( PIPE_ERROR );
 
   /***************************************************************************/
   /*
@@ -121,7 +121,7 @@ int main( int argc, char const *argv[] ) {
   ** removed from the beginning of each line.
   */
   if ( (pid_1 = fork()) == -1 )
-    ERROR( EXIT_FORK_ERROR );
+    PERROR_EXIT( FORK_ERROR );
   if ( !pid_1 ) {
     FILE *to_wrap;
     CLOSE( 1 );
@@ -134,14 +134,14 @@ int main( int argc, char const *argv[] ) {
     }
 
     if ( fputs( buf + lead_width, to_wrap ) == EOF )
-      ERROR( EXIT_WRITE_ERROR );
+      PERROR_EXIT( WRITE_ERROR );
     while ( fgets( buf, LINE_BUF_SIZE, fin ) ) {
       fputs( buf + lead_width, to_wrap );
       if ( ferror( to_wrap ) )
-        ERROR( EXIT_WRITE_ERROR );
+        PERROR_EXIT( WRITE_ERROR );
     }
     if ( ferror( fin ) )
-      ERROR( EXIT_READ_ERROR );
+      PERROR_EXIT( READ_ERROR );
     exit( EXIT_OK );
   }
 
@@ -158,7 +158,7 @@ int main( int argc, char const *argv[] ) {
   */
   if ( (pid = fork()) == -1 ) {
     kill( pid_1, SIGTERM );             /* we failed, so kill child 1 */
-    ERROR( EXIT_FORK_ERROR );
+    PERROR_EXIT( FORK_ERROR );
   }
   if ( !pid ) {
     arg_buf arg_line_width;
@@ -211,7 +211,7 @@ int main( int argc, char const *argv[] ) {
     REDIRECT( STDIN_FILENO, 0 );
     REDIRECT( STDOUT_FILENO, 1 );
     execvp( PACKAGE, argv );
-    ERROR( EXIT_EXEC_ERROR );
+    PERROR_EXIT( EXEC_ERROR );
   }
 
   /***************************************************************************/
@@ -238,10 +238,10 @@ int main( int argc, char const *argv[] ) {
   while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) ) {
     fprintf( fout, "%s%s", leader, buf );
     if ( ferror( fout ) )
-      ERROR( EXIT_WRITE_ERROR );
+      PERROR_EXIT( WRITE_ERROR );
   }
   if ( ferror( from_wrap ) )
-    ERROR( EXIT_READ_ERROR );
+    PERROR_EXIT( READ_ERROR );
 
   /*
   ** Wait for child processes.

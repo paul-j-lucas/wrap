@@ -104,7 +104,7 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
     REALLOC( aliases, alias_t, n_aliases_alloc );
   }
   if ( !aliases )
-    ERROR( EXIT_OUT_OF_MEMORY );
+    PERROR_EXIT( OUT_OF_MEMORY );
 
   alias = &aliases[ n_aliases++ ];
   alias->line_no = line_no;
