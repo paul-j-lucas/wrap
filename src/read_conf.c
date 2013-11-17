@@ -120,10 +120,8 @@ char const* read_conf( char const *conf_file ) {
 
   /* open configuration file */
   if ( !(fconf = fopen( conf_file, "r" )) ) {
-    if ( explicit_conf_file ) {
-      fprintf( stderr, "%s: %s: %s\n", me, conf_file, strerror( errno ) );
-      exit( EXIT_CONF_ERROR );
-    }
+    if ( explicit_conf_file )
+      PMESSAGE_EXIT( READ_OPEN, "%s: %s\n", conf_file, strerror( errno ) );
     return NULL;
   }
 
@@ -140,24 +138,21 @@ char const* read_conf( char const *conf_file ) {
         section = ALIASES;
       else if ( strcmp( line, "[PATTERNS]" ) == 0 )
         section = PATTERNS;
-      else {
-        fprintf(
-          stderr, "%s: %s:%d: \"%s\": invalid section\n",
-          me, conf_file, line_no, line
+      else
+        PMESSAGE_EXIT( CONF_ERROR,
+          "%s:%d: \"%s\": invalid section\n",
+          conf_file, line_no, line
         );
-        exit( EXIT_CONF_ERROR );
-      }
       continue;
     }
 
     /* parse line within section */
     switch ( section ) {
       case NONE:
-        fprintf(
-          stderr, "%s: %s:%d: \"%s\": line not within any section\n",
-          me, conf_file, line_no, line
+        PMESSAGE_EXIT( CONF_ERROR,
+          "%s:%d: \"%s\": line not within any section\n",
+          conf_file, line_no, line
         );
-        exit( EXIT_CONF_ERROR );
       case ALIASES:
         alias_parse( line, conf_file, line_no );
         break;
@@ -169,10 +164,8 @@ char const* read_conf( char const *conf_file ) {
     } /* switch */
   } /* while */
 
-  if ( ferror( fconf ) ) {
-    fprintf( stderr, "%s: %s: %s\n", me, conf_file, strerror( errno ) );
-    exit( EXIT_READ_ERROR );
-  }
+  if ( ferror( fconf ) )
+    PMESSAGE_EXIT( READ_ERROR, "%s: %s\n", conf_file, strerror( errno ) );
   fclose( fconf );
   return conf_file;
 }

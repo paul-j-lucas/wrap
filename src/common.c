@@ -38,10 +38,8 @@ char const* base_name( char const *path_name ) {
 }
 
 int check_atou( char const *s ) {
-  if ( strspn( s, "0123456789" ) != strlen( s ) ) {
-    fprintf( stderr, "%s: \"%s\": invalid integer\n", me, s );
-    exit( EXIT_USAGE );
-  }
+  if ( strspn( s, "0123456789" ) != strlen( s ) )
+    PMESSAGE_EXIT( USAGE, "\"%s\": invalid integer\n", s );
   return atoi( s );
 }
 

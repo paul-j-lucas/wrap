@@ -90,39 +90,30 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
 
   /* part 2: whitespace */
   line += strspn( line, " \t" );
-  if ( !*line ) {
-    fprintf( stderr, "%s: %s:%d: '=' expected\n", me, conf_file, line_no );
-    exit( EXIT_CONF_ERROR );
-  }
+  if ( !*line )
+    PMESSAGE_EXIT( CONF_ERROR, "%s:%d: '=' expected\n", conf_file, line_no );
 
   /* part 3: = */
-  if ( *line != '=' ) {
-    fprintf(
-      stderr, "%s: %s:%d: '%c': unexpected character; '=' expected\n",
-      me, conf_file, line_no, *line
+  if ( *line != '=' )
+    PMESSAGE_EXIT( CONF_ERROR,
+      "%s:%d: '%c': unexpected character; '=' expected\n",
+      conf_file, line_no, *line
     );
-    exit( EXIT_CONF_ERROR );
-  }
   ++line;                               /* skip '=' */
 
   /* part 4: whitespace */
   line += strspn( line, " \t" );
-  if ( !*line ) {
-    fprintf(
-      stderr, "%s: %s:%d: alias name expected after '='\n",
-      me, conf_file, line_no
+  if ( !*line )
+    PMESSAGE_EXIT( CONF_ERROR,
+      "%s:%d: alias name expected after '='\n",
+      conf_file, line_no
     );
-    exit( EXIT_CONF_ERROR );
-  }
 
   /* part 5: alias */
-  if ( !(alias = alias_find( line )) ) {
-    fprintf(
-      stderr, "%s: %s:%d: \"%s\": no such alias\n",
-      me, conf_file, line_no, line
+  if ( !(alias = alias_find( line )) )
+    PMESSAGE_EXIT( CONF_ERROR,
+      "%s:%d: \"%s\": no such alias\n", conf_file, line_no, line
     );
-    exit( EXIT_CONF_ERROR );
-  }
   pattern->alias = alias;
 }
 

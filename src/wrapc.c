@@ -125,13 +125,10 @@ int main( int argc, char const *argv[] ) {
   if ( !pid_1 ) {
     FILE *to_wrap;
     CLOSE( 1 );
-    if ( !(to_wrap = fdopen( pipes[0][1], "w" )) ) {
-      fprintf(
-        stderr, "%s: child can't open pipe for writing: %s\n",
-        me, strerror( errno )
+    if ( !(to_wrap = fdopen( pipes[0][1], "w" )) )
+      PMESSAGE_EXIT( WRITE_OPEN,
+        "child can't open pipe for writing: %s\n", strerror( errno )
       );
-      exit( EXIT_WRITE_OPEN );
-    }
 
     if ( fputs( buf + lead_width, to_wrap ) == EOF )
       PERROR_EXIT( WRITE_ERROR );
@@ -227,13 +224,10 @@ int main( int argc, char const *argv[] ) {
   CLOSE( 0 );
   close( pipes[1][1] );
 
-  if ( !(from_wrap = fdopen( pipes[1][0], "r" )) ) {
-    fprintf(
-      stderr, "%s: parent can't open pipe for reading: %s\n",
-      me, strerror( errno )
+  if ( !(from_wrap = fdopen( pipes[1][0], "r" )) )
+    PMESSAGE_EXIT( READ_OPEN,
+      "parent can't open pipe for reading: %s\n", strerror( errno )
     );
-    exit( EXIT_READ_OPEN );
-  }
 
   while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) ) {
     fprintf( fout, "%s%s", leader, buf );
@@ -259,12 +253,10 @@ int main( int argc, char const *argv[] ) {
       }
     } else if ( WIFSIGNALED( wait_status ) ) {
       int const signal = WTERMSIG( wait_status );
-      fprintf(
-        stderr,
-        "%s: child process terminated with signal %d: %s\n",
-        me, signal, strsignal( signal )
+      PMESSAGE_EXIT( CHILD_SIGNAL,
+        "child process terminated with signal %d: %s\n",
+        signal, strsignal( signal )
       );
-      exit( EXIT_CHILD_SIGNAL );
     }
   } /* while */
 
@@ -304,14 +296,10 @@ static void process_options( int argc, char const *argv[] ) {
   if ( argc )
     usage();
 
-  if ( opt_fin && !(fin = fopen( opt_fin, "r" )) ) {
-    fprintf( stderr, "%s: \"%s\": %s\n", me, opt_fin, strerror( errno ) );
-    exit( EXIT_READ_OPEN );
-  }
-  if ( opt_fout && !(fout = fopen( opt_fout, "w" )) ) {
-    fprintf( stderr, "%s: \"%s\": %s\n", me, opt_fout, strerror( errno ) );
-    exit( EXIT_WRITE_OPEN );
-  }
+  if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
+    PMESSAGE_EXIT( READ_OPEN, "\"%s\": %s\n", opt_fin, strerror( errno ) );
+  if ( opt_fout && !(fout = fopen( opt_fout, "w" )) )
+    PMESSAGE_EXIT( WRITE_OPEN, "\"%s\": %s\n", opt_fout, strerror( errno ) );
 
   if ( !fin )
     fin = stdin;

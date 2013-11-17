@@ -456,13 +456,11 @@ static void init( int argc, char const *argv[] ) {
     alias_t const *alias = NULL;
     opt_conf_file = read_conf( opt_conf_file );
     if ( opt_alias ) {
-      if ( !(alias = alias_find( opt_alias )) ) {
-        fprintf(
-          stderr, "%s: \"%s\": no such alias in %s\n",
-          me, opt_alias, opt_conf_file
+      if ( !(alias = alias_find( opt_alias )) )
+        PMESSAGE_EXIT( USAGE,
+          "\"%s\": no such alias in %s\n",
+          opt_alias, opt_conf_file
         );
-        exit( EXIT_USAGE );
-      }
     }
 #ifdef WITH_PATTERNS
     else if ( opt_fin_name )
@@ -505,13 +503,11 @@ static void process_options( int argc, char const *argv[], char const *opts,
 
   optind = opterr = 1;
   while ( (opt = pjl_getopt( argc, argv, opts )) != EOF ) {
-    if ( line_no && strchr( "acCfFov", opt ) ) {
-      fprintf(
-        stderr, "%s: %s:%d: '%c': option not allowed in configuration file\n",
-        me, opt_conf_file, line_no, opt
+    if ( line_no && strchr( "acCfFov", opt ) )
+      PMESSAGE_EXIT( CONF_ERROR,
+        "%s:%d: '%c': option not allowed in configuration file\n",
+        opt_conf_file, line_no, opt
       );
-      exit( EXIT_CONF_ERROR );
-    }
     switch ( opt ) {
       case 'a': opt_alias           = optarg;               break;
       case 'b': opt_lead_ws_delimit = true;                 break;
@@ -542,14 +538,10 @@ static void process_options( int argc, char const *argv[], char const *opts,
     } /* switch */
   } /* while */
 
-  if ( opt_fin && !(fin = fopen( opt_fin, "r" )) ) {
-    fprintf( stderr, "%s: \"%s\": %s\n", me, optarg, strerror( errno ) );
-    exit( EXIT_READ_OPEN );
-  }
-  if ( opt_fout && !(fout = fopen( optarg, "w" )) ) {
-    fprintf( stderr, "%s: \"%s\": %s\n", me, optarg, strerror( errno ) );
-    exit( EXIT_WRITE_OPEN );
-  }
+  if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
+    PMESSAGE_EXIT( READ_OPEN, "\"%s\": %s\n", optarg, strerror( errno ) );
+  if ( opt_fout && !(fout = fopen( optarg, "w" )) )
+    PMESSAGE_EXIT( WRITE_OPEN, "\"%s\": %s\n", optarg, strerror( errno ) );
 }
 
 static void usage() {

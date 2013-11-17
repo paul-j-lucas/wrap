@@ -47,6 +47,7 @@
 #define EXIT_CHILD_SIGNAL   30
 #define EXIT_PIPE_ERROR     40
 
+/* define a "bool" type */
 #ifdef HAVE_STDBOOL_H
 # include <stdbool.h>
 #else
@@ -65,6 +66,9 @@ typedef bool _Bool;
 
 #define PERROR_EXIT(STATUS) \
   do { perror( me ); exit( EXIT_##STATUS ); } while (0)
+
+#define PMESSAGE_EXIT(STATUS,FORMAT,...) \
+  do { fprintf( stderr, "%s: " FORMAT, me, __VA_ARGS__ ); exit( EXIT_##STATUS ); } while (0)
 
 #define MALLOC(TYPE,N) \
   (TYPE*)check_realloc( NULL, sizeof(TYPE) * (N) )

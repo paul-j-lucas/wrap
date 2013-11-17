@@ -52,14 +52,11 @@ static void alias_check_dup( char const *conf_file, int line_no ) {
     int i = n_aliases - 1;
     char const *const last_name = aliases[i].argv[0];
     while ( --i >= 0 )
-      if ( strcmp( aliases[i].argv[0], last_name ) == 0 ) {
-        fprintf(
-          stderr,
-          "%s: %s:%d: \"%s\": duplicate alias name (first is on line %d)\n",
-          me, conf_file, line_no, last_name, aliases[i].line_no
+      if ( strcmp( aliases[i].argv[0], last_name ) == 0 )
+        PMESSAGE_EXIT( CONF_ERROR,
+          "%s:%d: \"%s\": duplicate alias name (first is on line %d)\n",
+          conf_file, line_no, last_name, aliases[i].line_no
         );
-        exit( EXIT_CONF_ERROR );
-      }
   }
 }
 
@@ -122,35 +119,26 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
 
   /* part 2: whitespace */
   line += strspn( line, " \t" );
-  if ( !*line ) {
-    fprintf(
-      stderr, "%s: %s:%d: '=' expected\n",
-      me, conf_file, line_no
-    );
-    exit( EXIT_CONF_ERROR );
-  }
+  if ( !*line )
+    PMESSAGE_EXIT( CONF_ERROR, "%s:%d: '=' expected\n", conf_file, line_no );
 
   /* part 3: = */
-  if ( *line != '=' ) {
-    fprintf(
-      stderr, "%s: %s:%d: '%c': unexpected character; '=' expected\n",
-      me, conf_file, line_no, *line
+  if ( *line != '=' )
+    PMESSAGE_EXIT( CONF_ERROR,
+      "%s:%d: '%c': unexpected character; '=' expected\n",
+      conf_file, line_no, *line
     );
-    exit( EXIT_CONF_ERROR );
-  }
   ++line;                               /* skip '=' */
 
   /* parts 4 & 5: whitespace, options */
   while ( true ) {
     line += strspn( line, " \t" );
     if ( !*line ) {
-      if ( alias->argc == 1 ) {
-        fprintf(
-          stderr, "%s: %s:%d: option(s) expected after '='\n",
-          me, conf_file, line_no
+      if ( alias->argc == 1 )
+        PMESSAGE_EXIT( CONF_ERROR,
+          "%s:%d: option(s) expected after '='\n",
+          conf_file, line_no
         );
-        exit( EXIT_CONF_ERROR );
-      }
       break;
     }
     if ( alias->argc == n_argv_alloc ) {
