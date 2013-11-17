@@ -797,8 +797,6 @@ uninstall-am:
 dist-hook:
 	cd $(distdir)/tests && rm -f *.log *.trs
 
-#	rm -rf `find $(distdir)/tests -name '*.log' -o -name '*.trs'`
-
 # vim:set noet sw=8 ts=8:
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
