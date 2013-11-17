@@ -146,7 +146,8 @@ Specifies the configuration file
 .I f
 to read
 (default is
-.BR ~/.wraprc ).
+.BR ~/.wraprc )
+if warranted.
 .TP
 .B \-C
 Suppresses reading of any configuration file,
@@ -289,11 +290,23 @@ If unset,
 the home directory is obtained from the password database entry
 for the effective user.
 If that fails,
-no configuration file is read.
+no default configuration file is read.
 .SH FILES
 .TP
 .B ~/.wraprc
 The default configuration file.
+A configuration file,
+even one explicitly specified via
+.BR \-c ,
+is neither actually checked for existence nor read
+unless one of the
+.BR \-a ,
+.BR \-f ,
+or
+.B \-F
+options
+is specified
+since it doesn't affect the result.
 .SH EXAMPLE
 Wrap text into paragraphs having a line width of 72 characters,
 indenting one tab-stop,

@@ -100,7 +100,8 @@ Specifies the configuration file
 .I f
 to read
 (default is
-.BR ~/.wraprc ).
+.BR ~/.wraprc )
+if warranted.
 .TP
 .B \-C
 Suppresses reading of any configuration file,
@@ -196,6 +197,32 @@ Caught signal from child process.
 .BR pipe (2)
 failed.
 .PD
+.SH ENVIRONMENT
+.TP
+.B $HOME
+The user's home directory:
+used to locate the default configuration file.
+If unset,
+the home directory is obtained from the password database entry
+for the effective user.
+If that fails,
+no default configuration file is read.
+.SH FILES
+.TP
+.B ~/.wraprc
+The default configuration file.
+A configuration file,
+even one explicitly specified via
+.BR \-c ,
+is neither actually checked for existence nor read
+unless one of the
+.BR \-a ,
+.BR \-f ,
+or
+.B \-F
+options
+is specified
+since it doesn't affect the result.
 .SH BUGS
 The first comment line is used at the prototype for all subsequent lines.
 The number of characters comprising
@@ -206,7 +233,8 @@ before being passed to
 .B wrap
 for reformatting.
 After reformatting,
-the previously removed characters
+the prototype characters
+of the first comment line
 are inserted at the start of each line.
 .P
 This works fine if all the comment lines
