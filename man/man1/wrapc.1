@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\f1 1 "November 14, 2013" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "November 17, 2013" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -46,9 +46,6 @@ is a filter for reformatting program comments by
 wrapping and filling lines to a given
 .IR line-width ,
 the default for which is 80 characters.
-This can be changed via the
-.B \-w
-option.
 .P
 Leading white-space and comment delimiters are preserved.
 The characters that are recognized as comment delimeters are:
@@ -103,7 +100,7 @@ Specifies the configuration file
 .I f
 to read
 (default is
-.BR ~/.wraprc .)
+.BR ~/.wraprc ).
 .TP
 .B \-C
 Suppresses reading of any configuration file,
