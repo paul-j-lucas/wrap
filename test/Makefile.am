@@ -50,4 +50,8 @@ AM_TESTS_ENVIRONMENT = BUILD_SRC=$(top_builddir)/src; export BUILD_SRC ;
 TEST_EXTENSIONS = .test
 TEST_LOG_DRIVER = $(srcdir)/run_test.sh
 
+EXTRA_DIST = run_test.sh tests data expected
+dist-hook:
+	cd $(distdir)/tests && rm -f *.log *.trs
+
 # vim:set noet sw=8 ts=8:
