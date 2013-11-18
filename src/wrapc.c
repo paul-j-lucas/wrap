@@ -129,8 +129,18 @@ int main( int argc, char const *argv[] ) {
 
     if ( fputs( buf + lead_width, to_wrap ) == EOF )
       PERROR_EXIT( WRITE_ERROR );
-    while ( fgets( buf, LINE_BUF_SIZE, fin ) ) {
-      fputs( buf + lead_width, to_wrap );
+    while ( true ) {
+      buf[ lead_width ] = '\0';         /* sentinel */
+      if ( !fgets( buf, LINE_BUF_SIZE, fin ) )
+        break;
+      /*
+      ** If the sentinel is still there, it means we just read a line having a
+      ** width < lead_width: write a newline rather than a null.
+      */
+      if ( buf[ lead_width ] == '\0' )
+        putc( '\n', to_wrap );
+      else
+        fputs( buf + lead_width, to_wrap );
       if ( ferror( to_wrap ) )
         PERROR_EXIT( WRITE_ERROR );
     }
