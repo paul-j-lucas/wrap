@@ -205,11 +205,12 @@ INPUT=$DATA_DIR/`echo $INPUT`           # trims whitespace
 EXPECTED_EXIT=`echo $EXPECTED_EXIT`     # trims whitespace
 EXPECTED_OUTPUT="$EXPECTED_DIR/`echo $TEST_NAME | sed 's/test$/txt/'`"
 
+#echo $BUILD_SRC/$PROG -c $CONFIG "$OPTIONS" -f $INPUT -o $OUTPUT
 if $BUILD_SRC/$PROG -c $CONFIG $OPTIONS -f $INPUT -o $OUTPUT 2> $LOG_FILE
 then
   if [ 0 -eq $EXPECTED_EXIT ]
   then
-    if diff $OUTPUT $EXPECTED_OUTPUT > $LOG_FILE
+    if diff $EXPECTED_OUTPUT $OUTPUT > $LOG_FILE
     then pass; mv $OUTPUT $LOG_FILE
     else fail
     fi
