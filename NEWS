@@ -50,6 +50,11 @@ With the addition of UTF-8 support, it sounds better to use "width" (as in
 character and line width) rather than "length."  Consequently, the -l option
 has been deprecated in favor of the new -w option.
 
+** Fixed wrapc short-line bug.
+A bug whereby reading a comment line that has fewer characters than the number
+of leading characters of the first line resulted in lines being incorrectly
+folded has been fixed.
+
 * Changes in Wrap 1.0
 
 ** Initial version.

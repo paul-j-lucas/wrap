@@ -1,3 +1,7 @@
+2013-11-17  Paul J. Lucas <paul@lucasmail.org>
+
+    * wrapc.c: Fixed short-line bug.
+
 2013-11-09  Paul J. Lucas <paul@lucasmail.org>
 
     * Makefile.am, Makefile.in, aclocal.m4, ax_append_flag.m4,
