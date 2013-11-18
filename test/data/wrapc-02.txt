@@ -1,0 +1,8 @@
+  // Because of:
+  //
+  //    Ibid: if a variable marker contains one or more commas, then the last
+  //    comma is treated as introducing the width modifier, and all others are
+  //    treated as grouping separators.
+  //
+  // we have to count the number of commas in order to know when we've reached
+  // the last one.
