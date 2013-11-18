@@ -474,7 +474,7 @@ static void init( int argc, char const *argv[] ) {
 
   if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
     PMESSAGE_EXIT( READ_OPEN, "\"%s\": %s\n", optarg, strerror( errno ) );
-  if ( opt_fout && !(fout = fopen( optarg, "w" )) )
+  if ( opt_fout && !(fout = fopen( opt_fout, "w" )) )
     PMESSAGE_EXIT( WRITE_OPEN, "\"%s\": %s\n", optarg, strerror( errno ) );
 
   if ( !fin )
