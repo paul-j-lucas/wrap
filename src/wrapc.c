@@ -87,6 +87,7 @@ int main( int argc, char const *argv[] ) {
   **            pipes[1] goes between child 2 (wrap) and parent
   */
   int   pipes[2][2];
+  int   put_ret_val;                    /* fputs(), putc() return value */
   int   wait_status;                    /* child process wait status */
 
   process_options( argc, argv );
@@ -127,9 +128,10 @@ int main( int argc, char const *argv[] ) {
         "child can't open pipe for writing: %s\n", strerror( errno )
       );
 
-    if ( fputs( buf + lead_width, to_wrap ) == EOF )
-      PERROR_EXIT( WRITE_ERROR );
+    put_ret_val = fputs( buf + lead_width, to_wrap );
     while ( true ) {
+      if ( put_ret_val == EOF )
+        PERROR_EXIT( WRITE_ERROR );
       buf[ lead_width ] = '\0';         /* sentinel */
       if ( !fgets( buf, LINE_BUF_SIZE, fin ) )
         break;
@@ -137,12 +139,8 @@ int main( int argc, char const *argv[] ) {
       ** If the sentinel is still there, it means we just read a line having a
       ** width < lead_width: write a newline rather than a null.
       */
-      if ( buf[ lead_width ] == '\0' )
-        putc( '\n', to_wrap );
-      else
-        fputs( buf + lead_width, to_wrap );
-      if ( ferror( to_wrap ) )
-        PERROR_EXIT( WRITE_ERROR );
+      put_ret_val = buf[ lead_width ] == '\0' ?
+        putc( '\n', to_wrap ) : fputs( buf + lead_width, to_wrap );
     }
     if ( ferror( fin ) )
       PERROR_EXIT( READ_ERROR );
@@ -237,8 +235,7 @@ int main( int argc, char const *argv[] ) {
     );
 
   while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) ) {
-    fprintf( fout, "%s%s", leader, buf );
-    if ( ferror( fout ) )
+    if ( fprintf( fout, "%s%s", leader, buf ) < 0 )
       PERROR_EXIT( WRITE_ERROR );
   }
   if ( ferror( from_wrap ) )
