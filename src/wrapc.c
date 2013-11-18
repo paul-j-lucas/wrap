@@ -44,18 +44,15 @@
 
 typedef char arg_buf[ ARG_BUF_SIZE ];   /* wrap command-line argument buffer */
 
-/*
-** The default leading characters are:
-**  space and tab
-**  '!': HTML & XML comments
-**  '#': CMake, Make, Perl, Python, Ruby, and Shell comments
-**  '/' & '*': C, C++, and Java comments
-**  '%': PostScript comments
-**  ':': XQuery comments
-**  ';': Assember & Lisp comments
-**  '>': Forward mail indicator
-*/
-char const* leading_chars = "\t !#%*/:;>";
+char const  leading_chars[] =
+  " \t" /* whitespace */
+  "!"   /* HTML and XML comments */
+  "#"   /* CMake, Make, Perl, Python, Ruby, and Shell comments */
+  "%"   /* PostScript comments */
+  "/*"  /* C, C++, and Java comments */
+  ":"   /* XQuery comments */
+  ";"   /* Assember and Lisp comments */
+  ">"   /* Forward mail indicator */ ;
 
 FILE*       fin = NULL;                 /* file in */
 FILE*       fout = NULL;                /* file out */
