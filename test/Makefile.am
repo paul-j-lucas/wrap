@@ -27,7 +27,6 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap-alias-no_equal.test \
 	tests/wrap-alias-options_exp.test \
 	tests/wrap-alias-unexp_char.test \
-	tests/wrap-bI2.test \
 	tests/wrap-conf-not_found.test \
 	tests/wrap-conf-no_section.test \
 	tests/wrap-d.test \
@@ -38,6 +37,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap-H3.test \
 	tests/wrap-I2-m1.test \
 	tests/wrap-I2-w72.test \
+	tests/wrap-I2-W.test \
 	tests/wrap-n.test \
 	tests/wrap-no_options.test \
 	tests/wrap-pattern-alias_exp.test \

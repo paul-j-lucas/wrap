@@ -1,3 +1,7 @@
+2014-01-18  Paul J. Lucas <paul@lucasmail.org>
+
+    * wrap.1, wrap.c: Changed -b to -W.
+
 2013-11-17  Paul J. Lucas <paul@lucasmail.org>
 
     * wrapc.c: Fixed short-line bug.

@@ -443,7 +443,7 @@ static void hang_indent( int *count, int *width ) {
 }
 
 static void init( int argc, char const *argv[] ) {
-  char const opts[] = "a:bc:Cdef:F:h:H:i:I:l:m:M:nNo:p:s:S:t:Tvw:";
+  char const opts[] = "a:bc:Cdef:F:h:H:i:I:l:m:M:nNo:p:s:S:t:Tvw:W";
 
   me = base_name( argv[0] );
   process_options( argc, argv, opts, 0 );
@@ -517,7 +517,6 @@ static void process_options( int argc, char const *argv[], char const *opts,
       );
     switch ( opt ) {
       case 'a': opt_alias           = optarg;               break;
-      case 'b': opt_lead_ws_delimit = true;                 break;
       case 'c': opt_conf_file       = optarg;               break;
       case 'C': opt_no_conf         = true;                 break;
       case 'd': opt_lead_dot_ignore = true;                 break;
@@ -541,6 +540,8 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'v': fprintf( stderr, "%s\n", PACKAGE_STRING );  exit( EXIT_OK );
       case 'l': /* deprecated: now synonym for -w */
       case 'w': line_width          = check_atou( optarg ); break;
+      case 'b': /* deprecated: now synonym for -W */
+      case 'W': opt_lead_ws_delimit = true;                 break;
       default : usage();
     } /* switch */
   } /* while */
@@ -548,8 +549,8 @@ static void process_options( int argc, char const *argv[], char const *opts,
 
 static void usage() {
   fprintf( stderr,
-"usage: %s [-bCdenNTv] [-w line-width] [-p para-delim-chars] [-s tab-spaces]\n"
-"       [-{fF} input-file] [-o output-file]    [-c conf-file]\n"
+"usage: %s [-CdenNTvW] [-w line-width] [-p para-delim-chars] [-s tab-spaces]\n"
+"       [-{fF} input-file] [-o output-file] [-c conf-file] [-a alias]\n"
 "       [-t leading-tabs]  [-S leading-spaces]\n"
 "       [-m mirror-tabs]   [-M mirror-spaces]\n"
 "       [-i indent-tabs]   [-I indent-spaces]\n"

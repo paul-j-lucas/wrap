@@ -2,7 +2,7 @@
 .\"	wrap -- text reformatter
 .\"	wrap.1: manual page
 .\"
-.\"	Copyright (C) 1996-2013  Paul J. Lucas
+.\"	Copyright (C) 1996-2014  Paul J. Lucas
 .\"
 .\"	This program is free software; you can redistribute it and/or modify
 .\"	it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\f1 1 "November 17, 2013" "PJL TOOLS"
+.TH \f3wrap\f1 1 "January 18, 2014" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -96,7 +96,7 @@ If
 is specified, every newline delimits a paragraph.
 .IP "4." 3
 If the
-.B \-b
+.B \-W
 option is specified, a line beginning with white-space
 delimits a paragraph.
 .IP "5." 3
@@ -139,7 +139,9 @@ or
 options.
 .TP
 .B \-b
-Treats a line beginning with white-space as a paragraph delimiter.
+Deprecated.
+Now a synonym for
+.BR \-W .
 .TP
 .BI \-c " f"
 Specifies the configuration file
@@ -262,6 +264,8 @@ to
 .I n
 characters
 (default is 80).
+.B \-W
+Treats a line beginning with white-space as a paragraph delimiter.
 .SH EXIT STATUS
 .PD 0
 .IP 0
