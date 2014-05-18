@@ -38,7 +38,7 @@ char const* base_name( char const *path_name ) {
 }
 
 int check_atou( char const *s ) {
-  if ( strspn( s, "0123456789" ) != strlen( s ) )
+  if ( s[ strspn( s, "0123456789" ) ] )
     PMESSAGE_EXIT( USAGE, "\"%s\": invalid integer\n", s );
   return atoi( s );
 }
@@ -53,7 +53,7 @@ void* check_realloc( void *p, size_t size ) {
   **    malloc(size), but some old systems don't support this (e.g., NextStep).
   */
   if ( !size )
-    ++size;
+    size = 1;
   r = p ? realloc( p, size ) : malloc( size );
   if ( !r )
     PERROR_EXIT( OUT_OF_MEMORY );
