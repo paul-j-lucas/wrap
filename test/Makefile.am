@@ -18,6 +18,8 @@
 #	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
+AUTOMAKE_OPTIONS = 1.12			# needed for TEST_LOG_DRIVER
+
 TESTS =	tests/utf8-w77.test \
 	tests/utf8-w78.test \
 	tests/utf8-w79.test \
