@@ -1,0 +1,16 @@
+#! /bin/bash
+
+[ -f Makefile ] && make distclean
+
+rm -rf autom4te.cache
+
+rm -f aclocal.m4 compile configure depcomp install-sh missing \
+      Makefile.in \
+      man/Makefile.in \
+      man/man1/Makefile.in \
+      man/man5/Makefile.in \
+      src/config.h.in \
+      src/Makefile.in \
+      test/Makefile.in
+
+# vim:set et sw=2 ts=2:
