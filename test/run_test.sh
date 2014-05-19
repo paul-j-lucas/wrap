@@ -47,7 +47,7 @@ local_basename() {
 }
 
 pass() {
-  print_result $PASS $TEST_NAME
+  print_result PASS $TEST_NAME
   {
     echo ":test-result: PASS"
     echo ":copy-in-global-log: no"
@@ -55,7 +55,7 @@ pass() {
 }
 
 fail() {
-  print_result $FAIL $TEST_NAME
+  print_result FAIL $TEST_NAME
   {
     echo ":test-result: FAIL"
     echo ":copy-in-global-log: yes"
@@ -65,8 +65,8 @@ fail() {
 
 print_result() {
   RESULT=$1; shift
-  MSG="${RESULT_STR[ $RESULT ]}: $*"
-  COLOR=${RESULT_COLOR[ $RESULT ]}
+  MSG="$RESULT: $*"
+  COLOR=`eval echo \\$COLOR_$RESULT`
   if [ "$COLOR" ]
   then echo $COLOR$MSG$COLOR_NONE
   else echo $MSG
@@ -151,21 +151,6 @@ TEST=$1
 
 ########## Initialize #########################################################
 
-# Mnemonic array indicies.
-PASS=0
-XPASS=1
-FAIL=2
-XFAIL=3
-SKIP=4
-ERROR=5
-
-RESULT_STR[ $ERROR ]=ERROR
-RESULT_STR[ $FAIL  ]=FAIL
-RESULT_STR[ $PASS  ]=PASS
-RESULT_STR[ $SKIP  ]=SKIP
-RESULT_STR[ $XFAIL ]=XFAIL
-RESULT_STR[ $XPASS ]=XPASS
-
 if [ "$COLOR_TESTS" = yes ]
 then
   COLOR_BLUE="[1;34m"
@@ -175,12 +160,12 @@ then
   COLOR_NONE="[m"
   COLOR_RED="[0;31m"
 
-  RESULT_COLOR[ $ERROR ]=$COLOR_MAGENTA
-  RESULT_COLOR[ $FAIL  ]=$COLOR_RED
-  RESULT_COLOR[ $PASS  ]=$COLOR_GREEN
-  RESULT_COLOR[ $SKIP  ]=$COLOR_BLUE
-  RESULT_COLOR[ $XFAIL ]=$COLOR_LIGHT_GREEN
-  RESULT_COLOR[ $XPASS ]=$COLOR_RED
+  COLOR_ERROR=$COLOR_MAGENTA
+  COLOR_FAIL=$COLOR_RED
+  COLOR_PASS=$COLOR_GREEN
+  COLOR_SKIP=$COLOR_BLUE
+  COLOR_XFAIL=$COLOR_LIGHT_GREEN
+  COLOR_XPASS=$COLOR_RED
 fi
 
 case $EXPECT_FAILURE in
