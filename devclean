@@ -1,16 +1,28 @@
-#! /bin/bash
+#! /bin/sh
+##
+#       wrap -- text-reformatter
+#       devclean -- do a distclean plus remove all auto-generated files
+#
+#       Copyright (C) 2014  Paul J. Lucas
+#
+#       This program is free software; you can redistribute it and/or modify
+#       it under the terms of the GNU General Public License as published by
+#       the Free Software Foundation; either version 2 of the Licence, or
+#       (at your option) any later version.
+#
+#       This program is distributed in the hope that it will be useful,
+#       but WITHOUT ANY WARRANTY; without even the implied warranty of
+#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#       GNU General Public License for more details.
+#
+#       You should have received a copy of the GNU General Public License
+#       along with this program.  If not, see <http://www.gnu.org/licenses/>.
+##
 
 [ -f Makefile ] && make distclean
 
-rm -rf autom4te.cache
+rm -rf aclocal.m4 autom4te.cache compile configure depcomp install-sh missing
 
-rm -f aclocal.m4 compile configure depcomp install-sh missing \
-      Makefile.in \
-      man/Makefile.in \
-      man/man1/Makefile.in \
-      man/man5/Makefile.in \
-      src/config.h.in \
-      src/Makefile.in \
-      test/Makefile.in
+find . -name '*.in' | xargs rm
 
 # vim:set et sw=2 ts=2:
