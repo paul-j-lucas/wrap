@@ -24,15 +24,15 @@ TESTS =	tests/utf8-w77.test \
 	tests/utf8-w78.test \
 	tests/utf8-w79.test \
 	tests/utf8-w80.test \
-	tests/wrap-a.test \
 	tests/wrap-alias-dup.test \
 	tests/wrap-alias-no_equal.test \
 	tests/wrap-alias-options_exp.test \
 	tests/wrap-alias-unexp_char.test \
-	tests/wrap-conf-not_found.test \
+	tests/wrap-a.test \
 	tests/wrap-conf-no_section.test \
-	tests/wrap-d.test \
+	tests/wrap-conf-not_found.test \
 	tests/wrap-dep.test \
+	tests/wrap-d.test \
 	tests/wrap-file-not_found.test \
 	tests/wrap-h1-I5.test \
 	tests/wrap-H3-t1-T.test \
@@ -40,8 +40,10 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap-I2-m1.test \
 	tests/wrap-I2-w72.test \
 	tests/wrap-I2-W.test \
-	tests/wrap-n.test \
+	tests/wrap-long_line-01.test \
+	tests/wrap-long_line-02.test \
 	tests/wrap-no_options.test \
+	tests/wrap-n.test \
 	tests/wrap-pattern-alias_exp.test \
 	tests/wrap-pattern-no_equal.test \
 	tests/wrap-pattern-unexp_char.test \
