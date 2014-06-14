@@ -20,7 +20,7 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-AC_INIT([wrap], [3.0], [paul@lucasmail.org])
+AC_INIT([wrap], [3.0.1], [paul@lucasmail.org])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
