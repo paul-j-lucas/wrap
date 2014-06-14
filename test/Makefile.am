@@ -42,6 +42,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap-I2-W.test \
 	tests/wrap-long_line-01.test \
 	tests/wrap-long_line-02.test \
+	tests/wrap-long_line-03.test \
 	tests/wrap-no_options.test \
 	tests/wrap-n.test \
 	tests/wrap-pattern-alias_exp.test \
