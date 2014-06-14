@@ -3,7 +3,7 @@ Test File Format
 
 Test files must be a single line in the following format:
 
-{*command*} `|` {*config*} `|` {*options*} `|` {*input*} `|` {*exit*}
+*command* `|` *config* `|` *options* `|` *input* `|` *exit*
 
 that is five fields separated by the pipe (`|`) character
 (with optional whitespace)
