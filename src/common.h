@@ -64,20 +64,26 @@ typedef bool _Bool;
 # define __bool_true_false_are_defined 1
 #endif /* HAVE_STDBOOL_H */
 
+#define BLOCK(...) \
+  do { __VA_ARGS__ } while (0)
+
 #define PERROR_EXIT(STATUS) \
-  do { perror( me ); exit( EXIT_##STATUS ); } while (0)
+  BLOCK( perror( me ); exit( EXIT_##STATUS ); )
 
 #define PMESSAGE_EXIT(STATUS,FORMAT,...) \
-  do { fprintf( stderr, "%s: " FORMAT, me, __VA_ARGS__ ); exit( EXIT_##STATUS ); } while (0)
+  BLOCK( fprintf( stderr, "%s: " FORMAT, me, __VA_ARGS__ ); exit( EXIT_##STATUS ); )
+
+#define CHECK_FGETX(FILE) \
+  BLOCK( if ( ferror( FILE ) ) PERROR_EXIT( READ_ERROR ); )
 
 #define FPRINTF(FILE,...) \
-  do { if ( fprintf( FILE, __VA_ARGS__ ) < 0 ) PERROR_EXIT( WRITE_ERROR ); } while (0)
+  BLOCK( if ( fprintf( FILE, __VA_ARGS__ ) < 0 ) PERROR_EXIT( WRITE_ERROR ); )
 
 #define FPUTC(C,FILE) \
-  do { if ( putc( C, FILE ) == EOF ) PERROR_EXIT( WRITE_ERROR ); } while (0)
+  BLOCK( if ( putc( C, FILE ) == EOF ) PERROR_EXIT( WRITE_ERROR ); )
 
 #define FPUTS(S,FILE) \
-  do { if ( fputs( S, FILE ) == EOF ) PERROR_EXIT( WRITE_ERROR ); } while (0)
+  BLOCK( if ( fputs( S, FILE ) == EOF ) PERROR_EXIT( WRITE_ERROR ); )
 
 #define MALLOC(TYPE,N) \
   (TYPE*)check_realloc( NULL, sizeof(TYPE) * (N) )

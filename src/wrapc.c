@@ -97,8 +97,7 @@ int main( int argc, char const *argv[] ) {
   ** be removed from all lines.
   */
   if ( !fgets( buf, LINE_BUF_SIZE, fin ) ) {
-    if ( ferror( fin ) )
-      PERROR_EXIT( READ_ERROR );
+    CHECK_FGETX( fin );
     exit( EXIT_OK );
   }
   strcpy( leader, buf );
@@ -142,8 +141,7 @@ int main( int argc, char const *argv[] ) {
       put_ret_val = buf[ lead_width ] == '\0' ?
         putc( '\n', to_wrap ) : fputs( buf + lead_width, to_wrap );
     }
-    if ( ferror( fin ) )
-      PERROR_EXIT( READ_ERROR );
+    CHECK_FGETX( fin );
     exit( EXIT_OK );
   }
 
@@ -237,8 +235,7 @@ int main( int argc, char const *argv[] ) {
   while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) )
     FPRINTF( fout, "%s%s", leader, buf );
 
-  if ( ferror( from_wrap ) )
-    PERROR_EXIT( READ_ERROR );
+  CHECK_FGETX( from_wrap );
 
   /*
   ** Wait for child processes.

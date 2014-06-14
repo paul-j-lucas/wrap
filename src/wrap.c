@@ -400,8 +400,7 @@ delimit_paragraph:
       */
       buf[0] = '.';
       if ( !fgets( buf + 1, LINE_BUF_SIZE - 1, fin ) ) {
-        if ( ferror( fin ) )
-          PERROR_EXIT( READ_ERROR );
+        CHECK_FGETX( fin );
         continue;
       }
       FPUTS( buf, fout );
@@ -415,8 +414,7 @@ delimit_paragraph:
   } /* for */
 
 done:
-  if ( ferror( fin ) )
-    PERROR_EXIT( READ_ERROR );
+  CHECK_FGETX( fin );
   if ( buf_count )                      /* print left-over text */
     print_line( buf_count );
   exit( EXIT_OK );
