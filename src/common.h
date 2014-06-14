@@ -31,7 +31,7 @@
 
 #define DEFAULT_LINE_WIDTH  80          /* wrap text to this line width */
 #define DEFAULT_TAB_SPACES  8           /* number of spaces a tab equals */
-#define LINE_BUF_SIZE       1024        /* hopefully, no one will exceed this */
+#define LINE_BUF_SIZE       16384       /* hopefully, no one will exceed this */
 
 /* exit(3) status codes */
 #define EXIT_OK             0
@@ -69,6 +69,15 @@ typedef bool _Bool;
 
 #define PMESSAGE_EXIT(STATUS,FORMAT,...) \
   do { fprintf( stderr, "%s: " FORMAT, me, __VA_ARGS__ ); exit( EXIT_##STATUS ); } while (0)
+
+#define FPRINTF(FILE,...) \
+  do { if ( fprintf( FILE, __VA_ARGS__ ) < 0 ) PERROR_EXIT( WRITE_ERROR ); } while (0)
+
+#define FPUTC(C,FILE) \
+  do { if ( putc( C, FILE ) == EOF ) PERROR_EXIT( WRITE_ERROR ); } while (0)
+
+#define FPUTS(S,FILE) \
+  do { if ( fputs( S, FILE ) == EOF ) PERROR_EXIT( WRITE_ERROR ); } while (0)
 
 #define MALLOC(TYPE,N) \
   (TYPE*)check_realloc( NULL, sizeof(TYPE) * (N) )

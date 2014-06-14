@@ -234,10 +234,9 @@ int main( int argc, char const *argv[] ) {
       "parent can't open pipe for reading: %s\n", strerror( errno )
     );
 
-  while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) ) {
-    if ( fprintf( fout, "%s%s", leader, buf ) < 0 )
-      PERROR_EXIT( WRITE_ERROR );
-  }
+  while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) )
+    FPRINTF( fout, "%s%s", leader, buf );
+
   if ( ferror( from_wrap ) )
     PERROR_EXIT( READ_ERROR );
 

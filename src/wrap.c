@@ -404,13 +404,11 @@ delimit_paragraph:
           PERROR_EXIT( READ_ERROR );
         continue;
       }
-      if ( fputs( buf, fout ) == EOF )
-        PERROR_EXIT( WRITE_ERROR );
+      FPUTS( buf, fout );
     } else {
       if ( consec_newlines == 2 || 
           (consec_newlines > 2 && newlines_delimit == 1) ) {
-        if ( putc( c, fout ) == EOF )
-          PERROR_EXIT( WRITE_ERROR );
+        FPUTC( c, fout );
       }
       do_indent = true;
     }
@@ -491,17 +489,11 @@ static void init( int argc, char const *argv[] ) {
 static void print_line( int up_to ) {
   int i;
   for ( i = 0; i < opt_lead_tabs; ++i )
-    if ( putc( '\t', fout ) == EOF )
-      goto error;
+    FPUTC( '\t', fout );
   for ( i = 0; i < opt_lead_spaces; ++i )
-    if ( putc( ' ', fout ) == EOF )
-      goto error;
+    FPUTC( ' ', fout );
   buf[ up_to ] = '\0';
-  if ( fprintf( fout, "%s\n", buf ) >= 0 )
-    return;
-
-error:
-  PERROR_EXIT( WRITE_ERROR );
+  FPRINTF( fout, "%s\n", buf );
 }
 
 static void process_options( int argc, char const *argv[], char const *opts,
