@@ -222,6 +222,13 @@ int main( int argc, char const *argv[] ) {
      *************************************************************************/
 
     if ( isspace( c ) ) {
+      if ( is_long_line ) {
+        /*
+        ** We've been handling a "long line" and finally got a whitespace
+        ** character at which we can finally wrap: delimit the paragraph.
+        */
+        goto delimit_paragraph;
+      }
       if ( opt_lead_ws_delimit && prev_c == '\n' ) {
         /*
         ** Leading whitespace characters delimit paragraphs and the previous
@@ -242,10 +249,6 @@ int main( int argc, char const *argv[] ) {
         ** The previous character was a paragraph-delimiter character (set only
         ** if opt_para_delimiters was set): delimit the paragraph.
         */
-        goto delimit_paragraph;
-      }
-      if ( is_long_line ) {
-        c = '\n';
         goto delimit_paragraph;
       }
       if ( buf_count && put_spaces < 1 + was_eos_char ) {
@@ -369,7 +372,7 @@ int main( int argc, char const *argv[] ) {
 
     if ( !wrap_pos ) {
       /*
-      ** We've exceeded the line width, but we haven't encountered a whitespace
+      ** We've exceeded the line width, but haven't encountered a whitespace
       ** character at which to wrap; therefore, we've got a "long line."
       */
       if ( !is_long_line )
@@ -414,20 +417,27 @@ continue_outer_loop:
 
 delimit_paragraph:
     if ( buf_count ) {
-      if ( !is_long_line )
-        print_lead_chars();
-      else
+      /*
+      ** Print what's in the buffer before delimiting the paragraph.  If we've
+      ** been handling a "long line," it's now finally ended; otherwise, print
+      ** the leading characters.
+      */
+      if ( is_long_line )
         is_long_line = false;
+      else
+        print_lead_chars();
       print_buf( buf_count, true );
       buf_count = buf_width = 0;
     } else if ( is_long_line )
-      FPUTC( '\n', fout );
+      FPUTC( '\n', fout );              /* delimit the "long line" */
+
     put_spaces = 0;
     was_eos_char = was_para_delim_char = false;
+
     if ( do_ignore_lead_dot ) {
       do_ignore_lead_dot = false;
       /*
-      ** The line starts with a leading dot and opt_lead_dot_ignore = true:
+      ** The line starts with a leading dot and opt_lead_dot_ignore is true:
       ** read/write the line as-is.
       */
       buf[0] = '.';
