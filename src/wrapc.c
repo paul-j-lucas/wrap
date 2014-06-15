@@ -36,11 +36,11 @@
 
 /* Close both ends of pipe P. */
 #define CLOSE(P) \
-  do { close( pipes[P][0] ); close( pipes[P][1] ); } while (0)
+  BLOCK( close( pipes[P][0] ); close( pipes[P][1] ); )
 
 /* Redirect file-descriptor FD to/from pipe P. */
 #define REDIRECT(FD,P) \
-  do { close( FD ); dup( pipes[P][FD] ); CLOSE( P ); } while (0)
+  BLOCK( close( FD ); dup( pipes[P][FD] ); CLOSE( P ); )
 
 typedef char arg_buf[ ARG_BUF_SIZE ];   /* wrap command-line argument buffer */
 
@@ -190,7 +190,7 @@ int main( int argc, char const *argv[] ) {
 #define IF_ARG_DUP(ARG,FMT) if ( ARG ) ARG_DUP( FMT )
 
 #define ARG_FMT(ARG,FMT) \
-  do { ARG_SPRINTF( ARG, (FMT) ); argv[ argc++ ] = arg_##ARG; } while (0)
+  BLOCK( ARG_SPRINTF( ARG, (FMT) ); argv[ argc++ ] = arg_##ARG; )
 
 #define IF_ARG_FMT(ARG,FMT) if ( ARG ) ARG_FMT( ARG, FMT )
 
