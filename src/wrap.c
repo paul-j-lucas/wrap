@@ -91,6 +91,7 @@ static char const utf8_len_table[] = {
 #define UTF8_LEN(C)         ((int)utf8_len_table[ (unsigned char)(C) ])
 
 /* local functions */
+static bool copy_line( FILE *fin, FILE *fout, char *buf, size_t buf_size );
 static void clean_up();
 static void hang_indent( int *count, int *width );
 static void init( int argc, char const *argv[] );
@@ -440,12 +441,9 @@ delimit_paragraph:
       ** The line starts with a leading dot and opt_lead_dot_ignore is true:
       ** read/write the line as-is.
       */
-      buf[0] = '.';
-      if ( !fgets( buf + 1, LINE_BUF_SIZE, fin ) ) {
-        CHECK_FGETX( fin );
-        continue;
-      }
-      FPUTS( buf, fout );
+      FPUTC( '.', fout );
+      if ( !copy_line( fin, fout, buf, LINE_BUF_SIZE ) )
+        goto done;
     } else {
       if ( consec_newlines == 2 || 
           (consec_newlines > 2 && newlines_delimit == 1) ) {
@@ -472,6 +470,19 @@ static void clean_up() {
 #ifdef WITH_PATTERNS
   pattern_cleanup();
 #endif /* WITH_PATTERNS */
+}
+
+static bool copy_line( FILE *fin, FILE *fout, char *buf, size_t buf_size ) {
+  char *const last = buf + buf_size - 1;
+  do {
+    *last = '\0';
+    if ( !fgets( buf, buf_size, fin ) ) {
+      CHECK_FGETX( fin );
+      return false;
+    }
+    FPUTS( buf, fout );
+  } while ( *last && *last != '\n' );
+  return true;
 }
 
 static void hang_indent( int *count, int *width ) {
