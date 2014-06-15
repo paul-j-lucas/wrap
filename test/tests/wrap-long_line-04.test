@@ -1,0 +1,1 @@
+wrap | /dev/null | -t1 | long_line-03.txt | 0

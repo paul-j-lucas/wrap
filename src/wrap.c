@@ -94,7 +94,8 @@ static char const utf8_len_table[] = {
 static void clean_up();
 static void hang_indent( int *count, int *width );
 static void init( int argc, char const *argv[] );
-static void print_line( int up_to );
+static void print_buf( int len, bool newline );
+static void print_lead_chars();
 static void process_options( int argc, char const *argv[], char const *opts,
                              int line_no );
 static void usage();
@@ -134,13 +135,19 @@ int main( int argc, char const *argv[] ) {
   bool do_indent = true;
 
   /*
+  ** True only when we're handling a "long line" (a sequence of non-whitespace
+  ** characters longer than line_width) that can't be wrapped.
+  */
+  bool is_long_line = false;
+
+  /*
   ** True when the next line to be read will be a title line.
   */
   bool next_line_is_title;
 
   /*
-  ** Number of spaces to output before the next non-white-space character: set
-  ** to 1 when we encounter a white-space character and 2 when was_eos_char is
+  ** Number of spaces to output before the next non-whitespace character: set
+  ** to 1 when we encounter a whitespace character and 2 when was_eos_char is
   ** true so as to put 2 characters after the end of a sentence.
   */
   int  put_spaces = 0;
@@ -192,7 +199,8 @@ int main( int argc, char const *argv[] ) {
         ** The first line of the next paragraph is title line and the buffer
         ** isn't empty (there is a title): print the title.
         */
-        print_line( buf_count );
+        print_lead_chars();
+        print_buf( buf_count, true );
         buf_count = buf_width = 0;
         do_hang_indent = true;
         next_line_is_title = false;
@@ -217,7 +225,7 @@ int main( int argc, char const *argv[] ) {
       if ( opt_lead_ws_delimit && prev_c == '\n' ) {
         /*
         ** Leading whitespace characters delimit paragraphs and the previous
-        ** character was a newline which means this white-space character is at
+        ** character was a newline which means this whitespace character is at
         ** the beginning of a line: delimit the paragraph.
         */
         goto delimit_paragraph;
@@ -234,6 +242,10 @@ int main( int argc, char const *argv[] ) {
         ** The previous character was a paragraph-delimiter character (set only
         ** if opt_para_delimiters was set): delimit the paragraph.
         */
+        goto delimit_paragraph;
+      }
+      if ( is_long_line ) {
+        c = '\n';
         goto delimit_paragraph;
       }
       if ( buf_count && put_spaces < 1 + was_eos_char ) {
@@ -355,7 +367,22 @@ int main( int argc, char const *argv[] ) {
      *  EXCEEDED LINE WIDTH; PRINT LINE OUT
      *************************************************************************/
 
-    print_line( wrap_pos );
+    if ( !wrap_pos ) {
+      /*
+      ** We've exceeded the line width, but we haven't encountered a whitespace
+      ** character at which to wrap; therefore, we've got a "long line."
+      */
+      if ( !is_long_line )
+        print_lead_chars();
+      print_buf( buf_count, false );
+      buf_count = buf_width = 0;
+      is_long_line = true;
+      continue;
+    }
+
+    is_long_line = false;
+    print_lead_chars();
+    print_buf( wrap_pos, true );
 
     /*
     ** Prepare to slide the partial word to the left where we can pick up from
@@ -387,9 +414,14 @@ continue_outer_loop:
 
 delimit_paragraph:
     if ( buf_count ) {
-      print_line( buf_count );
+      if ( !is_long_line )
+        print_lead_chars();
+      else
+        is_long_line = false;
+      print_buf( buf_count, true );
       buf_count = buf_width = 0;
-    }
+    } else if ( is_long_line )
+      FPUTC( '\n', fout );
     put_spaces = 0;
     was_eos_char = was_para_delim_char = false;
     if ( do_ignore_lead_dot ) {
@@ -415,8 +447,11 @@ delimit_paragraph:
 
 done:
   CHECK_FGETX( fin );
-  if ( buf_count )                      /* print left-over text */
-    print_line( buf_count );
+  if ( buf_count ) {                    /* print left-over text */
+    if ( !is_long_line )
+      print_lead_chars();
+    print_buf( buf_count, true );
+  }
   exit( EXIT_OK );
 }
 
@@ -484,14 +519,17 @@ static void init( int argc, char const *argv[] ) {
   opt_lead_spaces += opt_mirror_spaces;
 }
 
-static void print_line( int up_to ) {
+static void print_buf( int len, bool newline ) {
+  buf[ len ] = '\0';
+  FPRINTF( fout, newline ? "%s\n" : "%s", buf );
+}
+
+static void print_lead_chars() {
   int i;
   for ( i = 0; i < opt_lead_tabs; ++i )
     FPUTC( '\t', fout );
   for ( i = 0; i < opt_lead_spaces; ++i )
     FPUTC( ' ', fout );
-  buf[ up_to ] = '\0';
-  FPRINTF( fout, "%s\n", buf );
 }
 
 static void process_options( int argc, char const *argv[], char const *opts,
