@@ -441,7 +441,7 @@ delimit_paragraph:
       ** read/write the line as-is.
       */
       buf[0] = '.';
-      if ( !fgets( buf + 1, LINE_BUF_SIZE - 1, fin ) ) {
+      if ( !fgets( buf + 1, LINE_BUF_SIZE, fin ) ) {
         CHECK_FGETX( fin );
         continue;
       }
