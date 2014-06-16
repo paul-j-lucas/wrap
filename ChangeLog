@@ -1,6 +1,39 @@
+2014-06-14  Paul J. Lucas <paul@lucasmail.org>
+
+    * configure.ac: Upped version to 3.0.1.
+
+    * long_line-03.txt Makefile.am wrap-long_line-03.test wrap-long_line-03.txt
+      wrap-long_line-04.test wrap-long_line-04.txt: New long-line test.
+
+    * README.md: New README file for test format.
+
+    * wrap.c: Fixed long-line bug.
+
+    * wrap.c: Can now handle arbitrarily long lines.
+
+2014-06-12  Paul J. Lucas <paul@lucasmail.org>
+
+    * long_line-01.txt long_line-02.txt Makefile.am wrap-long_line-01.test
+      wrap-long_line-01.txt wrap-long_line-02.test wrap-long_line-02.txt: New
+      tests.
+
+2014-06-11  Paul J. Lucas <paul@lucasmail.org>
+
+    * wrap.1: Fixed -W by adding .TP.
+
+2014-05-26  Paul J. Lucas <paul@lucasmail.org>
+
+    * README.md: Added for github.
+
 2014-05-19  Paul J. Lucas <paul@lucasmail.org>
 
     * devclean: Added this script.
+
+    * Makefile.am: Added "Added AUTOMAKE_OPTIONS = 1.12."
+
+    * run_test.sh: No longer using arrays since Bourne shell doesn't have them.
+
+    * run_test.sh: Now explicitly setting PATH to get correct wrap/wrapc.
 
 2014-01-18  Paul J. Lucas <paul@lucasmail.org>
 

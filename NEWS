@@ -3,6 +3,11 @@ Wrap NEWS -- history of user-visible changes.
 Copyright (C) 1996-2014 Paul J. Lucas.
 See the end of the file for license conditions.
 
+* Changes in Wrap 3.0.1
+
+** Fixed handline of long lines.
+Lines longer than line-width are now handled correctly.
+
 * Changes in Wrap 3.0
 
 ** Added command-line option aliases.
