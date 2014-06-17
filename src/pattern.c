@@ -40,7 +40,7 @@ static pattern_t*   patterns = NULL;    /* global list of patterns */
 /**
  * Frees all memory used by a pattern.
  *
- * @paran pattern The pattern to free.
+ * @param pattern The pattern to free.
  */
 static void pattern_free( pattern_t *pattern ) {
   free( (void*)pattern->pattern );
