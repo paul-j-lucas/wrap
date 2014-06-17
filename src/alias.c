@@ -63,7 +63,7 @@ static void alias_check_dup( char const *conf_file, int line_no ) {
 /**
  * Frees all memory used by an alias.
  *
- * @paran alias The alias to free.
+ * @param alias The alias to free.
  */
 static void alias_free( alias_t *alias ) {
   while ( alias->argc >= 0 )
@@ -109,7 +109,7 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
   alias->argv = MALLOC( char const*, n_argv_alloc );
 
   /* alias line: <name>[<ws>]={[<ws>]<options>}... */
-  /*      parts:   1     2  3    4       5         */
+  /*      parts:   1     2   3   4       5         */
 
   /* part 1: name */
   span = strspn( line, ALIAS_NAME_CHARS );
