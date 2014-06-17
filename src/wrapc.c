@@ -42,8 +42,6 @@
 #define REDIRECT(FD,P) \
   BLOCK( close( FD ); dup( pipes[P][FD] ); CLOSE( P ); )
 
-typedef char arg_buf[ ARG_BUF_SIZE ];   /* wrap command-line argument buffer */
-
 char const  leading_chars[] =
   " \t" /* whitespace */
   "!"   /* HTML and XML comments */
@@ -159,6 +157,8 @@ int main( int argc, char const *argv[] ) {
     PERROR_EXIT( FORK_ERROR );
   }
   if ( !pid ) {
+    typedef char arg_buf[ ARG_BUF_SIZE ];
+
     arg_buf arg_line_width;
     arg_buf arg_opt_alias;
     arg_buf arg_opt_conf_file;
