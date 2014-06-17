@@ -80,10 +80,10 @@ typedef bool _Bool;
   BLOCK( if ( fprintf( FILE, __VA_ARGS__ ) < 0 ) PERROR_EXIT( WRITE_ERROR ); )
 
 #define FPUTC(C,FILE) \
-  BLOCK( if ( putc( C, FILE ) == EOF ) PERROR_EXIT( WRITE_ERROR ); )
+  BLOCK( if ( putc( (C), FILE ) == EOF ) PERROR_EXIT( WRITE_ERROR ); )
 
 #define FPUTS(S,FILE) \
-  BLOCK( if ( fputs( S, FILE ) == EOF ) PERROR_EXIT( WRITE_ERROR ); )
+  BLOCK( if ( fputs( (S), FILE ) == EOF ) PERROR_EXIT( WRITE_ERROR ); )
 
 #define MALLOC(TYPE,N) \
   (TYPE*)check_realloc( NULL, sizeof(TYPE) * (N) )

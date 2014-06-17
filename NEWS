@@ -5,8 +5,12 @@ See the end of the file for license conditions.
 
 * Changes in Wrap 3.0.1
 
-** Fixed handline of long lines.
+** Fixed handling of long lines.
 Lines longer than line-width are now handled correctly.
+
+** Fixed handling of ragged lines in wrapc.
+Comment lines that don't all start with the same number of delimiters are now
+handled better.
 
 * Changes in Wrap 3.0
 

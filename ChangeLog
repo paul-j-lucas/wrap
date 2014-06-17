@@ -1,3 +1,13 @@
+2014-05-16  Paul J. Lucas <paul@lucasmail.org>
+
+    * common.h: Added () around arguments for FPUTC and FPUTS.
+
+    * wrapc.1: Added algorithm description in the DESCRIPTION section.
+
+    * wrapc.1: Removed BUGS section.
+
+    * wrapc.c: Now scanning for leading characters on every line.
+
 2014-06-14  Paul J. Lucas <paul@lucasmail.org>
 
     * configure.ac: Upped version to 3.0.1.

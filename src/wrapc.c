@@ -87,7 +87,6 @@ int main( int argc, char const *argv[] ) {
   **            pipes[1] goes between child 2 (wrap) and parent
   */
   int   pipes[2][2];
-  int   put_ret_val;                    /* fputs(), putc() return value */
   int   wait_status;                    /* child process wait status */
 
   process_options( argc, argv );
@@ -114,7 +113,7 @@ int main( int argc, char const *argv[] ) {
   ** Close both ends of pipes[1] since it doesn't use it; read from our
   ** original stdin and write to pipes[0] (child 2, wrap).
   **
-  ** Print the first and all subsequent lines with the leading characters
+  ** Write the first and all subsequent lines with the leading characters
   ** removed from the beginning of each line.
   */
   if ( (pid_1 = fork()) == -1 )
@@ -127,20 +126,15 @@ int main( int argc, char const *argv[] ) {
         "child can't open pipe for writing: %s\n", strerror( errno )
       );
 
-    put_ret_val = fputs( buf + lead_width, to_wrap );
-    while ( true ) {
-      if ( put_ret_val == EOF )
-        PERROR_EXIT( WRITE_ERROR );
-      buf[ lead_width ] = '\0';         /* sentinel */
-      if ( !fgets( buf, LINE_BUF_SIZE, fin ) )
-        break;
-      /*
-      ** If the sentinel is still there, it means we just read a line having a
-      ** width < lead_width: write a newline rather than a null.
-      */
-      put_ret_val = buf[ lead_width ] == '\0' ?
-        putc( '\n', to_wrap ) : fputs( buf + lead_width, to_wrap );
-    }
+    FPUTS( buf + lead_width, to_wrap ); /* write first line to wrap */
+
+    while ( fgets( buf, LINE_BUF_SIZE, fin ) ) {
+      lead_width = strspn( buf, leading_chars );
+      if ( !buf[ lead_width ] )         /* no non-leading characters */
+        FPUTC( '\n', to_wrap );
+      else
+        FPUTS( buf + lead_width, to_wrap );
+    } /* while */
     CHECK_FGETX( fin );
     exit( EXIT_OK );
   }

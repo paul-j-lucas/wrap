@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\f1 1 "January 18, 2014" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "June 16, 2014" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -42,12 +42,12 @@ wrapc \- comment reformatter
 .BI [ options ]
 .SH DESCRIPTION
 .B wrapc
-is a filter for reformatting program comments by
-wrapping and filling lines to a given
+is a filter for reformatting source code comments
+(or quoted e-mail)
+by wrapping and filling lines to a given
 .IR line-width ,
 the default for which is 80 characters.
 .P
-Leading white-space and comment delimiters are preserved.
 The characters that are recognized as comment delimeters are:
 .P
 .PD 0
@@ -64,12 +64,25 @@ XQuery comments.
 .IP "\f(CW;\f1" 10
 Assember and Lisp comments.
 .IP "\f(CW>\f1" 10
-Forwarded mail indicator.
+Quoted mail indicator.
 .PD
+.P
+Leading whitespace and comment delimiters
+of the first line
+are used as the prototype for all lines.
+For each line,
+all leading whitespace and comment delimiters are stripped
+before being passed to
+.BR wrap (1)
+for reformatting.
+After reformatting,
+the prototype characters
+of the first comment line
+are prepended at the start of each line.
 .P
 All other white-space characters are folded
 in the same manner as in
-.BR wrap (1).
+.BR wrap .
 .SH OPTIONS
 An option argument
 .I f
@@ -223,28 +236,6 @@ or
 options
 is specified
 since it doesn't affect the result.
-.SH BUGS
-The first comment line is used at the prototype for all subsequent lines.
-The number of characters comprising
-the leading white-space and comment delimiters
-of the first comment line
-is removed from the start of each line
-before being passed to
-.B wrap
-for reformatting.
-After reformatting,
-the prototype characters
-of the first comment line
-are inserted at the start of each line.
-.P
-This works fine if all the comment lines
-have the same leading white-space and comment delimiters;
-if not,
-subsequent lines' leading characters
-become the same
-as those of the first
-and/or
-leading characters can be discarded.
 .SH EXAMPLE
 While in
 .BR vi ,
