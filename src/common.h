@@ -29,9 +29,10 @@
 
 /*****************************************************************************/
 
-#define DEFAULT_LINE_WIDTH  80          /* wrap text to this line width */
-#define DEFAULT_TAB_SPACES  8           /* number of spaces a tab equals */
 #define LINE_BUF_SIZE       8192        /* hopefully, no one will exceed this */
+#define LINE_WIDTH_DEFAULT  80          /* wrap text to this line width */
+#define LINE_WIDTH_MINIMUM  1
+#define TAB_SPACES_DEFAULT  8           /* number of spaces a tab equals */
 
 /* exit(3) status codes */
 #define EXIT_OK             0

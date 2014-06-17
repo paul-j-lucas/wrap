@@ -56,13 +56,13 @@ char const  leading_chars[] =
 
 FILE*       fin = NULL;                 /* file in */
 FILE*       fout = NULL;                /* file out */
-int         line_width = DEFAULT_LINE_WIDTH;
+int         line_width = LINE_WIDTH_DEFAULT;
 char const* me;                         /* executable name */
-int         tab_spaces = DEFAULT_TAB_SPACES;
+int         tab_spaces = TAB_SPACES_DEFAULT;
 
 /* option definitions */
 char const* opt_alias = NULL;
-char const* opt_conf_file = NULL;
+char const* opt_conf_file = NULL;       /* full path to conf file */
 bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
 char const* opt_fin_name = NULL;        /* file in name */
 bool        opt_no_conf = false;        /* do not read conf file */
@@ -70,6 +70,7 @@ char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
 bool        opt_title_line = false;     /* 1st para line is title? */
 
 /* local functions */
+static int  calc_leader_width( char const *leader );
 static void process_options( int argc, char const *argv[] );
 static char const* str_status( int status );
 static void usage();
@@ -79,8 +80,8 @@ static void usage();
 int main( int argc, char const *argv[] ) {
   char  buf[ LINE_BUF_SIZE ];
   FILE* from_wrap;                      /* file used by parent */
-  char  leader[ LINE_BUF_SIZE ];        /* string segment removed/prepended */
-  int   lead_width;                     /* number of leading characters */
+  char  leader[ LINE_BUF_SIZE ];        /* characters stripped/prepended */
+  int   leader_count;                   /* number of leading characters */
   pid_t pid, pid_1;                     /* child process-IDs */
   /*
   ** Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
@@ -92,15 +93,21 @@ int main( int argc, char const *argv[] ) {
   process_options( argc, argv );
 
   /*
-  ** Read the first line of input and obtain a string of leading characters to
-  ** be removed from all lines.
+  ** Read the first line of input to obtain a sequence of leading characters to
+  ** be the prototype for all lines.
   */
   if ( !fgets( buf, LINE_BUF_SIZE, fin ) ) {
     CHECK_FGETX( fin );
     exit( EXIT_OK );
   }
   strcpy( leader, buf );
-  leader[ lead_width = strspn( buf, leading_chars ) ] = '\0';
+  leader[ leader_count = strspn( buf, leading_chars ) ] = '\0';
+
+  line_width -= calc_leader_width( leader );
+  if ( line_width < LINE_WIDTH_MINIMUM )
+    PMESSAGE_EXIT( USAGE,
+      "line-width (%d) is too small (<%d)\n", line_width, LINE_WIDTH_MINIMUM
+    );
 
   /* open pipes */
   if ( pipe( pipes[0] ) == -1 || pipe( pipes[1] ) == -1 )
@@ -114,7 +121,7 @@ int main( int argc, char const *argv[] ) {
   ** original stdin and write to pipes[0] (child 2, wrap).
   **
   ** Write the first and all subsequent lines with the leading characters
-  ** removed from the beginning of each line.
+  ** stripped from the beginning of each line.
   */
   if ( (pid_1 = fork()) == -1 )
     PERROR_EXIT( FORK_ERROR );
@@ -126,14 +133,15 @@ int main( int argc, char const *argv[] ) {
         "child can't open pipe for writing: %s\n", strerror( errno )
       );
 
-    FPUTS( buf + lead_width, to_wrap ); /* write first line to wrap */
+    /* write first line to wrap */
+    FPUTS( buf + leader_count, to_wrap );
 
     while ( fgets( buf, LINE_BUF_SIZE, fin ) ) {
-      lead_width = strspn( buf, leading_chars );
-      if ( !buf[ lead_width ] )         /* no non-leading characters */
+      leader_count = strspn( buf, leading_chars );
+      if ( !buf[ leader_count ] )       /* no non-leading characters */
         FPUTC( '\n', to_wrap );
       else
-        FPUTS( buf + lead_width, to_wrap );
+        FPUTS( buf + leader_count, to_wrap );
     } /* while */
     CHECK_FGETX( fin );
     exit( EXIT_OK );
@@ -142,10 +150,6 @@ int main( int argc, char const *argv[] ) {
   /***************************************************************************/
   /*
   ** Child 2
-  **
-  ** Compute the actual width of the leader: tabs are equal to <tab_spaces>
-  ** spaces minus the number of spaces we're into a tab-stop, and all others
-  ** are equal to 1.  Subtract this from <line_width> to obtain the wrap width.
   **
   ** Read from pipes[0] (child 1) and write to pipes[1] (parent); exec into
   ** wrap.
@@ -164,18 +168,6 @@ int main( int argc, char const *argv[] ) {
 
     int argc = 0;
     char *argv[11];                     /* must be +1 of greatest arg below */
-    char const *c;
-    int spaces = 0;
-
-    for ( c = leader; *c; ++c ) {
-      if ( *c == '\t' ) {
-        line_width -= tab_spaces - spaces;
-        spaces = 0;
-      } else {
-        --line_width;
-        spaces = (spaces + 1) % tab_spaces;
-      }
-    } /* for */
 
 #define ARG_SPRINTF(ARG,FMT) \
   snprintf( arg_##ARG, sizeof arg_##ARG, (FMT), (ARG) )
@@ -258,6 +250,29 @@ int main( int argc, char const *argv[] ) {
 }
 
 /*****************************************************************************/
+
+/**
+ * Compute the actual width of the leader: tabs are equal to <tab_spaces>
+ * spaces minus the number of spaces we're into a tab-stop, and all others are
+ * equal to 1.
+ */
+static int calc_leader_width( char const *leader ) {
+  char const *c;
+  int spaces = 0;
+  int width = 0;
+
+  for ( c = leader; *c; ++c ) {
+    if ( *c == '\t' ) {
+      width += tab_spaces - spaces;
+      spaces = 0;
+    } else {
+      ++width;
+      spaces = (spaces + 1) % tab_spaces;
+    }
+  } /* for */
+
+  return width;
+}
 
 static void process_options( int argc, char const *argv[] ) {
   int opt;                              /* command-line option */

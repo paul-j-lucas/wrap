@@ -2,6 +2,8 @@
 
     * common.h: Added () around arguments for FPUTC and FPUTS.
 
+    * wrap.c, wrapc.c: Now checking that line_width doesn't become too small.
+
     * wrapc.1: Added algorithm description in the DESCRIPTION section.
 
     * wrapc.1: Removed BUGS section.

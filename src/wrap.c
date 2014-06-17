@@ -40,10 +40,10 @@
 char        buf[ LINE_BUF_SIZE ];
 FILE*       fin = NULL;                 /* file in */
 FILE*       fout = NULL;                /* file out */
-int         line_width = DEFAULT_LINE_WIDTH;
+int         line_width = LINE_WIDTH_DEFAULT;
 char const* me;                         /* executable name */
 int         newlines_delimit = 2;       /* # newlines that delimit a para */
-int         tab_spaces = DEFAULT_TAB_SPACES;
+int         tab_spaces = TAB_SPACES_DEFAULT;
 
 /* option definitions */
 char const* opt_alias = NULL;
@@ -535,6 +535,11 @@ static void init( int argc, char const *argv[] ) {
   line_width -=
     2 * (opt_mirror_tabs * tab_spaces + opt_mirror_spaces) +
     opt_lead_tabs * tab_spaces + opt_lead_spaces;
+
+  if ( line_width < LINE_WIDTH_MINIMUM )
+    PMESSAGE_EXIT( USAGE,
+      "line-width (%d) is too small (<%d)\n", line_width, LINE_WIDTH_MINIMUM
+    );
 
   opt_lead_tabs   += opt_mirror_tabs;
   opt_lead_spaces += opt_mirror_spaces;
