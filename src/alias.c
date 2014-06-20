@@ -51,12 +51,13 @@ static void alias_check_dup( char const *conf_file, int line_no ) {
   if ( n_aliases > 1 ) {
     int i = n_aliases - 1;
     char const *const last_name = aliases[i].argv[0];
-    while ( --i >= 0 )
+    while ( --i >= 0 ) {
       if ( strcmp( aliases[i].argv[0], last_name ) == 0 )
         PMESSAGE_EXIT( CONF_ERROR,
           "%s:%d: \"%s\": duplicate alias name (first is on line %d)\n",
           conf_file, line_no, last_name, aliases[i].line_no
         );
+    } /* while */
   }
 }
 
