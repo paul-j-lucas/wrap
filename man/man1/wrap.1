@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\f1 1 "July 17, 2014" "PJL TOOLS"
+.TH \f3wrap\f1 1 "July 21, 2014" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -157,7 +157,9 @@ even one explicitly specified via
 .BR \-c .
 .TP
 .B \-d
-Does not alter lines that begin with a `\f3.\f1' (dot) presumed to be
+Does not alter lines that begin with a
+.RB ` . '
+(dot) presumed to be
 .BR [nt]roff (1)
 control lines.
 .TP
@@ -181,17 +183,25 @@ while still allowing
 to be used as part of a shell pipeline.)
 .TP
 .BI \-h " n"
-Hang-indents \f2n\f1 more tabs for all but the first line of each paragraph.
+Hang-indents
+.I n
+more tabs for all but the first line of each paragraph.
 .TP
 .BI \-H " n"
-Hang-indents \f2n\f1 more spaces for all but the first line of each paragraph
+Hang-indents
+.I n
+more spaces for all but the first line of each paragraph
 after any tabs.
 .TP
 .BI \-i " n"
-Indents \f2n\f1 more tabs for the first line of each paragraph.
+Indents
+.I n
+more tabs for the first line of each paragraph.
 .TP
 .BI \-I " n"
-Indents \f2n\f1 more spaces for the first line of each paragraph after any tabs.
+Indents
+.I n
+more spaces for the first line of each paragraph after any tabs.
 .TP
 .BI \-l " n"
 Deprecated.
