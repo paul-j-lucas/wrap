@@ -82,18 +82,18 @@ int main( int argc, char const *argv[] ) {
   int   leader_count;                   /* number of leading characters */
   pid_t pid, pid_1;                     /* child process-IDs */
   /*
-  ** Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
-  **            pipes[1] goes between child 2 (wrap) and parent
-  */
+   * Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
+   *            pipes[1] goes between child 2 (wrap) and parent
+   */
   int   pipes[2][2];
   int   wait_status;                    /* child process wait status */
 
   process_options( argc, argv );
 
   /*
-  ** Read the first line of input to obtain a sequence of leading characters to
-  ** be the prototype for all lines.
-  */
+   * Read the first line of input to obtain a sequence of leading characters to
+   * be the prototype for all lines.
+   */
   if ( !fgets( buf, LINE_BUF_SIZE, fin ) ) {
     CHECK_FGETX( fin );
     exit( EXIT_OK );
@@ -111,16 +111,16 @@ int main( int argc, char const *argv[] ) {
   if ( pipe( pipes[0] ) == -1 || pipe( pipes[1] ) == -1 )
     PERROR_EXIT( PIPE_ERROR );
 
-  /***************************************************************************/
-  /*
-  ** Child 1
-  ** 
-  ** Close both ends of pipes[1] since it doesn't use it; read from our
-  ** original stdin and write to pipes[0] (child 2, wrap).
-  **
-  ** Write the first and all subsequent lines with the leading characters
-  ** stripped from the beginning of each line.
-  */
+  /****************************************************************************
+   *
+   * Child 1
+   * 
+   * Close both ends of pipes[1] since it doesn't use it; read from our
+   * original stdin and write to pipes[0] (child 2, wrap).
+   *
+   * Write the first and all subsequent lines with the leading characters
+   * stripped from the beginning of each line.
+   */
   if ( (pid_1 = fork()) == -1 )
     PERROR_EXIT( FORK_ERROR );
   if ( !pid_1 ) {
@@ -145,13 +145,13 @@ int main( int argc, char const *argv[] ) {
     exit( EXIT_OK );
   }
 
-  /***************************************************************************/
-  /*
-  ** Child 2
-  **
-  ** Read from pipes[0] (child 1) and write to pipes[1] (parent); exec into
-  ** wrap.
-  */
+  /****************************************************************************
+   *
+   * Child 2
+   *
+   * Read from pipes[0] (child 1) and write to pipes[1] (parent); exec into
+   * wrap.
+   */
   if ( (pid = fork()) == -1 ) {
     kill( pid_1, SIGTERM );             /* we failed, so kill child 1 */
     PERROR_EXIT( FORK_ERROR );
@@ -200,16 +200,16 @@ int main( int argc, char const *argv[] ) {
     PERROR_EXIT( EXEC_ERROR );
   }
 
-  /***************************************************************************/
-  /*
-  ** Parent
-  **
-  ** Close both ends of pipes[0] since it doesn't use it; close the write end
-  ** of pipes[1].
-  **
-  ** Read from pipes[1] (child 2, wrap) and prepend the leading text to each
-  ** line.
-  */
+  /****************************************************************************
+   *
+   * Parent
+   *
+   * Close both ends of pipes[0] since it doesn't use it; close the write end
+   * of pipes[1].
+   *
+   * Read from pipes[1] (child 2, wrap) and prepend the leading text to each
+   * line.
+   */
   CLOSE( 0 );
   close( pipes[1][1] );
 
@@ -224,8 +224,8 @@ int main( int argc, char const *argv[] ) {
   CHECK_FGETX( from_wrap );
 
   /*
-  ** Wait for child processes.
-  */
+   * Wait for child processes.
+   */
   while ( (pid = wait( &wait_status )) > 0 ) {
     if ( WIFEXITED( wait_status ) ) {
       int const exit_status = WEXITSTATUS( wait_status );

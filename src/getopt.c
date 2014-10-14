@@ -61,8 +61,8 @@ int pjl_getopt( int argc, char const *argv[], char const *opts ) {
     sp = 1;
   } else if ( *cp == '?' ) {
     /*
-    ** Added the functionality of having optional arguments by JRP on 7/16/92.
-    */
+     * Added the functionality of having optional arguments by JRP on 7/16/92.
+     */
     if ( argv[ optind ][ sp+1 ] )
       optarg = (char*)&argv[ optind++ ][ sp+1 ];
     else if ( ++optind >= argc || *argv[ optind ] == '-' )

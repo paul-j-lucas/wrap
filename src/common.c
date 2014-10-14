@@ -46,12 +46,12 @@ int check_atou( char const *s ) {
 void* check_realloc( void *p, size_t size ) {
   void *r;
   /*
-  ** Autoconf, 5.5.1:
-  **
-  ** realloc
-  **    The C standard says a call realloc(NULL, size) is equivalent to
-  **    malloc(size), but some old systems don't support this (e.g., NextStep).
-  */
+   * Autoconf, 5.5.1:
+   *
+   * realloc
+   *    The C standard says a call realloc(NULL, size) is equivalent to
+   *    malloc(size), but some old systems don't support this (e.g., NextStep).
+   */
   if ( !size )
     size = 1;
   r = p ? realloc( p, size ) : malloc( size );

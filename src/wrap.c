@@ -113,54 +113,54 @@ int main( int argc, char const *argv[] ) {
   int i, from;                          /* work variables */
 
   /*
-  ** Number of consecutive newlines.
-  */
+   * Number of consecutive newlines.
+   */
   int  consec_newlines = 0;
 
   /*
-  ** True only when we should do hang-indenting after a title line.
-  */
+   * True only when we should do hang-indenting after a title line.
+   */
   bool do_hang_indent = false;
 
   /*
-  ** True only when opt_lead_dot_ignore = true, the current character is a '.',
-  ** and the previous character was a '\n' (i.e., the line starts with a '.').
-  */
+   * True only when opt_lead_dot_ignore = true, the current character is a '.',
+   * and the previous character was a '\n' (i.e., the line starts with a '.').
+   */
   bool do_ignore_lead_dot = false;
 
   /*
-  ** True only when we should do indenting: set initially to indent the first
-  ** line of a paragraph and after newlines_delimit or more consecutive
-  ** newlines for subsequent paragraphs.
-  */
+   * True only when we should do indenting: set initially to indent the first
+   * line of a paragraph and after newlines_delimit or more consecutive
+   * newlines for subsequent paragraphs.
+   */
   bool do_indent = true;
 
   /*
-  ** True only when we're handling a "long line" (a sequence of non-whitespace
-  ** characters longer than line_width) that can't be wrapped.
-  */
+   * True only when we're handling a "long line" (a sequence of non-whitespace
+   * characters longer than line_width) that can't be wrapped.
+   */
   bool is_long_line = false;
 
   /*
-  ** True when the next line to be read will be a title line.
-  */
+   * True when the next line to be read will be a title line.
+   */
   bool next_line_is_title;
 
   /*
-  ** Number of spaces to output before the next non-whitespace character: set
-  ** to 1 when we encounter a whitespace character and 2 when was_eos_char is
-  ** true so as to put 2 characters after the end of a sentence.
-  */
+   * Number of spaces to output before the next non-whitespace character: set
+   * to 1 when we encounter a whitespace character and 2 when was_eos_char is
+   * true so as to put 2 characters after the end of a sentence.
+   */
   int  put_spaces = 0;
 
   /*
-  ** True only if the previous character was an end-of-sentence character.
-  */
+   * True only if the previous character was an end-of-sentence character.
+   */
   bool was_eos_char = false;
 
   /*
-  ** True only if the previous character was a paragraph-delimiter character.
-  */
+   * True only if the previous character was a paragraph-delimiter character.
+   */
   bool was_para_delim_char = false;
 
   /***************************************************************************/
@@ -168,9 +168,9 @@ int main( int argc, char const *argv[] ) {
   init( argc, argv );
 
   /*
-  ** The first non-all-whitespace line of the first paragraph is a title line
-  ** only if opt_title_line (-T) is true.
-  */
+   * The first non-all-whitespace line of the first paragraph is a title line
+   * only if opt_title_line (-T) is true.
+   */
   next_line_is_title = opt_title_line;
 
   for ( ; (c = getc( fin )) != EOF; prev_c = c ) {
@@ -182,24 +182,24 @@ int main( int argc, char const *argv[] ) {
     if ( c == '\n' ) {
       if ( ++consec_newlines >= newlines_delimit ) {
         /*
-        ** At least newlines_delimit consecutive newlines: set that the next
-        ** line is a title line and delimit the paragraph.
-        */
+         * At least newlines_delimit consecutive newlines: set that the next
+         * line is a title line and delimit the paragraph.
+         */
         next_line_is_title = opt_title_line;
         goto delimit_paragraph;
       }
       if ( opt_eos_delimit && was_eos_char ) {
         /*
-        ** End-of-sentence characters delimit paragraphs and the previous
-        ** character was an end-of-sentence character: delimit the paragraph.
-        */
+         * End-of-sentence characters delimit paragraphs and the previous
+         * character was an end-of-sentence character: delimit the paragraph.
+         */
         goto delimit_paragraph;
       }
       if ( next_line_is_title && buf_count ) {
         /*
-        ** The first line of the next paragraph is title line and the buffer
-        ** isn't empty (there is a title): print the title.
-        */
+         * The first line of the next paragraph is title line and the buffer
+         * isn't empty (there is a title): print the title.
+         */
         print_lead_chars();
         print_buf( buf_count, true );
         buf_count = buf_width = 0;
@@ -209,8 +209,8 @@ int main( int argc, char const *argv[] ) {
       }
       if ( was_eos_char ) {
         /*
-        ** We are joining a line after the end of a sentence: force 2 spaces.
-        */
+         * We are joining a line after the end of a sentence: force 2 spaces.
+         */
         put_spaces = 2;
         continue;
       }
@@ -225,38 +225,38 @@ int main( int argc, char const *argv[] ) {
     if ( isspace( c ) ) {
       if ( is_long_line ) {
         /*
-        ** We've been handling a "long line" and finally got a whitespace
-        ** character at which we can finally wrap: delimit the paragraph.
-        */
+         * We've been handling a "long line" and finally got a whitespace
+         * character at which we can finally wrap: delimit the paragraph.
+         */
         goto delimit_paragraph;
       }
       if ( opt_lead_ws_delimit && prev_c == '\n' ) {
         /*
-        ** Leading whitespace characters delimit paragraphs and the previous
-        ** character was a newline which means this whitespace character is at
-        ** the beginning of a line: delimit the paragraph.
-        */
+         * Leading whitespace characters delimit paragraphs and the previous
+         * character was a newline which means this whitespace character is at
+         * the beginning of a line: delimit the paragraph.
+         */
         goto delimit_paragraph;
       }
       if ( opt_eos_delimit && was_eos_char ) {
         /*
-        ** End-of-sentence characters delimit paragraphs and the previous
-        ** character was an end-of-sentence character: delimit the paragraph.
-        */
+         * End-of-sentence characters delimit paragraphs and the previous
+         * character was an end-of-sentence character: delimit the paragraph.
+         */
         goto delimit_paragraph;
       }
       if ( was_para_delim_char ) {
         /*
-        ** The previous character was a paragraph-delimiter character (set only
-        ** if opt_para_delimiters was set): delimit the paragraph.
-        */
+         * The previous character was a paragraph-delimiter character (set only
+         * if opt_para_delimiters was set): delimit the paragraph.
+         */
         goto delimit_paragraph;
       }
       if ( buf_count && put_spaces < 1 + was_eos_char ) {
         /*
-        ** We are not at the beginning of a line: remember to insert 1 space
-        ** later amd allow 2 after the end of a sentence.
-        */
+         * We are not at the beginning of a line: remember to insert 1 space
+         * later amd allow 2 after the end of a sentence.
+         */
         ++put_spaces;
       }
       continue;
@@ -279,9 +279,9 @@ int main( int argc, char const *argv[] ) {
     }
 
     /*
-    ** Treat a quote or a closing parenthesis or bracket as an end-of-sentence
-    ** character if it was preceded by a regular end-of-sentence character.
-    */
+     * Treat a quote or a closing parenthesis or bracket as an end-of-sentence
+     * character if it was preceded by a regular end-of-sentence character.
+     */
     if ( !(was_eos_char && strchr( "'\")]", c )) )
       was_eos_char = (strchr( ".?!", c ) != NULL);
 
@@ -295,8 +295,8 @@ int main( int argc, char const *argv[] ) {
     if ( put_spaces ) {
       if ( buf_count ) {
         /*
-        ** Mark position at a space to perform a wrap if necessary.
-        */
+         * Mark position at a space to perform a wrap if necessary.
+         */
         wrap_pos = buf_count;
         buf_width += put_spaces;
         do {
@@ -304,8 +304,8 @@ int main( int argc, char const *argv[] ) {
         } while ( --put_spaces );
       } else {
         /*
-        ** Never put spaces at the beginning of a line.
-        */
+         * Never put spaces at the beginning of a line.
+         */
         put_spaces = 0;
       }
     }
@@ -341,10 +341,10 @@ int main( int argc, char const *argv[] ) {
     buf[ tmp_buf_count++ ] = c;
 
     /*
-    ** If we've just read the start byte of a multi-byte UTF-8 character, read
-    ** the remaining bytes comprising the character.  The entire muti-byte
-    ** UTF-8 character is always treated as having a width of 1.
-    */
+     * If we've just read the start byte of a multi-byte UTF-8 character, read
+     * the remaining bytes comprising the character.  The entire muti-byte
+     * UTF-8 character is always treated as having a width of 1.
+     */
     for ( i = utf8_len; i > 1; --i ) {
       if ( (c = getc( fin )) == EOF )
         goto done;                      /* premature end of UTF-8 character */
@@ -362,8 +362,8 @@ int main( int argc, char const *argv[] ) {
 
     if ( ++buf_width < line_width ) {
       /*
-      ** We haven't exceeded the line width yet.
-      */
+       * We haven't exceeded the line width yet.
+       */
       continue;
     }
 
@@ -373,9 +373,9 @@ int main( int argc, char const *argv[] ) {
 
     if ( !wrap_pos ) {
       /*
-      ** We've exceeded the line width, but haven't encountered a whitespace
-      ** character at which to wrap; therefore, we've got a "long line."
-      */
+       * We've exceeded the line width, but haven't encountered a whitespace
+       * character at which to wrap; therefore, we've got a "long line."
+       */
       if ( !is_long_line )
         print_lead_chars();
       print_buf( buf_count, false );
@@ -389,16 +389,16 @@ int main( int argc, char const *argv[] ) {
     print_buf( wrap_pos, true );
 
     /*
-    ** Prepare to slide the partial word to the left where we can pick up from
-    ** where we left off the next time around.
-    */
+     * Prepare to slide the partial word to the left where we can pick up from
+     * where we left off the next time around.
+     */
     tmp_buf_count = buf_count;
     buf_count = buf_width = 0;
     hang_indent( &buf_count, &buf_width );
 
     /*
-    ** Now slide the partial word to the left.
-    */
+     * Now slide the partial word to the left.
+     */
     for ( from = wrap_pos + 1; from < tmp_buf_count; ++from ) {
       c = buf[ from ];
       if ( !isspace( c ) ) {
@@ -419,9 +419,9 @@ continue_outer_loop:
 delimit_paragraph:
     if ( buf_count ) {
       /*
-      ** Print what's in the buffer before delimiting the paragraph.  If we've
-      ** been handling a "long line," it's now finally ended; otherwise, print
-      ** the leading characters.
+       * Print what's in the buffer before delimiting the paragraph.  If we've
+       * been handling a "long line," it's now finally ended; otherwise, print
+       * the leading characters.
       */
       if ( is_long_line )
         is_long_line = false;
@@ -438,9 +438,9 @@ delimit_paragraph:
     if ( do_ignore_lead_dot ) {
       do_ignore_lead_dot = false;
       /*
-      ** The line starts with a leading dot and opt_lead_dot_ignore is true:
-      ** read/write the line as-is.
-      */
+       * The line starts with a leading dot and opt_lead_dot_ignore is true:
+       * read/write the line as-is.
+       */
       FPUTC( '.', fout );
       if ( !copy_line( fin, fout, buf, LINE_BUF_SIZE ) )
         goto done;
