@@ -94,6 +94,10 @@ typedef bool _Bool;
 
 /**
  * Extracts the base portion of a path-name.
+ * Unlike \c basename(3):
+ *  + Trailing \c '/' characters are not deleted.
+ *  + \a path_name is never modified (hence can therefore be \c const).
+ *  + Returns a pointer within \a path_name (hence is multi-call safe).
  *
  * @param path_name The path-name to extract the base portion of.
  * @return Returns a pointer to the last component of \a path_name.

@@ -49,6 +49,10 @@ static int          n_aliases = 0;      /* number of aliases */
  */
 static void alias_check_dup( char const *conf_file, int line_no ) {
   if ( n_aliases > 1 ) {
+    /*
+     * The number of aliases is assumed to be small, so linear search is good
+     * enough.
+     */
     int i = n_aliases - 1;
     char const *const last_name = aliases[i].argv[0];
     while ( --i >= 0 ) {
