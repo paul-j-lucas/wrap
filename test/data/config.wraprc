@@ -2,4 +2,4 @@
 man = -dep,:;
 
 [PATTERNS]
-*.[123456789] = man
+*.[1-9] = man
