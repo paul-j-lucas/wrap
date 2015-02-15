@@ -17,3 +17,13 @@ title lines.
 It also includes **wrapc**
 that is useful for reformatting comments
 in source code.
+
+To install:
+
+```sh
+  $ autoreconf -fiv
+  $ ./configure
+  $ make
+  $ make install
+  $ man wrap
+```
