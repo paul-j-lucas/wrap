@@ -27,4 +27,4 @@ you can generate `configure` yourself by doing:
 
     autoreconf -fiv
 
-Then follow the normal instructions given in `INSTALL.fsf`.
+Then follow the generic installation instructions given in `INSTALL.fsf`.
