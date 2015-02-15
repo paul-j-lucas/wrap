@@ -40,12 +40,9 @@
 char        buf[ LINE_BUF_SIZE ];
 FILE*       fin = NULL;                 /* file in */
 FILE*       fout = NULL;                /* file out */
-int         line_width = LINE_WIDTH_DEFAULT;
 char const* me;                         /* executable name */
-int         newlines_delimit = 2;       /* # newlines that delimit a para */
-int         tab_spaces = TAB_SPACES_DEFAULT;
 
-/* option definitions */
+/* option variable definitions */
 char const* opt_alias = NULL;
 char const* opt_conf_file = NULL;
 bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
@@ -60,10 +57,13 @@ bool        opt_lead_dot_ignore = false;/* ignore lines starting with '.'? */
 int         opt_lead_spaces = 0;        /* leading spaces */
 int         opt_lead_tabs = 0;          /* leading tabs */
 bool        opt_lead_ws_delimit = false;/* leading whitespace delimit para's? */
+int         opt_line_width = LINE_WIDTH_DEFAULT;
 int         opt_mirror_spaces = 0;
 int         opt_mirror_tabs = 0;
+int         opt_newlines_delimit = NEWLINES_DELIMIT_DEFAULT;
 bool        opt_no_conf = false;        /* do not read conf file */
 char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
+int         opt_tab_spaces = TAB_SPACES_DEFAULT;
 bool        opt_title_line = false;     /* 1st para line is title? */
 
 static char const utf8_len_table[] = {
@@ -130,14 +130,14 @@ int main( int argc, char const *argv[] ) {
 
   /*
    * True only when we should do indenting: set initially to indent the first
-   * line of a paragraph and after newlines_delimit or more consecutive
+   * line of a paragraph and after opt_newlines_delimit or more consecutive
    * newlines for subsequent paragraphs.
    */
   bool do_indent = true;
 
   /*
    * True only when we're handling a "long line" (a sequence of non-whitespace
-   * characters longer than line_width) that can't be wrapped.
+   * characters longer than opt_line_width) that can't be wrapped.
    */
   bool is_long_line = false;
 
@@ -180,10 +180,10 @@ int main( int argc, char const *argv[] ) {
      *************************************************************************/
 
     if ( c == '\n' ) {
-      if ( ++consec_newlines >= newlines_delimit ) {
+      if ( ++consec_newlines >= opt_newlines_delimit ) {
         /*
-         * At least newlines_delimit consecutive newlines: set that the next
-         * line is a title line and delimit the paragraph.
+         * At least opt_newlines_delimit consecutive newlines: set that the
+         * next line is a title line and delimit the paragraph.
          */
         next_line_is_title = opt_title_line;
         goto delimit_paragraph;
@@ -320,7 +320,7 @@ int main( int argc, char const *argv[] ) {
         buf[ buf_count++ ] = '\t';
       for ( i = 0; i < opt_indt_spaces; ++i )
         buf[ buf_count++ ] = ' ';
-      buf_width = opt_indt_tabs * tab_spaces + opt_indt_spaces;
+      buf_width = opt_indt_tabs * opt_tab_spaces + opt_indt_spaces;
       do_indent = false;
     }
 
@@ -360,7 +360,7 @@ int main( int argc, char const *argv[] ) {
         continue;                       /* discard UTF-8 BOM */
     }
 
-    if ( ++buf_width < line_width ) {
+    if ( ++buf_width < opt_line_width ) {
       /*
        * We haven't exceeded the line width yet.
        */
@@ -446,7 +446,7 @@ delimit_paragraph:
         goto done;
     } else {
       if ( consec_newlines == 2 || 
-          (consec_newlines > 2 && newlines_delimit == 1) ) {
+          (consec_newlines > 2 && opt_newlines_delimit == 1) ) {
         FPUTC( c, fout );
       }
       do_indent = true;
@@ -491,7 +491,7 @@ static void hang_indent( int *count, int *width ) {
     buf[ (*count)++ ] = '\t';
   for ( i = 0; i < opt_hang_spaces; ++i )
     buf[ (*count)++ ] = ' ';
-  *width += opt_hang_tabs * tab_spaces + opt_hang_spaces;
+  *width += opt_hang_tabs * opt_tab_spaces + opt_hang_spaces;
 }
 
 static void init( int argc, char const *argv[] ) {
@@ -532,13 +532,13 @@ static void init( int argc, char const *argv[] ) {
   if ( !fout )
     fout = stdout;
 
-  line_width -=
-    2 * (opt_mirror_tabs * tab_spaces + opt_mirror_spaces) +
-    opt_lead_tabs * tab_spaces + opt_lead_spaces;
+  opt_line_width -=
+    2 * (opt_mirror_tabs * opt_tab_spaces + opt_mirror_spaces) +
+    opt_lead_tabs * opt_tab_spaces + opt_lead_spaces;
 
-  if ( line_width < LINE_WIDTH_MINIMUM )
+  if ( opt_line_width < LINE_WIDTH_MINIMUM )
     PMESSAGE_EXIT( USAGE,
-      "line-width (%d) is too small (<%d)\n", line_width, LINE_WIDTH_MINIMUM
+      "line-width (%d) is too small (<%d)\n", opt_line_width, LINE_WIDTH_MINIMUM
     );
 
   opt_lead_tabs   += opt_mirror_tabs;
@@ -570,32 +570,32 @@ static void process_options( int argc, char const *argv[], char const *opts,
         opt_conf_file, line_no, opt
       );
     switch ( opt ) {
-      case 'a': opt_alias           = optarg;               break;
-      case 'c': opt_conf_file       = optarg;               break;
-      case 'C': opt_no_conf         = true;                 break;
-      case 'd': opt_lead_dot_ignore = true;                 break;
-      case 'e': opt_eos_delimit     = true;                 break;
-      case 'f': opt_fin             = optarg;         /* no break; */
-      case 'F': opt_fin_name        = base_name( optarg );  break;
-      case 'h': opt_hang_tabs       = check_atou( optarg ); break;
-      case 'H': opt_hang_spaces     = check_atou( optarg ); break;
-      case 'i': opt_indt_tabs       = check_atou( optarg ); break;
-      case 'I': opt_indt_spaces     = check_atou( optarg ); break;
-      case 'm': opt_mirror_tabs     = check_atou( optarg ); break;
-      case 'M': opt_mirror_spaces   = check_atou( optarg ); break;
-      case 'n': newlines_delimit    = INT_MAX;              break;
-      case 'N': newlines_delimit    = 1;                    break;
-      case 'o': opt_fout            = optarg;               break;
-      case 'p': opt_para_delimiters = optarg;               break;
-      case 's': tab_spaces          = check_atou( optarg ); break;
-      case 'S': opt_lead_spaces     = check_atou( optarg ); break;
-      case 't': opt_lead_tabs       = check_atou( optarg ); break;
-      case 'T': opt_title_line      = true;                 break;
+      case 'a': opt_alias             = optarg;               break;
+      case 'c': opt_conf_file         = optarg;               break;
+      case 'C': opt_no_conf           = true;                 break;
+      case 'd': opt_lead_dot_ignore   = true;                 break;
+      case 'e': opt_eos_delimit       = true;                 break;
+      case 'f': opt_fin               = optarg;         /* no break; */
+      case 'F': opt_fin_name          = base_name( optarg );  break;
+      case 'h': opt_hang_tabs         = check_atou( optarg ); break;
+      case 'H': opt_hang_spaces       = check_atou( optarg ); break;
+      case 'i': opt_indt_tabs         = check_atou( optarg ); break;
+      case 'I': opt_indt_spaces       = check_atou( optarg ); break;
+      case 'm': opt_mirror_tabs       = check_atou( optarg ); break;
+      case 'M': opt_mirror_spaces     = check_atou( optarg ); break;
+      case 'n': opt_newlines_delimit  = INT_MAX;              break;
+      case 'N': opt_newlines_delimit  = 1;                    break;
+      case 'o': opt_fout              = optarg;               break;
+      case 'p': opt_para_delimiters   = optarg;               break;
+      case 's': opt_tab_spaces        = check_atou( optarg ); break;
+      case 'S': opt_lead_spaces       = check_atou( optarg ); break;
+      case 't': opt_lead_tabs         = check_atou( optarg ); break;
+      case 'T': opt_title_line        = true;                 break;
       case 'v': fprintf( stderr, "%s\n", PACKAGE_STRING );  exit( EXIT_OK );
       case 'l': /* deprecated: now synonym for -w */
-      case 'w': line_width          = check_atou( optarg ); break;
+      case 'w': opt_line_width        = check_atou( optarg ); break;
       case 'b': /* deprecated: now synonym for -W */
-      case 'W': opt_lead_ws_delimit = true;                 break;
+      case 'W': opt_lead_ws_delimit   = true;                 break;
       default : usage();
     } /* switch */
   } /* while */

@@ -42,7 +42,23 @@
 #define REDIRECT(FD,P) \
   BLOCK( close( FD ); dup( pipes[P][FD] ); CLOSE( P ); )
 
-char const  leading_chars[] =
+/* global variable definitions */
+FILE*       fin = NULL;                 /* file in */
+FILE*       fout = NULL;                /* file out */
+char const* me;                         /* executable name */
+
+/* option variable definitions */
+char const* opt_alias = NULL;
+char const* opt_conf_file = NULL;       /* full path to conf file */
+bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
+char const* opt_fin_name = NULL;        /* file in name */
+int         opt_line_width = LINE_WIDTH_DEFAULT;
+bool        opt_no_conf = false;        /* do not read conf file */
+char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
+int         opt_tab_spaces = TAB_SPACES_DEFAULT;
+bool        opt_title_line = false;     /* 1st para line is title? */
+
+static char const leading_chars[] =
   " \t" /* whitespace */
   "!"   /* HTML and XML comments */
   "#"   /* CMake, Make, Perl, Python, Ruby, and Shell comments */
@@ -51,21 +67,6 @@ char const  leading_chars[] =
   ":"   /* XQuery comments */
   ";"   /* Assember and Lisp comments */
   ">"   /* Forward mail indicator */ ;
-
-FILE*       fin = NULL;                 /* file in */
-FILE*       fout = NULL;                /* file out */
-int         line_width = LINE_WIDTH_DEFAULT;
-char const* me;                         /* executable name */
-int         tab_spaces = TAB_SPACES_DEFAULT;
-
-/* option definitions */
-char const* opt_alias = NULL;
-char const* opt_conf_file = NULL;       /* full path to conf file */
-bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
-char const* opt_fin_name = NULL;        /* file in name */
-bool        opt_no_conf = false;        /* do not read conf file */
-char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
-bool        opt_title_line = false;     /* 1st para line is title? */
 
 /* local functions */
 static int  calc_leader_width( char const *leader );
@@ -101,10 +102,10 @@ int main( int argc, char const *argv[] ) {
   strcpy( leader, buf );
   leader[ leader_count = strspn( buf, leading_chars ) ] = '\0';
 
-  line_width -= calc_leader_width( leader );
-  if ( line_width < LINE_WIDTH_MINIMUM )
+  opt_line_width -= calc_leader_width( leader );
+  if ( opt_line_width < LINE_WIDTH_MINIMUM )
     PMESSAGE_EXIT( USAGE,
-      "line-width (%d) is too small (<%d)\n", line_width, LINE_WIDTH_MINIMUM
+      "line-width (%d) is too small (<%d)\n", opt_line_width, LINE_WIDTH_MINIMUM
     );
 
   /* open pipes */
@@ -159,12 +160,12 @@ int main( int argc, char const *argv[] ) {
   if ( !pid ) {
     typedef char arg_buf[ ARG_BUF_SIZE ];
 
-    arg_buf arg_line_width;
     arg_buf arg_opt_alias;
     arg_buf arg_opt_conf_file;
     char    arg_opt_fin_name[ PATH_MAX ];
+    arg_buf arg_opt_line_width;
     arg_buf arg_opt_para_delimiters;
-    arg_buf arg_tab_spaces;
+    arg_buf arg_opt_tab_spaces;
 
     int argc = 0;
     char *argv[11];                     /* must be +1 of greatest arg below */
@@ -189,9 +190,9 @@ int main( int argc, char const *argv[] ) {
     /*  4 */ IF_ARG_DUP( opt_eos_delimit    , "-e"    );
     /*  5 */ IF_ARG_FMT( opt_fin_name       , "-F%s"  );
     /*  6 */ IF_ARG_FMT( opt_para_delimiters, "-p%s"  );
-    /*  7 */    ARG_FMT( tab_spaces         , "-s%d"  );
+    /*  7 */    ARG_FMT( opt_tab_spaces     , "-s%d"  );
     /*  8 */ IF_ARG_DUP( opt_title_line     , "-T"    );
-    /*  9 */    ARG_FMT( line_width         , "-w%d"  );
+    /*  9 */    ARG_FMT( opt_line_width     , "-w%d"  );
     /* 10 */ argv[ argc ] = NULL;
 
     REDIRECT( STDIN_FILENO, 0 );
@@ -252,7 +253,7 @@ int main( int argc, char const *argv[] ) {
 /*****************************************************************************/
 
 /**
- * Compute the actual width of the leader: tabs are equal to <tab_spaces>
+ * Compute the actual width of the leader: tabs are equal to <opt_tab_spaces>
  * spaces minus the number of spaces we're into a tab-stop, and all others are
  * equal to 1.
  */
@@ -263,11 +264,11 @@ static int calc_leader_width( char const *leader ) {
 
   for ( c = leader; *c; ++c ) {
     if ( *c == '\t' ) {
-      width += tab_spaces - spaces;
+      width += opt_tab_spaces - spaces;
       spaces = 0;
     } else {
       ++width;
-      spaces = (spaces + 1) % tab_spaces;
+      spaces = (spaces + 1) % opt_tab_spaces;
     }
   } /* for */
 
@@ -293,11 +294,11 @@ static void process_options( int argc, char const *argv[] ) {
       case 'F': opt_fin_name        = base_name( optarg );  break;
       case 'o': opt_fout            = optarg;               break;
       case 'p': opt_para_delimiters = optarg;               break;
-      case 's': tab_spaces          = check_atou( optarg ); break;
+      case 's': opt_tab_spaces      = check_atou( optarg ); break;
       case 'T': opt_title_line      = true;                 break;
       case 'v': fprintf( stderr, "%s\n", PACKAGE_STRING );  exit( EXIT_OK );
       case 'l': /* deprecated: now synonym for -w */
-      case 'w': line_width          = check_atou( optarg ); break;
+      case 'w': opt_line_width      = check_atou( optarg ); break;
       default : usage();
     } /* switch */
   } /* while */

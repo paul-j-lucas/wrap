@@ -19,20 +19,8 @@
 #       along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
+# Uncomment the following line for shell tracing.
 #set -x
-
-ME=$0; ME=`expr $ME : '.*/\(.*\)'`
-
-[ "$BUILD_SRC" ] || {
-  echo "$ME: \$BUILD_SRC not set" >&2
-  exit 2
-}
-
-##
-# The automake framework sets $srcdir. If it's empty, it means this script was
-# called by hand, so set it ourselves.
-##
-[ "$srcdir" ] || srcdir="."
 
 ########## Functions ##########################################################
 
@@ -83,6 +71,15 @@ options:
   --expect-failure={yes|no}
 END
   exit 1
+}
+
+########## Begin ##############################################################
+
+ME=`local_basename "$0"`
+
+[ "$BUILD_SRC" ] || {
+  echo "$ME: \$BUILD_SRC not set" >&2
+  exit 2
 }
 
 ########## Process command-line ###############################################
@@ -173,9 +170,15 @@ yes) EXPECT_FAILURE=1 ;;
   *) EXPECT_FAILURE=0 ;;
 esac
 
+##
+# The automake framework sets $srcdir. If it's empty, it means this script was
+# called by hand, so set it ourselves.
+##
+[ "$srcdir" ] || srcdir="."
+
 DATA_DIR=$srcdir/data
 EXPECTED_DIR=$srcdir/expected
-TEST_NAME=`local_basename $TEST_NAME`
+TEST_NAME=`local_basename "$TEST_NAME"`
 OUTPUT=/tmp/wrap_test_output_$$_
 
 ########## Run test ###########################################################
