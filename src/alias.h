@@ -40,8 +40,8 @@ void alias_cleanup();
  * name and return that alias.
  *
  * @param name The name to match.
- * @return Returns the alias having the given name \c NULL if no matching alias
- * is found.
+ * @return Returns the alias having the given name or \c NULL if no matching
+ * alias is found.
  */
 alias_t const* alias_find( char const *name );
 
