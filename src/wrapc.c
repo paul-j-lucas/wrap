@@ -332,7 +332,7 @@ static char const* str_status( int status ) {
     case EXIT_CHILD_SIGNAL  : return "child process terminated by signal";
     case EXIT_PIPE_ERROR    : return "pipe() failed";
     default                 : return "unknown status";
-  }
+  } /* switch */
 }
 
 static void usage() {
