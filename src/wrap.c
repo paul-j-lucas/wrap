@@ -351,7 +351,7 @@ int main( int argc, char const *argv[] ) {
       buf[ tmp_buf_count++ ] = c;
       if ( UTF8_LEN( c ) )              /* unexpected UTF-8 start byte */
         goto continue_outer_loop;       /* skip entire UTF-8 character */
-    }
+    } /* for */
     buf_count = tmp_buf_count;          /* UTF-8 is valid */
 
     if ( utf8_len == UTF8_BOM_LEN ) {
@@ -407,7 +407,7 @@ int main( int argc, char const *argv[] ) {
         for ( utf8_len = UTF8_LEN( c ); utf8_len > 1; --utf8_len )
           buf[ buf_count++ ] = buf[ ++from ];
       }
-    }
+    } /* for */
 
     wrap_pos = 0;
 
