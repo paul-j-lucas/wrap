@@ -591,7 +591,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'S': opt_lead_spaces       = check_atou( optarg ); break;
       case 't': opt_lead_tabs         = check_atou( optarg ); break;
       case 'T': opt_title_line        = true;                 break;
-      case 'v': fprintf( stderr, "%s\n", PACKAGE_STRING );  exit( EXIT_OK );
+      case 'v': fprintf( stderr, "%s\n", PACKAGE_STRING );    exit( EXIT_OK );
       case 'l': /* deprecated: now synonym for -w */
       case 'w': opt_line_width        = check_atou( optarg ); break;
       case 'b': /* deprecated: now synonym for -W */
