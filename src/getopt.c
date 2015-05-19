@@ -18,12 +18,12 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/* local */
+#include "getopt.h"
+
 /* standard */
 #include <stdio.h>
 #include <string.h>
-
-/* local */
-#include "getopt.h"
 
 /*****************************************************************************/
 

@@ -18,6 +18,10 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/* local */
+#include "common.h"
+#include "getopt.h"
+
 /* system */
 #include <errno.h>                      /* for errno */
 #include <limits.h>                     /* for PATH_MAX */
@@ -27,10 +31,6 @@
 #include <string.h>                     /* for str...() */
 #include <sys/wait.h>                   /* for wait() */
 #include <unistd.h>                     /* for close(), fork(), ... */
-
-/* local */
-#include "common.h"
-#include "getopt.h"
 
 #define ARG_BUF_SIZE  22                /* max wrap command-line arg size */
 
