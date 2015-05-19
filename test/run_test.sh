@@ -143,7 +143,7 @@ done
 [ "$TEST_NAME" ] || usage "required --test-name not given"
 [ "$LOG_FILE"  ] || usage "required --log-file not given"
 [ "$TRS_FILE"  ] || usage "required --trs-file not given"
-[ $# -ge 1     ] || usage "requireed test-command not given"
+[ $# -ge 1     ] || usage "required test-command not given"
 TEST=$1
 
 ########## Initialize #########################################################
