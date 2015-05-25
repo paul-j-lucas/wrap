@@ -18,7 +18,12 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/* local */
+#include "alias.h"
 #include "common.h"
+#ifdef WITH_PATTERNS
+# include "pattern.h"
+#endif /* WITH_PATTERNS */
 
 /* system */
 #include <ctype.h>
@@ -31,12 +36,6 @@
 #include <stdlib.h>                     /* for atoi(), ... */
 #include <string.h>
 #include <unistd.h>                     /* for geteuid() */
-
-/* local */
-#include "alias.h"
-#ifdef WITH_PATTERNS
-# include "pattern.h"
-#endif /* WITH_PATTERNS */
 
 #define CONF_FILE_NAME ".wraprc"
 

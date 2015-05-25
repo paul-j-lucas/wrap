@@ -18,15 +18,15 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/* local */
+#include "common.h"
+#include "pattern.h"
+
 /* system */
 #include <fnmatch.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-/* local */
-#include "common.h"
-#include "pattern.h"
 
 #define PATTERN_ALLOC_DEFAULT       10
 #define PATTERN_ALLOC_INCREMENT     10

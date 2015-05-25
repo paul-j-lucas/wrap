@@ -18,15 +18,6 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* system */
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>                     /* for INT_MAX */
-#include <stdio.h>
-#include <stdlib.h>                     /* for exit(), ... */
-#include <string.h>
-#include <unistd.h>                     /* for STDIN_FILENO, ... */
-
 /* local */
 #include "alias.h"
 #include "common.h"
@@ -35,6 +26,15 @@
 # include "pattern.h"
 #endif /* WITH_PATTERNS */
 #include "read_conf.h"
+
+/* system */
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>                     /* for INT_MAX */
+#include <stdio.h>
+#include <stdlib.h>                     /* for exit(), ... */
+#include <string.h>
+#include <unistd.h>                     /* for STDIN_FILENO, ... */
 
 /* global variable definitions */
 char        buf[ LINE_BUF_SIZE ];

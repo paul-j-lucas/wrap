@@ -18,13 +18,13 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/* local */
+#include "common.h"
+
 /* system */
 #include <stdio.h>
 #include <stdlib.h>                     /* for atoi(), malloc(), ... */
 #include <string.h>
-
-/* local */
-#include "common.h"
 
 extern char const *me;
 
