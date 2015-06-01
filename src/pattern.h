@@ -48,7 +48,7 @@ void pattern_cleanup();
  *
  * @param file_name The file-name to match.
  * @return Returns the alias associated with the pattern that matches
- * \a file-name or \c NULL if no matching pattern is found.
+ * \a file_name or \c NULL if no matching pattern is found.
  */
 alias_t const* pattern_find( char const *file_name );
 
