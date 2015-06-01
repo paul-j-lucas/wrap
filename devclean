@@ -1,9 +1,8 @@
 #! /bin/sh
 ##
-#       wrap -- text-reformatter
-#       devclean -- do a distclean plus remove all auto-generated files
+#       devclean -- remove all auto-generated files
 #
-#       Copyright (C) 2014  Paul J. Lucas
+#       Copyright (C) 2015  Paul J. Lucas
 #
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -19,10 +18,18 @@
 #       along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-[ -f Makefile ] && make distclean
+# Uncomment to debug
+#set -x
 
-rm -rf aclocal.m4 autom4te.cache compile configure depcomp install-sh missing
-
-find . -name '*.in' | xargs rm
+find . -name .gitignore | while read ignore_file
+do
+  OPWD=`pwd`
+  cd `dirname $ignore_file`
+  rm -f *~
+  while read ignore_pattern
+  do find . -name "$ignore_pattern" -exec rm -fr {} \;
+  done < .gitignore
+  cd $OPWD
+done
 
 # vim:set et sw=2 ts=2:
