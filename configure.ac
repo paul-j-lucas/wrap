@@ -50,7 +50,7 @@ AC_CHECK_MEMBERS([struct passwd.pw_dir],[],[],[[#include <pwd.h>]])
 AC_FUNC_FNMATCH
 AC_FUNC_FORK
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([geteuid getpwuid strerror strndup])
+AC_CHECK_FUNCS([geteuid getpwuid perror strerror strndup])
 
 # If fnmatch(3) is defined, define an automake variable that can be used to
 # compile pattern.c conditionally.
