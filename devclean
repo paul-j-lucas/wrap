@@ -23,13 +23,11 @@
 
 find . -name .gitignore | while read ignore_file
 do
-  OPWD=`pwd`
-  cd `dirname $ignore_file`
-  rm -f *~
+  ignore_dir=`dirname $ignore_file`
+  rm -f $ignore_dir/*~
   while read ignore_pattern
-  do find . -name "$ignore_pattern" -exec rm -fr {} \;
-  done < .gitignore
-  cd $OPWD
+  do find $ignore_dir -name "$ignore_pattern" -exec rm -fr {} \; -prune
+  done < $ignore_file
 done
 
 # vim:set et sw=2 ts=2:
