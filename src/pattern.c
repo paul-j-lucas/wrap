@@ -23,6 +23,7 @@
 #include "pattern.h"
 
 /* system */
+#include <assert.h>
 #include <fnmatch.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,6 +44,7 @@ static pattern_t*   patterns = NULL;    /* global list of patterns */
  * @param pattern The pattern to free.
  */
 static void pattern_free( pattern_t *pattern ) {
+  assert( pattern );
   free( (void*)pattern->pattern );
 }
 
@@ -56,6 +58,7 @@ void pattern_cleanup() {
 
 alias_t const* pattern_find( char const *file_name ) {
   int i;
+  assert( file_name );
   for ( i = 0; i < n_patterns; ++i )
     if ( fnmatch( patterns[i].pattern, file_name, 0 ) == 0 )
       return patterns[i].alias;
@@ -67,6 +70,9 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
   static int n_patterns_alloc = 0;      /* number of patterns allocated */
   pattern_t *pattern;                   /* current pattern being parsed into */
   size_t span;
+
+  assert( line );
+  assert( conf_file );
 
   if ( !n_patterns_alloc ) {
     n_patterns_alloc = PATTERN_ALLOC_DEFAULT;

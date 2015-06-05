@@ -22,6 +22,7 @@
 #include "getopt.h"
 
 /* standard */
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -30,6 +31,8 @@
 int pjl_getopt( int argc, char const *argv[], char const *opts ) {
   char const *cp;
   static int sp = 1;
+
+  assert( opts );
 
   if ( sp == 1 ) {
     if ( optind >= argc || argv[ optind ][0] != '-' || !argv[ optind ][1] )

@@ -26,6 +26,7 @@
 #endif /* WITH_PATTERNS */
 
 /* system */
+#include <assert.h>
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>                     /* for PATH_MAX */
@@ -50,8 +51,10 @@ extern char const *me;
  * @param component The component to append.
  */
 static void path_append( char *path, char const *component ) {
-  size_t len = strlen( path );
-  if ( len ) {
+  size_t len;
+  assert( path );
+  assert( component );
+  if ( (len = strlen( path )) ) {
     path += len - 1;
     if ( *path != '/' )
       strcpy( ++path, "/" );
@@ -66,8 +69,9 @@ static void path_append( char *path, char const *component ) {
  * @return Returns \a line for convenience.
  */
 static char* strip_comment( char *line ) {
-  char *const comment = strchr( line, '#' );
-  if ( comment )
+  char *comment;
+  assert( line );
+  if ( (comment = strchr( line, '#' )) )
     *comment = '\0';
   return line;
 }
@@ -80,6 +84,7 @@ static char* strip_comment( char *line ) {
  */
 static char* trim_ws( char *s ) {
   size_t len;
+  assert( s );
   s += strspn( s, " \t" );
   len = strlen( s );
   while ( len > 0 && isspace( s[ --len ] ) )

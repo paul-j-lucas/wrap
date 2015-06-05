@@ -22,6 +22,7 @@
 #include "common.h"
 
 /* system */
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>                     /* for atoi(), malloc(), ... */
 #include <string.h>
@@ -31,13 +32,15 @@ extern char const *me;
 /*****************************************************************************/
 
 char const* base_name( char const *path_name ) {
-  char const *const slash = strrchr( path_name, '/' );
-  if ( slash )
+  char const *slash;
+  assert( path_name );
+  if ( (slash = strrchr( path_name, '/' )) )
     return slash[1] ? slash + 1 : slash;
   return path_name;
 }
 
 int check_atou( char const *s ) {
+  assert( s );
   if ( s[ strspn( s, "0123456789" ) ] )
     PMESSAGE_EXIT( USAGE, "\"%s\": invalid integer\n", s );
   return atoi( s );

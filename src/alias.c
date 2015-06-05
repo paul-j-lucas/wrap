@@ -23,6 +23,7 @@
 #include "common.h"
 
 /* system */
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -48,6 +49,7 @@ static int          n_aliases = 0;      /* number of aliases */
  * @param line_no The line-number within \a conf_file.
  */
 static void alias_check_dup( char const *conf_file, int line_no ) {
+  assert( conf_file );
   if ( n_aliases > 1 ) {
     /*
      * The number of aliases is assumed to be small, so linear search is good
@@ -71,6 +73,7 @@ static void alias_check_dup( char const *conf_file, int line_no ) {
  * @param alias The alias to free.
  */
 static void alias_free( alias_t *alias ) {
+  assert( alias );
   while ( alias->argc >= 0 )
     free( (void*)alias->argv[ alias->argc-- ] );
   free( alias->argv );
@@ -85,6 +88,7 @@ void alias_cleanup() {
 }
 
 alias_t const* alias_find( char const *name ) {
+  assert( name );
   int i;
   for ( i = 0; i < n_aliases; ++i )
     if ( strcmp( aliases[i].argv[0], name ) == 0 )
@@ -97,6 +101,9 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
   int n_argv_alloc = ALIAS_ARGV_ALLOC_DEFAULT;
   static int n_aliases_alloc = 0;     /* number of aliases allocated */
   size_t span;
+
+  assert( line );
+  assert( conf_file );
 
   if ( !n_aliases_alloc ) {
     n_aliases_alloc = ALIAS_ALLOC_DEFAULT;

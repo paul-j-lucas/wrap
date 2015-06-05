@@ -23,6 +23,7 @@
 #include "getopt.h"
 
 /* system */
+#include <assert.h>
 #include <errno.h>                      /* for errno */
 #include <limits.h>                     /* for PATH_MAX */
 #include <signal.h>                     /* for kill() */
@@ -261,6 +262,8 @@ static int calc_leader_width( char const *leader ) {
   char const *c;
   int spaces = 0;
   int width = 0;
+
+  assert( leader );
 
   for ( c = leader; *c; ++c ) {
     if ( *c == '\t' ) {

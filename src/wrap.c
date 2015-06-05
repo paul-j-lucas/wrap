@@ -28,6 +28,7 @@
 #include "read_conf.h"
 
 /* system */
+#include <assert.h>
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>                     /* for INT_MAX */
@@ -473,7 +474,12 @@ static void clean_up() {
 }
 
 static bool copy_line( FILE *fin, FILE *fout, char *buf, size_t buf_size ) {
-  char *const last = buf + buf_size - 1;
+  char *last;
+  assert( fin );
+  assert( fout );
+  assert( buf );
+
+  last = buf + buf_size - 1;
   do {
     *last = '\0';
     if ( !fgets( buf, buf_size, fin ) ) {
@@ -487,6 +493,8 @@ static bool copy_line( FILE *fin, FILE *fout, char *buf, size_t buf_size ) {
 
 static void hang_indent( int *count, int *width ) {
   int i;
+  assert( count );
+  assert( width );
   for ( i = 0; i < opt_hang_tabs; ++i )
     buf[ (*count)++ ] = '\t';
   for ( i = 0; i < opt_hang_spaces; ++i )
@@ -561,6 +569,7 @@ static void print_lead_chars() {
 static void process_options( int argc, char const *argv[], char const *opts,
                              int line_no ) {
   int opt;                              /* command-line option */
+  assert( opts );
 
   optind = opterr = 1;
   while ( (opt = pjl_getopt( argc, argv, opts )) != EOF ) {
