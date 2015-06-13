@@ -26,9 +26,10 @@
 /**
  * Reads the configuration file.
  *
- * @param conf_file The full-path of the configuration file to read.  If NULL,
- * then the user's home directory is checked for the presence of the default
- * configuration file.  If found, that file is read.
+ * @param conf_file The full-path of the configuration file to read.
+ * If NULL, then the user's home directory is checked for the presence of the
+ * default configuration file.
+ * If found, that file is read.
  * @return Returns the full-path of the configuration file that was read.
  */
 char const* read_conf( char const *conf_file );

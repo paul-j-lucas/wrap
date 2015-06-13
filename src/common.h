@@ -109,8 +109,7 @@ char const* base_name( char const *path_name );
 
 /**
  * Converts an ASCII string to an unsigned integer.
- * Unlike atoi(3), this function insists that all characters in \a s
- * are digits.
+ * Unlike \c atoi(3), insists that all characters in \a s are digits.
  * If conversion fails, prints an error message and exits.
  *
  * @param s The string to convert.
@@ -119,7 +118,7 @@ char const* base_name( char const *path_name );
 int check_atou( char const *s );
 
 /**
- * Calls realloc(3) and checks for failure.
+ * Calls \c realloc(3) and checks for failure.
  * If reallocation fails, prints an error message and exits.
  *
  * @param p The pointer to reallocate.  If NULL, new memory is allocated.

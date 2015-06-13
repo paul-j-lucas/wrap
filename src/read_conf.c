@@ -48,6 +48,7 @@ extern char const *me;
  * Appends a component to a path ensuring that exactly one \c / separates them.
  *
  * @param path The path to append to.
+ * The buffer pointed to must be big enough to hold the new path.
  * @param component The component to append.
  */
 static void path_append( char *path, char const *component ) {
