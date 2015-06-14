@@ -70,9 +70,9 @@ static char const leading_chars[] =
   ">"   /* Forward mail indicator */ ;
 
 /* local functions */
-static int  calc_leader_width( char const *leader );
-static void process_options( int argc, char const *argv[] );
-static char const* str_status( int status );
+static int  calc_leader_width( char const* );
+static void process_options( int, char const*[] );
+static char const* str_status( int );
 static void usage();
 
 /*****************************************************************************/

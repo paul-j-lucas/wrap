@@ -92,14 +92,13 @@ static char const utf8_len_table[] = {
 #define UTF8_LEN(C)         ((int)utf8_len_table[ (unsigned char)(C) ])
 
 /* local functions */
-static bool copy_line( FILE *fin, FILE *fout, char *buf, size_t buf_size );
+static bool copy_line( FILE*, FILE*, char*, size_t );
 static void clean_up();
-static void hang_indent( int *count, int *width );
-static void init( int argc, char const *argv[] );
-static void print_buf( int len, bool newline );
+static void hang_indent( int*, int* );
+static void init( int, char const*[] );
+static void print_buf( int, bool );
 static void print_lead_chars();
-static void process_options( int argc, char const *argv[], char const *opts,
-                             int line_no );
+static void process_options( int , char const*[], char const*, int );
 static void usage();
 
 /*****************************************************************************/
