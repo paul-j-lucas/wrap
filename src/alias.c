@@ -81,7 +81,7 @@ static void alias_free( alias_t *alias ) {
 
 /*****************************************************************************/
 
-void alias_cleanup() {
+void alias_cleanup( void ) {
   while ( n_aliases )
     alias_free( &aliases[ --n_aliases ] );
   free( aliases );

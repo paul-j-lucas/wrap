@@ -93,13 +93,13 @@ static char const utf8_len_table[] = {
 
 /* local functions */
 static bool copy_line( FILE*, FILE*, char*, size_t );
-static void clean_up();
+static void clean_up( void );
 static void hang_indent( int*, int* );
 static void init( int, char const*[] );
 static void print_buf( int, bool );
-static void print_lead_chars();
+static void print_lead_chars( void );
 static void process_options( int , char const*[], char const*, int );
-static void usage();
+static void usage( void );
 
 /*****************************************************************************/
 
@@ -465,7 +465,7 @@ done:
 
 /*****************************************************************************/
 
-static void clean_up() {
+static void clean_up( void ) {
   alias_cleanup();
 #ifdef WITH_PATTERNS
   pattern_cleanup();
@@ -557,7 +557,7 @@ static void print_buf( int len, bool newline ) {
   FPRINTF( fout, newline ? "%s\n" : "%s", buf );
 }
 
-static void print_lead_chars() {
+static void print_lead_chars( void ) {
   int i;
   for ( i = 0; i < opt_lead_tabs; ++i )
     FPUTC( '\t', fout );
@@ -609,7 +609,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
   } /* while */
 }
 
-static void usage() {
+static void usage( void ) {
   fprintf( stderr,
 "usage: %s [-CdenNTvW] [-w line-width] [-p para-delim-chars] [-s tab-spaces]\n"
 "       [-{fF} input-file] [-o output-file] [-c conf-file] [-a alias]\n"

@@ -73,7 +73,7 @@ static char const leading_chars[] =
 static int  calc_leader_width( char const* );
 static void process_options( int, char const*[] );
 static char const* str_status( int );
-static void usage();
+static void usage( void );
 
 /*****************************************************************************/
 
@@ -338,7 +338,7 @@ static char const* str_status( int status ) {
   } /* switch */
 }
 
-static void usage() {
+static void usage( void ) {
   fprintf( stderr,
 "usage: %s [-a alias] [-CeTv] [-w line-width]\n"
 "       [-{fF} input-file] [-o output-file] [-c conf-file]\n"

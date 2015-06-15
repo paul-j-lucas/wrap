@@ -33,7 +33,7 @@ typedef struct alias_s alias_t;
 /**
  * Cleans-up all alias data.
  */
-void alias_cleanup();
+void alias_cleanup( void );
 
 /**
  * Attempts to find an alias from the internal list of aliases having the given

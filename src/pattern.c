@@ -50,7 +50,7 @@ static void pattern_free( pattern_t *pattern ) {
 
 /*****************************************************************************/
 
-void pattern_cleanup() {
+void pattern_cleanup( void ) {
   while ( n_patterns )
     pattern_free( &patterns[ --n_patterns ] );
   free( patterns );

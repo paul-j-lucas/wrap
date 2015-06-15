@@ -40,7 +40,7 @@ typedef struct pattern_s pattern_t;
 /**
  * Cleans-up all pattern data.
  */
-void pattern_cleanup();
+void pattern_cleanup( void );
 
 /**
  * Attempts to find a pattern from the internal list of patterns that matches
