@@ -18,11 +18,11 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* local */
+// local
 #include "alias.h"
 #include "common.h"
 
-/* system */
+// system
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,11 +35,11 @@
 #define ALIAS_NAME_CHARS \
   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
 
-static alias_t*     aliases = NULL;     /* global list of aliases */
+static alias_t*     aliases = NULL;     // global list of aliases
 extern char const*  me;
-static int          n_aliases = 0;      /* number of aliases */
+static int          n_aliases = 0;      // number of aliases
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 /**
  * Checks the most-recently-added alias against all previous aliases for a
@@ -51,10 +51,10 @@ static int          n_aliases = 0;      /* number of aliases */
 static void alias_check_dup( char const *conf_file, int line_no ) {
   assert( conf_file );
   if ( n_aliases > 1 ) {
-    /*
-     * The number of aliases is assumed to be small, so linear search is good
-     * enough.
-     */
+    //
+    // The number of aliases is assumed to be small, so linear search is good
+    // enough.
+    //
     int i = n_aliases - 1;
     char const *const last_name = aliases[i].argv[0];
     while ( --i >= 0 ) {
@@ -63,7 +63,7 @@ static void alias_check_dup( char const *conf_file, int line_no ) {
           "%s:%d: \"%s\": duplicate alias name (first is on line %d)\n",
           conf_file, line_no, last_name, aliases[i].line_no
         );
-    } /* while */
+    } // while
   }
 }
 
@@ -79,7 +79,7 @@ static void alias_free( alias_t *alias ) {
   free( alias->argv );
 }
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 void alias_cleanup( void ) {
   while ( n_aliases )
@@ -89,21 +89,17 @@ void alias_cleanup( void ) {
 
 alias_t const* alias_find( char const *name ) {
   assert( name );
-  int i;
-  for ( i = 0; i < n_aliases; ++i )
+  for ( int i = 0; i < n_aliases; ++i )
     if ( strcmp( aliases[i].argv[0], name ) == 0 )
       return &aliases[i];
   return NULL;
 }
 
 void alias_parse( char const *line, char const *conf_file, int line_no ) {
-  alias_t *alias;                     /* current alias being parsed into */
-  int n_argv_alloc = ALIAS_ARGV_ALLOC_DEFAULT;
-  static int n_aliases_alloc = 0;     /* number of aliases allocated */
-  size_t span;
-
   assert( line );
   assert( conf_file );
+
+  static int n_aliases_alloc = 0;     // number of aliases allocated
 
   if ( !n_aliases_alloc ) {
     n_aliases_alloc = ALIAS_ALLOC_DEFAULT;
@@ -115,35 +111,36 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
   if ( !aliases )
     PERROR_EXIT( OUT_OF_MEMORY );
 
-  alias = &aliases[ n_aliases++ ];
+  int n_argv_alloc = ALIAS_ARGV_ALLOC_DEFAULT;
+  alias_t *const alias = &aliases[ n_aliases++ ];
   alias->line_no = line_no;
   alias->argc = 1;
   alias->argv = MALLOC( char const*, n_argv_alloc );
 
-  /* alias line: <name>[<ws>]={[<ws>]<options>}... */
-  /*      parts:   1     2   3   4       5         */
+  // alias line: <name>[<ws>]={[<ws>]<options>}...
+  //      parts:   1     2   3   4       5        
 
-  /* part 1: name */
-  span = strspn( line, ALIAS_NAME_CHARS );
+  // part 1: name
+  size_t span = strspn( line, ALIAS_NAME_CHARS );
   alias->argv[0] = strndup( line, span );
   alias_check_dup( conf_file, line_no );
   line += span;
 
-  /* part 2: whitespace */
+  // part 2: whitespace
   line += strspn( line, " \t" );
   if ( !*line )
     PMESSAGE_EXIT( CONF_ERROR, "%s:%d: '=' expected\n", conf_file, line_no );
 
-  /* part 3: = */
+  // part 3: =
   if ( *line != '=' )
     PMESSAGE_EXIT( CONF_ERROR,
       "%s:%d: '%c': unexpected character; '=' expected\n",
       conf_file, line_no, *line
     );
-  ++line;                               /* skip '=' */
+  ++line;                               // skip '='
 
-  /* parts 4 & 5: whitespace, options */
-  while ( true ) {
+  // parts 4 & 5: whitespace, options
+  for ( ;; ) {
     line += strspn( line, " \t" );
     if ( !*line ) {
       if ( alias->argc == 1 )
@@ -160,13 +157,12 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
     span = strcspn( line, " \t" );
     alias->argv[ alias->argc++ ] = strndup( line, span );
     line += span;
-  } /* while */
+  } // for
 
   if ( n_argv_alloc > alias->argc + 1 )
     REALLOC( alias->argv, char const*, alias->argc + 1 );
   alias->argv[ alias->argc ] = NULL;
 }
 
-/*****************************************************************************/
-
+///////////////////////////////////////////////////////////////////////////////
 /* vim:set et sw=2 ts=2: */

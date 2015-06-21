@@ -18,14 +18,14 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* local */
+// local
 #include "alias.h"
 #include "common.h"
 #ifdef WITH_PATTERNS
 # include "pattern.h"
 #endif /* WITH_PATTERNS */
 
-/* system */
+// system
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
@@ -42,7 +42,7 @@
 
 extern char const *me;
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 /**
  * Appends a component to a path ensuring that exactly one \c / separates them.
@@ -52,10 +52,11 @@ extern char const *me;
  * @param component The component to append.
  */
 static void path_append( char *path, char const *component ) {
-  size_t len;
   assert( path );
   assert( component );
-  if ( (len = strlen( path )) ) {
+
+  size_t const len = strlen( path );
+  if ( len ) {
     path += len - 1;
     if ( *path != '/' )
       strcpy( ++path, "/" );
@@ -70,9 +71,9 @@ static void path_append( char *path, char const *component ) {
  * @return Returns \a line for convenience.
  */
 static char* strip_comment( char *line ) {
-  char *comment;
   assert( line );
-  if ( (comment = strchr( line, '#' )) )
+  char *const comment = strchr( line, '#' );
+  if ( comment )
     *comment = '\0';
   return line;
 }
@@ -84,28 +85,23 @@ static char* strip_comment( char *line ) {
  * @return Returns a pointer to within \a s having all whitespace trimmed.
  */
 static char* trim_ws( char *s ) {
-  size_t len;
   assert( s );
   s += strspn( s, " \t" );
-  len = strlen( s );
-  while ( len > 0 && isspace( s[ --len ] ) )
+  for ( size_t len = strlen( s ); len > 0 && isspace( s[ --len ] ); )
     s[ len ] = '\0';
   return s;
 }
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 char const* read_conf( char const *conf_file ) {
   static char conf_path_buf[ PATH_MAX ];
   bool const explicit_conf_file = (conf_file != NULL);
-  FILE *fconf;
-  char line_buf[ LINE_BUF_SIZE ];
-  int line_no = 0;
 
   enum section { NONE, ALIASES, PATTERNS };
-  enum section section = NONE;          /* section we're in */
+  enum section section = NONE;          // section we're in
 
-  /* locate default configuration file */
+  // locate default configuration file
   if ( !conf_file ) {
     char const *home = getenv( "HOME" );
     if ( !home ) {
@@ -123,21 +119,24 @@ char const* read_conf( char const *conf_file ) {
     conf_file = conf_path_buf;
   }
 
-  /* open configuration file */
-  if ( !(fconf = fopen( conf_file, "r" )) ) {
+  // open configuration file
+  FILE *const fconf = fopen( conf_file, "r" );
+  if ( !fconf ) {
     if ( explicit_conf_file )
-      PMESSAGE_EXIT( READ_OPEN, "%s: %s\n", conf_file, strerror( errno ) );
+      PMESSAGE_EXIT( READ_OPEN, "%s: %s\n", conf_file, ERROR_STR );
     return NULL;
   }
 
-  /* parse configuration file */
+  // parse configuration file
+  char line_buf[ LINE_BUF_SIZE ];
+  int line_no = 0;
   while ( fgets( line_buf, LINE_BUF_SIZE, fconf ) ) {
     char const *const line = trim_ws( strip_comment( line_buf ) );
     ++line_no;
     if ( !*line )
       continue;
 
-    /* parse section line */
+    // parse section line
     if ( line[0] == '[' ) {
       if ( strcmp( line, "[ALIASES]" ) == 0 )
         section = ALIASES;
@@ -151,7 +150,7 @@ char const* read_conf( char const *conf_file ) {
       continue;
     }
 
-    /* parse line within section */
+    // parse line within section
     switch ( section ) {
       case NONE:
         PMESSAGE_EXIT( CONF_ERROR,
@@ -166,15 +165,14 @@ char const* read_conf( char const *conf_file ) {
         pattern_parse( line, conf_file, line_no );
         break;
 #endif /* WITH_PATTERNS */
-    } /* switch */
-  } /* while */
+    } // switch
+  } // while
 
   if ( ferror( fconf ) )
-    PMESSAGE_EXIT( READ_ERROR, "%s: %s\n", conf_file, strerror( errno ) );
+    PMESSAGE_EXIT( READ_ERROR, "%s: %s\n", conf_file, ERROR_STR );
   fclose( fconf );
   return conf_file;
 }
 
-/*****************************************************************************/
-
+///////////////////////////////////////////////////////////////////////////////
 /* vim:set et sw=2 ts=2: */

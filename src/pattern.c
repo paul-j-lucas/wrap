@@ -18,11 +18,11 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* local */
+// local
 #include "common.h"
 #include "pattern.h"
 
-/* system */
+// system
 #include <assert.h>
 #include <fnmatch.h>
 #include <stdio.h>
@@ -33,10 +33,10 @@
 #define PATTERN_ALLOC_INCREMENT     10
 
 extern char const*  me;
-static int          n_patterns = 0;     /* number of patterns */
-static pattern_t*   patterns = NULL;    /* global list of patterns */
+static int          n_patterns = 0;     // number of patterns
+static pattern_t*   patterns = NULL;    // global list of patterns
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 /**
  * Frees all memory used by a pattern.
@@ -48,7 +48,7 @@ static void pattern_free( pattern_t *pattern ) {
   free( (void*)pattern->pattern );
 }
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 void pattern_cleanup( void ) {
   while ( n_patterns )
@@ -57,22 +57,18 @@ void pattern_cleanup( void ) {
 }
 
 alias_t const* pattern_find( char const *file_name ) {
-  int i;
   assert( file_name );
-  for ( i = 0; i < n_patterns; ++i )
+  for ( int i = 0; i < n_patterns; ++i )
     if ( fnmatch( patterns[i].pattern, file_name, 0 ) == 0 )
       return patterns[i].alias;
   return NULL;
 }
 
 void pattern_parse( char const *line, char const *conf_file, int line_no ) {
-  alias_t const *alias;
-  static int n_patterns_alloc = 0;      /* number of patterns allocated */
-  pattern_t *pattern;                   /* current pattern being parsed into */
-  size_t span;
-
   assert( line );
   assert( conf_file );
+
+  static int n_patterns_alloc = 0;      // number of patterns allocated
 
   if ( !n_patterns_alloc ) {
     n_patterns_alloc = PATTERN_ALLOC_DEFAULT;
@@ -84,30 +80,30 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
   if ( !patterns )
     PERROR_EXIT( OUT_OF_MEMORY );
 
-  pattern = &patterns[ n_patterns++ ];
+  pattern_t *const pattern = &patterns[ n_patterns++ ];
 
-  /* pattern line: <pattern>[<ws>]=[<ws>]<alias> */
-  /*        parts:     1      2   3  4      5    */
+  // pattern line: <pattern>[<ws>]=[<ws>]<alias>
+  //        parts:     1      2   3  4      5   
 
-  /* part 1: pattern */
-  span = strcspn( line, " \t=" );
+  // part 1: pattern
+  size_t const span = strcspn( line, " \t=" );
   pattern->pattern = strndup( line, span );
   line += span;
 
-  /* part 2: whitespace */
+  // part 2: whitespace
   line += strspn( line, " \t" );
   if ( !*line )
     PMESSAGE_EXIT( CONF_ERROR, "%s:%d: '=' expected\n", conf_file, line_no );
 
-  /* part 3: = */
+  // part 3: =
   if ( *line != '=' )
     PMESSAGE_EXIT( CONF_ERROR,
       "%s:%d: '%c': unexpected character; '=' expected\n",
       conf_file, line_no, *line
     );
-  ++line;                               /* skip '=' */
+  ++line;                               // skip '='
 
-  /* part 4: whitespace */
+  // part 4: whitespace
   line += strspn( line, " \t" );
   if ( !*line )
     PMESSAGE_EXIT( CONF_ERROR,
@@ -115,14 +111,14 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
       conf_file, line_no
     );
 
-  /* part 5: alias */
-  if ( !(alias = alias_find( line )) )
+  // part 5: alias
+  alias_t const *const alias = alias_find( line );
+  if ( !alias )
     PMESSAGE_EXIT( CONF_ERROR,
       "%s:%d: \"%s\": no such alias\n", conf_file, line_no, line
     );
   pattern->alias = alias;
 }
 
-/*****************************************************************************/
-
+///////////////////////////////////////////////////////////////////////////////
 /* vim:set et sw=2 ts=2: */

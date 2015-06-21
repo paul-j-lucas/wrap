@@ -21,13 +21,13 @@
 #ifndef wrap_common_H
 #define wrap_common_H
 
-/* standard */
-#include <stddef.h>                     /* for size_t */
-
-/* local */
+// local
 #include "config.h"
 
-/*****************************************************************************/
+// standard
+#include <stddef.h>                     /* for size_t */
+
+///////////////////////////////////////////////////////////////////////////////
 
 #define LINE_BUF_SIZE             8192  /* hopefully, no one will exceed this */
 #define LINE_WIDTH_DEFAULT        80    /* wrap text to this line width */
@@ -35,7 +35,7 @@
 #define NEWLINES_DELIMIT_DEFAULT  2     /* # newlines that delimit a para */
 #define TAB_SPACES_DEFAULT        8     /* number of spaces a tab equals */
 
-/* exit(3) status codes */
+// exit(3) status codes
 #define EXIT_OK             0
 #define EXIT_USAGE          1
 #define EXIT_CONF_ERROR     2
@@ -49,7 +49,7 @@
 #define EXIT_CHILD_SIGNAL   30
 #define EXIT_PIPE_ERROR     40
 
-/* define a "bool" type */
+// define a "bool" type
 #ifdef HAVE_STDBOOL_H
 # include <stdbool.h>
 #else
@@ -66,14 +66,13 @@ typedef bool _Bool;
 # define __bool_true_false_are_defined 1
 #endif /* HAVE_STDBOOL_H */
 
-#define BLOCK(...) \
-  do { __VA_ARGS__ } while (0)
-
-#define PERROR_EXIT(STATUS) \
-  BLOCK( perror( me ); exit( EXIT_##STATUS ); )
+#define BLOCK(...)          do { __VA_ARGS__ } while (0)
+#define ERROR_STR           strerror( errno )
+#define PERROR_EXIT(STATUS) BLOCK( perror( me ); exit( EXIT_##STATUS ); )
+#define PRINT_ERR(...)      fprintf( stderr, __VA_ARGS__ )
 
 #define PMESSAGE_EXIT(STATUS,FORMAT,...) \
-  BLOCK( fprintf( stderr, "%s: " FORMAT, me, __VA_ARGS__ ); exit( EXIT_##STATUS ); )
+  BLOCK( PRINT_ERR( "%s: " FORMAT, me, __VA_ARGS__ ); exit( EXIT_##STATUS ); )
 
 #define CHECK_FGETX(FILE) \
   BLOCK( if ( ferror( FILE ) ) PERROR_EXIT( READ_ERROR ); )
@@ -127,7 +126,7 @@ int check_atou( char const *s );
  */
 void* check_realloc( void *p, size_t size );
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 #endif /* wrap_common_H */
 /* vim:set et sw=2 ts=2: */

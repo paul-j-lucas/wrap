@@ -18,10 +18,10 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* local */
+// local
 #include "common.h"
 
-/* system */
+// system
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>                     /* for atoi(), malloc(), ... */
@@ -29,12 +29,12 @@
 
 extern char const *me;
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 char const* base_name( char const *path_name ) {
-  char const *slash;
   assert( path_name );
-  if ( (slash = strrchr( path_name, '/' )) )
+  char const *const slash = strrchr( path_name, '/' );
+  if ( slash )
     return slash[1] ? slash + 1 : slash;
   return path_name;
 }
@@ -47,22 +47,20 @@ int check_atou( char const *s ) {
 }
 
 void* check_realloc( void *p, size_t size ) {
-  void *r;
-  /*
-   * Autoconf, 5.5.1:
-   *
-   * realloc
-   *    The C standard says a call realloc(NULL, size) is equivalent to
-   *    malloc(size), but some old systems don't support this (e.g., NextStep).
-   */
+  //
+  // Autoconf, 5.5.1:
+  //
+  // realloc
+  //    The C standard says a call realloc(NULL, size) is equivalent to
+  //    malloc(size), but some old systems don't support this (e.g., NextStep).
+  //
   if ( !size )
     size = 1;
-  r = p ? realloc( p, size ) : malloc( size );
+  void *const r = p ? realloc( p, size ) : malloc( size );
   if ( !r )
     PERROR_EXIT( OUT_OF_MEMORY );
   return r;
 }
 
-/*****************************************************************************/
-
+///////////////////////////////////////////////////////////////////////////////
 /* vim:set et sw=2 ts=2: */

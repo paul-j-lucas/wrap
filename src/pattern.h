@@ -21,7 +21,7 @@
 #ifndef wrap_pattern_H
 #define wrap_pattern_H
 
-/* local */
+// local
 #include "alias.h"
 #include "config.h"
 
@@ -29,7 +29,7 @@
 # error "Patterns not supported (no fnmatch(3)); this file should not be compiled."
 #endif /* WITH_PATTERNS */
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 struct pattern_s {
   char const* pattern;
@@ -62,7 +62,7 @@ alias_t const* pattern_find( char const *file_name );
  */
 void pattern_parse( char const *line, char const *conf_file, int line_no );
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 #endif /* wrap_pattern_H */
 /* vim:set et sw=2 ts=2: */

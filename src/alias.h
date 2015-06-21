@@ -21,12 +21,12 @@
 #ifndef wrap_alias_H
 #define wrap_alias_H
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 struct alias_s {
-  int line_no;                          /* line in conf file defined on */
-  int argc;                             /* number of arguments + 1 */
-  char const** argv;                    /* argv[0] = alias name */
+  int line_no;                          // line in conf file defined on
+  int argc;                             // number of arguments + 1
+  char const** argv;                    // argv[0] = alias name
 };
 typedef struct alias_s alias_t;
 
@@ -55,7 +55,7 @@ alias_t const* alias_find( char const *name );
  */
 void alias_parse( char const *line, char const *conf_file, int line_no );
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 #endif /* wrap_alias_H */
 /* vim:set et sw=2 ts=2: */

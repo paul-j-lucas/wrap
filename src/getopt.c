@@ -18,21 +18,22 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* local */
+// local
+#include "common.h"
 #include "getopt.h"
 
-/* standard */
+// standard
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 int pjl_getopt( int argc, char const *argv[], char const *opts ) {
+  assert( opts );
+
   char const *cp;
   static int sp = 1;
-
-  assert( opts );
 
   if ( sp == 1 ) {
     if ( optind >= argc || argv[ optind ][0] != '-' || !argv[ optind ][1] )
@@ -45,7 +46,7 @@ int pjl_getopt( int argc, char const *argv[], char const *opts ) {
   optopt = argv[ optind ][ sp ];
   if ( optopt == ':' || !(cp = strchr( opts, optopt )) ) {
     if ( opterr )
-      fprintf( stderr, "%s: '%c': illegal option\n", *argv, optopt );
+      PRINT_ERR( "%s: '%c': illegal option\n", *argv, optopt );
     sp = 1;
     return '?';
   }
@@ -54,18 +55,16 @@ int pjl_getopt( int argc, char const *argv[], char const *opts ) {
       optarg = (char*)&argv[ optind++ ][ sp+1 ];
     else if ( ++optind >= argc ) {
       if ( opterr )
-        fprintf(
-          stderr, "%s: '%c': option requires an argument\n", *argv, optopt
-        );
+        PRINT_ERR( "%s: '%c': option requires an argument\n", *argv, optopt );
       sp = 1;
       return '?';
     } else
       optarg = (char*)argv[ optind++ ];
     sp = 1;
   } else if ( *cp == '?' ) {
-    /*
-     * Added the functionality of having optional arguments by JRP on 7/16/92.
-     */
+    //
+    // Added the functionality of having optional arguments by JRP on 7/16/92.
+    //
     if ( argv[ optind ][ sp+1 ] )
       optarg = (char*)&argv[ optind++ ][ sp+1 ];
     else if ( ++optind >= argc || *argv[ optind ] == '-' )
@@ -83,6 +82,5 @@ int pjl_getopt( int argc, char const *argv[], char const *opts ) {
   return optopt;
 }
 
-/*****************************************************************************/
-
+///////////////////////////////////////////////////////////////////////////////
 /* vim:set et sw=2 ts=2: */

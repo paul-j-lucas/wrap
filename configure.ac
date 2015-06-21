@@ -20,12 +20,12 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-AC_INIT([wrap], [3.0.2], [paul@lucasmail.org],,[https://github.com/paul-j-lucas/wrap])
+AC_INIT([wrap], [3.0.3], [paul@lucasmail.org],,[https://github.com/paul-j-lucas/wrap])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 # Checks for programs.
-AC_PROG_CC
+AC_PROG_CC_C99
 AC_PROG_INSTALL
 
 # Checks for libraries.
@@ -39,6 +39,7 @@ AC_CHECK_HEADERS([pwd.h])
 AC_CHECK_HEADERS([signal.h])
 AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([unistd.h])
+AC_HEADER_ASSERT
 AC_HEADER_STDBOOL
 
 # Checks for typedefs, structures, and compiler characteristics.

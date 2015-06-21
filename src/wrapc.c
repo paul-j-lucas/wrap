@@ -18,11 +18,11 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* local */
+// local
 #include "common.h"
 #include "getopt.h"
 
-/* system */
+// system
 #include <assert.h>
 #include <errno.h>                      /* for errno */
 #include <limits.h>                     /* for PATH_MAX */
@@ -35,73 +35,64 @@
 
 #define ARG_BUF_SIZE  22                /* max wrap command-line arg size */
 
-/* Close both ends of pipe P. */
+// Close both ends of pipe P.
 #define CLOSE(P) \
   BLOCK( close( pipes[P][0] ); close( pipes[P][1] ); )
 
-/* Redirect file-descriptor FD to/from pipe P. */
+// Redirect file-descriptor FD to/from pipe P.
 #define REDIRECT(FD,P) \
   BLOCK( close( FD ); dup( pipes[P][FD] ); CLOSE( P ); )
 
-/* global variable definitions */
-FILE*       fin = NULL;                 /* file in */
-FILE*       fout = NULL;                /* file out */
-char const* me;                         /* executable name */
+// global variable definitions
+FILE*       fin = NULL;                 // file in
+FILE*       fout = NULL;                // file out
+char const* me;                         // executable name
 
-/* option variable definitions */
+// option variable definitions
 char const* opt_alias = NULL;
-char const* opt_conf_file = NULL;       /* full path to conf file */
-bool        opt_eos_delimit = false;    /* end-of-sentence delimits para's? */
-char const* opt_fin_name = NULL;        /* file in name */
+char const* opt_conf_file = NULL;       // full path to conf file
+bool        opt_eos_delimit = false;    // end-of-sentence delimits para's?
+char const* opt_fin_name = NULL;        // file in name
 int         opt_line_width = LINE_WIDTH_DEFAULT;
-bool        opt_no_conf = false;        /* do not read conf file */
-char const* opt_para_delimiters = NULL; /* additional para delimiter chars */
+bool        opt_no_conf = false;        // do not read conf file
+char const* opt_para_delimiters = NULL; // additional para delimiter chars
 int         opt_tab_spaces = TAB_SPACES_DEFAULT;
-bool        opt_title_line = false;     /* 1st para line is title? */
+bool        opt_title_line = false;     // 1st para line is title?
 
 static char const leading_chars[] =
-  " \t" /* whitespace */
-  "!"   /* HTML and XML comments */
-  "#"   /* CMake, Make, Perl, Python, Ruby, and Shell comments */
-  "%"   /* PostScript comments */
-  "/*"  /* C, C++, and Java comments */
-  ":"   /* XQuery comments */
-  ";"   /* Assember and Lisp comments */
-  ">"   /* Forward mail indicator */ ;
+  " \t" // whitespace
+  "!"   // HTML and XML comments
+  "#"   // CMake, Make, Perl, Python, Ruby, and Shell comments
+  "%"   // PostScript comments
+  "/*"  // C, C++, and Java comments
+  ":"   // XQuery comments
+  ";"   // Assember and Lisp comments
+  ">";  // Forward mail indicator
 
-/* local functions */
+// local functions
 static int  calc_leader_width( char const* );
 static void process_options( int, char const*[] );
 static char const* str_status( int );
 static void usage( void );
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
-  char  buf[ LINE_BUF_SIZE ];
-  FILE* from_wrap;                      /* file used by parent */
-  char  leader[ LINE_BUF_SIZE ];        /* characters stripped/prepended */
-  int   leader_count;                   /* number of leading characters */
-  pid_t pid, pid_1;                     /* child process-IDs */
-  /*
-   * Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
-   *            pipes[1] goes between child 2 (wrap) and parent
-   */
-  int   pipes[2][2];
-  int   wait_status;                    /* child process wait status */
-
   process_options( argc, argv );
 
-  /*
-   * Read the first line of input to obtain a sequence of leading characters to
-   * be the prototype for all lines.
-   */
+  //
+  // Read the first line of input to obtain a sequence of leading characters to
+  // be the prototype for all lines.
+  //
+  char buf[ LINE_BUF_SIZE ];
   if ( !fgets( buf, LINE_BUF_SIZE, fin ) ) {
     CHECK_FGETX( fin );
     exit( EXIT_OK );
   }
+  char leader[ LINE_BUF_SIZE ];         // characters stripped/prepended
   strcpy( leader, buf );
-  leader[ leader_count = strspn( buf, leading_chars ) ] = '\0';
+  int leader_count = strspn( buf, leading_chars );
+  leader[ leader_count ] = '\0';
 
   opt_line_width -= calc_leader_width( leader );
   if ( opt_line_width < LINE_WIDTH_MINIMUM )
@@ -109,53 +100,59 @@ int main( int argc, char const *argv[] ) {
       "line-width (%d) is too small (<%d)\n", opt_line_width, LINE_WIDTH_MINIMUM
     );
 
-  /* open pipes */
+  //
+  // Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
+  //            pipes[1] goes between child 2 (wrap) and parent
+  //
+  int pipes[2][2];
   if ( pipe( pipes[0] ) == -1 || pipe( pipes[1] ) == -1 )
     PERROR_EXIT( PIPE_ERROR );
 
-  /****************************************************************************
-   *
-   * Child 1
-   * 
-   * Close both ends of pipes[1] since it doesn't use it; read from our
-   * original stdin and write to pipes[0] (child 2, wrap).
-   *
-   * Write the first and all subsequent lines with the leading characters
-   * stripped from the beginning of each line.
-   */
-  if ( (pid_1 = fork()) == -1 )
+  /////////////////////////////////////////////////////////////////////////////
+  //
+  // Child 1
+  // 
+  // Close both ends of pipes[1] since it doesn't use it; read from our
+  // original stdin and write to pipes[0] (child 2, wrap).
+  //
+  // Write the first and all subsequent lines with the leading characters
+  // stripped from the beginning of each line.
+  //
+  pid_t const pid_1 = fork();
+  if ( pid_1 == -1 )
     PERROR_EXIT( FORK_ERROR );
   if ( !pid_1 ) {
-    FILE *to_wrap;
     CLOSE( 1 );
-    if ( !(to_wrap = fdopen( pipes[0][1], "w" )) )
+    FILE *const to_wrap = fdopen( pipes[0][1], "w" );
+    if ( !to_wrap )
       PMESSAGE_EXIT( WRITE_OPEN,
-        "child can't open pipe for writing: %s\n", strerror( errno )
+        "child can't open pipe for writing: %s\n", ERROR_STR
       );
 
-    /* write first line to wrap */
+    // write first line to wrap
     FPUTS( buf + leader_count, to_wrap );
 
     while ( fgets( buf, LINE_BUF_SIZE, fin ) ) {
       leader_count = strspn( buf, leading_chars );
-      if ( !buf[ leader_count ] )       /* no non-leading characters */
+      if ( !buf[ leader_count ] )       // no non-leading characters
         FPUTC( '\n', to_wrap );
       else
         FPUTS( buf + leader_count, to_wrap );
-    } /* while */
+    } // while
     CHECK_FGETX( fin );
     exit( EXIT_OK );
   }
 
-  /****************************************************************************
-   *
-   * Child 2
-   *
-   * Read from pipes[0] (child 1) and write to pipes[1] (parent); exec into
-   * wrap.
-   */
-  if ( (pid = fork()) == -1 ) {
-    kill( pid_1, SIGTERM );             /* we failed, so kill child 1 */
+  /////////////////////////////////////////////////////////////////////////////
+  //
+  // Child 2
+  //
+  // Read from pipes[0] (child 1) and write to pipes[1] (parent); exec into
+  // wrap.
+  //
+  pid_t pid = fork();
+  if ( pid == -1 ) {
+    kill( pid_1, SIGTERM );             // we failed, so kill child 1
     PERROR_EXIT( FORK_ERROR );
   }
   if ( !pid ) {
@@ -169,7 +166,7 @@ int main( int argc, char const *argv[] ) {
     arg_buf arg_opt_tab_spaces;
 
     int argc = 0;
-    char *argv[11];                     /* must be +1 of greatest arg below */
+    char *argv[11];                     // must be +1 of greatest arg below
 
 #define ARG_SPRINTF(ARG,FMT) \
   snprintf( arg_##ARG, sizeof arg_##ARG, (FMT), (ARG) )
@@ -182,7 +179,7 @@ int main( int argc, char const *argv[] ) {
 
 #define IF_ARG_FMT(ARG,FMT) if ( ARG ) ARG_FMT( ARG, FMT )
 
-    /* Quoting string arguments is unnecessary since no shell is involved. */
+    // Quoting string arguments is unnecessary since no shell is involved.
 
     /*  0 */    ARG_DUP(                      PACKAGE );
     /*  1 */ IF_ARG_FMT( opt_alias          , "-a%s"  );
@@ -202,22 +199,23 @@ int main( int argc, char const *argv[] ) {
     PERROR_EXIT( EXEC_ERROR );
   }
 
-  /****************************************************************************
-   *
-   * Parent
-   *
-   * Close both ends of pipes[0] since it doesn't use it; close the write end
-   * of pipes[1].
-   *
-   * Read from pipes[1] (child 2, wrap) and prepend the leading text to each
-   * line.
-   */
+  /////////////////////////////////////////////////////////////////////////////
+  //
+  // Parent
+  //
+  // Close both ends of pipes[0] since it doesn't use it; close the write end
+  // of pipes[1].
+  //
+  // Read from pipes[1] (child 2, wrap) and prepend the leading text to each
+  // line.
+  //
   CLOSE( 0 );
   close( pipes[1][1] );
 
-  if ( !(from_wrap = fdopen( pipes[1][0], "r" )) )
+  FILE *const from_wrap = fdopen( pipes[1][0], "r" );
+  if ( !from_wrap )
     PMESSAGE_EXIT( READ_OPEN,
-      "parent can't open pipe for reading: %s\n", strerror( errno )
+      "parent can't open pipe for reading: %s\n", ERROR_STR
     );
 
   while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) )
@@ -225,15 +223,15 @@ int main( int argc, char const *argv[] ) {
 
   CHECK_FGETX( from_wrap );
 
-  /*
-   * Wait for child processes.
-   */
+  //
+  // Wait for child processes.
+  //
+  int wait_status;
   while ( (pid = wait( &wait_status )) > 0 ) {
     if ( WIFEXITED( wait_status ) ) {
       int const exit_status = WEXITSTATUS( wait_status );
       if ( exit_status != 0 ) {
-        fprintf(
-          stderr,
+        PRINT_ERR(
           "%s: child process exited with status %d: %s\n",
           me, exit_status, str_status( exit_status )
         );
@@ -246,12 +244,12 @@ int main( int argc, char const *argv[] ) {
         signal, strsignal( signal )
       );
     }
-  } /* while */
+  } // while
 
   exit( EXIT_OK );
 }
 
-/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
 
 /**
  * Compute the actual width of the leader: tabs are equal to <opt_tab_spaces>
@@ -273,15 +271,15 @@ static int calc_leader_width( char const *leader ) {
       ++width;
       spaces = (spaces + 1) % opt_tab_spaces;
     }
-  } /* for */
+  } // for
 
   return width;
 }
 
 static void process_options( int argc, char const *argv[] ) {
-  int opt;                              /* command-line option */
-  char const* opt_fin = NULL;           /* file in name */
-  char const* opt_fout = NULL;          /* file out name */
+  int opt;                              // command-line option
+  char const* opt_fin = NULL;           // file in name
+  char const* opt_fout = NULL;          // file out name
   char const opts[] = "a:c:Cef:F:l:o:p:s:Tvw:";
 
   me = base_name( argv[0] );
@@ -293,26 +291,26 @@ static void process_options( int argc, char const *argv[] ) {
       case 'c': opt_conf_file       = optarg;               break;
       case 'C': opt_no_conf         = true;                 break;
       case 'e': opt_eos_delimit     = true;                 break;
-      case 'f': opt_fin             = optarg;         /* no break; */
+      case 'f': opt_fin             = optarg;         // no break;
       case 'F': opt_fin_name        = base_name( optarg );  break;
       case 'o': opt_fout            = optarg;               break;
       case 'p': opt_para_delimiters = optarg;               break;
       case 's': opt_tab_spaces      = check_atou( optarg ); break;
       case 'T': opt_title_line      = true;                 break;
-      case 'v': fprintf( stderr, "%s\n", PACKAGE_STRING );  exit( EXIT_OK );
-      case 'l': /* deprecated: now synonym for -w */
+      case 'v': PRINT_ERR( "%s\n", PACKAGE_STRING );        exit( EXIT_OK );
+      case 'l': // deprecated: now synonym for -w
       case 'w': opt_line_width      = check_atou( optarg ); break;
       default : usage();
-    } /* switch */
-  } /* while */
+    } // switch
+  } // while
   argc -= optind, argv += optind;
   if ( argc )
     usage();
 
   if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
-    PMESSAGE_EXIT( READ_OPEN, "\"%s\": %s\n", opt_fin, strerror( errno ) );
+    PMESSAGE_EXIT( READ_OPEN, "\"%s\": %s\n", opt_fin, ERROR_STR );
   if ( opt_fout && !(fout = fopen( opt_fout, "w" )) )
-    PMESSAGE_EXIT( WRITE_OPEN, "\"%s\": %s\n", opt_fout, strerror( errno ) );
+    PMESSAGE_EXIT( WRITE_OPEN, "\"%s\": %s\n", opt_fout, ERROR_STR );
 
   if ( !fin )
     fin = stdin;
@@ -335,11 +333,11 @@ static char const* str_status( int status ) {
     case EXIT_CHILD_SIGNAL  : return "child process terminated by signal";
     case EXIT_PIPE_ERROR    : return "pipe() failed";
     default                 : return "unknown status";
-  } /* switch */
+  } // switch
 }
 
 static void usage( void ) {
-  fprintf( stderr,
+  PRINT_ERR(
 "usage: %s [-a alias] [-CeTv] [-w line-width]\n"
 "       [-{fF} input-file] [-o output-file] [-c conf-file]\n"
 "       [-p para-delim-chars] [-s tab-spaces]\n"
@@ -348,6 +346,5 @@ static void usage( void ) {
   exit( EXIT_USAGE );
 }
 
-/*****************************************************************************/
-
+///////////////////////////////////////////////////////////////////////////////
 /* vim:set et sw=2 ts=2: */
