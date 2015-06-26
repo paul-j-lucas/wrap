@@ -1,3 +1,7 @@
+2015-06-26  Paul J. Lucas <paul@lucasmail.org>
+
+    * alias.c: Fixed alias_free().
+
 2015-06-20  Paul J. Lucas <paul@lucasmail.org>
 
     * Many files: Now using C99.
