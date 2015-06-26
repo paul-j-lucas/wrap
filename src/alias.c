@@ -74,8 +74,8 @@ static void alias_check_dup( char const *conf_file, int line_no ) {
  */
 static void alias_free( alias_t *alias ) {
   assert( alias );
-  while ( alias->argc >= 0 )
-    free( (void*)alias->argv[ alias->argc-- ] );
+  while ( alias->argc > 0 )
+    free( (void*)alias->argv[ --alias->argc ] );
   free( alias->argv );
 }
 
