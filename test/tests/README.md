@@ -28,7 +28,7 @@ For example, tests such as these:
     ad-B2-E1-m.test
 
 that are the same test but differ only in 'e' vs. 'E' will work fine
-on typical Linux filesystems but cause a collision on Mac OS X.
+on every other Unix filesystem but cause a collision on HFS+.
 
 One solution (the one used here) is to append a distinct number:
 
