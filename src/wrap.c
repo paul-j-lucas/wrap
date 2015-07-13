@@ -456,7 +456,7 @@ done:
       print_lead_chars();
     print_buf( buf_count, true );
   }
-  exit( EXIT_OK );
+  exit( EXIT_SUCCESS );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -571,32 +571,32 @@ static void process_options( int argc, char const *argv[], char const *opts,
         opt_conf_file, line_no, opt
       );
     switch ( opt ) {
-      case 'a': opt_alias             = optarg;               break;
-      case 'c': opt_conf_file         = optarg;               break;
-      case 'C': opt_no_conf           = true;                 break;
-      case 'd': opt_lead_dot_ignore   = true;                 break;
-      case 'e': opt_eos_delimit       = true;                 break;
-      case 'f': opt_fin               = optarg;         // no break;
-      case 'F': opt_fin_name          = base_name( optarg );  break;
-      case 'h': opt_hang_tabs         = check_atou( optarg ); break;
-      case 'H': opt_hang_spaces       = check_atou( optarg ); break;
-      case 'i': opt_indt_tabs         = check_atou( optarg ); break;
-      case 'I': opt_indt_spaces       = check_atou( optarg ); break;
-      case 'm': opt_mirror_tabs       = check_atou( optarg ); break;
-      case 'M': opt_mirror_spaces     = check_atou( optarg ); break;
-      case 'n': opt_newlines_delimit  = INT_MAX;              break;
-      case 'N': opt_newlines_delimit  = 1;                    break;
-      case 'o': opt_fout              = optarg;               break;
-      case 'p': opt_para_delimiters   = optarg;               break;
-      case 's': opt_tab_spaces        = check_atou( optarg ); break;
-      case 'S': opt_lead_spaces       = check_atou( optarg ); break;
-      case 't': opt_lead_tabs         = check_atou( optarg ); break;
-      case 'T': opt_title_line        = true;                 break;
-      case 'v': PRINT_ERR( "%s\n", PACKAGE_STRING );          exit( EXIT_OK );
+      case 'a': opt_alias             = optarg;                     break;
+      case 'c': opt_conf_file         = optarg;                     break;
+      case 'C': opt_no_conf           = true;                       break;
+      case 'd': opt_lead_dot_ignore   = true;                       break;
+      case 'e': opt_eos_delimit       = true;                       break;
+      case 'f': opt_fin               = optarg;               // no break;
+      case 'F': opt_fin_name          = base_name( optarg );        break;
+      case 'h': opt_hang_tabs         = check_atou( optarg );       break;
+      case 'H': opt_hang_spaces       = check_atou( optarg );       break;
+      case 'i': opt_indt_tabs         = check_atou( optarg );       break;
+      case 'I': opt_indt_spaces       = check_atou( optarg );       break;
+      case 'm': opt_mirror_tabs       = check_atou( optarg );       break;
+      case 'M': opt_mirror_spaces     = check_atou( optarg );       break;
+      case 'n': opt_newlines_delimit  = INT_MAX;                    break;
+      case 'N': opt_newlines_delimit  = 1;                          break;
+      case 'o': opt_fout              = optarg;                     break;
+      case 'p': opt_para_delimiters   = optarg;                     break;
+      case 's': opt_tab_spaces        = check_atou( optarg );       break;
+      case 'S': opt_lead_spaces       = check_atou( optarg );       break;
+      case 't': opt_lead_tabs         = check_atou( optarg );       break;
+      case 'T': opt_title_line        = true;                       break;
+      case 'v': PRINT_ERR( "%s\n", PACKAGE_STRING ); exit( EXIT_SUCCESS );
       case 'l': // deprecated: now synonym for -w
-      case 'w': opt_line_width        = check_atou( optarg ); break;
+      case 'w': opt_line_width        = check_atou( optarg );       break;
       case 'b': // deprecated: now synonym for -W
-      case 'W': opt_lead_ws_delimit   = true;                 break;
+      case 'W': opt_lead_ws_delimit   = true;                       break;
       default : usage();
     } // switch
   } // while

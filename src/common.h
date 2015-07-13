@@ -26,6 +26,7 @@
 
 // standard
 #include <stddef.h>                     /* for size_t */
+#include <stdlib.h>                     /* for EXIT_SUCCESS */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +37,6 @@
 #define TAB_SPACES_DEFAULT        8     /* number of spaces a tab equals */
 
 // exit(3) status codes
-#define EXIT_OK             0
 #define EXIT_USAGE          1
 #define EXIT_CONF_ERROR     2
 #define EXIT_OUT_OF_MEMORY  3

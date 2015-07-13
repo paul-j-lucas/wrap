@@ -87,7 +87,7 @@ int main( int argc, char const *argv[] ) {
   char buf[ LINE_BUF_SIZE ];
   if ( !fgets( buf, LINE_BUF_SIZE, fin ) ) {
     CHECK_FGETX( fin );
-    exit( EXIT_OK );
+    exit( EXIT_SUCCESS );
   }
   char leader[ LINE_BUF_SIZE ];         // characters stripped/prepended
   strcpy( leader, buf );
@@ -140,7 +140,7 @@ int main( int argc, char const *argv[] ) {
         FPUTS( buf + leader_count, to_wrap );
     } // while
     CHECK_FGETX( fin );
-    exit( EXIT_OK );
+    exit( EXIT_SUCCESS );
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -246,7 +246,7 @@ int main( int argc, char const *argv[] ) {
     }
   } // while
 
-  exit( EXIT_OK );
+  exit( EXIT_SUCCESS );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -287,19 +287,19 @@ static void process_options( int argc, char const *argv[] ) {
   opterr = 1;
   while ( (opt = pjl_getopt( argc, argv, opts )) != EOF ) {
     switch ( opt ) {
-      case 'a': opt_alias           = optarg;               break;
-      case 'c': opt_conf_file       = optarg;               break;
-      case 'C': opt_no_conf         = true;                 break;
-      case 'e': opt_eos_delimit     = true;                 break;
-      case 'f': opt_fin             = optarg;         // no break;
-      case 'F': opt_fin_name        = base_name( optarg );  break;
-      case 'o': opt_fout            = optarg;               break;
-      case 'p': opt_para_delimiters = optarg;               break;
-      case 's': opt_tab_spaces      = check_atou( optarg ); break;
-      case 'T': opt_title_line      = true;                 break;
-      case 'v': PRINT_ERR( "%s\n", PACKAGE_STRING );        exit( EXIT_OK );
+      case 'a': opt_alias           = optarg;                       break;
+      case 'c': opt_conf_file       = optarg;                       break;
+      case 'C': opt_no_conf         = true;                         break;
+      case 'e': opt_eos_delimit     = true;                         break;
+      case 'f': opt_fin             = optarg;                 // no break;
+      case 'F': opt_fin_name        = base_name( optarg );          break;
+      case 'o': opt_fout            = optarg;                       break;
+      case 'p': opt_para_delimiters = optarg;                       break;
+      case 's': opt_tab_spaces      = check_atou( optarg );         break;
+      case 'T': opt_title_line      = true;                         break;
+      case 'v': PRINT_ERR( "%s\n", PACKAGE_STRING ); exit( EXIT_SUCCESS );
       case 'l': // deprecated: now synonym for -w
-      case 'w': opt_line_width      = check_atou( optarg ); break;
+      case 'w': opt_line_width      = check_atou( optarg );         break;
       default : usage();
     } // switch
   } // while
@@ -320,7 +320,7 @@ static void process_options( int argc, char const *argv[] ) {
 
 static char const* str_status( int status ) {
   switch ( status ) {
-    case EXIT_OK            : return "OK";
+    case EXIT_SUCCESS       : return "success";
     case EXIT_USAGE         : return "usage error";
     case EXIT_CONF_ERROR    : return "configuration file error";
     case EXIT_OUT_OF_MEMORY : return "out of memory";
