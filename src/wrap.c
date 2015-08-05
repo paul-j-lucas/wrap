@@ -27,7 +27,7 @@
 #endif /* WITH_PATTERNS */
 #include "read_conf.h"
 
-// system
+// standard
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>

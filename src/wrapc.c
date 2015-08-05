@@ -22,7 +22,7 @@
 #include "common.h"
 #include "getopt.h"
 
-// system
+// standard
 #include <assert.h>
 #include <errno.h>                      /* for errno */
 #include <limits.h>                     /* for PATH_MAX */

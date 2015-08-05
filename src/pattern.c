@@ -22,7 +22,7 @@
 #include "common.h"
 #include "pattern.h"
 
-// system
+// standard
 #include <assert.h>
 #include <fnmatch.h>
 #include <stdio.h>

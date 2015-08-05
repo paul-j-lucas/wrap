@@ -21,7 +21,7 @@
 // local
 #include "common.h"
 
-// system
+// standard
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>                     /* for atoi(), malloc(), ... */

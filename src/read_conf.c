@@ -25,7 +25,7 @@
 # include "pattern.h"
 #endif /* WITH_PATTERNS */
 
-// system
+// standard
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
