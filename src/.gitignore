@@ -1,4 +1,4 @@
-.deps
+*.dSYM
 config.h
 stamp-h1
 wrap
