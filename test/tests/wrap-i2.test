@@ -1,0 +1,1 @@
+wrap | /dev/null | -i2 | data-01.txt | 0
