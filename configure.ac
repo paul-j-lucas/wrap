@@ -66,10 +66,10 @@ fi
 # Miscellaneous.
 AC_LANG(C)
 AX_CFLAGS_WARN_ALL
-AX_CHECK_COMPILE_FLAG([-Wextra],[CFLAGS+=" -Wextra"])
-AX_CHECK_COMPILE_FLAG([-Wc++-compat],[CFLAGS+=" -Wc++-compat"])
-AX_CHECK_COMPILE_FLAG([-Wredundant-decls],[CFLAGS+=" -Wredundant-decls"])
-AX_CHECK_COMPILE_FLAG([-Wwrite-strings],[CFLAGS+=" -Wwrite-strings"])
+AX_CHECK_COMPILE_FLAG([-Wextra],[CFLAGS="$CFLAGS -Wextra"])
+AX_CHECK_COMPILE_FLAG([-Wc++-compat],[CFLAGS="$CFLAGS -Wc++-compat"])
+AX_CHECK_COMPILE_FLAG([-Wredundant-decls],[CFLAGS="$CFLAGS -Wredundant-decls"])
+AX_CHECK_COMPILE_FLAG([-Wwrite-strings],[CFLAGS="$CFLAGS -Wwrite-strings"])
 
 # Generate files.
 AH_TOP([#ifndef wrap_config_H
