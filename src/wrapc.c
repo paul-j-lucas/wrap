@@ -37,25 +37,25 @@
 
 // Close both ends of pipe P.
 #define CLOSE(P) \
-  BLOCK( close( pipes[P][ STDIN_FILENO ] ); close( pipes[P][ STDOUT_FILENO] ); )
+  BLOCK( close( pipes[P][ STDIN_FILENO ] ); close( pipes[P][ STDOUT_FILENO ] ); )
 
 // Redirect file-descriptor FD to/from pipe P.
 #define REDIRECT(FD,P) \
   BLOCK( close( FD ); dup( pipes[P][FD] ); CLOSE( P ); )
 
-// global variable definitions
-FILE*       fin = NULL;                 // file in
-FILE*       fout = NULL;                // file out
-char const* me;                         // executable name
+// extern variable definitions
+FILE       *fin = NULL;                 // file in
+FILE       *fout = NULL;                // file out
+char const *me;                         // executable name
 
 // option variable definitions
-char const* opt_alias = NULL;
-char const* opt_conf_file = NULL;       // full path to conf file
+char const *opt_alias = NULL;
+char const *opt_conf_file = NULL;       // full path to conf file
 bool        opt_eos_delimit = false;    // end-of-sentence delimits para's?
-char const* opt_fin_name = NULL;        // file in name
+char const *opt_fin_name = NULL;        // file in name
 int         opt_line_width = LINE_WIDTH_DEFAULT;
 bool        opt_no_conf = false;        // do not read conf file
-char const* opt_para_delimiters = NULL; // additional para delimiter chars
+char const *opt_para_delimiters = NULL; // additional para delimiter chars
 int         opt_tab_spaces = TAB_SPACES_DEFAULT;
 bool        opt_title_line = false;     // 1st para line is title?
 
