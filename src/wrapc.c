@@ -24,7 +24,7 @@
 
 // standard
 #include <assert.h>
-#include <errno.h>                      /* for errno */
+#include <errno.h>
 #include <limits.h>                     /* for PATH_MAX */
 #include <signal.h>                     /* for kill() */
 #include <stdio.h>
@@ -100,24 +100,6 @@ int main( int argc, char const *argv[] ) {
     PMESSAGE_EXIT( USAGE,
       "line-width (%d) is too small (<%d)\n", opt_line_width, LINE_WIDTH_MINIMUM
     );
-
-  //
-  // Split off the trailing non-whitespace (tnws) from the leader so that if we
-  // read a comment that's empty except for the leader, we won't emit trailing
-  // whitespace. For example, given:
-  //
-  //    # foo
-  //    #
-  //    # bar
-  //
-  // the leader initially is "# " (because that's what's before "foo").  If we
-  // didn't split off trailing non-whitespace, then when we wrapped the comment
-  // above, the second line would become "# " containing a trailing whitespace.
-  //
-  size_t const tnws_len = leader_len - strrspn( leader, " \t" );
-  char leader_tws[ LINE_BUF_SIZE ];     // leader trailing whitespace, if any
-  strcpy( leader_tws, leader + tnws_len );
-  leader[ tnws_len ] = '\0';
 
   //
   // Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
@@ -237,6 +219,24 @@ int main( int argc, char const *argv[] ) {
     PMESSAGE_EXIT( READ_OPEN,
       "parent can't open pipe for reading: %s\n", ERROR_STR
     );
+
+  //
+  // Split off the trailing non-whitespace (tnws) from the leader so that if we
+  // read a comment that's empty except for the leader, we won't emit trailing
+  // whitespace. For example, given:
+  //
+  //    # foo
+  //    #
+  //    # bar
+  //
+  // the leader initially is "# " (because that's what's before "foo").  If we
+  // didn't split off trailing non-whitespace, then when we wrapped the comment
+  // above, the second line would become "# " containing a trailing whitespace.
+  //
+  size_t const tnws_len = leader_len - strrspn( leader, " \t" );
+  char leader_tws[ LINE_BUF_SIZE ];     // leader trailing whitespace, if any
+  strcpy( leader_tws, leader + tnws_len );
+  leader[ tnws_len ] = '\0';
 
   while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) ) {
     if ( strcmp( buf, "\n" ) == 0 )     // don't emit leader_tws for blank lines
