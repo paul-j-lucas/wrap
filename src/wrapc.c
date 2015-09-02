@@ -118,7 +118,6 @@ int main( int argc, char const *argv[] ) {
   // Write the first and all subsequent lines with the leading characters
   // stripped from the beginning of each line.
   //
-
   pid_t const pid_1 = fork();
   if ( pid_1 == -1 )
     PERROR_EXIT( FORK_ERROR );
