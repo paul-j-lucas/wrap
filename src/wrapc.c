@@ -8,12 +8,12 @@
 **      it under the terms of the GNU General Public License as published by
 **      the Free Software Foundation; either version 2 of the Licence, or
 **      (at your option) any later version.
-** 
+**
 **      This program is distributed in the hope that it will be useful,
 **      but WITHOUT ANY WARRANTY; without even the implied warranty of
 **      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 **      GNU General Public License for more details.
-** 
+**
 **      You should have received a copy of the GNU General Public License
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -111,13 +111,14 @@ int main( int argc, char const *argv[] ) {
   /////////////////////////////////////////////////////////////////////////////
   //
   // Child 1
-  // 
+  //
   // Close both ends of pipes[1] since it doesn't use it; read from our
   // original stdin and write to pipes[0] (child 2, wrap).
   //
   // Write the first and all subsequent lines with the leading characters
   // stripped from the beginning of each line.
   //
+
   pid_t const pid_1 = fork();
   if ( pid_1 == -1 )
     PERROR_EXIT( FORK_ERROR );
