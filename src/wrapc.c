@@ -91,7 +91,7 @@ int main( int argc, char const *argv[] ) {
   }
   char leader[ LINE_BUF_SIZE ];         // characters stripped/prepended
   strcpy( leader, buf );
-  size_t leader_count = strspn( buf, leading_chars );
+  size_t leader_count = strspn( leader, leading_chars );
   leader[ leader_count ] = '\0';
 
   opt_line_width -= calc_leader_width( leader );
