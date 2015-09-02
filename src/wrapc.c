@@ -37,7 +37,7 @@
 
 // Close both ends of pipe P.
 #define CLOSE(P) \
-  BLOCK( close( pipes[P][0] ); close( pipes[P][1] ); )
+  BLOCK( close( pipes[P][ STDIN_FILENO ] ); close( pipes[P][ STDOUT_FILENO] ); )
 
 // Redirect file-descriptor FD to/from pipe P.
 #define REDIRECT(FD,P) \
@@ -105,8 +105,8 @@ int main( int argc, char const *argv[] ) {
   //            pipes[1] goes between child 2 (wrap) and parent
   //
   int pipes[2][2];
-  if ( pipe( pipes[0] ) == -1 || pipe( pipes[1] ) == -1 )
-    PERROR_EXIT( PIPE_ERROR );
+  PIPE( pipes[0] );
+  PIPE( pipes[1] );
 
   /////////////////////////////////////////////////////////////////////////////
   //
@@ -121,9 +121,9 @@ int main( int argc, char const *argv[] ) {
   pid_t const pid_1 = fork();
   if ( pid_1 == -1 )
     PERROR_EXIT( FORK_ERROR );
-  if ( !pid_1 ) {
+  if ( pid_1 == 0 ) {
     CLOSE( 1 );
-    FILE *const to_wrap = fdopen( pipes[0][1], "w" );
+    FILE *const to_wrap = fdopen( pipes[0][ STDOUT_FILENO ], "w" );
     if ( !to_wrap )
       PMESSAGE_EXIT( WRITE_OPEN,
         "child can't open pipe for writing: %s\n", ERROR_STR
@@ -150,12 +150,12 @@ int main( int argc, char const *argv[] ) {
   // Read from pipes[0] (child 1) and write to pipes[1] (parent); exec into
   // wrap.
   //
-  pid_t pid = fork();
-  if ( pid == -1 ) {
+  pid_t const pid_2 = fork();
+  if ( pid_2 == -1 ) {
     kill( pid_1, SIGTERM );             // we failed, so kill child 1
     PERROR_EXIT( FORK_ERROR );
   }
-  if ( !pid ) {
+  if ( pid_2 == 0 ) {
     typedef char arg_buf[ ARG_BUF_SIZE ];
 
     arg_buf arg_opt_alias;
@@ -210,9 +210,9 @@ int main( int argc, char const *argv[] ) {
   // line.
   //
   CLOSE( 0 );
-  close( pipes[1][1] );
+  close( pipes[1][ STDOUT_FILENO ] );
 
-  FILE *const from_wrap = fdopen( pipes[1][0], "r" );
+  FILE *const from_wrap = fdopen( pipes[1][ STDIN_FILENO ], "r" );
   if ( !from_wrap )
     PMESSAGE_EXIT( READ_OPEN,
       "parent can't open pipe for reading: %s\n", ERROR_STR
@@ -227,7 +227,7 @@ int main( int argc, char const *argv[] ) {
   // Wait for child processes.
   //
   int wait_status;
-  while ( (pid = wait( &wait_status )) > 0 ) {
+  for ( pid_t pid; (pid = wait( &wait_status )) > 0; ) {
     if ( WIFEXITED( wait_status ) ) {
       int const exit_status = WEXITSTATUS( wait_status );
       if ( exit_status != 0 ) {
@@ -244,7 +244,7 @@ int main( int argc, char const *argv[] ) {
         signal, strsignal( signal )
       );
     }
-  } // while
+  } // for
 
   exit( EXIT_SUCCESS );
 }
@@ -257,13 +257,12 @@ int main( int argc, char const *argv[] ) {
  * equal to 1.
  */
 static int calc_leader_width( char const *leader ) {
-  char const *c;
+  assert( leader );
+
   int spaces = 0;
   int width = 0;
 
-  assert( leader );
-
-  for ( c = leader; *c; ++c ) {
+  for ( char const *c = leader; *c; ++c ) {
     if ( *c == '\t' ) {
       width += opt_tab_spaces - spaces;
       spaces = 0;
@@ -277,15 +276,14 @@ static int calc_leader_width( char const *leader ) {
 }
 
 static void process_options( int argc, char const *argv[] ) {
-  int opt;                              // command-line option
-  char const* opt_fin = NULL;           // file in name
-  char const* opt_fout = NULL;          // file out name
-  char const opts[] = "a:c:Cef:F:l:o:p:s:Tvw:";
+  char const *opt_fin = NULL;           // file in name
+  char const *opt_fout = NULL;          // file out name
+  char const  opts[] = "a:c:Cef:F:l:o:p:s:Tvw:";
 
   me = base_name( argv[0] );
 
   opterr = 1;
-  while ( (opt = pjl_getopt( argc, argv, opts )) != EOF ) {
+  for ( int opt; (opt = pjl_getopt( argc, argv, opts )) != EOF; ) {
     switch ( opt ) {
       case 'a': opt_alias           = optarg;                       break;
       case 'c': opt_conf_file       = optarg;                       break;
@@ -302,7 +300,7 @@ static void process_options( int argc, char const *argv[] ) {
       case 'w': opt_line_width      = check_atou( optarg );         break;
       default : usage();
     } // switch
-  } // while
+  } // for
   argc -= optind, argv += optind;
   if ( argc )
     usage();
@@ -341,7 +339,7 @@ static void usage( void ) {
 "usage: %s [-a alias] [-CeTv] [-w line-width]\n"
 "       [-{fF} input-file] [-o output-file] [-c conf-file]\n"
 "       [-p para-delim-chars] [-s tab-spaces]\n"
-    "", me
+    , me
   );
   exit( EXIT_USAGE );
 }

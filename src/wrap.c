@@ -561,10 +561,9 @@ static void print_lead_chars( void ) {
 static void process_options( int argc, char const *argv[], char const *opts,
                              int line_no ) {
   assert( opts );
-  int opt;                              // command-line option
 
   optind = opterr = 1;
-  while ( (opt = pjl_getopt( argc, argv, opts )) != EOF ) {
+  for ( int opt; (opt = pjl_getopt( argc, argv, opts )) != EOF; ) {
     if ( line_no && strchr( "acCfFov", opt ) )
       PMESSAGE_EXIT( CONF_ERROR,
         "%s:%d: '%c': option not allowed in configuration file\n",
@@ -599,7 +598,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'W': opt_lead_ws_delimit   = true;                       break;
       default : usage();
     } // switch
-  } // while
+  } // for
 }
 
 static void usage( void ) {

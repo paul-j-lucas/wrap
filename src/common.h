@@ -89,6 +89,9 @@ typedef bool _Bool;
 #define MALLOC(TYPE,N) \
   (TYPE*)check_realloc( NULL, sizeof(TYPE) * (N) )
 
+#define PIPE(P) \
+  BLOCK( if ( pipe( P ) == -1 ) PERROR_EXIT( PIPE_ERROR ); )
+
 #define REALLOC(PTR,TYPE,N) \
   (PTR) = (TYPE*)check_realloc( (PTR), sizeof(TYPE) * (N) )
 
