@@ -70,10 +70,10 @@ static char const leading_chars[] =
   ">";  // Forward mail indicator
 
 // local functions
-static int  calc_leader_width( char const* );
-static void process_options( int, char const*[] );
-static char const* str_status( int );
-static void usage( void );
+static size_t calc_leader_width( char const* );
+static void   process_options( int, char const*[] );
+static char   const* str_status( int );
+static void   usage( void );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -91,7 +91,7 @@ int main( int argc, char const *argv[] ) {
   }
   char leader[ LINE_BUF_SIZE ];         // characters stripped/prepended
   strcpy( leader, buf );
-  int leader_count = strspn( buf, leading_chars );
+  size_t leader_count = strspn( buf, leading_chars );
   leader[ leader_count ] = '\0';
 
   opt_line_width -= calc_leader_width( leader );
@@ -118,6 +118,7 @@ int main( int argc, char const *argv[] ) {
   // Write the first and all subsequent lines with the leading characters
   // stripped from the beginning of each line.
   //
+
   pid_t const pid_1 = fork();
   if ( pid_1 == -1 )
     PERROR_EXIT( FORK_ERROR );
@@ -256,11 +257,11 @@ int main( int argc, char const *argv[] ) {
  * spaces minus the number of spaces we're into a tab-stop, and all others are
  * equal to 1.
  */
-static int calc_leader_width( char const *leader ) {
+static size_t calc_leader_width( char const *leader ) {
   assert( leader );
 
-  int spaces = 0;
-  int width = 0;
+  size_t spaces = 0;
+  size_t width = 0;
 
   for ( char const *c = leader; *c; ++c ) {
     if ( *c == '\t' ) {
