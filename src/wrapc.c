@@ -70,10 +70,11 @@ static char const leading_chars[] =
   ">";  // Forward mail indicator
 
 // local functions
-static size_t calc_leader_width( char const* );
-static void   process_options( int, char const*[] );
-static char   const* str_status( int );
-static void   usage( void );
+static size_t       calc_leader_width( char const* );
+static void         process_options( int, char const*[] );
+static size_t       strrspn( char const*, char const* );
+static char const*  str_status( int );
+static void         usage( void );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -91,14 +92,32 @@ int main( int argc, char const *argv[] ) {
   }
   char leader[ LINE_BUF_SIZE ];         // characters stripped/prepended
   strcpy( leader, buf );
-  size_t leader_count = strspn( leader, leading_chars );
-  leader[ leader_count ] = '\0';
+  size_t leader_len = strspn( leader, leading_chars );
+  leader[ leader_len ] = '\0';
 
   opt_line_width -= calc_leader_width( leader );
   if ( opt_line_width < LINE_WIDTH_MINIMUM )
     PMESSAGE_EXIT( USAGE,
       "line-width (%d) is too small (<%d)\n", opt_line_width, LINE_WIDTH_MINIMUM
     );
+
+  //
+  // Split off the trailing non-whitespace (tnws) from the leader so that if we
+  // read a comment that's empty except for the leader, we won't emit trailing
+  // whitespace. For example, given:
+  //
+  //    # foo
+  //    #
+  //    # bar
+  //
+  // the leader initially is "# " (because that's what's before "foo").  If we
+  // didn't split off trailing non-whitespace, then when we wrapped the comment
+  // above, the second line would become "# " containing a trailing whitespace.
+  //
+  size_t const tnws_len = leader_len - strrspn( leader, " \t" );
+  char leader_tws[ LINE_BUF_SIZE ];     // leader trailing whitespace, if any
+  strcpy( leader_tws, leader + tnws_len );
+  leader[ tnws_len ] = '\0';
 
   //
   // Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
@@ -131,14 +150,14 @@ int main( int argc, char const *argv[] ) {
       );
 
     // write first line to wrap
-    FPUTS( buf + leader_count, to_wrap );
+    FPUTS( buf + leader_len, to_wrap );
 
     while ( fgets( buf, LINE_BUF_SIZE, fin ) ) {
-      leader_count = strspn( buf, leading_chars );
-      if ( !buf[ leader_count ] )       // no non-leading characters
+      leader_len = strspn( buf, leading_chars );
+      if ( !buf[ leader_len ] )         // no non-leading characters
         FPUTC( '\n', to_wrap );
       else
-        FPUTS( buf + leader_count, to_wrap );
+        FPUTS( buf + leader_len, to_wrap );
     } // while
     CHECK_FGETX( fin );
     exit( EXIT_SUCCESS );
@@ -219,8 +238,12 @@ int main( int argc, char const *argv[] ) {
       "parent can't open pipe for reading: %s\n", ERROR_STR
     );
 
-  while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) )
-    FPRINTF( fout, "%s%s", leader, buf );
+  while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) ) {
+    if ( strcmp( buf, "\n" ) == 0 )     // don't emit leader_tws for blank lines
+      FPRINTF( fout, "%s%s", leader, buf );
+    else
+      FPRINTF( fout, "%s%s%s", leader, leader_tws, buf );
+  } // while
 
   CHECK_FGETX( from_wrap );
 
@@ -315,6 +338,24 @@ static void process_options( int argc, char const *argv[] ) {
     fin = stdin;
   if ( !fout )
     fout = stdout;
+}
+
+/**
+ * Reverse strspn(3): spans the trailing part of \a s as long as characters
+ * from \a s occur in \a set.
+ *
+ * @param s The null-terminated string to span.
+ * @param set The null-terminated set of characters.
+ * @return Returns the number of characters spanned.
+ */
+static size_t strrspn( char const *s, char const *set ) {
+  assert( s );
+  assert( set );
+
+  size_t n = 0;
+  for ( char const *t = s + strlen( s ); t-- > s && strchr( set, *t ); ++n )
+    ;
+  return n;
 }
 
 static char const* str_status( int status ) {

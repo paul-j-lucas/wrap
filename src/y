@@ -1,8 +1,0 @@
-  // Parent
-  // 
-  // Close both ends of pipes[0] since it doesn't use it; close the write end
-  // of pipes[1].
-  // 
-  // Read from pipes[1] (child 2, wrap) and prepend the leading text to each
-  // line.
-  // 

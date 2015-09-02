@@ -3,9 +3,15 @@ Wrap NEWS -- history of user-visible changes.
 Copyright (C) 1996-2015 Paul J. Lucas.
 See the end of the file for license conditions.
 
+* Changes in Wrap 3.1
+
+** Fixed extraneous trailing whitespace.
+Comment lines that contained only leading whitespace and the comment delimiter
+no longer have trailing whitespace added.
+
 * Changes in Wrap 3.0.3
 
-** Now using C99
+** Now using C99.
 Now using C99 as the minimum required C version.
 
 * Changes in Wrap 3.0.2
