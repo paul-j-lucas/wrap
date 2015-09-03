@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      pattern.c
 **
-**      Copyright (C) 2013-2014  Paul J. Lucas
+**      Copyright (C) 2013-2015  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -21,12 +21,12 @@
 // local
 #include "common.h"
 #include "pattern.h"
+#include "util.h"
 
 // standard
 #include <assert.h>
 #include <fnmatch.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #define PATTERN_ALLOC_DEFAULT       10

@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      wrap.c
 **
-**      Copyright (C) 1996-2014  Paul J. Lucas
+**      Copyright (C) 1996-2015  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 */
 
 // local
+#include "config.h"
 #include "alias.h"
 #include "common.h"
 #include "getopt.h"
@@ -26,6 +27,7 @@
 # include "pattern.h"
 #endif /* WITH_PATTERNS */
 #include "read_conf.h"
+#include "util.h"
 
 // standard
 #include <assert.h>

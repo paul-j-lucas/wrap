@@ -2,7 +2,7 @@
 #	wrap -- text reformatter
 #	src/Makefile.am
 #
-#	Copyright (C) 2013-2014  Paul J. Lucas
+#	Copyright (C) 2013-2015  Paul J. Lucas
 #
 #	This program is free software; you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
 
 bin_PROGRAMS = wrap wrapc
 
-wrap_SOURCES = alias.c common.c getopt.c read_conf.c wrap.c
+wrap_SOURCES = alias.c getopt.c read_conf.c util.c wrap.c
 if am_WITH_PATTERNS
 wrap_SOURCES += pattern.c
 endif
 
-wrapc_SOURCES = common.c getopt.c wrapc.c
+wrapc_SOURCES = getopt.c util.c wrapc.c
 
 # vim:set noet sw=8 ts=8:

@@ -2,7 +2,7 @@
 **      pjl_getopt() -- get option character from command line argument list
 **      getopt.h
 **
-**      Copyright (C) 2013-2014  Paul J. Lucas
+**      Copyright (C) 2013-2015  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
