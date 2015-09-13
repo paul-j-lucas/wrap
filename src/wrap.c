@@ -39,35 +39,36 @@
 #include <string.h>
 #include <unistd.h>                     /* for STDIN_FILENO, ... */
 
-// global variable definitions
+// extern variable definitions
 char        buf[ LINE_BUF_SIZE ];
-FILE*       fin = NULL;                 // file in
-FILE*       fout = NULL;                // file out
-char const* me;                         // executable name
+FILE       *fin;                        // file in
+FILE       *fout;                       // file out
+char const *me;                         // executable name
 
 // option variable definitions
-char const* opt_alias = NULL;
-char const* opt_conf_file = NULL;
-bool        opt_eos_delimit = false;    // end-of-sentence delimits para's?
-char const* opt_fin = NULL;             // file in path
-char const* opt_fin_name = NULL;        // file in name (only)
+char const* opt_alias;
+char const* opt_conf_file;
+bool        opt_eos_delimit;            // end-of-sentence delimits para's?
+bool        opt_data_link_escape;       // respond to in-band control
+char const* opt_fin;                    // file in path
+char const* opt_fin_name;               // file in name (only)
 char const* opt_fout = NULL;            // file out path
-int         opt_hang_spaces = 0;        // hanging-indent spaces
-int         opt_hang_tabs = 0;          // hanging-indent tabs
-int         opt_indt_spaces = 0;        // indent spaces
-int         opt_indt_tabs = 0;          // indent tabs
-bool        opt_lead_dot_ignore = false;// ignore lines starting with '.'?
-int         opt_lead_spaces = 0;        // leading spaces
-int         opt_lead_tabs = 0;          // leading tabs
-bool        opt_lead_ws_delimit = false;// leading whitespace delimit para's?
+int         opt_hang_spaces;            // hanging-indent spaces
+int         opt_hang_tabs;              // hanging-indent tabs
+int         opt_indt_spaces;            // indent spaces
+int         opt_indt_tabs;              // indent tabs
+bool        opt_lead_dot_ignore;        // ignore lines starting with '.'?
+int         opt_lead_spaces;            // leading spaces
+int         opt_lead_tabs;              // leading tabs
+bool        opt_lead_ws_delimit;        // leading whitespace delimit para's?
 int         opt_line_width = LINE_WIDTH_DEFAULT;
-int         opt_mirror_spaces = 0;
-int         opt_mirror_tabs = 0;
+int         opt_mirror_spaces;
+int         opt_mirror_tabs;
 int         opt_newlines_delimit = NEWLINES_DELIMIT_DEFAULT;
-bool        opt_no_conf = false;        // do not read conf file
+bool        opt_no_conf;                // do not read conf file
 char const* opt_para_delimiters = NULL; // additional para delimiter chars
 int         opt_tab_spaces = TAB_SPACES_DEFAULT;
-bool        opt_title_line = false;     // 1st para line is title?
+bool        opt_title_line;             // 1st para line is title?
 
 static char const utf8_len_table[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
@@ -258,6 +259,29 @@ int main( int argc, char const *argv[] ) {
         ++put_spaces;
       }
       continue;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //  HANDLE WRAP/WRAPC INTERPROCESS MESSAGE
+    ///////////////////////////////////////////////////////////////////////////
+
+    if ( opt_data_link_escape && c == ASCII_DLE ) {
+      switch ( getc( fin ) ) {
+        case ASCII_ETB:
+          //
+          // We've been told by wrapc (child 1) that we've reached the end of
+          // the comment: dump any remaining buffer, propagate the interprocess
+          // message to the other wrapc process (parent), and pass text through
+          // verbatim.
+          //
+          if ( buf_count )
+            print_buf( buf_count, true );
+          FPRINTF( fout, "%c%c", ASCII_DLE, ASCII_ETB );
+          fcopy( fin, fout );
+          exit( EXIT_SUCCESS );
+        case EOF:
+          goto done;
+      } // switch
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -452,7 +476,7 @@ delimit_paragraph:
   } // for
 
 done:
-  CHECK_FGETX( fin );
+  CHECK_FERROR( fin );
   if ( buf_count ) {                    // print left-over text
     if ( !is_long_line )
       print_lead_chars();
@@ -479,7 +503,7 @@ static bool copy_line( FILE *fin, FILE *fout, char *buf, size_t buf_size ) {
   do {
     *last = '\0';
     if ( !fgets( buf, buf_size, fin ) ) {
-      CHECK_FGETX( fin );
+      CHECK_FERROR( fin );
       return false;
     }
     FPUTS( buf, fout );
@@ -498,7 +522,7 @@ static void hang_indent( int *count, int *width ) {
 }
 
 static void init( int argc, char const *argv[] ) {
-  char const opts[] = "a:bc:Cdef:F:h:H:i:I:l:m:M:nNo:p:s:S:t:Tvw:W";
+  char const opts[] = "a:bc:CdDef:F:h:H:i:I:l:m:M:nNo:p:s:S:t:Tvw:W";
 
   me = base_name( argv[0] );
   process_options( argc, argv, opts, 0 );
@@ -566,7 +590,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
 
   optind = opterr = 1;
   for ( int opt; (opt = pjl_getopt( argc, argv, opts )) != EOF; ) {
-    if ( line_no && strchr( "acCfFov", opt ) )
+    if ( line_no && strchr( "acCDfFov", opt ) )
       PMESSAGE_EXIT( CONF_ERROR,
         "%s:%d: '%c': option not allowed in configuration file\n",
         opt_conf_file, line_no, opt
@@ -576,6 +600,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'c': opt_conf_file         = optarg;                     break;
       case 'C': opt_no_conf           = true;                       break;
       case 'd': opt_lead_dot_ignore   = true;                       break;
+      case 'D': opt_data_link_escape  = true;                       break;
       case 'e': opt_eos_delimit       = true;                       break;
       case 'f': opt_fin               = optarg;               // no break;
       case 'F': opt_fin_name          = base_name( optarg );        break;

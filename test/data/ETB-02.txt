@@ -1,0 +1,3 @@
+    // don't emit leader_tws for blank lines
+    bool const is_blank_line = strcmp( pbuf, "\n" ) == 0;
+    FPRINTF( fout, "%s%s%s", leader, is_blank_line ? "" : leader_tws, pbuf );

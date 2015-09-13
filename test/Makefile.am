@@ -20,7 +20,9 @@
 
 AUTOMAKE_OPTIONS = 1.12			# needed for TEST_LOG_DRIVER
 
-TESTS =	tests/utf8-w77.test \
+TESTS =	tests/ETB-no_options-01.test \
+	tests/ETB-no_options-02.test \
+	tests/utf8-w77.test \
 	tests/utf8-w78.test \
 	tests/utf8-w79.test \
 	tests/utf8-w80.test \

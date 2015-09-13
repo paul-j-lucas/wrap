@@ -63,5 +63,21 @@ void* check_realloc( void *p, size_t size ) {
   return r;
 }
 
+void fcopy( FILE *ffrom, FILE *fto ) {
+  char buf[ LINE_BUF_SIZE ];
+  for ( size_t size; (size = fread( buf, 1, LINE_BUF_SIZE, ffrom )) > 0; )
+    FWRITE( buf, 1, size, fto );
+  CHECK_FERROR( ffrom );
+}
+
+int peekc( FILE *file ) {
+  int const c = getc( file );
+  if ( c == EOF )
+    CHECK_FERROR( file );
+  else
+    UNGETC( c, file );
+  return c;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 /* vim:set et sw=2 ts=2: */

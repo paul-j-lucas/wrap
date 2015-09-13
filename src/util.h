@@ -26,6 +26,7 @@
 
 // standard
 #include <stddef.h>                     /* for size_t */
+#include <stdio.h>                      /* for FILE */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -54,17 +55,20 @@ typedef bool _Bool;
 #define PMESSAGE_EXIT(STATUS,FORMAT,...) \
   BLOCK( PRINT_ERR( "%s: " FORMAT, me, __VA_ARGS__ ); exit( EXIT_##STATUS ); )
 
-#define CHECK_FGETX(FILE) \
-  BLOCK( if ( ferror( FILE ) ) PERROR_EXIT( READ_ERROR ); )
+#define CHECK_FERROR(STREAM) \
+  BLOCK( if ( ferror( STREAM ) ) PERROR_EXIT( READ_ERROR ); )
 
-#define FPRINTF(FILE,...) \
-  BLOCK( if ( fprintf( FILE, __VA_ARGS__ ) < 0 ) PERROR_EXIT( WRITE_ERROR ); )
+#define FPRINTF(STREAM,...) \
+  BLOCK( if ( fprintf( (STREAM), __VA_ARGS__ ) < 0 ) PERROR_EXIT( WRITE_ERROR ); )
 
-#define FPUTC(C,FILE) \
-  BLOCK( if ( putc( (C), FILE ) == EOF ) PERROR_EXIT( WRITE_ERROR ); )
+#define FPUTC(C,STREAM) \
+  BLOCK( if ( putc( (C), (STREAM) ) == EOF ) PERROR_EXIT( WRITE_ERROR ); )
 
-#define FPUTS(S,FILE) \
-  BLOCK( if ( fputs( (S), FILE ) == EOF ) PERROR_EXIT( WRITE_ERROR ); )
+#define FPUTS(S,STREAM) \
+  BLOCK( if ( fputs( (S), (STREAM) ) == EOF ) PERROR_EXIT( WRITE_ERROR ); )
+
+#define FWRITE(BUF,SIZE,NITEMS,STREAM) \
+  BLOCK( if ( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS) ) PERROR_EXIT( WRITE_ERROR ); )
 
 #define MALLOC(TYPE,N) \
   (TYPE*)check_realloc( NULL, sizeof(TYPE) * (N) )
@@ -74,6 +78,9 @@ typedef bool _Bool;
 
 #define REALLOC(PTR,TYPE,N) \
   (PTR) = (TYPE*)check_realloc( (PTR), sizeof(TYPE) * (N) )
+
+#define UNGETC(C,STREAM) \
+  BLOCK( if ( ungetc( (C), (STREAM) ) == EOF ) PERROR_EXIT( READ_ERROR ); )
 
 /**
  * Extracts the base portion of a path-name.
@@ -108,6 +115,23 @@ int check_atou( char const *s );
  * @return Returns a pointer to the allocated memory.
  */
 void* check_realloc( void *p, size_t size );
+
+/**
+ * Copies \a ffrom to \a fto until EOF.
+ *
+ * @param ffrom The \c FILE to copy from.
+ * @param fto The \c FILE to copy to.
+ */
+void fcopy( FILE *ffrom, FILE *fto );
+
+/**
+ * Peeks at the next character on the given file stream, but does not advance
+ * the \c FILE pointer.
+ *
+ * @param file The file to peek from.
+ * @return Returns the next character, if any, or \c EOF if none.
+ */
+int peekc( FILE *file );
 
 ///////////////////////////////////////////////////////////////////////////////
 
