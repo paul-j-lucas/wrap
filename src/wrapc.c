@@ -146,7 +146,7 @@ int main( int argc, char const *argv[] ) {
         //
         FPRINTF( to_wrap, "%c%c%s", ASCII_DLE, ASCII_ETB, buf );
         fcopy( fin, to_wrap );
-        break;
+        exit( EXIT_SUCCESS );
       }
       leader_len = strspn( buf, LEADING_CHARS );
       if ( !buf[ leader_len ] )         // no non-leading characters
