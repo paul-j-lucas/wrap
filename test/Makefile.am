@@ -35,6 +35,7 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrap-conf-no_section.test \
 	tests/wrap-d.test \
 	tests/wrap-dep.test \
+	tests/wrap-f-F.test \
 	tests/wrap-file-not_found.test \
 	tests/wrap-h1-I5.test \
 	tests/wrap-H3-t1-T.test \
@@ -48,6 +49,7 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrap-long_line-03.test \
 	tests/wrap-long_line-04.test \
 	tests/wrap-n.test \
+	tests/wrap-n-N.test \
 	tests/wrap-no_options.test \
 	tests/wrap-pattern-alias_exp.test \
 	tests/wrap-pattern-no_equal.test \

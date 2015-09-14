@@ -21,6 +21,7 @@
 // local
 #include "common.h"
 #include "getopt.h"
+#include "options.h"
 #include "util.h"
 
 // standard
@@ -75,7 +76,6 @@ bool        opt_title_line;             // 1st para line is title?
 // local functions
 static size_t       calc_leader_width( char const* );
 static void         process_options( int, char const*[] );
-static size_t       strrspn( char const*, char const* );
 static char const*  str_status( int );
 static void         usage( void );
 
@@ -337,11 +337,13 @@ static void process_options( int argc, char const *argv[] ) {
   char const *opt_fin = NULL;           // file in name
   char const *opt_fout = NULL;          // file out name
   char const  opts[] = "a:c:Cef:F:l:o:p:s:Tvw:";
+  bool        print_version = false;
 
   me = base_name( argv[0] );
 
   opterr = 1;
   for ( int opt; (opt = pjl_getopt( argc, argv, opts )) != EOF; ) {
+    SET_OPTION( opt );
     switch ( opt ) {
       case 'a': opt_alias           = optarg;                       break;
       case 'c': opt_conf_file       = optarg;                       break;
@@ -353,7 +355,7 @@ static void process_options( int argc, char const *argv[] ) {
       case 'p': opt_para_delimiters = optarg;                       break;
       case 's': opt_tab_spaces      = check_atou( optarg );         break;
       case 'T': opt_title_line      = true;                         break;
-      case 'v': PRINT_ERR( "%s\n", PACKAGE_STRING ); exit( EXIT_SUCCESS );
+      case 'v': print_version       = true;                         break;
       case 'l': // deprecated: now synonym for -w
       case 'w': opt_line_width      = check_atou( optarg );         break;
       default : usage();
@@ -362,6 +364,14 @@ static void process_options( int argc, char const *argv[] ) {
   argc -= optind, argv += optind;
   if ( argc )
     usage();
+
+  check_mutually_exclusive( "f", "F" );
+  check_mutually_exclusive( "v", "acCefFlopsTw" );
+
+  if ( print_version ) {
+    PRINT_ERR( "%s\n", PACKAGE_STRING );
+    exit( EXIT_SUCCESS );
+  }
 
   if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
     PMESSAGE_EXIT( READ_OPEN, "\"%s\": %s\n", opt_fin, ERROR_STR );
@@ -372,24 +382,6 @@ static void process_options( int argc, char const *argv[] ) {
     fin = stdin;
   if ( !fout )
     fout = stdout;
-}
-
-/**
- * Reverse strspn(3): spans the trailing part of \a s as long as characters
- * from \a s occur in \a set.
- *
- * @param s The null-terminated string to span.
- * @param set The null-terminated set of characters.
- * @return Returns the number of characters spanned.
- */
-static size_t strrspn( char const *s, char const *set ) {
-  assert( s );
-  assert( set );
-
-  size_t n = 0;
-  for ( char const *t = s + strlen( s ); t-- > s && strchr( set, *t ); ++n )
-    ;
-  return n;
 }
 
 static char const* str_status( int status ) {

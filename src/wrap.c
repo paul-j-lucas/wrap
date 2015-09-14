@@ -23,6 +23,7 @@
 #include "alias.h"
 #include "common.h"
 #include "getopt.h"
+#include "options.h"
 #ifdef WITH_PATTERNS
 # include "pattern.h"
 #endif /* WITH_PATTERNS */
@@ -266,7 +267,7 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( opt_data_link_escape && c == ASCII_DLE ) {
-      switch ( getc( fin ) ) {
+      switch ( c = getc( fin ) ) {
         case ASCII_ETB:
           //
           // We've been told by wrapc (child 1) that we've reached the end of
@@ -274,8 +275,7 @@ int main( int argc, char const *argv[] ) {
           // message to the other wrapc process (parent), and pass text through
           // verbatim.
           //
-          if ( buf_count )
-            print_buf( buf_count, true );
+          print_buf( buf_count, true );
           FPRINTF( fout, "%c%c", ASCII_DLE, ASCII_ETB );
           fcopy( fin, fout );
           exit( EXIT_SUCCESS );
@@ -522,11 +522,11 @@ static void hang_indent( int *count, int *width ) {
 }
 
 static void init( int argc, char const *argv[] ) {
-  char const opts[] = "a:bc:CdDef:F:h:H:i:I:l:m:M:nNo:p:s:S:t:Tvw:W";
-
   me = base_name( argv[0] );
-  process_options( argc, argv, opts, 0 );
   atexit( clean_up );
+
+  char const opts[] = "a:bc:CdDef:F:h:H:i:I:l:m:M:nNo:p:s:S:t:Tvw:W";
+  process_options( argc, argv, opts, 0 );
   argc -= optind, argv += optind;
   if ( argc )
     usage();
@@ -574,7 +574,8 @@ static void init( int argc, char const *argv[] ) {
 
 static void print_buf( int len, bool newline ) {
   buf[ len ] = '\0';
-  FPRINTF( fout, newline ? "%s\n" : "%s", buf );
+  if ( len )
+    FPRINTF( fout, newline ? "%s\n" : "%s", buf );
 }
 
 static void print_lead_chars( void ) {
@@ -589,7 +590,11 @@ static void process_options( int argc, char const *argv[], char const *opts,
   assert( opts );
 
   optind = opterr = 1;
+  bool print_version = false;
+  CLEAR_OPTIONS();
+
   for ( int opt; (opt = pjl_getopt( argc, argv, opts )) != EOF; ) {
+    SET_OPTION( opt );
     if ( line_no && strchr( "acCDfFov", opt ) )
       PMESSAGE_EXIT( CONF_ERROR,
         "%s:%d: '%c': option not allowed in configuration file\n",
@@ -618,7 +623,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'S': opt_lead_spaces       = check_atou( optarg );       break;
       case 't': opt_lead_tabs         = check_atou( optarg );       break;
       case 'T': opt_title_line        = true;                       break;
-      case 'v': PRINT_ERR( "%s\n", PACKAGE_STRING ); exit( EXIT_SUCCESS );
+      case 'v': print_version         = true;                       break;
       case 'l': // deprecated: now synonym for -w
       case 'w': opt_line_width        = check_atou( optarg );       break;
       case 'b': // deprecated: now synonym for -W
@@ -626,6 +631,15 @@ static void process_options( int argc, char const *argv[], char const *opts,
       default : usage();
     } // switch
   } // for
+
+  check_mutually_exclusive( "f", "F" );
+  check_mutually_exclusive( "n", "N" );
+  check_mutually_exclusive( "v", "abcCdDefFhHiIlmMnNopsStTwW" );
+
+  if ( print_version ) {
+    PRINT_ERR( "%s\n", PACKAGE_STRING );
+    exit( EXIT_SUCCESS );
+  }
 }
 
 static void usage( void ) {

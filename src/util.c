@@ -79,5 +79,15 @@ int peekc( FILE *file ) {
   return c;
 }
 
+size_t strrspn( char const *s, char const *set ) {
+  assert( s );
+  assert( set );
+
+  size_t n = 0;
+  for ( char const *t = s + strlen( s ); t-- > s && strchr( set, *t ); ++n )
+    ;
+  return n;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 /* vim:set et sw=2 ts=2: */

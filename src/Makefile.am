@@ -20,11 +20,11 @@
 
 bin_PROGRAMS = wrap wrapc
 
-wrap_SOURCES = alias.c getopt.c read_conf.c util.c wrap.c
+wrap_SOURCES = alias.c getopt.c read_conf.c options.c util.c wrap.c
 if am_WITH_PATTERNS
 wrap_SOURCES += pattern.c
 endif
 
-wrapc_SOURCES = getopt.c util.c wrapc.c
+wrapc_SOURCES = getopt.c options.c util.c wrapc.c
 
 # vim:set noet sw=8 ts=8:

@@ -133,6 +133,16 @@ void fcopy( FILE *ffrom, FILE *fto );
  */
 int peekc( FILE *file );
 
+/**
+ * Reverse strspn(3): spans the trailing part of \a s as long as characters
+ * from \a s occur in \a set.
+ *
+ * @param s The null-terminated string to span.
+ * @param set The null-terminated set of characters.
+ * @return Returns the number of characters spanned.
+ */
+size_t strrspn( char const *s, char const *set );
+
 ///////////////////////////////////////////////////////////////////////////////
 
 #endif /* wrap_util_H */
