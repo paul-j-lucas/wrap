@@ -9,6 +9,11 @@ See the end of the file for license conditions.
 Comment lines that contained only leading whitespace and the comment delimiter
 no longer have trailing whitespace added.
 
+** Stops wrapping text upon non-comment line.
+If a line is encountered that does not start with whitespace followed by
+comment delimiters, it signals the end of the comment and all remaining lines
+are passed through verbatim.
+
 * Changes in Wrap 3.0.3
 
 ** Now using C99.
