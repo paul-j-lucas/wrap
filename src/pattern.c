@@ -32,11 +32,11 @@
 #define PATTERN_ALLOC_DEFAULT       10
 #define PATTERN_ALLOC_INCREMENT     10
 
-extern char const*  me;
+extern char const  *me;
 static int          n_patterns = 0;     // number of patterns
-static pattern_t*   patterns = NULL;    // global list of patterns
+static pattern_t   *patterns = NULL;    // global list of patterns
 
-///////////////////////////////////////////////////////////////////////////////
+////////// local functions ////////////////////////////////////////////////////
 
 /**
  * Frees all memory used by a pattern.
@@ -48,7 +48,7 @@ static void pattern_free( pattern_t *pattern ) {
   free( (void*)pattern->pattern );
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////// extern functions ///////////////////////////////////////////////////
 
 void pattern_cleanup( void ) {
   while ( n_patterns )

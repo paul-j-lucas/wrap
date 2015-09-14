@@ -36,11 +36,11 @@
 #define ALIAS_NAME_CHARS \
   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
 
-static alias_t*     aliases = NULL;     // global list of aliases
-extern char const*  me;
+static alias_t     *aliases = NULL;     // global list of aliases
+extern char const  *me;
 static int          n_aliases = 0;      // number of aliases
 
-///////////////////////////////////////////////////////////////////////////////
+////////// local functions ////////////////////////////////////////////////////
 
 /**
  * Checks the most-recently-added alias against all previous aliases for a
@@ -80,7 +80,7 @@ static void alias_free( alias_t *alias ) {
   free( alias->argv );
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////// extern functions ///////////////////////////////////////////////////
 
 void alias_cleanup( void ) {
   while ( n_aliases )
