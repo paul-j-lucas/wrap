@@ -1,3 +1,31 @@
+2015-09-14  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS: Added mention of stopping wrapping text upon non-comment line.
+   * wrapc.1: Added mention of end of comment behavior.
+
+2015-09-13  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Now calling exit() directly.
+   * src/Makefile.am, options.c, options.h, util.c, util.h, wrap.c, wrapc.c,
+     test/Makefile.am, wrap-f-F.test, wrap-n-N.test: Added option
+     mutually-exclusive checking and tests.
+
+2015-09-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * common.h, util.c, util.h, wrap.c, wrapc.c, test/Makefile.am, ETB-01.txt,
+     ETB-02.txt, ETB-no_options-01.txt, ETB-no_options-02.txt,
+     ETB-no_options-01.test, ETB-no_options-02.test: Initial ETB code.
+
+2015-09-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Moved leader_tws code.
+   * read_conf.c: Now using PACKAGE as part of CONF_FILE_NAME.
+
+2015-09-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: s/buf/leader/
+   * wrapc.c: s/int/size_t/ where appropriate.
+
 2015-08-06  Paul J. Lucas <paul@lucasmail.org>
 
    * configure.ac: Fixed extra CFLAGS.
