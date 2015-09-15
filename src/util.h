@@ -82,6 +82,8 @@ typedef bool _Bool;
 #define UNGETC(C,STREAM) \
   BLOCK( if ( ungetc( (C), (STREAM) ) == EOF ) PERROR_EXIT( READ_ERROR ); )
 
+///////////////////////////////////////////////////////////////////////////////
+
 /**
  * Extracts the base portion of a path-name.
  * Unlike \c basename(3):
