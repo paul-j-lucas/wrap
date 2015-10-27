@@ -123,7 +123,7 @@ char const* read_conf( char const *conf_file ) {
   FILE *const fconf = fopen( conf_file, "r" );
   if ( !fconf ) {
     if ( explicit_conf_file )
-      PMESSAGE_EXIT( READ_OPEN, "%s: %s\n", conf_file, ERROR_STR );
+      PMESSAGE_EXIT( EX_NOINPUT, "%s: %s\n", conf_file, ERROR_STR );
     return NULL;
   }
 
@@ -143,7 +143,7 @@ char const* read_conf( char const *conf_file ) {
       else if ( strcmp( line, "[PATTERNS]" ) == 0 )
         section = PATTERNS;
       else
-        PMESSAGE_EXIT( CONF_ERROR,
+        PMESSAGE_EXIT( EX_CONFIG,
           "%s:%d: \"%s\": invalid section\n",
           conf_file, line_no, line
         );
@@ -153,7 +153,7 @@ char const* read_conf( char const *conf_file ) {
     // parse line within section
     switch ( section ) {
       case NONE:
-        PMESSAGE_EXIT( CONF_ERROR,
+        PMESSAGE_EXIT( EX_CONFIG,
           "%s:%d: \"%s\": line not within any section\n",
           conf_file, line_no, line
         );
@@ -169,7 +169,7 @@ char const* read_conf( char const *conf_file ) {
   } // while
 
   if ( ferror( fconf ) )
-    PMESSAGE_EXIT( READ_ERROR, "%s: %s\n", conf_file, ERROR_STR );
+    PMESSAGE_EXIT( EX_IOERR, "%s: %s\n", conf_file, ERROR_STR );
   fclose( fconf );
   return conf_file;
 }

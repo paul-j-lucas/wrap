@@ -278,7 +278,7 @@ int main( int argc, char const *argv[] ) {
           print_buf( buf_count, true );
           FPRINTF( fout, "%c%c", ASCII_DLE, ASCII_ETB );
           fcopy( fin, fout );
-          exit( EXIT_SUCCESS );
+          exit( EX_OK );
         case EOF:
           goto done;
       } // switch
@@ -482,7 +482,7 @@ done:
       print_lead_chars();
     print_buf( buf_count, true );
   }
-  exit( EXIT_SUCCESS );
+  exit( EX_OK );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -536,7 +536,7 @@ static void init( int argc, char const *argv[] ) {
     opt_conf_file = read_conf( opt_conf_file );
     if ( opt_alias ) {
       if ( !(alias = alias_find( opt_alias )) )
-        PMESSAGE_EXIT( USAGE,
+        PMESSAGE_EXIT( EX_USAGE,
           "\"%s\": no such alias in %s\n",
           opt_alias, opt_conf_file
         );
@@ -550,9 +550,9 @@ static void init( int argc, char const *argv[] ) {
   }
 
   if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
-    PMESSAGE_EXIT( READ_OPEN, "\"%s\": %s\n", optarg, ERROR_STR );
+    PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", optarg, ERROR_STR );
   if ( opt_fout && !(fout = fopen( opt_fout, "w" )) )
-    PMESSAGE_EXIT( WRITE_OPEN, "\"%s\": %s\n", optarg, ERROR_STR );
+    PMESSAGE_EXIT( EX_CANTCREAT, "\"%s\": %s\n", optarg, ERROR_STR );
 
   if ( !fin )
     fin = stdin;
@@ -564,7 +564,7 @@ static void init( int argc, char const *argv[] ) {
     opt_lead_tabs * opt_tab_spaces + opt_lead_spaces;
 
   if ( opt_line_width < LINE_WIDTH_MINIMUM )
-    PMESSAGE_EXIT( USAGE,
+    PMESSAGE_EXIT( EX_USAGE,
       "line-width (%d) is too small (<%d)\n", opt_line_width, LINE_WIDTH_MINIMUM
     );
 
@@ -596,7 +596,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
   for ( int opt; (opt = pjl_getopt( argc, argv, opts )) != EOF; ) {
     SET_OPTION( opt );
     if ( line_no && strchr( "acCDfFov", opt ) )
-      PMESSAGE_EXIT( CONF_ERROR,
+      PMESSAGE_EXIT( EX_CONFIG,
         "%s:%d: '%c': option not allowed in configuration file\n",
         opt_conf_file, line_no, opt
       );
@@ -638,7 +638,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
 
   if ( print_version ) {
     PRINT_ERR( "%s\n", PACKAGE_STRING );
-    exit( EXIT_SUCCESS );
+    exit( EX_OK );
   }
 }
 
@@ -672,7 +672,7 @@ static void usage( void ) {
 "       -W         Treat line beginning with white-space as paragraph delimiter.\n"
     , me, me, CONF_FILE_NAME, TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
   );
-  exit( EXIT_USAGE );
+  exit( EX_USAGE );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -27,6 +27,7 @@
 #include <assert.h>
 #include <fnmatch.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define PATTERN_ALLOC_DEFAULT       10
@@ -78,7 +79,7 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
     REALLOC( patterns, pattern_t, n_patterns_alloc );
   }
   if ( !patterns )
-    PERROR_EXIT( OUT_OF_MEMORY );
+    PERROR_EXIT( EX_OSERR );
 
   pattern_t *const pattern = &patterns[ n_patterns++ ];
 
@@ -93,11 +94,11 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
   // part 2: whitespace
   line += strspn( line, " \t" );
   if ( !*line )
-    PMESSAGE_EXIT( CONF_ERROR, "%s:%d: '=' expected\n", conf_file, line_no );
+    PMESSAGE_EXIT( EX_CONFIG, "%s:%d: '=' expected\n", conf_file, line_no );
 
   // part 3: =
   if ( *line != '=' )
-    PMESSAGE_EXIT( CONF_ERROR,
+    PMESSAGE_EXIT( EX_CONFIG,
       "%s:%d: '%c': unexpected character; '=' expected\n",
       conf_file, line_no, *line
     );
@@ -106,7 +107,7 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
   // part 4: whitespace
   line += strspn( line, " \t" );
   if ( !*line )
-    PMESSAGE_EXIT( CONF_ERROR,
+    PMESSAGE_EXIT( EX_CONFIG,
       "%s:%d: alias name expected after '='\n",
       conf_file, line_no
     );
@@ -114,7 +115,7 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
   // part 5: alias
   alias_t const *const alias = alias_find( line );
   if ( !alias )
-    PMESSAGE_EXIT( CONF_ERROR,
+    PMESSAGE_EXIT( EX_CONFIG,
       "%s:%d: \"%s\": no such alias\n", conf_file, line_no, line
     );
   pattern->alias = alias;

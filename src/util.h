@@ -27,6 +27,7 @@
 // standard
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>                      /* for FILE */
+#include <stdlib.h>                     /* for exit(3) */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -49,38 +50,38 @@ typedef bool _Bool;
 
 #define BLOCK(...)          do { __VA_ARGS__ } while (0)
 #define ERROR_STR           strerror( errno )
-#define PERROR_EXIT(STATUS) BLOCK( perror( me ); exit( EXIT_##STATUS ); )
+#define PERROR_EXIT(STATUS) BLOCK( perror( me ); exit( STATUS ); )
 #define PRINT_ERR(...)      fprintf( stderr, __VA_ARGS__ )
 
 #define PMESSAGE_EXIT(STATUS,FORMAT,...) \
-  BLOCK( PRINT_ERR( "%s: " FORMAT, me, __VA_ARGS__ ); exit( EXIT_##STATUS ); )
+  BLOCK( PRINT_ERR( "%s: " FORMAT, me, __VA_ARGS__ ); exit( STATUS ); )
 
 #define CHECK_FERROR(STREAM) \
-  BLOCK( if ( ferror( STREAM ) ) PERROR_EXIT( READ_ERROR ); )
+  BLOCK( if ( ferror( STREAM ) ) PERROR_EXIT( EX_IOERR ); )
 
 #define FPRINTF(STREAM,...) \
-  BLOCK( if ( fprintf( (STREAM), __VA_ARGS__ ) < 0 ) PERROR_EXIT( WRITE_ERROR ); )
+  BLOCK( if ( fprintf( (STREAM), __VA_ARGS__ ) < 0 ) PERROR_EXIT( EX_IOERR ); )
 
 #define FPUTC(C,STREAM) \
-  BLOCK( if ( putc( (C), (STREAM) ) == EOF ) PERROR_EXIT( WRITE_ERROR ); )
+  BLOCK( if ( putc( (C), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
 
 #define FPUTS(S,STREAM) \
-  BLOCK( if ( fputs( (S), (STREAM) ) == EOF ) PERROR_EXIT( WRITE_ERROR ); )
+  BLOCK( if ( fputs( (S), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
 
 #define FWRITE(BUF,SIZE,NITEMS,STREAM) \
-  BLOCK( if ( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS) ) PERROR_EXIT( WRITE_ERROR ); )
+  BLOCK( if ( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS) ) PERROR_EXIT( EX_IOERR ); )
 
 #define MALLOC(TYPE,N) \
   (TYPE*)check_realloc( NULL, sizeof(TYPE) * (N) )
 
 #define PIPE(P) \
-  BLOCK( if ( pipe( P ) == -1 ) PERROR_EXIT( PIPE_ERROR ); )
+  BLOCK( if ( pipe( P ) == -1 ) PERROR_EXIT( EX_OSERR ); )
 
 #define REALLOC(PTR,TYPE,N) \
   (PTR) = (TYPE*)check_realloc( (PTR), sizeof(TYPE) * (N) )
 
 #define UNGETC(C,STREAM) \
-  BLOCK( if ( ungetc( (C), (STREAM) ) == EOF ) PERROR_EXIT( READ_ERROR ); )
+  BLOCK( if ( ungetc( (C), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
 
 ///////////////////////////////////////////////////////////////////////////////
 

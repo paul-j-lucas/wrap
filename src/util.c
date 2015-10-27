@@ -43,7 +43,7 @@ char const* base_name( char const *path_name ) {
 int check_atou( char const *s ) {
   assert( s );
   if ( s[ strspn( s, "0123456789" ) ] )
-    PMESSAGE_EXIT( USAGE, "\"%s\": invalid integer\n", s );
+    PMESSAGE_EXIT( EX_USAGE, "\"%s\": invalid integer\n", s );
   return atoi( s );
 }
 
@@ -59,7 +59,7 @@ void* check_realloc( void *p, size_t size ) {
     size = 1;
   void *const r = p ? realloc( p, size ) : malloc( size );
   if ( !r )
-    PERROR_EXIT( OUT_OF_MEMORY );
+    PERROR_EXIT( EX_OSERR );
   return r;
 }
 

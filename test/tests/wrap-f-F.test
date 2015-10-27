@@ -1,1 +1,1 @@
-wrap | /dev/null | -f data/data-01.txt -F foo | data-01.txt | 1
+wrap | /dev/null | -f data/data-01.txt -F foo | data-01.txt | 64

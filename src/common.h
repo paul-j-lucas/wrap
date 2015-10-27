@@ -25,7 +25,9 @@
 #include "config.h"
 
 // standard
-#include <stdlib.h>                     /* for EXIT_SUCCESS */
+#ifdef HAVE_SYSEXITS_H
+# include <sysexits.h>
+#endif /* HAVE_SYSEXITS_H */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -36,17 +38,15 @@
 #define NEWLINES_DELIMIT_DEFAULT  2     /* # newlines that delimit a para */
 #define TAB_SPACES_DEFAULT        8     /* number of spaces a tab equals */
 
-#define EXIT_USAGE                1
-#define EXIT_CONF_ERROR           2
-#define EXIT_OUT_OF_MEMORY        3
-#define EXIT_READ_OPEN            10
-#define EXIT_READ_ERROR           11
-#define EXIT_WRITE_OPEN           12
-#define EXIT_WRITE_ERROR          13
-#define EXIT_FORK_ERROR           20
-#define EXIT_EXEC_ERROR           21
-#define EXIT_CHILD_SIGNAL         30
-#define EXIT_PIPE_ERROR           40
+#ifndef HAVE_SYSEXITS_H
+# define EX_OK                    0     /* success */
+# define EX_USAGE                 64    /* command-line usage error */
+# define EX_NOINPUT               66    /* opening file error */
+# define EX_OSERR                 71    /* system error (e.g., can't fork) */
+# define EX_CANTCREAT             73    /* creating file error */
+# define EX_IOERR                 74    /* input/output error */
+# define EX_CONFIG                78    /* config. file error */
+#endif /* HAVE_SYSEXITS_H */
 
 /**
  * From Wikipedia: The data link escape character (DLE) was intended to be a

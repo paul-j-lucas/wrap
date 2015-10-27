@@ -91,7 +91,7 @@ int main( int argc, char const *argv[] ) {
   char buf[ LINE_BUF_SIZE ];
   if ( !fgets( buf, LINE_BUF_SIZE, fin ) ) {
     CHECK_FERROR( fin );
-    exit( EXIT_SUCCESS );
+    exit( EX_OK );
   }
   char leader[ LINE_BUF_SIZE ];         // characters stripped/prepended
   strcpy( leader, buf );
@@ -100,7 +100,7 @@ int main( int argc, char const *argv[] ) {
 
   opt_line_width -= calc_leader_width( leader );
   if ( opt_line_width < LINE_WIDTH_MINIMUM )
-    PMESSAGE_EXIT( USAGE,
+    PMESSAGE_EXIT( EX_USAGE,
       "line-width (%d) is too small (<%d)\n", opt_line_width, LINE_WIDTH_MINIMUM
     );
 
@@ -124,12 +124,12 @@ int main( int argc, char const *argv[] ) {
   //
   pid_t const pid_1 = fork();
   if ( pid_1 == -1 )
-    PERROR_EXIT( FORK_ERROR );
+    PERROR_EXIT( EX_OSERR );
   if ( pid_1 == 0 ) {                   // child process
     CLOSE( 1 );
     FILE *const to_wrap = fdopen( pipes[0][ STDOUT_FILENO ], "w" );
     if ( !to_wrap )
-      PMESSAGE_EXIT( WRITE_OPEN,
+      PMESSAGE_EXIT( EX_OSERR,
         "child can't open pipe for writing: %s\n", ERROR_STR
       );
 
@@ -146,7 +146,7 @@ int main( int argc, char const *argv[] ) {
         //
         FPRINTF( to_wrap, "%c%c%s", ASCII_DLE, ASCII_ETB, buf );
         fcopy( fin, to_wrap );
-        exit( EXIT_SUCCESS );
+        exit( EX_OK );
       }
       leader_len = strspn( buf, LEADING_CHARS );
       if ( !buf[ leader_len ] )         // no non-leading characters
@@ -155,7 +155,7 @@ int main( int argc, char const *argv[] ) {
         FPUTS( buf + leader_len, to_wrap );
     } // while
     CHECK_FERROR( fin );
-    exit( EXIT_SUCCESS );
+    exit( EX_OK );
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -168,7 +168,7 @@ int main( int argc, char const *argv[] ) {
   pid_t const pid_2 = fork();
   if ( pid_2 == -1 ) {
     kill( pid_1, SIGTERM );             // we failed, so kill child 1
-    PERROR_EXIT( FORK_ERROR );
+    PERROR_EXIT( EX_OSERR );
   }
   if ( pid_2 == 0 ) {                   // child process
     typedef char arg_buf[ ARG_BUF_SIZE ];
@@ -212,7 +212,7 @@ int main( int argc, char const *argv[] ) {
     REDIRECT( STDIN_FILENO, 0 );
     REDIRECT( STDOUT_FILENO, 1 );
     execvp( PACKAGE, argv );
-    PERROR_EXIT( EXEC_ERROR );
+    PERROR_EXIT( EX_OSERR );
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -230,7 +230,7 @@ int main( int argc, char const *argv[] ) {
 
   FILE *const from_wrap = fdopen( pipes[1][ STDIN_FILENO ], "r" );
   if ( !from_wrap )
-    PMESSAGE_EXIT( READ_OPEN,
+    PMESSAGE_EXIT( EX_OSERR,
       "parent can't open pipe for reading: %s\n", ERROR_STR
     );
 
@@ -297,14 +297,14 @@ break_loop:
       }
     } else if ( WIFSIGNALED( wait_status ) ) {
       int const signal = WTERMSIG( wait_status );
-      PMESSAGE_EXIT( CHILD_SIGNAL,
+      PMESSAGE_EXIT( EX_OSERR,
         "child process terminated with signal %d: %s\n",
         signal, strsignal( signal )
       );
     }
   } // for
 
-  exit( EXIT_SUCCESS );
+  exit( EX_OK );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -370,13 +370,13 @@ static void process_options( int argc, char const *argv[] ) {
 
   if ( print_version ) {
     PRINT_ERR( "%s\n", PACKAGE_STRING );
-    exit( EXIT_SUCCESS );
+    exit( EX_OK );
   }
 
   if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
-    PMESSAGE_EXIT( READ_OPEN, "\"%s\": %s\n", opt_fin, ERROR_STR );
+    PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", opt_fin, ERROR_STR );
   if ( opt_fout && !(fout = fopen( opt_fout, "w" )) )
-    PMESSAGE_EXIT( WRITE_OPEN, "\"%s\": %s\n", opt_fout, ERROR_STR );
+    PMESSAGE_EXIT( EX_CANTCREAT, "\"%s\": %s\n", opt_fout, ERROR_STR );
 
   if ( !fin )
     fin = stdin;
@@ -386,19 +386,14 @@ static void process_options( int argc, char const *argv[] ) {
 
 static char const* str_status( int status ) {
   switch ( status ) {
-    case EXIT_SUCCESS       : return "success";
-    case EXIT_USAGE         : return "usage error";
-    case EXIT_CONF_ERROR    : return "configuration file error";
-    case EXIT_OUT_OF_MEMORY : return "out of memory";
-    case EXIT_READ_OPEN     : return "error opening file for reading";
-    case EXIT_READ_ERROR    : return "read error";
-    case EXIT_WRITE_OPEN    : return "error opening file for writing";
-    case EXIT_WRITE_ERROR   : return "write error";
-    case EXIT_FORK_ERROR    : return "fork() failed";
-    case EXIT_EXEC_ERROR    : return "exec() failed";
-    case EXIT_CHILD_SIGNAL  : return "child process terminated by signal";
-    case EXIT_PIPE_ERROR    : return "pipe() failed";
-    default                 : return "unknown status";
+    case EX_OK        : return "success";
+    case EX_USAGE     : return "usage error";
+    case EX_NOINPUT   : return "error opening file";
+    case EX_OSERR     : return "system error (e.g., can't fork)";
+    case EX_CANTCREAT : return "error creating file";
+    case EX_IOERR     : return "I/O error";
+    case EX_CONFIG    : return "configuration file error";
+    default           : return "unknown status";
   } // switch
 }
 
@@ -422,7 +417,7 @@ static void usage( void ) {
 "       -v         Print version an exit.\n"
     , me, me, CONF_FILE_NAME, TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
   );
-  exit( EXIT_USAGE );
+  exit( EX_USAGE );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

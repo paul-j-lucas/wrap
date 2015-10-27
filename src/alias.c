@@ -60,7 +60,7 @@ static void alias_check_dup( char const *conf_file, int line_no ) {
     char const *const last_name = aliases[i].argv[0];
     while ( --i >= 0 ) {
       if ( strcmp( aliases[i].argv[0], last_name ) == 0 )
-        PMESSAGE_EXIT( CONF_ERROR,
+        PMESSAGE_EXIT( EX_CONFIG,
           "%s:%d: \"%s\": duplicate alias name (first is on line %d)\n",
           conf_file, line_no, last_name, aliases[i].line_no
         );
@@ -110,7 +110,7 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
     REALLOC( aliases, alias_t, n_aliases_alloc );
   }
   if ( !aliases )
-    PERROR_EXIT( OUT_OF_MEMORY );
+    PERROR_EXIT( EX_OSERR );
 
   int n_argv_alloc = ALIAS_ARGV_ALLOC_DEFAULT;
   alias_t *const alias = &aliases[ n_aliases++ ];
@@ -130,11 +130,11 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
   // part 2: whitespace
   line += strspn( line, " \t" );
   if ( !*line )
-    PMESSAGE_EXIT( CONF_ERROR, "%s:%d: '=' expected\n", conf_file, line_no );
+    PMESSAGE_EXIT( EX_CONFIG, "%s:%d: '=' expected\n", conf_file, line_no );
 
   // part 3: =
   if ( *line != '=' )
-    PMESSAGE_EXIT( CONF_ERROR,
+    PMESSAGE_EXIT( EX_CONFIG,
       "%s:%d: '%c': unexpected character; '=' expected\n",
       conf_file, line_no, *line
     );
@@ -145,7 +145,7 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
     line += strspn( line, " \t" );
     if ( !*line ) {
       if ( alias->argc == 1 )
-        PMESSAGE_EXIT( CONF_ERROR,
+        PMESSAGE_EXIT( EX_CONFIG,
           "%s:%d: option(s) expected after '='\n",
           conf_file, line_no
         );

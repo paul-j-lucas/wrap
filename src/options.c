@@ -45,7 +45,7 @@ void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
       if ( GAVE_OPTION( *opt ) ) {
         if ( ++gave_count > 1 ) {
           char const gave_opt2 = *opt;
-          PMESSAGE_EXIT( USAGE,
+          PMESSAGE_EXIT( EX_USAGE,
             "-%c and -%c are mutually exclusive\n", gave_opt1, gave_opt2
           );
         }

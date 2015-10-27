@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\f1 1 "June 14, 2015" "PJL TOOLS"
+.TH \f3wrap\f1 1 "October 27, 2015" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -281,20 +281,18 @@ Treats a line beginning with white-space as a paragraph delimiter.
 .PD 0
 .IP 0
 Success.
-.IP 1
-Error in command-line.
-.IP 2
-Error in configuration file.
-.IP 3
-Out of memory.
-.IP 10
-Error opening file for reading.
-.IP 11
-Read error.
-.IP 12
-Error opening file for writing.
-.IP 13
-Write error.
+.IP 64
+Command-line usage error.
+.IP 66
+Open file error.
+.IP 71
+System error.
+.IP 73
+Create file error.
+.IP 74
+I/O error.
+.IP 78
+Configuration file error.
 .PD
 .SH ENVIRONMENT
 .TP
