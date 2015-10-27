@@ -78,6 +78,7 @@ static size_t       calc_leader_width( char const* );
 static void         process_options( int, char const*[] );
 static char const*  str_status( int );
 static void         usage( void );
+static void         wait_for_child_processes( void );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -280,30 +281,7 @@ int main( int argc, char const *argv[] ) {
 break_loop:
 
   CHECK_FERROR( from_wrap );
-
-  //
-  // Wait for child processes.
-  //
-  int wait_status;
-  for ( pid_t pid; (pid = wait( &wait_status )) > 0; ) {
-    if ( WIFEXITED( wait_status ) ) {
-      int const exit_status = WEXITSTATUS( wait_status );
-      if ( exit_status != 0 ) {
-        PRINT_ERR(
-          "%s: child process exited with status %d: %s\n",
-          me, exit_status, str_status( exit_status )
-        );
-        exit( exit_status );
-      }
-    } else if ( WIFSIGNALED( wait_status ) ) {
-      int const signal = WTERMSIG( wait_status );
-      PMESSAGE_EXIT( EX_OSERR,
-        "child process terminated with signal %d: %s\n",
-        signal, strsignal( signal )
-      );
-    }
-  } // for
-
+  wait_for_child_processes();
   exit( EX_OK );
 }
 
@@ -418,6 +396,28 @@ static void usage( void ) {
     , me, me, CONF_FILE_NAME, TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
   );
   exit( EX_USAGE );
+}
+
+static void wait_for_child_processes( void ) {
+  int wait_status;
+  for ( pid_t pid; (pid = wait( &wait_status )) > 0; ) {
+    if ( WIFEXITED( wait_status ) ) {
+      int const exit_status = WEXITSTATUS( wait_status );
+      if ( exit_status != 0 ) {
+        PRINT_ERR(
+          "%s: child process exited with status %d: %s\n",
+          me, exit_status, str_status( exit_status )
+        );
+        exit( exit_status );
+      }
+    } else if ( WIFSIGNALED( wait_status ) ) {
+      int const signal = WTERMSIG( wait_status );
+      PMESSAGE_EXIT( EX_OSERR,
+        "child process terminated with signal %d: %s\n",
+        signal, strsignal( signal )
+      );
+    }
+  } // for
 }
 
 ///////////////////////////////////////////////////////////////////////////////
