@@ -21,11 +21,15 @@
 #ifndef wrap_common_H
 #define wrap_common_H
 
+// local
+#include "config.h"
+
 // standard
 #include <stdlib.h>                     /* for EXIT_SUCCESS */
 
 ///////////////////////////////////////////////////////////////////////////////
 
+#define CONF_FILE_NAME            "." PACKAGE "rc"
 #define LINE_BUF_SIZE             8192  /* hopefully, no one will exceed this */
 #define LINE_WIDTH_DEFAULT        80    /* wrap text to this line width */
 #define LINE_WIDTH_MINIMUM        1

@@ -644,13 +644,33 @@ static void process_options( int argc, char const *argv[], char const *opts,
 
 static void usage( void ) {
   PRINT_ERR(
-"usage: %s [-CdenNTvW] [-w line-width] [-p para-delim-chars] [-s tab-spaces]\n"
-"       [-{fF} input-file] [-o output-file] [-c conf-file] [-a alias]\n"
-"       [-t leading-tabs]  [-S leading-spaces]\n"
-"       [-m mirror-tabs]   [-M mirror-spaces]\n"
-"       [-i indent-tabs]   [-I indent-spaces]\n"
-"       [-h hanging-tabs]  [-H hanging-spaces]\n"
-    "", me
+"usage: %s [options]\n"
+"       %s -v\n"
+"\n"
+"options:\n"
+"       -a alias   Use alias from configuration file.\n"
+"       -c file    Specify the configuration file [default: ~/%s].\n"
+"       -C         Supress reading configuration file.\n"
+"       -d         Does not alter lines that begin with '.' (dot).\n"
+"       -e         Treat white-space after end-of-sentence as new paragraph.\n"
+"       -f file    Read from this file [default: stdin].\n"
+"       -F string  Specify filename for stdin.\n"
+"       -h number  Hang-indent tabs for all but first line of each paragraph.\n"
+"       -H number  Hang-indent spaces for all but first line of each paragraph.\n"
+"       -i number  Indent tabs for first line of each paragraph.\n"
+"       -I number  Indent spaces for first line of each paragraph.\n"
+"       -S number  Prepend leading spaces after leading tabs to each line.\n"
+"       -t number  Prepend leading tabs to each line.\n"
+"       -n         Does not treat newlines as paragraph delimeters.\n"
+"       -N         Treat every newline as a paragraph delimiter.\n"
+"       -o file    Write to this file [default: stdout].\n"
+"       -p string  Specify additional paragraph delimiter characters.\n"
+"       -s number  Specify tab-spaces equivalence [default: %d].\n"
+"       -T         Treat paragraph first line as title.\n"
+"       -v         Print version an exit.\n"
+"       -w number  Specify line width [default: %d]\n"
+"       -W         Treat line beginning with white-space as paragraph delimiter.\n"
+    , me, me, CONF_FILE_NAME, TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
   );
   exit( EXIT_USAGE );
 }

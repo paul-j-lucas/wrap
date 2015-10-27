@@ -40,8 +40,6 @@
 #include <string.h>
 #include <unistd.h>                     /* for geteuid() */
 
-#define CONF_FILE_NAME  "." PACKAGE "rc"
-
 extern char const *me;
 
 ////////// local functions ////////////////////////////////////////////////////

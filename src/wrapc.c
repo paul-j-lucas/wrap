@@ -404,10 +404,23 @@ static char const* str_status( int status ) {
 
 static void usage( void ) {
   PRINT_ERR(
-"usage: %s [-a alias] [-CeTv] [-w line-width]\n"
-"       [-{fF} input-file] [-o output-file] [-c conf-file]\n"
-"       [-p para-delim-chars] [-s tab-spaces]\n"
-    , me
+"usage: %s [options]\n"
+"       %s -v\n"
+"\n"
+"options:\n"
+"       -a alias   Use alias from configuration file.\n"
+"       -c file    Specify the configuration file [default: ~/%s].\n"
+"       -C         Supress reading configuration file.\n"
+"       -e         Treat white-space after end-of-sentence as new paragraph.\n"
+"       -f file    Read from this file [default: stdin].\n"
+"       -F string  Specify filename for stdin.\n"
+"       -o file    Write to this file [default: stdout].\n"
+"       -p string  Specify additional paragraph delimiter characters.\n"
+"       -s number  Specify tab-spaces equivalence [default: %d].\n"
+"       -T         Treat paragraph first line as title.\n"
+"       -w number  Specify line width [default: %d]\n"
+"       -v         Print version an exit.\n"
+    , me, me, CONF_FILE_NAME, TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
   );
   exit( EXIT_USAGE );
 }
