@@ -1,3 +1,14 @@
+2015-10-27  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac, wrap.1, wrapc.1, alias.c, common.h, options.c, pattern.c,
+     read_conf.c, util.c, util.h, wrap.c, wrapc.c, wrap-alias-dup.test,
+     wrap-alias-no_equal.test, wrap-alias-options_exp.test,
+     wrap-alias-unexp_char.test, wrap-conf-no_section.test,
+     wrap-conf-not_found.test, wrap-f-F.test, wrap-file-not_found.test,
+     wrap-n-N.test, wrap-pattern-alias_exp.test, wrap-pattern-no_alias.test,
+     wrap-pattern-no_equal.test, wrap-pattern-unexp_char.test: Now using
+     sysexits(3) exit codes.
+
 2015-09-14  Paul J. Lucas <paul@lucasmail.org>
 
    * NEWS: Added mention of stopping wrapping text upon non-comment line.
