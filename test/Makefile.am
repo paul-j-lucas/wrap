@@ -57,7 +57,8 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrap-t1.test \
 	tests/wrapc-no_options-01.test \
 	tests/wrapc-no_options-02.test \
-	tests/wrapc-no_options-03.test
+	tests/wrapc-no_options-03.test \
+	tests/wrapc-no_options-04.test
 
 AM_TESTS_ENVIRONMENT = BUILD_SRC=$(top_builddir)/src; export BUILD_SRC ;
 TEST_EXTENSIONS = .test

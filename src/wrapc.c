@@ -70,11 +70,12 @@ bool        opt_title_line;             // 1st para line is title?
   ";"   /* Assember and Lisp comments */                          \
   ">"   /* Forward mail indicator */
 
-#define WS_CHARS        " \t"           /* whitespace characters */
-#define LEADING_CHARS   WS_CHARS COMMENT_CHARS
+#define WS_CHARS    " \t"               /* whitespace characters */
 
 // local functions
-static size_t       calc_leader_width( char const* );
+static size_t       leader_span( char const* );
+static size_t       leader_width( char const* );
+static void         parse_leader( char const*, char*, size_t* );
 static void         process_options( int, char const*[] );
 static char const*  str_status( int );
 static void         usage( void );
@@ -90,20 +91,14 @@ int main( int argc, char const *argv[] ) {
   // be the prototype for all lines.
   //
   char buf[ LINE_BUF_SIZE ];
-  if ( !fgets( buf, LINE_BUF_SIZE, fin ) ) {
+  if ( !fgets( buf, sizeof( buf ), fin ) ) {
     CHECK_FERROR( fin );
     exit( EX_OK );
   }
-  char leader[ LINE_BUF_SIZE ];         // characters stripped/prepended
-  strcpy( leader, buf );
-  size_t leader_len = strspn( leader, LEADING_CHARS );
-  leader[ leader_len ] = '\0';
 
-  opt_line_width -= calc_leader_width( leader );
-  if ( opt_line_width < LINE_WIDTH_MINIMUM )
-    PMESSAGE_EXIT( EX_USAGE,
-      "line-width (%d) is too small (<%d)\n", opt_line_width, LINE_WIDTH_MINIMUM
-    );
+  char leader[ LINE_BUF_SIZE ];         // characters stripped/prepended
+  size_t leader_len;
+  parse_leader( buf, leader, &leader_len );
 
   //
   // Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
@@ -149,7 +144,7 @@ int main( int argc, char const *argv[] ) {
         fcopy( fin, to_wrap );
         exit( EX_OK );
       }
-      leader_len = strspn( buf, LEADING_CHARS );
+      leader_len = leader_span( buf );
       if ( !buf[ leader_len ] )         // no non-leading characters
         FPUTC( '\n', to_wrap );
       else
@@ -288,16 +283,34 @@ break_loop:
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Compute the actual width of the leader: tabs are equal to <opt_tab_spaces>
- * spaces minus the number of spaces we're into a tab-stop, and all others are
- * equal to 1.
+ * Spans the initial part of \a s for the "leader."  The leader is defined as
+ * \c {WS}*{CC}+{WS}* where \c WS is whitespace and \c CC are comment
+ * characters.
+ *
+ * @param s The string to span.
+ * @return Returns the length of the leader.
  */
-static size_t calc_leader_width( char const *leader ) {
+static size_t leader_span( char const *s ) {
+  assert( s );
+  size_t ws_len = strspn( s, WS_CHARS );
+  size_t const cc_len = strspn( s += ws_len, COMMENT_CHARS );
+  if ( cc_len )
+    ws_len += strspn( s + cc_len, WS_CHARS );
+  return ws_len + cc_len;
+}
+
+/**
+ * Compute the actual width of the leader: tabs are equal to <opt_tab_spaces>
+ * spaces minus the number of spaces we're into a tab-stop; all others are
+ * equal to 1.
+ *
+ * @param leader The leader string to calculate the width of.
+ * @return Returns said width.
+ */
+static size_t leader_width( char const *leader ) {
   assert( leader );
 
-  size_t spaces = 0;
-  size_t width = 0;
-
+  size_t spaces = 0, width = 0;
   for ( char const *c = leader; *c; ++c ) {
     if ( *c == '\t' ) {
       width += opt_tab_spaces - spaces;
@@ -307,8 +320,23 @@ static size_t calc_leader_width( char const *leader ) {
       spaces = (spaces + 1) % opt_tab_spaces;
     }
   } // for
-
   return width;
+}
+
+static void parse_leader( char const *buf, char *leader, size_t *leader_len ) {
+  assert( buf );
+  assert( leader );
+  assert( leader_len );
+
+  *leader_len = leader_span( buf );
+  strncpy( leader, buf, *leader_len );
+  leader[ *leader_len ] = '\0';
+
+  opt_line_width -= leader_width( leader );
+  if ( opt_line_width < LINE_WIDTH_MINIMUM )
+    PMESSAGE_EXIT( EX_USAGE,
+      "line-width (%d) is too small (<%d)\n", opt_line_width, LINE_WIDTH_MINIMUM
+    );
 }
 
 static void process_options( int argc, char const *argv[] ) {
