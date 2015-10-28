@@ -38,28 +38,38 @@
 #define ARG_BUF_SIZE  25                /* max wrap command-line arg size */
 
 // Close both ends of pipe P.
-#define CLOSE(P) \
+#define CLOSE_PIPES(P) \
   BLOCK( close( pipes[P][ STDIN_FILENO ] ); close( pipes[P][ STDOUT_FILENO ] ); )
 
 // Redirect file-descriptor FD to/from pipe P.
 #define REDIRECT(FD,P) \
-  BLOCK( close( FD ); dup( pipes[P][FD] ); CLOSE( P ); )
+  BLOCK( close( FD ); dup( pipes[P][FD] ); CLOSE_PIPES( P ); )
 
 // extern variable definitions
-FILE       *fin;                        // file in
-FILE       *fout;                       // file out
-char const *me;                         // executable name
+FILE         *fin;                      // file in
+FILE         *fout;                     // file out
+char const   *me;                       // executable name
 
 // option variable definitions
-char const *opt_alias;       
-char const *opt_conf_file;              // full path to conf file
-bool        opt_eos_delimit;            // end-of-sentence delimits para's?
-char const *opt_fin_name;               // file in name
-int         opt_line_width = LINE_WIDTH_DEFAULT;
-bool        opt_no_conf;                // do not read conf file
-char const *opt_para_delimiters;        // additional para delimiter chars
-int         opt_tab_spaces = TAB_SPACES_DEFAULT;
-bool        opt_title_line;             // 1st para line is title?
+char const   *opt_alias;       
+char const   *opt_conf_file;            // full path to conf file
+bool          opt_eos_delimit;          // end-of-sentence delimits para's?
+char const   *opt_fin_name;             // file in name
+int           opt_line_width = LINE_WIDTH_DEFAULT;
+bool          opt_no_conf;              // do not read conf file
+char const   *opt_para_delimiters;      // additional para delimiter chars
+int           opt_tab_spaces = TAB_SPACES_DEFAULT;
+bool          opt_title_line;           // 1st para line is title?
+
+// local variables
+static char   buf[ LINE_BUF_SIZE ];
+static char   leader[ LINE_BUF_SIZE ];  // characters stripped/prepended
+static size_t leader_len;
+//
+// Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
+//            pipes[1] goes between child 2 (wrap) and parent
+//
+static int    pipes[2][2];
 
 #define COMMENT_CHARS \
   "!"   /* HTML and XML comments */                               \
@@ -73,8 +83,11 @@ bool        opt_title_line;             // 1st para line is title?
 #define WS_CHARS    " \t"               /* whitespace characters */
 
 // local functions
+static pid_t        child_1( void );
+static void         child_2( pid_t );
 static size_t       leader_span( char const* );
 static size_t       leader_width( char const* );
+static void         parent( void );
 static void         parse_leader( char const*, char*, size_t* );
 static void         process_options( int, char const*[] );
 static char const*  str_status( int );
@@ -90,94 +103,104 @@ int main( int argc, char const *argv[] ) {
   // Read the first line of input to obtain a sequence of leading characters to
   // be the prototype for all lines.
   //
-  char buf[ LINE_BUF_SIZE ];
   if ( !fgets( buf, sizeof( buf ), fin ) ) {
     CHECK_FERROR( fin );
     exit( EX_OK );
   }
-
-  char leader[ LINE_BUF_SIZE ];         // characters stripped/prepended
-  size_t leader_len;
   parse_leader( buf, leader, &leader_len );
 
   //
-  // Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
-  //            pipes[1] goes between child 2 (wrap) and parent
+  // Open the pipes, fork the child processes, and go.
   //
-  int pipes[2][2];
   PIPE( pipes[0] );
   PIPE( pipes[1] );
+  child_2( child_1() );
+  parent();
 
-  /////////////////////////////////////////////////////////////////////////////
-  //
-  // Child 1
-  //
-  // Close both ends of pipes[1] since it doesn't use it; read from our
-  // original stdin and write to pipes[0] (child 2, wrap).
-  //
-  // Write the first and all subsequent lines with the leading characters
-  // stripped from the beginning of each line.
-  //
-  pid_t const pid_1 = fork();
-  if ( pid_1 == -1 )
+  wait_for_child_processes();
+  exit( EX_OK );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Child 1
+ *
+ * Close both ends of pipes[1] since it doesn't use it; read from our original
+ * stdin and write to pipes[0] (child 2, wrap).
+ *
+ * Write the first and all subsequent lines with the leading characters
+ * stripped from the beginning of each line.
+ *
+ * @return Returns the child's process ID.
+ */
+static pid_t child_1( void ) {
+  pid_t const pid = fork();
+  if ( pid == -1 )
     PERROR_EXIT( EX_OSERR );
-  if ( pid_1 == 0 ) {                   // child process
-    CLOSE( 1 );
-    FILE *const to_wrap = fdopen( pipes[0][ STDOUT_FILENO ], "w" );
-    if ( !to_wrap )
-      PMESSAGE_EXIT( EX_OSERR,
-        "child can't open pipe for writing: %s\n", ERROR_STR
-      );
+  if ( pid != 0 )                       // parent process
+    return pid;
 
-    // write first line to wrap
-    FPUTS( buf + leader_len, to_wrap );
+  CLOSE_PIPES( 1 );
+  FILE *const to_wrap = fdopen( pipes[0][ STDOUT_FILENO ], "w" );
+  if ( !to_wrap )
+    PMESSAGE_EXIT( EX_OSERR,
+      "child can't open pipe for writing: %s\n", ERROR_STR
+    );
 
-    while ( fgets( buf, LINE_BUF_SIZE, fin ) ) {
-      char const first_nws = buf[ strspn( buf, WS_CHARS ) ];
-      if ( !strchr( COMMENT_CHARS, first_nws ) ) {
-        //
-        // The line's first non-whitespace character isn't a comment character:
-        // we've reached the end of the comment. Signal wrap that we're now
-        // passing text through verbatim.
-        //
-        FPRINTF( to_wrap, "%c%c%s", ASCII_DLE, ASCII_ETB, buf );
-        fcopy( fin, to_wrap );
-        exit( EX_OK );
-      }
-      leader_len = leader_span( buf );
-      if ( !buf[ leader_len ] )         // no non-leading characters
-        FPUTC( '\n', to_wrap );
-      else
-        FPUTS( buf + leader_len, to_wrap );
-    } // while
-    CHECK_FERROR( fin );
-    exit( EX_OK );
-  }
+  // write first line to wrap
+  FPUTS( buf + leader_len, to_wrap );
 
-  /////////////////////////////////////////////////////////////////////////////
-  //
-  // Child 2
-  //
-  // Read from pipes[0] (child 1) and write to pipes[1] (parent); exec into
-  // wrap.
-  //
+  while ( fgets( buf, LINE_BUF_SIZE, fin ) ) {
+    char const first_nws = buf[ strspn( buf, WS_CHARS ) ];
+    if ( !strchr( COMMENT_CHARS, first_nws ) ) {
+      //
+      // The line's first non-whitespace character isn't a comment character:
+      // we've reached the end of the comment. Signal wrap that we're now
+      // passing text through verbatim.
+      //
+      FPRINTF( to_wrap, "%c%c%s", ASCII_DLE, ASCII_ETB, buf );
+      fcopy( fin, to_wrap );
+      exit( EX_OK );
+    }
+    leader_len = leader_span( buf );
+    if ( !buf[ leader_len ] )         // no non-leading characters
+      FPUTC( '\n', to_wrap );
+    else
+      FPUTS( buf + leader_len, to_wrap );
+  } // while
+  CHECK_FERROR( fin );
+  exit( EX_OK );
+}
+
+/**
+ * Child 2
+ *
+ * Read from pipes[0] (child 1) and write to pipes[1] (parent); exec into
+ * wrap.
+ *
+ * @return Returns the child's process ID.
+ */
+static void child_2( pid_t pid_1 ) {
   pid_t const pid_2 = fork();
   if ( pid_2 == -1 ) {
     kill( pid_1, SIGTERM );             // we failed, so kill child 1
     PERROR_EXIT( EX_OSERR );
   }
-  if ( pid_2 == 0 ) {                   // child process
-    typedef char arg_buf[ ARG_BUF_SIZE ];
+  if ( pid_2 != 0 )                     // parent process
+    return;
 
-    arg_buf arg_opt_alias;
-    arg_buf arg_opt_conf_file;
-    char    arg_opt_fin_name[ PATH_MAX ];
-    arg_buf arg_opt_line_width;
-    arg_buf arg_opt_para_delimiters;
-    arg_buf arg_opt_tab_spaces;
+  typedef char arg_buf[ ARG_BUF_SIZE ];
 
-    int argc = 0;
-    char *argv[12];                     // must be +1 of greatest arg below
+  arg_buf arg_opt_alias;
+  arg_buf arg_opt_conf_file;
+  char    arg_opt_fin_name[ PATH_MAX ];
+  arg_buf arg_opt_line_width;
+  arg_buf arg_opt_para_delimiters;
+  arg_buf arg_opt_tab_spaces;
+
+  int argc = 0;
+  char *argv[12];                       // must be +1 of greatest arg below
 
 #define ARG_SET(ARG)          argv[ argc++ ] = (ARG)
 #define ARG_DUP(FMT)          ARG_SET( strdup( FMT ) )
@@ -190,38 +213,79 @@ int main( int argc, char const *argv[] ) {
 #define IF_ARG_DUP(ARG,FMT)   if ( ARG ) ARG_DUP( FMT )
 #define IF_ARG_FMT(ARG,FMT)   if ( ARG ) ARG_FMT( ARG, FMT )
 
-    // Quoting string arguments is unnecessary since no shell is involved.
+  // Quoting string arguments is unnecessary since no shell is involved.
 
-    /*  0 */    ARG_DUP(                      PACKAGE );
-    /*  1 */ IF_ARG_FMT( opt_alias          , "-a%s"  );
-    /*  2 */ IF_ARG_FMT( opt_conf_file      , "-c%s"  );
-    /*  3 */ IF_ARG_DUP( opt_no_conf        , "-C"    );
-    /*  4 */    ARG_DUP(                      "-D"    );
-    /*  5 */ IF_ARG_DUP( opt_eos_delimit    , "-e"    );
-    /*  6 */ IF_ARG_FMT( opt_fin_name       , "-F%s"  );
-    /*  7 */ IF_ARG_FMT( opt_para_delimiters, "-p%s"  );
-    /*  8 */    ARG_FMT( opt_tab_spaces     , "-s%d"  );
-    /*  9 */ IF_ARG_DUP( opt_title_line     , "-T"    );
-    /* 10 */    ARG_FMT( opt_line_width     , "-w%d"  );
-    /* 11 */ argv[ argc ] = NULL;
+  /*  0 */    ARG_DUP(                      PACKAGE );
+  /*  1 */ IF_ARG_FMT( opt_alias          , "-a%s"  );
+  /*  2 */ IF_ARG_FMT( opt_conf_file      , "-c%s"  );
+  /*  3 */ IF_ARG_DUP( opt_no_conf        , "-C"    );
+  /*  4 */    ARG_DUP(                      "-D"    );
+  /*  5 */ IF_ARG_DUP( opt_eos_delimit    , "-e"    );
+  /*  6 */ IF_ARG_FMT( opt_fin_name       , "-F%s"  );
+  /*  7 */ IF_ARG_FMT( opt_para_delimiters, "-p%s"  );
+  /*  8 */    ARG_FMT( opt_tab_spaces     , "-s%d"  );
+  /*  9 */ IF_ARG_DUP( opt_title_line     , "-T"    );
+  /* 10 */    ARG_FMT( opt_line_width     , "-w%d"  );
+  /* 11 */ argv[ argc ] = NULL;
 
-    REDIRECT( STDIN_FILENO, 0 );
-    REDIRECT( STDOUT_FILENO, 1 );
-    execvp( PACKAGE, argv );
-    PERROR_EXIT( EX_OSERR );
-  }
+  REDIRECT( STDIN_FILENO, 0 );
+  REDIRECT( STDOUT_FILENO, 1 );
+  execvp( PACKAGE, argv );
+  PERROR_EXIT( EX_OSERR );
+}
 
-  /////////////////////////////////////////////////////////////////////////////
-  //
-  // Parent
-  //
-  // Close both ends of pipes[0] since it doesn't use it; close the write end
-  // of pipes[1].
-  //
-  // Read from pipes[1] (child 2, wrap) and prepend the leading text to each
-  // line.
-  //
-  CLOSE( 0 );
+/**
+ * Spans the initial part of \a s for the "leader."  The leader is defined as
+ * \c ^{WS}*{CC}+{WS}* where \c WS is whitespace and \c CC are comment
+ * characters.
+ *
+ * @param s The string to span.
+ * @return Returns the length of the leader.
+ */
+static size_t leader_span( char const *s ) {
+  assert( s );
+  size_t ws_len = strspn( s, WS_CHARS );
+  size_t const cc_len = strspn( s += ws_len, COMMENT_CHARS );
+  if ( cc_len )
+    ws_len += strspn( s + cc_len, WS_CHARS );
+  return ws_len + cc_len;
+}
+
+/**
+ * Compute the actual width of the leader: tabs are equal to <opt_tab_spaces>
+ * spaces minus the number of spaces we're into a tab-stop; all others are
+ * equal to 1.
+ *
+ * @param leader The leader string to calculate the width of.
+ * @return Returns said width.
+ */
+static size_t leader_width( char const *leader ) {
+  assert( leader );
+
+  size_t spaces = 0, width = 0;
+  for ( char const *c = leader; *c; ++c ) {
+    if ( *c == '\t' ) {
+      width += opt_tab_spaces - spaces;
+      spaces = 0;
+    } else {
+      ++width;
+      spaces = (spaces + 1) % opt_tab_spaces;
+    }
+  } // for
+  return width;
+}
+
+/**
+ * Parent
+ *
+ * Close both ends of pipes[0] since it doesn't use it; close the write end of
+ * pipes[1].
+ *
+ * Read from pipes[1] (child 2, wrap) and prepend the leading text to each
+ * line.
+ */
+static void parent( void ) {
+  CLOSE_PIPES( 0 );
   close( pipes[1][ STDOUT_FILENO ] );
 
   FILE *const from_wrap = fdopen( pipes[1][ STDIN_FILENO ], "r" );
@@ -276,51 +340,6 @@ int main( int argc, char const *argv[] ) {
 break_loop:
 
   CHECK_FERROR( from_wrap );
-  wait_for_child_processes();
-  exit( EX_OK );
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-/**
- * Spans the initial part of \a s for the "leader."  The leader is defined as
- * \c ^{WS}*{CC}+{WS}* where \c WS is whitespace and \c CC are comment
- * characters.
- *
- * @param s The string to span.
- * @return Returns the length of the leader.
- */
-static size_t leader_span( char const *s ) {
-  assert( s );
-  size_t ws_len = strspn( s, WS_CHARS );
-  size_t const cc_len = strspn( s += ws_len, COMMENT_CHARS );
-  if ( cc_len )
-    ws_len += strspn( s + cc_len, WS_CHARS );
-  return ws_len + cc_len;
-}
-
-/**
- * Compute the actual width of the leader: tabs are equal to <opt_tab_spaces>
- * spaces minus the number of spaces we're into a tab-stop; all others are
- * equal to 1.
- *
- * @param leader The leader string to calculate the width of.
- * @return Returns said width.
- */
-static size_t leader_width( char const *leader ) {
-  assert( leader );
-
-  size_t spaces = 0, width = 0;
-  for ( char const *c = leader; *c; ++c ) {
-    if ( *c == '\t' ) {
-      width += opt_tab_spaces - spaces;
-      spaces = 0;
-    } else {
-      ++width;
-      spaces = (spaces + 1) % opt_tab_spaces;
-    }
-  } // for
-  return width;
 }
 
 static void parse_leader( char const *buf, char *leader, size_t *leader_len ) {
