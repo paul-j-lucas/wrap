@@ -284,7 +284,7 @@ break_loop:
 
 /**
  * Spans the initial part of \a s for the "leader."  The leader is defined as
- * \c {WS}*{CC}+{WS}* where \c WS is whitespace and \c CC are comment
+ * \c ^{WS}*{CC}+{WS}* where \c WS is whitespace and \c CC are comment
  * characters.
  *
  * @param s The string to span.
