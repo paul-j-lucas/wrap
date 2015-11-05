@@ -464,7 +464,7 @@ delimit_paragraph:
       // read/write the line as-is.
       //
       FPUTC( '.', fout );
-      if ( !copy_line( fin, fout, buf, LINE_BUF_SIZE ) )
+      if ( !copy_line( fin, fout, buf, sizeof( buf ) ) )
         goto done;
     } else {
       if ( consec_newlines == 2 ||

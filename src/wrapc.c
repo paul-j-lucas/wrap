@@ -151,7 +151,7 @@ static pid_t child_1( void ) {
   // write first line to wrap
   FPUTS( buf + leader_len, to_wrap );
 
-  while ( fgets( buf, LINE_BUF_SIZE, fin ) ) {
+  while ( fgets( buf, sizeof( buf ), fin ) ) {
     char const first_nws = buf[ strspn( buf, WS_CHARS ) ];
     if ( !strchr( COMMENT_CHARS, first_nws ) ) {
       //
@@ -312,7 +312,7 @@ static void parent( void ) {
   strcpy( leader_tws, leader + tnws_len );
   leader[ tnws_len ] = '\0';
 
-  while ( fgets( buf, LINE_BUF_SIZE, from_wrap ) ) {
+  while ( fgets( buf, sizeof( buf ), from_wrap ) ) {
     char *pbuf = buf;
     if ( buf[0] == ASCII_DLE ) {
       switch ( buf[1] ) {
