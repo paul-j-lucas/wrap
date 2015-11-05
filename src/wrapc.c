@@ -43,7 +43,7 @@
 
 // Redirect file-descriptor FD to/from pipe P.
 #define REDIRECT(FD,P) \
-  BLOCK( close( FD ); dup( pipes[P][FD] ); CLOSE_PIPES( P ); )
+  BLOCK( close( FD ); DUP( pipes[P][FD] ); CLOSE_PIPES( P ); )
 
 // extern variable definitions
 FILE         *fin;                      // file in

@@ -59,6 +59,9 @@ typedef bool _Bool;
 #define CHECK_FERROR(STREAM) \
   BLOCK( if ( ferror( STREAM ) ) PERROR_EXIT( EX_IOERR ); )
 
+#define DUP(P) \
+  BLOCK( if ( dup( P ) == -1 ) PERROR_EXIT( EX_OSERR ); )
+
 #define FPRINTF(STREAM,...) \
   BLOCK( if ( fprintf( (STREAM), __VA_ARGS__ ) < 0 ) PERROR_EXIT( EX_IOERR ); )
 
