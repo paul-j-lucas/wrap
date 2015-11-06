@@ -451,11 +451,10 @@ static void wait_for_child_processes( void ) {
     if ( WIFEXITED( wait_status ) ) {
       int const exit_status = WEXITSTATUS( wait_status );
       if ( exit_status != 0 ) {
-        PRINT_ERR(
-          "%s: child process exited with status %d: %s\n",
-          me, exit_status, str_status( exit_status )
+        PMESSAGE_EXIT( exit_status,
+          "child process exited with status %d: %s\n",
+          exit_status, str_status( exit_status )
         );
-        exit( exit_status );
       }
     } else if ( WIFSIGNALED( wait_status ) ) {
       int const signal = WTERMSIG( wait_status );
