@@ -38,7 +38,7 @@
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit(), ... */
 #include <string.h>
-#include <unistd.h>                     /* for STDIN_FILENO, ... */
+#include <unistd.h>
 
 // extern variable definitions
 char        buf[ LINE_BUF_SIZE ];
