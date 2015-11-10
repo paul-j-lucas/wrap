@@ -51,7 +51,7 @@ FILE         *fout;                     // file out
 char const   *me;                       // executable name
 
 // option variable definitions
-char const   *opt_alias;       
+char const   *opt_alias;
 char const   *opt_conf_file;            // full path to conf file
 bool          opt_eos_delimit;          // end-of-sentence delimits para's?
 char const   *opt_fin_name;             // file in name
