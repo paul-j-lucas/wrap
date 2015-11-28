@@ -19,6 +19,7 @@
 ##
 
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = src man test
+EXTRA_DIST = m4/gnulib-cache.m4
+SUBDIRS = lib src man test
 
 # vim:set noet sw=8 ts=8:
