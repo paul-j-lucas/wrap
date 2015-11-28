@@ -1,3 +1,4 @@
 getopt.h
 stddef.h
+string.h
 unistd.h
