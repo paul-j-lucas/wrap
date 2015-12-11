@@ -1,8 +1,52 @@
+2015-12-11  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac, lib/Makefile.am, alloca.c, alloca.in.h, config.charset,
+     fnmatch.c, fnmatch.in.h, fnmatch_loop.c, localcharset.c, localcharset.h,
+     mbrtowc.c, mbsinit.c, mbsrtowcs-impl.h, mbsrtowcs-state.c, mbsrtowcs.c,
+     memchr.c, memchr.valgrind, ref-add.sin, ref-del.sin, stdbool.in.h,
+     streq.h, strnlen1.c, strnlen1.h, verify.h, wchar.in.h, wctype-h.c,
+     wctype.in.h, alloca.m4, codeset.m4, configmake.m4, fcntl-o.m4, fnmatch.m4,
+     glibc21.m4, gnulib-cache.m4, gnulib-comp.m4, localcharset.m4,
+     locale-fr.m4, locale-ja.m4, locale-zh.m4, mbrtowc.m4, mbsinit.m4,
+     mbsrtowcs.m4, mbstate_t.m4, memchr.m4, mmap-anon.m4, stdbool.m4,
+     wchar_h.m4, wctype_h.m4, wint_t.m4, src/Makefile.am, pattern.h,
+     read_conf.c, util.h, wrap.c: Now using gnulib fnmatch().
+
+2015-11-28  Paul J. Lucas <paul@lucasmail.org>
+
+   * arg-nonnull.h, c++defs.h, warn-on-use.h, src/Makefile.am: Gnulib tweaks.
+   * Makefile.am, configure.ac, lib/Makefile.am, dummy.c, stddef.in.h,
+     string.in.h, strndup.c, strnlen.c, 00gnulib.m4, absolute-header.m4,
+     extensions.m4, extern-inline.m4, gnulib-cache.m4, gnulib-common.m4,
+     gnulib-comp.m4, gnulib-tool.m4, include_next.m4, onceonly.m4, stddef_h.m4,
+     string_h.m4, strndup.m4, strnlen.m4, warn-on-use.m4, wchar_t.m4,
+     snippet/arg-nonnull.h, snippet/c++defs.h, snippet/warn-on-use.h: Initial
+     file for Gnulib.
+
+2015-11-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Removed trailing whitespace.
+
+2015-11-05  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Now using PMESSAGE_EXIT().
+   * wrap.c: Removed unnecessary #include.
+   * util.h, wrapc.c: Silenced dup() warning.
+
+2015-11-04  Paul J. Lucas <paul@lucasmail.org>
+
+   * read_conf.c, util.c, wrap.c, wrapc.c: Now using sizeof().
+
 2015-10-28  Paul J. Lucas <paul@lucasmail.org>
 
+   * wrapc.c: Clean-up.
+   * wrapc.c: Improved leader handling.
    * NEWS, configure.ac, wrapc.c, test/Makefile.am, bullets-01.txt,
      wrapc-no_options-04.txt, wrapc-no_options-04.test: Improved leader
      handling.
+
+2015-10-27  Paul J. Lucas <paul@lucasmail.org>
+
    * wrapc.c: Added wait_for_child_processes().
    * configure.ac, wrap.1, wrapc.1, alias.c, common.h, options.c, pattern.c,
      read_conf.c, util.c, util.h, wrap.c, wrapc.c, wrap-alias-dup.test,
@@ -12,184 +56,194 @@
      wrap-n-N.test, wrap-pattern-alias_exp.test, wrap-pattern-no_alias.test,
      wrap-pattern-no_equal.test, wrap-pattern-unexp_char.test: Now using
      sysexits(3) exit codes.
+   * common.h, read_conf.c, wrap.c, wrapc.c: Now printing more detailed help.
 
-2015-10-27  Paul J. Lucas <paul@lucasmail.org>
+2015-09-15  Paul J. Lucas <paul@lucasmail.org>
 
-   * configure.ac, wrap.1, wrapc.1, alias.c, common.h, options.c, pattern.c,
-     read_conf.c, util.c, util.h, wrap.c, wrapc.c, wrap-alias-dup.test,
-     wrap-alias-no_equal.test, wrap-alias-options_exp.test,
-     wrap-alias-unexp_char.test, wrap-conf-no_section.test,
-     wrap-conf-not_found.test, wrap-f-F.test, wrap-file-not_found.test,
-     wrap-n-N.test, wrap-pattern-alias_exp.test, wrap-pattern-no_alias.test,
-     wrap-pattern-no_equal.test, wrap-pattern-unexp_char.test: Now using
-     sysexits(3) exit codes.
+   * util.h: Cosmetic change.
 
 2015-09-14  Paul J. Lucas <paul@lucasmail.org>
 
    * NEWS: Added mention of stopping wrapping text upon non-comment line.
    * wrapc.1: Added mention of end of comment behavior.
+   * wrapc.c: Now calling exit() directly.
 
 2015-09-13  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrapc.c: Now calling exit() directly.
+   * Makefile.am, configure.ac, man/Makefile.am, man/man1/Makefile.am, wrap.1,
+     wrapc.1, man/man5/Makefile.am, wraprc.5, test/Makefile.am, run_test.sh:
+     Updated copyright year.
    * src/Makefile.am, options.c, options.h, util.c, util.h, wrap.c, wrapc.c,
      test/Makefile.am, wrap-f-F.test, wrap-n-N.test: Added option
      mutually-exclusive checking and tests.
-
-2015-09-03  Paul J. Lucas <paul@lucasmail.org>
-
+   * alias.c, getopt.c, pattern.c, read_conf.c, util.c: Cosmetic changes.
    * common.h, util.c, util.h, wrap.c, wrapc.c, test/Makefile.am, ETB-01.txt,
      ETB-02.txt, ETB-no_options-01.txt, ETB-no_options-02.txt,
      ETB-no_options-01.test, ETB-no_options-02.test: Initial ETB code.
 
+2015-09-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * src/Makefile.am, alias.c, alias.h, common.h, getopt.c, getopt.h,
+     pattern.c, pattern.h, read_conf.c, read_conf.h, util.c, util.h, wrap.c,
+     wrapc.c: Splunk common/util.
+
 2015-09-02  Paul J. Lucas <paul@lucasmail.org>
 
    * wrapc.c: Moved leader_tws code.
+   * wrapc.c: Formatting change.
    * read_conf.c: Now using PACKAGE as part of CONF_FILE_NAME.
+   * NEWS, configure.ac, wrapc.c, test/Makefile.am, wrapc-03.txt,
+     wrapc-no_options-02.txt, wrapc-no_options-03.txt,
+     wrapc-no_options-03.test: Fixed emitting trailing whitespace.
 
 2015-09-01  Paul J. Lucas <paul@lucasmail.org>
 
    * wrapc.c: s/buf/leader/
-   * wrapc.c: s/int/size_t/ where appropriate.
+   * wrapc.c, x, y: s/int/size_t/ where appropriate.
+   * wrapc.c: Whitespace fix.
+   * alias.c, alias.h, common.c, common.h, getopt.c, getopt.h, pattern.c,
+     pattern.h, read_conf.c, read_conf.h, wrapc.c: Removed extraneous
+     whitespace.
+   * common.h, wrap.c, wrapc.c: Minor clean-up.
 
-2015-08-06  Paul J. Lucas <paul@lucasmail.org>
+2015-08-19  Paul J. Lucas <paul@lucasmail.org>
+
+
+2015-08-13  Paul J. Lucas <paul@lucasmail.org>
 
    * configure.ac: Fixed extra CFLAGS.
 
-2015-08-05  Paul J. Lucas <paul@lucasmail.org>
+2015-08-06  Paul J. Lucas <paul@lucasmail.org>
 
    * NEWS: Updated copyright year; fixed typo.
+
+2015-08-05  Paul J. Lucas <paul@lucasmail.org>
+
    * alias.c, common.c, pattern.c, read_conf.c, wrap.c, wrapc.c: Comment
      change.
    * test/Makefile.am, wrap-i2.txt, wrap-i2.test: Added -i test.
 
 2015-07-13  Paul J. Lucas <paul@lucasmail.org>
 
-   * .gitignore, src/.gitignore: Moved some stuff.
+   * common.h, wrap.c, wrapc.c: Now using EXIT_SUCCESS.
 
 2015-06-28  Paul J. Lucas <paul@lucasmail.org>
 
-   * common.h, wrap.c, wrapc.c: Now using EXIT_SUCCESS.
 
 2015-06-27  Paul J. Lucas <paul@lucasmail.org>
 
-   * test/tests/README.md: Changed "Linux" to "... every other Unix ...".
+   * configure.ac: Upped version.
 
 2015-06-26  Paul J. Lucas <paul@lucasmail.org>
 
-   * configure.ac: Upped version.
-   * ChangeLog: Updated ChangeLog.
+   * alias.c: Fixed alias_free().
 
 2015-06-20  Paul J. Lucas <paul@lucasmail.org>
 
-   * alias.c: Fixed alias_free().
-   * ChangeLog, NEWS: Added updates about C99.
-   * test/tests/README.md: Added note about test names.
+   * NEWS: Added updates about C99.
    * configure.ac, alias.c, alias.h, common.c, common.h, getopt.c, getopt.h,
      pattern.c, pattern.h, read_conf.c, read_conf.h, wrap.c, wrapc.c: Now using
      C99.
 
 2015-06-17  Paul J. Lucas <paul@lucasmail.org>
 
-   * .gitignore: Added *~
+   * run_test.sh: s/PROG/COMMAND/
 
 2015-06-14  Paul J. Lucas <paul@lucasmail.org>
 
-   * run_test.sh: s/PROG/COMMAND/
    * wrap.1, wrapc.1: Removed $ from HOME.
+   * alias.c, alias.h, pattern.c, pattern.h, wrap.c, wrapc.c: Now using (void)
+     rather than () for functions with no arguments.
 
 2015-06-13  Paul J. Lucas <paul@lucasmail.org>
 
-   * alias.c, alias.h, pattern.c, pattern.h, wrap.c, wrapc.c: Now using (void)
-     rather than () for functions with no arguments.
    * wrap.c, wrapc.c: Clean-up local function prototypes.
-
-2015-06-05  Paul J. Lucas <paul@lucasmail.org>
-
    * alias.h, common.h, getopt.h, read_conf.c, read_conf.h: Comment
      reformatting.
 
-2015-06-01  Paul J. Lucas <paul@lucasmail.org>
+2015-06-05  Paul J. Lucas <paul@lucasmail.org>
 
    * alias.c, common.c, getopt.c, pattern.c, read_conf.c, wrap.c, wrapc.c:
      Added asserts.
+
+2015-06-01  Paul J. Lucas <paul@lucasmail.org>
+
    * devclean: Better version.
    * devclean: Now using .gitignore.
+   * configure.ac: Added perror().
 
 2015-05-25  Paul J. Lucas <paul@lucasmail.org>
 
-   * configure.ac: Added perror().
+
+2015-05-19  Paul J. Lucas <paul@lucasmail.org>
+
    * run_test.sh: Fixed typo.
+   * alias.c, common.c, getopt.c, pattern.c, read_conf.c, wrap.c, wrapc.c: Put
+     system includes last.
 
 2015-02-16  Paul J. Lucas <paul@lucasmail.org>
 
-   * alias.c, common.c, getopt.c, pattern.c, read_conf.c, wrap.c, wrapc.c: Put
-     system includes last.
    * alias.h, pattern.h: Fixed comments.
    * wrap.c: Formatting fix.
    * wrap.c: Added comments.
+   * wrapc.c: Added comment.
 
 2015-02-15  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrapc.c: Added comment.
-   * README.md: Fixed reference to INSTALL.
-   * README.md: Changed final sentence.
    * INSTALL: Undid rename.
-   * README.md: Moved local install instructions to README per INSTALL
-     reference.
    * INSTALL.md: Fixed typos.
    * INSTALL.md: New file.
+   * INSTALL.fsf: Renamed file.
 
 2014-11-21  Paul J. Lucas <paul@lucasmail.org>
 
-   * INSTALL.fsf: Renamed file.
+   * common.h, wrap.c, wrapc.c: Clean-up.
 
 2014-11-03  Paul J. Lucas <paul@lucasmail.org>
 
-   * common.h, wrap.c, wrapc.c: Clean-up.
-
-2014-10-29  Paul J. Lucas <paul@lucasmail.org>
-
    * run_test.sh: Now using local_basename everywhere.
 
-2014-10-14  Paul J. Lucas <paul@lucasmail.org>
+2014-10-29  Paul J. Lucas <paul@lucasmail.org>
 
    * wraprc.5, config.wraprc, pattern-alias_exp.wraprc,
      pattern-no_alias.wraprc, pattern-no_equal.wraprc,
      pattern-unexp_char.wraprc: Simplified man pattern.
+
+2014-10-14  Paul J. Lucas <paul@lucasmail.org>
+
    * common.c, getopt.c, wrap.c, wrapc.c: Comment reformatting.
+   * alias.c, common.h: Added comments.
 
 2014-07-21  Paul J. Lucas <paul@lucasmail.org>
 
-   * alias.c, common.h: Added comments.
+   * wrap.1: Replace \f with .I.
 
 2014-07-17  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrap.1: Replace \f with .I.
+   * wrap.1: Fixed typo: s/dicarded/discarded/
 
 2014-06-19  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrap.1: Fixed typo: s/dicarded/discarded/
    * alias.c: Cosmetic change.
+   * configure.ac: Added PACKAGE_URL.
 
 2014-06-17  Paul J. Lucas <paul@lucasmail.org>
 
-   * configure.ac: Added PACKAGE_URL.
    * pattern.c: Fixed typos.
    * alias.c: Fixed typos.
    * wrapc.c: Moved arg_buf typedef.
+   * NEWS, common.h, wrap.c, wrapc.c: 1. Added () around arguments for FPUTC
+     and FPUTS. 2. Now checking that line_width doesn't become too small. 3.
+     Now scanning for leading characters on every line.
 
 2014-06-16  Paul J. Lucas <paul@lucasmail.org>
 
-   * ChangeLog, NEWS, common.h, wrap.c, wrapc.c: 1. Added () around arguments
-     for FPUTC and FPUTS. 2. Now checking that line_width doesn't become too
-     small. 3. Now scanning for leading characters on every line.
-   * ChangeLog, NEWS, configure.ac, wrapc.1, common.h, wrapc.c: Now handling
-     ragged comment lines better.
+   * NEWS, configure.ac, wrapc.1, common.h, wrapc.c: Now handling ragged
+     comment lines better.
+   * NEWS: Updated news/changes.
 
 2014-06-14  Paul J. Lucas <paul@lucasmail.org>
 
-   * ChangeLog, NEWS: Updated news/changes.
    * common.h: Put LINE_BUF_SIZE to 8192.
    * wrapc.c: Now using BLOCK in wrapc.
    * wrap.c: Can now copy arbitrarily long lines.
@@ -202,47 +256,44 @@
      wrap-long_line-03.test: New long-line test.
    * common.h, wrap.c, wrapc.c: Added CHECK_FGETX and BLOCK macros.
    * configure.ac: Upped version to 3.0.1.
-   * test/tests/README.md: Removed {}.
    * common.h, wrap.c, wrapc.c: New convenience macros.
 
 2014-06-12  Paul J. Lucas <paul@lucasmail.org>
 
-   * test/tests/README.md: New README file for test format.
+   * test/Makefile.am, long_line-01.txt, long_line-02.txt,
+     wrap-long_line-01.txt, wrap-long_line-02.txt, wrap-long_line-01.test,
+     wrap-long_line-02.test: New tests, .gitignore files.
 
 2014-06-11  Paul J. Lucas <paul@lucasmail.org>
 
-   * test/.gitignore, test/Makefile.am, long_line-01.txt, long_line-02.txt,
-     wrap-long_line-01.txt, wrap-long_line-02.txt, test/tests/.gitignore,
-     wrap-long_line-01.test, wrap-long_line-02.test: New tests, .gitignore
-     files.
-   * .gitignore, src/.gitignore: More .gitignore stuff.
    * wrap.1: Fixed -W by adding .TP.
 
 2014-05-26  Paul J. Lucas <paul@lucasmail.org>
 
-   * .gitignore: Added .gitignore.
-   * README.md: Added for github.
+   * LICENSE: Initial commit
 
 2014-05-20  Paul J. Lucas <paul@lucasmail.org>
 
-   * LICENSE, README.md: Initial commit
+   * devclean: Simplified.
 
 2014-05-19  Paul J. Lucas <paul@lucasmail.org>
 
-   * devclean: Simplified.
    * run_test.sh: Added setting of PATH to get correct wrap/wrapc.
    * run_test.sh: Simpler version that doesn't use arrays since Bourne shell
      doesn't have them.
-   * ChangeLog, devclean: Added devclean.
+   * devclean: Added devclean.
    * test/Makefile.am: Added AUTOMAKE_OPTIONS = 1.12
 
-2014-01-24  Paul J. Lucas <paul@lucasmail.org>
+2014-05-18  Paul J. Lucas <paul@lucasmail.org>
 
    * common.c: 1. More efficient check_atou(). 2. Cleaner check_realloc().
 
-2014-01-18  Paul J. Lucas <paul@lucasmail.org>
+2014-01-24  Paul J. Lucas <paul@lucasmail.org>
 
    * configure: Added configure.
+
+2014-01-18  Paul J. Lucas <paul@lucasmail.org>
+
    * Makefile.am, Makefile.in, NEWS, configure.ac, man/Makefile.am,
      man/Makefile.in, man/man1/Makefile.am, man/man1/Makefile.in, wrapc.1,
      man/man5/Makefile.am, man/man5/Makefile.in, wraprc.5, src/Makefile.am,
@@ -250,28 +301,28 @@
      pattern.c, pattern.h, read_conf.c, read_conf.h, wrap.c, wrapc.c,
      test/Makefile.am, test/Makefile.in, run_test.sh: Updated copyright year to
      2014.
+   * Makefile.in, aclocal.m4, man/Makefile.in, man/man1/Makefile.in, wrap.1,
+     man/man5/Makefile.in, src/Makefile.in, wrap.c, test/Makefile.am,
+     test/Makefile.in, wrap-I2-W.txt, wrap-I2-W.test: Changed -b to -W.
 
 2013-11-18  Paul J. Lucas <paul@lucasmail.org>
 
-   * ChangeLog, Makefile.in, aclocal.m4, man/Makefile.in, man/man1/Makefile.in,
-     wrap.1, man/man5/Makefile.in, src/Makefile.in, wrap.c, test/Makefile.am,
-     test/Makefile.in, wrap-I2-W.txt, wrap-I2-W.test: Changed -b to -W.
    * wrapc.1: Added mention of leading characters being discarded bug.
    * wrap.c, wrapc.c: Now correstly testing for errors on putc(), fputs(), &
      fprintf().
    * test/Makefile.am, test/Makefile.in, wrapc-02.txt, wrapc-no_options-02.txt,
      wrapc-no_options-02.test: Added test to test wrapc short-line bug.
-   * ChangeLog, NEWS: Added mention of short-line bug fix.
+   * NEWS: Added mention of short-line bug fix.
    * wrapc.c: Fixed bug in reading lines < lead_width.
    * wrapc.c: Cosmetic change.
    * wrap.c: Fixed opening of output file.
    * wrap-conf-not_found.test: Updated expected exit status.
    * wrap-pattern-unexp_char.test: Fixed typo.
+   * run_test.sh: 1. Added debugging echo line. 2. Flipped diff order so
+     expected is on the left.
 
 2013-11-17  Paul J. Lucas <paul@lucasmail.org>
 
-   * run_test.sh: 1. Added debugging echo line. 2. Flipped diff order so
-     expected is on the left.
    * test/Makefile.in: Clean-up dist-hook.
    * wrap.1, wrapc.1: Clarifications.
    * wrap.1, wrapc.1: s/.)/)./
@@ -285,14 +336,11 @@
      are now distributed.
    * run_test.sh: Removed unnecessary quoting.
    * Makefile.in: COPYING is now in dist.
+   * COPYING: Renamed Copying to COPYING.
 
 2013-11-16  Paul J. Lucas <paul@lucasmail.org>
 
-   * COPYING: Renamed Copying to COPYING.
    * wrap.1: Moved non-whitespace-discard paragraph.
-
-2013-11-15  Paul J. Lucas <paul@lucasmail.org>
-
    * test/Makefile.am, test/Makefile.in, wrapc-01.txt, wrapc-no_options-01.txt,
      run_test.sh, utf8-w77.test, utf8-w78.test, utf8-w79.test, utf8-w80.test,
      wrap-H3-t1-T.test, wrap-H3.test, wrap-I2-m1.test, wrap-I2-w72.test,
@@ -305,7 +353,9 @@
      wrap-pattern-unexp_char.test, wrap-t1.test, wrapc-no_options-01.test: 1.
      Changed $WRAP to $BUILD_SRC in run_test.sh. 2. Added PROG field to tests.
      3. Added first wrapc test.
-   * ChangeLog: More entries.
+
+2013-11-15  Paul J. Lucas <paul@lucasmail.org>
+
    * NEWS: More news.
    * alias.c, pattern.c, read_conf.c: More commentss.
    * wrapc.c: Added missing exit codes.
@@ -319,25 +369,25 @@
      processed.
    * wrap.1, wrapc.1, wrap.c, wrapc.c, test/Makefile.am, test/Makefile.in,
      wrap-H3-t1-T.txt, wrap-H3-t1-T.test: Added -T option.
+   * wrap.c: Added proper UTF-8 code for sliding buffer.
 
 2013-11-14  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrap.c: Added proper UTF-8 code for sliding buffer.
    * wrap.c: Fixed comment.
    * wrap.1: 1. Added .SS sections. 2. Added mention that control characters
      are discarded. 3. Added mention that UTF-8 BOMs are discarded. 4. Added
      exit status codes. 5. Added mention of RFC 3629.
    * wrapc.1: Added exit status codes.
    * wraprc.5: Removed blank lines between comment delimiters.
+   * wrapc.1: Removed blank lines between comment delimiters.
 
 2013-11-13  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrapc.1: Removed blank lines between comment delimiters.
    * wrap.c: Comment addition.
+   * wrap.c: Cosmetic change.
 
 2013-11-12  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrap.c: Cosmetic change.
    * test/Makefile.am, test/Makefile.in, wrap-h1-I5.txt, wrap-h1-I5.test:
      Another test.
    * test/Makefile.am, test/Makefile.in, config.wraprc, wrap-a.txt,
@@ -372,19 +422,19 @@
      wrap-I2-m1.test, wrap-I2-w72.test, wrap-bI2.test, wrap-d.test,
      wrap-dep.test, wrap-no_options.test, wrap-t1.test: Moved tests into "test"
      subdirectory.
-
-2013-11-10  Paul J. Lucas <paul@lucasmail.org>
-
    * configure.ac, test/Makefile.am, test/Makefile.in, run_test.sh,
      utf8-w77.test, utf8-w78.test, utf8-w79.test, utf8-w80.test, wrap-H3.test,
      wrap-I2-m1.test, wrap-I2-w72.test, wrap-bI2.test, wrap-d.test,
      wrap-dep.test, wrap-no_options.test, wrap-t1.test: Now using GNU test
      driver mechanism.
+
+2013-11-10  Paul J. Lucas <paul@lucasmail.org>
+
    * run_tests.sh: INPUT now includes data/
+   * wrapc.c: Cosmetic change.
 
 2013-11-09  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrapc.c: Cosmetic change.
    * Makefile.am, Makefile.in, aclocal.m4, configure.ac, ax_append_flag.m4,
      ax_cflags_warn_all.m4, ax_check_compile_flag.m4, man/Makefile.in,
      man/man1/Makefile.in, man/man5/Makefile.in, src/Makefile.am,
@@ -402,10 +452,10 @@
      wrap-d.test, wrap-dep.test, wrap-no_options.test, wrap-t1.test: Reworked
      test filename format.
    * run_tests.sh: Now doing PASS/FAIL.
+   * Makefile: Added automake-required targets.
 
 2013-11-06  Paul J. Lucas <paul@lucasmail.org>
 
-   * Makefile: Added automake-required targets.
    * wrap.1, wrapc.1: Now using .TP.
    * wrapc.1: Added BUGS.
    * wrapc.1: Put SEE ALSO last.
@@ -416,10 +466,10 @@
    * test-t1.txt, test-t1: Another test.
    * test-bI2.txt, test-bI2: Renamed test.
    * test-dep.txt, test-dep: Another test.
+   * data-01a.txt, test-b-I2.txt, test-b-I2: Another test.
 
 2013-11-05  Paul J. Lucas <paul@lucasmail.org>
 
-   * data-01a.txt, test-b-I2.txt, test-b-I2: Another test.
    * Makefile, data-02.txt, run_tests.sh: Another test; s/test.sh/run_tests.sh/
    * test-H3.txt, test-H3: Another test.
    * test-d.txt, test-d: Another test.
@@ -429,23 +479,24 @@
      Added initial tests.
    * configure.ac, src/Makefile.am, src/Makefile.in, config.h.in, pattern.h,
      read_conf.c, wrap.c: Now conditionally compiles pattern.c.
+   * common.h: Cosmetic change.
 
 2013-11-04  Paul J. Lucas <paul@lucasmail.org>
 
-   * common.h: Cosmetic change.
    * wrap.c, wrapc.c: Fixed use of PACKAGE_STRING.
-   * ChangeLog: Tweak.
-   * ChangeLog: New file.
-
-2013-11-03  Paul J. Lucas <paul@lucasmail.org>
-
    * INSTALL, Makefile.am, Makefile.in, aclocal.m4, compile, configure.ac,
      depcomp, install-sh, man/Makefile.am, man/Makefile.in,
      man/man1/Makefile.am, man/man1/Makefile.in, man/man5/Makefile.am,
      man/man5/Makefile.in, missing, src/Makefile.am, src/Makefile.in, common.c,
      common.h, config.h.in, read_conf.c, wrap.c, wrapc.c: Now build with
      configure.
+
+2013-11-03  Paul J. Lucas <paul@lucasmail.org>
+
    * NEWS: New file.
+
+2013-11-02  Paul J. Lucas <paul@lucasmail.org>
+
    * AUTHORS: GNU compliance.
    * read_conf.c: Updated GPL with license URL.
    * Makefile: Updated GPL with license URL.
@@ -455,44 +506,44 @@
    * alias.c, alias.h: Updated GPL with license URL.
    * common.h: Updated GPL with license URL.
    * common.c: 1. Updated GPL. 2. Made realloc compatible with non-POSIX.
+   * wrap.1, wrapc.1, wraprc.5: Updated GPL with license URL.
 
 2013-10-30  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrap.1, wrapc.1, wraprc.5: Updated GPL with license URL.
    * wrapc.1: Tweaks.
    * alias.c, common.c, pattern.c, wrap.c: Fixed clean_up().
+   * Makefile, alias.c, alias.h, common.h, pattern.c, pattern.h, read_conf.c,
+     read_conf.h, wrap.c, wrapc.c: s/config/conf/
 
 2013-10-29  Paul J. Lucas <paul@lucasmail.org>
 
-   * Makefile, alias.c, alias.h, common.h, pattern.c, pattern.h, read_conf.c,
-     read_conf.h, wrap.c, wrapc.c: s/config/conf/
    * Makefile, alias.c, alias.h, common.c, common.h, config.c, config.h,
      getopt.c, getopt.h, pattern.c, pattern.h, wrap.c, wrapc.c: Moved source to
      src.
    * wrap.1, wrapc.1, wraprc.5: Put man pages in subdirectory.
-
-2013-10-23  Paul J. Lucas <paul@lucasmail.org>
-
    * Makefile, alias.c, alias.h, common.c, common.h, config.c, config.h,
      getopt.c, getopt.h, pattern.c, pattern.h, wrap.1, wrap.c, wrapc.1,
      wrapc.c, wraprc.5: Aliases & patterns.
 
-2013-10-22  Paul J. Lucas <paul@lucasmail.org>
+2013-10-23  Paul J. Lucas <paul@lucasmail.org>
 
    * common.c, common.h, wrap.c, wrapc.c: s/atoi/atou/
 
-2013-10-21  Paul J. Lucas <paul@lucasmail.org>
+2013-10-22  Paul J. Lucas <paul@lucasmail.org>
 
    * wrap.c: Fixed -f and -o errors.
+
+2013-10-21  Paul J. Lucas <paul@lucasmail.org>
+
    * wrap.c: Cosmetic fix.
    * wrap.1: Added . exception.
    * wrap.1, wrap.c: Added -d option.
    * wrapc.c: Fixed usage message.
    * wrap.c: Fixed eos-delimit bug.
+   * wrap.1, wrap.c, wrapc.1, wrapc.c: Added -p option.
 
 2013-10-20  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrap.1, wrap.c, wrapc.1, wrapc.c: Added -p option.
    * wrap.1, wrapc.1: Better Synopsis formatting.
    * wrap.c, wrapc.c: 1. Now using "opt_" prefix for command-line options. 2.
      Added do...while (0).
@@ -500,10 +551,10 @@
    * common.h: Added do...while (0).
    * Makefile: Removed -Wshadow.
    * Makefile: Now using gcc and warnings.
+   * wrap.c: Cosmetic change.
 
 2013-10-19  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrap.c: Cosmetic change.
    * wrap.c, wrapc.c: Cosmetic changes.
    * wrapc.c: Fixed exit status.
    * wrap.c: Cosmetic change.
@@ -511,25 +562,25 @@
    * Makefile, common.c, common.h, wrap.c, wrapc.c: Now checking integer
      arguments.
    * wrapc.c: Added child process wait checking.
+   * common.h, wrap.c: Cosmetic change.
 
 2013-10-18  Paul J. Lucas <paul@lucasmail.org>
 
-   * common.h, wrap.c: Cosmetic change.
    * wrapc.c: s/text-length/line-length/
+   * common.h, wrap.1, wrap.c, wrapc.1, wrapc.c: Added: -f & -o options, stream
+     error checking.
 
 2013-10-10  Paul J. Lucas <paul@lucasmail.org>
 
-   * common.h, wrap.1, wrap.c, wrapc.1, wrapc.c: Added: -f & -o options, stream
-     error checking.
    * wrapc.c: Clean-up.
+   * wrap.c: More efficient loop.
 
 2013-10-06  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrap.c: More efficient loop.
+   * wrap.c: Tweak.
 
 2013-10-04  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrap.c: Tweak.
    * wrap.c: Cosmetic changes.
    * wrap.c, wrapc.c: Cosmetic changes.
    * common.h: s/PJL_common_H/wrap_common_H/
@@ -544,31 +595,31 @@
    * wrapc.c: Added tab_spaces; clean-up.
    * wrap.c: Added tab_spaces.
    * version.h: Updated version.
+   * Makefile: 1. Updated copyright year. 2. Added $(MR)
 
 2013-10-03  Paul J. Lucas <paul@lucasmail.org>
 
-   * Makefile: 1. Updated copyright year. 2. Added $(MR)
    * c_compat.h: Cosmetic changes.
    * c_compat.h, wrap.c: Updated copyright year.
    * README: Updated e-mail address.
    * wrapc.1: Added ":" for XQuery comment.
+   * wrapc.c: Comment change.
 
 2013-01-24  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrapc.c: Comment change.
+   * Makefile, c_compat.h, version.h, wrap.1, wrap.c, wrapc.1, wrapc.c: Update.
 
 2012-07-17  Paul J. Lucas <paul@lucasmail.org>
 
-   * Makefile, c_compat.h, version.h, wrap.1, wrap.c, wrapc.1, wrapc.c: Update.
+   * wrapc.1: 1. s/2009/2012/ 2. s/pauljlucas@mac.com/paul@lucasmail.org/
 
 2009-10-15  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrapc.1: 1. s/2009/2012/ 2. s/pauljlucas@mac.com/paul@lucasmail.org/
+   * wrap.1: 1. Changed e-mail address. 2. Added missing '.'. 3. Updated
+     copyright year.
 
 2005-07-03  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrap.1: 1. Changed e-mail address. 2. Added missing '.'. 3. Updated
-     copyright year.
    * c_compat.h, version.h, wrap.c: Updated copyright notice to include "2005".
    * wrap.1, wrapc.1: Updated e-mail address.
    * wrapc.1: 1. Added '!'. 2. Updated date.
@@ -579,14 +630,14 @@
    * README: 1. Updated e-mail address. 2. Added "2005" to copyright.
    * c_compat.h: Converted tabs to spaces.
    * version.h: 1. Changed to 2.10. 2. Changed tabs to spaces.
+   * wrap.c: 1. s/VERSION/WRAP_VERSION/ 2. Converted tabs to spaces.
 
 2001-02-01  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrap.c: 1. s/VERSION/WRAP_VERSION/ 2. Converted tabs to spaces.
+   * Makefile: s/clobber/distclean/
 
 2000-07-01  Paul J. Lucas <paul@lucasmail.org>
 
-   * Makefile: s/clobber/distclean/
    * wrap.1, wrapc.1: Fixed mistake in author line.
    * wrapc.c: 1. Added #include "version.h". 2. Performed substitution: s/int
      pid;/pid_t pid;/ 3. Added mention of "Perl" to comments. 4. Fix bug in
