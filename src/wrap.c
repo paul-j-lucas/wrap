@@ -24,9 +24,7 @@
 #include "common.h"
 #include "getopt.h"
 #include "options.h"
-#ifdef WITH_PATTERNS
-# include "pattern.h"
-#endif /* WITH_PATTERNS */
+#include "pattern.h"
 #include "read_conf.h"
 #include "util.h"
 
@@ -489,9 +487,7 @@ done:
 
 static void clean_up( void ) {
   alias_cleanup();
-#ifdef WITH_PATTERNS
   pattern_cleanup();
-#endif /* WITH_PATTERNS */
 }
 
 static bool copy_line( FILE *fin, FILE *fout, char *buf, size_t buf_size ) {
@@ -541,10 +537,8 @@ static void init( int argc, char const *argv[] ) {
           opt_alias, opt_conf_file
         );
     }
-#ifdef WITH_PATTERNS
     else if ( opt_fin_name )
       alias = pattern_find( opt_fin_name );
-#endif /* WITH_PATTERNS */
     if ( alias )
       process_options( alias->argc, alias->argv, opts, alias->line_no );
   }

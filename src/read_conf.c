@@ -22,9 +22,7 @@
 #include "config.h"
 #include "alias.h"
 #include "common.h"
-#ifdef WITH_PATTERNS
-# include "pattern.h"
-#endif /* WITH_PATTERNS */
+#include "pattern.h"
 #include "util.h"
 
 // standard
@@ -160,11 +158,9 @@ char const* read_conf( char const *conf_file ) {
       case ALIASES:
         alias_parse( line, conf_file, line_no );
         break;
-#ifdef WITH_PATTERNS
       case PATTERNS:
         pattern_parse( line, conf_file, line_no );
         break;
-#endif /* WITH_PATTERNS */
     } // switch
   } // while
 

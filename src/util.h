@@ -25,28 +25,12 @@
 #include "config.h"
 
 // standard
+#include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>                      /* for FILE */
 #include <stdlib.h>                     /* for exit(3) */
 
 ///////////////////////////////////////////////////////////////////////////////
-
-// define a "bool" type
-#ifdef HAVE_STDBOOL_H
-# include <stdbool.h>
-#else
-# ifndef HAVE__BOOL
-#   ifdef __cplusplus
-typedef bool _Bool;
-#   else
-#     define _Bool signed char
-#   endif /* __cplusplus */
-# endif /* HAVE__BOOL */
-# define bool   _Bool
-# define false  0
-# define true   1
-# define __bool_true_false_are_defined 1
-#endif /* HAVE_STDBOOL_H */
 
 #define BLOCK(...)          do { __VA_ARGS__ } while (0)
 #define ERROR_STR           strerror( errno )

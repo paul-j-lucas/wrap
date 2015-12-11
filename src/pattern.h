@@ -25,10 +25,6 @@
 #include "alias.h"
 #include "config.h"
 
-#ifndef WITH_PATTERNS
-# error "Patterns not supported (no fnmatch(3)); this file should not be compiled."
-#endif /* WITH_PATTERNS */
-
 ///////////////////////////////////////////////////////////////////////////////
 
 struct pattern_s {

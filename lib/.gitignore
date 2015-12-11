@@ -1,4 +1,12 @@
+*.alias
+*.sed
+alloca.h
+configmake.h
+fnmatch.h
 getopt.h
+stdbool.h
 stddef.h
 string.h
 unistd.h
+wchar.h
+wctype.h

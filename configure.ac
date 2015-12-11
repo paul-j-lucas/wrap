@@ -56,16 +56,6 @@ AC_FUNC_FORK
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([geteuid getpwuid perror strerror strndup])
 
-# If fnmatch(3) is defined, define an automake variable that can be used to
-# compile pattern.c conditionally.
-AM_CONDITIONAL([am_WITH_PATTERNS], [test x$ac_cv_func_fnmatch_works = xyes])
-
-# If fnmatch(3) is defined, define a C macro in config.h that has a more
-# intuitive name that HAS_FN_MATCH.
-if test x$ac_cv_func_fnmatch_works = xyes
-then AC_DEFINE([WITH_PATTERNS],[1],[Define to 1 if patterns via fnmatch(3) are supported.])
-fi
-
 # Miscellaneous.
 AC_LANG(C)
 AX_CFLAGS_WARN_ALL

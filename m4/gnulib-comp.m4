@@ -39,17 +39,32 @@ AC_DEFUN([gl_EARLY],
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([gl_PROG_AR_RANLIB])
   # Code from module absolute-header:
+  # Code from module alloca:
+  # Code from module alloca-opt:
+  # Code from module configmake:
   # Code from module extensions:
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   # Code from module extern-inline:
+  # Code from module fnmatch:
   # Code from module include_next:
+  # Code from module localcharset:
+  # Code from module mbrtowc:
+  # Code from module mbsinit:
+  # Code from module mbsrtowcs:
+  # Code from module memchr:
   # Code from module snippet/arg-nonnull:
   # Code from module snippet/c++defs:
   # Code from module snippet/warn-on-use:
+  # Code from module stdbool:
   # Code from module stddef:
+  # Code from module streq:
   # Code from module string:
   # Code from module strndup:
   # Code from module strnlen:
+  # Code from module strnlen1:
+  # Code from module verify:
+  # Code from module wchar:
+  # Code from module wctype-h:
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -68,7 +83,43 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([gl_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='lib'
+  gl_FUNC_ALLOCA
+  gl_CONFIGMAKE_PREP
   AC_REQUIRE([gl_EXTERN_INLINE])
+  gl_FUNC_FNMATCH_POSIX
+  if test -n "$FNMATCH_H"; then
+    AC_LIBOBJ([fnmatch])
+    gl_PREREQ_FNMATCH
+  fi
+  gl_LOCALCHARSET
+  LOCALCHARSET_TESTS_ENVIRONMENT="CHARSETALIASDIR=\"\$(abs_top_builddir)/$gl_source_base\""
+  AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
+  gl_FUNC_MBRTOWC
+  if test $HAVE_MBRTOWC = 0 || test $REPLACE_MBRTOWC = 1; then
+    AC_LIBOBJ([mbrtowc])
+    gl_PREREQ_MBRTOWC
+  fi
+  gl_WCHAR_MODULE_INDICATOR([mbrtowc])
+  gl_FUNC_MBSINIT
+  if test $HAVE_MBSINIT = 0 || test $REPLACE_MBSINIT = 1; then
+    AC_LIBOBJ([mbsinit])
+    gl_PREREQ_MBSINIT
+  fi
+  gl_WCHAR_MODULE_INDICATOR([mbsinit])
+  gl_FUNC_MBSRTOWCS
+  if test $HAVE_MBSRTOWCS = 0 || test $REPLACE_MBSRTOWCS = 1; then
+    AC_LIBOBJ([mbsrtowcs])
+    AC_LIBOBJ([mbsrtowcs-state])
+    gl_PREREQ_MBSRTOWCS
+  fi
+  gl_WCHAR_MODULE_INDICATOR([mbsrtowcs])
+  gl_FUNC_MEMCHR
+  if test $HAVE_MEMCHR = 0 || test $REPLACE_MEMCHR = 1; then
+    AC_LIBOBJ([memchr])
+    gl_PREREQ_MEMCHR
+  fi
+  gl_STRING_MODULE_INDICATOR([memchr])
+  AM_STDBOOL_H
   gl_STDDEF_H
   gl_HEADER_STRING_H
   gl_FUNC_STRNDUP
@@ -82,6 +133,8 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_STRNLEN
   fi
   gl_STRING_MODULE_INDICATOR([strnlen])
+  gl_WCHAR_H
+  gl_WCTYPE_H
   # End of code from modules
   m4_ifval(gl_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl_LIBSOURCES_DIR])[ ||
@@ -225,22 +278,66 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/snippet/arg-nonnull.h
   build-aux/snippet/c++defs.h
   build-aux/snippet/warn-on-use.h
-  lib/dummy.c
+  lib/alloca.c
+  lib/alloca.in.h
+  lib/config.charset
+  lib/fnmatch.c
+  lib/fnmatch.in.h
+  lib/fnmatch_loop.c
+  lib/localcharset.c
+  lib/localcharset.h
+  lib/mbrtowc.c
+  lib/mbsinit.c
+  lib/mbsrtowcs-impl.h
+  lib/mbsrtowcs-state.c
+  lib/mbsrtowcs.c
+  lib/memchr.c
+  lib/memchr.valgrind
+  lib/ref-add.sin
+  lib/ref-del.sin
+  lib/stdbool.in.h
   lib/stddef.in.h
+  lib/streq.h
   lib/string.in.h
   lib/strndup.c
   lib/strnlen.c
+  lib/strnlen1.c
+  lib/strnlen1.h
+  lib/verify.h
+  lib/wchar.in.h
+  lib/wctype-h.c
+  lib/wctype.in.h
   m4/00gnulib.m4
   m4/absolute-header.m4
+  m4/alloca.m4
+  m4/codeset.m4
+  m4/configmake.m4
   m4/extensions.m4
   m4/extern-inline.m4
+  m4/fcntl-o.m4
+  m4/fnmatch.m4
+  m4/glibc21.m4
   m4/gnulib-common.m4
   m4/include_next.m4
+  m4/localcharset.m4
+  m4/locale-fr.m4
+  m4/locale-ja.m4
+  m4/locale-zh.m4
+  m4/mbrtowc.m4
+  m4/mbsinit.m4
+  m4/mbsrtowcs.m4
+  m4/mbstate_t.m4
+  m4/memchr.m4
+  m4/mmap-anon.m4
   m4/onceonly.m4
+  m4/stdbool.m4
   m4/stddef_h.m4
   m4/string_h.m4
   m4/strndup.m4
   m4/strnlen.m4
   m4/warn-on-use.m4
+  m4/wchar_h.m4
   m4/wchar_t.m4
+  m4/wctype_h.m4
+  m4/wint_t.m4
 ])

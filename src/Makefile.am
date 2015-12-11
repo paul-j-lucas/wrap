@@ -22,10 +22,7 @@ bin_PROGRAMS = wrap wrapc
 
 AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_builddir)/lib -L$(top_srcdir)/lib
 
-wrap_SOURCES = alias.c getopt.c read_conf.c options.c util.c wrap.c
-if am_WITH_PATTERNS
-wrap_SOURCES += pattern.c
-endif
+wrap_SOURCES = alias.c getopt.c read_conf.c pattern.c options.c util.c wrap.c
 wrap_LDADD = $(top_builddir)/lib/libgnu.a
 
 wrapc_SOURCES = getopt.c options.c util.c wrapc.c
