@@ -25,9 +25,7 @@
 #include "config.h"
 
 // standard
-#ifdef HAVE_SYSEXITS_H
-# include <sysexits.h>
-#endif /* HAVE_SYSEXITS_H */
+#include <sysexits.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -37,16 +35,6 @@
 #define LINE_WIDTH_MINIMUM        1
 #define NEWLINES_DELIMIT_DEFAULT  2     /* # newlines that delimit a para */
 #define TAB_SPACES_DEFAULT        8     /* number of spaces a tab equals */
-
-#ifndef HAVE_SYSEXITS_H
-# define EX_OK                    0     /* success */
-# define EX_USAGE                 64    /* command-line usage error */
-# define EX_NOINPUT               66    /* opening file error */
-# define EX_OSERR                 71    /* system error (e.g., can't fork) */
-# define EX_CANTCREAT             73    /* creating file error */
-# define EX_IOERR                 74    /* input/output error */
-# define EX_CONFIG                78    /* config. file error */
-#endif /* HAVE_SYSEXITS_H */
 
 /**
  * From Wikipedia: The data link escape character (DLE) was intended to be a

@@ -55,16 +55,22 @@ AC_DEFUN([gl_EARLY],
   # Code from module mbsinit:
   # Code from module mbsrtowcs:
   # Code from module memchr:
+  # Code from module snippet/_Noreturn:
   # Code from module snippet/arg-nonnull:
   # Code from module snippet/c++defs:
   # Code from module snippet/warn-on-use:
+  # Code from module ssize_t:
   # Code from module stdbool:
   # Code from module stddef:
+  # Code from module stdlib:
   # Code from module streq:
   # Code from module string:
   # Code from module strndup:
   # Code from module strnlen:
   # Code from module strnlen1:
+  # Code from module sys_types:
+  # Code from module sysexits:
+  # Code from module unistd:
   # Code from module verify:
   # Code from module wchar:
   # Code from module wctype-h:
@@ -122,8 +128,10 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_MEMCHR
   fi
   gl_STRING_MODULE_INDICATOR([memchr])
+  gt_TYPE_SSIZE_T
   AM_STDBOOL_H
   gl_STDDEF_H
+  gl_STDLIB_H
   gl_HEADER_STRING_H
   gl_FUNC_STRNDUP
   if test $HAVE_STRNDUP = 0 || test $REPLACE_STRNDUP = 1; then
@@ -136,6 +144,10 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_STRNLEN
   fi
   gl_STRING_MODULE_INDICATOR([strnlen])
+  gl_SYS_TYPES_H
+  AC_PROG_MKDIR_P
+  gl_SYSEXITS
+  gl_UNISTD_H
   gl_WCHAR_H
   gl_WCTYPE_H
   # End of code from modules
@@ -278,6 +290,7 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
+  build-aux/snippet/_Noreturn.h
   build-aux/snippet/arg-nonnull.h
   build-aux/snippet/c++defs.h
   build-aux/snippet/warn-on-use.h
@@ -300,12 +313,17 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/ref-del.sin
   lib/stdbool.in.h
   lib/stddef.in.h
+  lib/stdlib.in.h
   lib/streq.h
   lib/string.in.h
   lib/strndup.c
   lib/strnlen.c
   lib/strnlen1.c
   lib/strnlen1.h
+  lib/sys_types.in.h
+  lib/sysexits.in.h
+  lib/unistd.c
+  lib/unistd.in.h
   lib/verify.h
   lib/wchar.in.h
   lib/wctype-h.c
@@ -332,12 +350,18 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mbstate_t.m4
   m4/memchr.m4
   m4/mmap-anon.m4
+  m4/off_t.m4
   m4/onceonly.m4
+  m4/ssize_t.m4
   m4/stdbool.m4
   m4/stddef_h.m4
+  m4/stdlib_h.m4
   m4/string_h.m4
   m4/strndup.m4
   m4/strnlen.m4
+  m4/sys_types_h.m4
+  m4/sysexits.m4
+  m4/unistd_h.m4
   m4/warn-on-use.m4
   m4/wchar_h.m4
   m4/wchar_t.m4
