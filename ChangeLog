@@ -1,5 +1,18 @@
+2015-12-17  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, stdlib.in.h, sys_types.in.h, sysexits.in.h, unistd.c,
+     unistd.in.h, gnulib-cache.m4, gnulib-comp.m4, off_t.m4, ssize_t.m4,
+     stdlib_h.m4, sys_types_h.m4, sysexits.m4, unistd_h.m4,
+     snippet/_Noreturn.h, common.h: Now using GNUlib sysexits.
+
+2015-12-13  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, gnulib-cache.m4: Added missing stdbool in m4 cache.
+
 2015-12-11  Paul J. Lucas <paul@lucasmail.org>
 
+   * lib/Makefile.am, fnmatch.m4, gnulib-cache.m4, gnulib-common.m4,
+     gnulib-comp.m4, mbrtowc.m4: Updated Gnulib.
    * configure.ac, lib/Makefile.am, alloca.c, alloca.in.h, config.charset,
      fnmatch.c, fnmatch.in.h, fnmatch_loop.c, localcharset.c, localcharset.h,
      mbrtowc.c, mbsinit.c, mbsrtowcs-impl.h, mbsrtowcs-state.c, mbsrtowcs.c,
