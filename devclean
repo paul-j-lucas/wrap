@@ -57,7 +57,7 @@ do
     no_slash=${ig_pattern#/}
     if [[ $no_slash == $ig_pattern ]]
     then $ECHO find $ig_dir -name "$ig_pattern" -exec rm -fr {} \; -prune
-    else $ECHO rm -fr $no_slash
+    else $ECHO rm -fr $ig_dir/$no_slash
     fi
   done < $ig_file
 done
