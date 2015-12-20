@@ -1,5 +1,5 @@
-*.dSYM
-config.h
-stamp-h1
-wrap
-wrapc
+/*.dSYM
+/config.h
+/stamp-h1
+/wrap
+/wrapc
