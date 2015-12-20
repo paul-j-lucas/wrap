@@ -254,7 +254,7 @@ int main( int argc, char const *argv[] ) {
       if ( buf_count && put_spaces < 1 + was_eos_char ) {
         //
         // We are not at the beginning of a line: remember to insert 1 space
-        // later amd allow 2 after the end of a sentence.
+        // later and allow 2 after the end of a sentence.
         //
         ++put_spaces;
       }
