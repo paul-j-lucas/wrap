@@ -26,5 +26,6 @@ wrap_SOURCES = alias.c getopt.c read_conf.c pattern.c options.c util.c wrap.c
 wrap_LDADD = $(top_builddir)/lib/libgnu.a
 
 wrapc_SOURCES = getopt.c options.c util.c wrapc.c
+wrapc_LDADD = $(top_builddir)/lib/libgnu.a
 
 # vim:set noet sw=8 ts=8:
