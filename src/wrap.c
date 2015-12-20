@@ -70,6 +70,8 @@ bool        opt_title_line;             // 1st para line is title?
 
 // local variable definitions
 static char buf[ LINE_BUF_SIZE ];
+static int  buf_count = 0;              // number of characters in buffer
+static int  buf_width = 0;              // actual width of buffer
 
 static char const utf8_len_table[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
@@ -98,7 +100,7 @@ static char const utf8_len_table[] = {
 // local functions
 static bool copy_line( FILE*, FILE*, char*, size_t );
 static void clean_up( void );
-static void hang_indent( int*, int* );
+static void hang_indent( void );
 static void init( int, char const*[] );
 static void print_buf( int, bool );
 static void print_lead_chars( void );
@@ -108,8 +110,6 @@ static void usage( void );
 ///////////////////////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
-  int buf_count = 0;                    // number of characters in buffer
-  int buf_width = 0;                    // actual width of buffer
   int wrap_pos = 0;                     // position at which we can wrap
 
   //
@@ -202,7 +202,6 @@ int main( int argc, char const *argv[] ) {
         //
         print_lead_chars();
         print_buf( buf_count, true );
-        buf_count = buf_width = 0;
         do_hang_indent = true;
         next_line_is_title = false;
         continue;
@@ -347,7 +346,7 @@ int main( int argc, char const *argv[] ) {
     }
 
     if ( do_hang_indent ) {
-      hang_indent( &buf_count, &buf_width );
+      hang_indent();
       do_hang_indent = false;
     }
 
@@ -401,22 +400,20 @@ int main( int argc, char const *argv[] ) {
       if ( !is_long_line )
         print_lead_chars();
       print_buf( buf_count, false );
-      buf_count = buf_width = 0;
       is_long_line = true;
       continue;
     }
 
     is_long_line = false;
     print_lead_chars();
+    tmp_buf_count = buf_count;
     print_buf( wrap_pos, true );
 
     //
     // Prepare to slide the partial word to the left where we can pick up from
     // where we left off the next time around.
     //
-    tmp_buf_count = buf_count;
-    buf_count = buf_width = 0;
-    hang_indent( &buf_count, &buf_width );
+    hang_indent();
 
     //
     // Now slide the partial word to the left.
@@ -450,7 +447,6 @@ delimit_paragraph:
       else
         print_lead_chars();
       print_buf( buf_count, true );
-      buf_count = buf_width = 0;
     } else if ( is_long_line )
       FPUTC( '\n', fout );              // delimit the "long line"
 
@@ -509,14 +505,12 @@ static bool copy_line( FILE *fin, FILE *fout, char *buf, size_t buf_size ) {
   return true;
 }
 
-static void hang_indent( int *count, int *width ) {
-  assert( count );
-  assert( width );
+static void hang_indent( void ) {
   for ( int i = 0; i < opt_hang_tabs; ++i )
-    buf[ (*count)++ ] = '\t';
+    buf[ buf_count++ ] = '\t';
   for ( int i = 0; i < opt_hang_spaces; ++i )
-    buf[ (*count)++ ] = ' ';
-  *width += opt_hang_tabs * opt_tab_spaces + opt_hang_spaces;
+    buf[ buf_count++ ] = ' ';
+  buf_width += opt_hang_tabs * opt_tab_spaces + opt_hang_spaces;
 }
 
 static void init( int argc, char const *argv[] ) {
@@ -572,6 +566,7 @@ static void print_buf( int len, bool newline ) {
   buf[ len ] = '\0';
   if ( len )
     FPRINTF( fout, newline ? "%s\n" : "%s", buf );
+  buf_count = buf_width = 0;
 }
 
 static void print_lead_chars( void ) {
