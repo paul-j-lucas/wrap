@@ -39,7 +39,6 @@
 #include <unistd.h>
 
 // extern variable definitions
-char        buf[ LINE_BUF_SIZE ];
 FILE       *fin;                        // file in
 FILE       *fout;                       // file out
 char const *me;                         // executable name
@@ -68,6 +67,9 @@ bool        opt_no_conf;                // do not read conf file
 char const* opt_para_delimiters = NULL; // additional para delimiter chars
 int         opt_tab_spaces = TAB_SPACES_DEFAULT;
 bool        opt_title_line;             // 1st para line is title?
+
+// local variable definitions
+static char buf[ LINE_BUF_SIZE ];
 
 static char const utf8_len_table[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
