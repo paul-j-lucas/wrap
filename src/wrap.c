@@ -408,15 +408,11 @@ int main( int argc, char const *argv[] ) {
     print_lead_chars();
     tmp_buf_count = buf_count;
     print_buf( wrap_pos, true );
-
-    //
-    // Prepare to slide the partial word to the left where we can pick up from
-    // where we left off the next time around.
-    //
     hang_indent();
 
     //
-    // Now slide the partial word to the left.
+    // Slide the partial word to the left where we can pick up from where we
+    // left off the next time around.
     //
     for ( int from = wrap_pos + 1; from < tmp_buf_count; ++from ) {
       c = buf[ from ];
