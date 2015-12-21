@@ -44,13 +44,13 @@ FILE       *fout;                       // file out
 char const *me;                         // executable name
 
 // option variable definitions
-char const* opt_alias;
-char const* opt_conf_file;
+char const *opt_alias;
+char const *opt_conf_file;
 bool        opt_eos_delimit;            // end-of-sentence delimits para's?
 bool        opt_data_link_escape;       // respond to in-band control
-char const* opt_fin;                    // file in path
-char const* opt_fin_name;               // file in name (only)
-char const* opt_fout = NULL;            // file out path
+char const *opt_fin;                    // file in path
+char const *opt_fin_name;               // file in name (only)
+char const *opt_fout = NULL;            // file out path
 int         opt_hang_spaces;            // hanging-indent spaces
 int         opt_hang_tabs;              // hanging-indent tabs
 int         opt_indt_spaces;            // indent spaces
@@ -64,7 +64,7 @@ int         opt_mirror_spaces;
 int         opt_mirror_tabs;
 int         opt_newlines_delimit = NEWLINES_DELIMIT_DEFAULT;
 bool        opt_no_conf;                // do not read conf file
-char const* opt_para_delimiters = NULL; // additional para delimiter chars
+char const *opt_para_delimiters = NULL; // additional para delimiter chars
 int         opt_tab_spaces = TAB_SPACES_DEFAULT;
 bool        opt_title_line;             // 1st para line is title?
 
