@@ -59,10 +59,11 @@ AC_CHECK_FUNCS([geteuid getpwuid perror strerror strndup])
 # Miscellaneous.
 AC_LANG(C)
 AX_CFLAGS_WARN_ALL
-AX_CHECK_COMPILE_FLAG([-Wextra],[CFLAGS="$CFLAGS -Wextra"])
-AX_CHECK_COMPILE_FLAG([-Wc++-compat],[CFLAGS="$CFLAGS -Wc++-compat"])
-AX_CHECK_COMPILE_FLAG([-Wredundant-decls],[CFLAGS="$CFLAGS -Wredundant-decls"])
-AX_CHECK_COMPILE_FLAG([-Wwrite-strings],[CFLAGS="$CFLAGS -Wwrite-strings"])
+AX_CFLAGS_GCC_OPTION([-Wc++-compat])
+AX_CFLAGS_GCC_OPTION([-Wcast-align])
+AX_CFLAGS_GCC_OPTION([-Wextra])
+AX_CFLAGS_GCC_OPTION([-Wredundant-decls])
+AX_CFLAGS_GCC_OPTION([-Wwrite-strings])
 
 # Generate files.
 AH_TOP([#ifndef wrap_config_H
