@@ -48,7 +48,6 @@ fail() {
     echo ":test-result: FAIL"
     echo ":copy-in-global-log: yes"
   } > $TRS_FILE
-  exit $ACTUAL_EXIT
 }
 
 print_result() {
