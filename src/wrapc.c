@@ -178,8 +178,6 @@ static pid_t child_1( void ) {
  *
  * Read from pipes[0] (child 1) and write to pipes[1] (parent); exec into
  * wrap.
- *
- * @return Returns the child's process ID.
  */
 static void child_2( pid_t pid_1 ) {
   pid_t const pid_2 = fork();
