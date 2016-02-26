@@ -142,14 +142,14 @@ static pid_t child_1( void ) {
     return pid;
 
   CLOSE_PIPES( 1 );
-  FILE *const to_wrap = fdopen( pipes[0][ STDOUT_FILENO ], "w" );
-  if ( !to_wrap )
+  FILE *const fwrap = fdopen( pipes[0][ STDOUT_FILENO ], "w" );
+  if ( !fwrap )
     PMESSAGE_EXIT( EX_OSERR,
       "child can't open pipe for writing: %s\n", ERROR_STR
     );
 
   // write first line to wrap
-  FPUTS( buf + leader_len, to_wrap );
+  FPUTS( buf + leader_len, fwrap );
 
   while ( fgets( buf, sizeof( buf ), fin ) ) {
     char const first_nws = buf[ strspn( buf, WS_CHARS ) ];
@@ -159,15 +159,15 @@ static pid_t child_1( void ) {
       // we've reached the end of the comment. Signal wrap that we're now
       // passing text through verbatim.
       //
-      FPRINTF( to_wrap, "%c%c%s", ASCII_DLE, ASCII_ETB, buf );
-      fcopy( fin, to_wrap );
+      FPRINTF( fwrap, "%c%c%s", ASCII_DLE, ASCII_ETB, buf );
+      fcopy( fin, fwrap );
       exit( EX_OK );
     }
     leader_len = leader_span( buf );
     if ( !buf[ leader_len ] )         // no non-leading characters
-      FPUTC( '\n', to_wrap );
+      FPUTC( '\n', fwrap );
     else
-      FPUTS( buf + leader_len, to_wrap );
+      FPUTS( buf + leader_len, fwrap );
   } // while
   CHECK_FERROR( fin );
   exit( EX_OK );
