@@ -44,7 +44,7 @@ int check_atou( char const *s ) {
   assert( s );
   if ( s[ strspn( s, "0123456789" ) ] )
     PMESSAGE_EXIT( EX_USAGE, "\"%s\": invalid integer\n", s );
-  return atoi( s );
+  return (int)strtol( s, NULL, 10 );
 }
 
 void* check_realloc( void *p, size_t size ) {
