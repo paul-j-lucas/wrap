@@ -34,7 +34,7 @@
 # include <pwd.h>                       /* for getpwuid() */
 #endif /* HAVE_PWD_H */
 #include <stdio.h>
-#include <stdlib.h>                     /* for atoi(), ... */
+#include <stdlib.h>                     /* for getenv(), ... */
 #include <string.h>
 #include <unistd.h>                     /* for geteuid() */
 
