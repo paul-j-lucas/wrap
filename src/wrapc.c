@@ -62,7 +62,7 @@ int           opt_tab_spaces = TAB_SPACES_DEFAULT;
 bool          opt_title_line;           // 1st para line is title?
 
 // local variables
-static char   buf[ LINE_BUF_SIZE ];
+static char   line_buf[ LINE_BUF_SIZE ];
 static char   leader[ LINE_BUF_SIZE ];  // characters stripped/prepended
 static size_t leader_len;
 //
@@ -103,11 +103,11 @@ int main( int argc, char const *argv[] ) {
   // Read the first line of input to obtain a sequence of leading characters to
   // be the prototype for all lines.
   //
-  if ( !fgets( buf, sizeof( buf ), fin ) ) {
+  if ( !fgets( line_buf, sizeof( line_buf ), fin ) ) {
     CHECK_FERROR( fin );
     exit( EX_OK );
   }
-  parse_leader( buf, leader, &leader_len );
+  parse_leader( line_buf, leader, &leader_len );
 
   //
   // Open the pipes, fork the child processes, and go.
@@ -149,25 +149,25 @@ static pid_t child_1( void ) {
     );
 
   // write first line to wrap
-  FPUTS( buf + leader_len, fwrap );
+  FPUTS( line_buf + leader_len, fwrap );
 
-  while ( fgets( buf, sizeof( buf ), fin ) ) {
-    char const first_nws = buf[ strspn( buf, WS_CHARS ) ];
+  while ( fgets( line_buf, sizeof( line_buf ), fin ) ) {
+    char const first_nws = line_buf[ strspn( line_buf, WS_CHARS ) ];
     if ( !strchr( COMMENT_CHARS, first_nws ) ) {
       //
       // The line's first non-whitespace character isn't a comment character:
       // we've reached the end of the comment. Signal wrap that we're now
       // passing text through verbatim.
       //
-      FPRINTF( fwrap, "%c%c%s", ASCII_DLE, ASCII_ETB, buf );
+      FPRINTF( fwrap, "%c%c%s", ASCII_DLE, ASCII_ETB, line_buf );
       fcopy( fin, fwrap );
       exit( EX_OK );
     }
-    leader_len = leader_span( buf );
-    if ( !buf[ leader_len ] )         // no non-leading characters
+    leader_len = leader_span( line_buf );
+    if ( !line_buf[ leader_len ] )      // no non-leading characters
       FPUTC( '\n', fwrap );
     else
-      FPUTS( buf + leader_len, fwrap );
+      FPUTS( line_buf + leader_len, fwrap );
   } // while
   CHECK_FERROR( fin );
   exit( EX_OK );
@@ -310,17 +310,17 @@ static void parent( void ) {
   strcpy( leader_tws, leader + tnws_len );
   leader[ tnws_len ] = '\0';
 
-  while ( fgets( buf, sizeof( buf ), from_wrap ) ) {
-    char *pbuf = buf;
-    if ( buf[0] == ASCII_DLE ) {
-      switch ( buf[1] ) {
+  while ( fgets( line_buf, sizeof( line_buf ), from_wrap ) ) {
+    char *pbuf = line_buf;
+    if ( line_buf[0] == ASCII_DLE ) {
+      switch ( line_buf[1] ) {
         case ASCII_ETB:
           //
           // We've been told by child 1 (via wrap, child 2) that we've reached
           // the end of the comment: dump any remaining buffer and pass text
           // through verbatim.
           //
-          FPUTS( buf + 2, fout );
+          FPUTS( line_buf + 2, fout );
           fcopy( from_wrap, fout );
           goto break_loop;
         default:
