@@ -1,3 +1,52 @@
+2016-03-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS: Added 3.3 news.
+   * configure.ac, wrapc.1, wrapc.c, test/Makefile.am, wrapc-04.txt,
+     wrapc-no_options-05.txt, wrapc-no_options-05.test: wrapc now special-cases
+     first line not being a comment.
+
+2016-03-09  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: s/buf/line_buf/
+
+2016-03-07  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: s/buf*/line*/
+   * util.c: s/atoi/strtol/
+   * read_conf.c: Updated comment.
+
+2016-03-04  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Sorted options in usage message.
+
+2016-02-26  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: s/to_wrap/fwrap/
+   * wrapc.c: Comment fix.
+
+2016-01-18  Paul J. Lucas <paul@lucasmail.org>
+
+   * run_test.sh: No longer exiting on fail.
+
+2016-01-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac, ax_cflags_gcc_option.m4: Now using AX_CFLAGS_GCC_OPTION.
+
+2015-12-21  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Clean-up.
+   * wrap.c: Cosmetic change.
+
+2015-12-20  Paul J. Lucas <paul@lucasmail.org>
+
+   * src/Makefile.am: Added wrapc_LDADD.
+   * wrap.c: Comment fix.
+   * wrap.c: print_buf() now zeroing buf_count, buf_width; hang_indent() now
+     has no arguments.
+   * wrap.c: Made "buf" static.
+   * devclean: Fixed / ignore removal.
+   * devclean: Now using / in .gitignore files; updated devclean to match.
+
 2015-12-17  Paul J. Lucas <paul@lucasmail.org>
 
    * lib/Makefile.am, stdlib.in.h, sys_types.in.h, sysexits.in.h, unistd.c,
