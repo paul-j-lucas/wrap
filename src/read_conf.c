@@ -127,7 +127,7 @@ char const* read_conf( char const *conf_file ) {
 
   // parse configuration file
   char line_buf[ LINE_BUF_SIZE ];
-  int line_no = 0;
+  unsigned line_no = 0;
   while ( fgets( line_buf, sizeof( line_buf ), fconf ) ) {
     char const *const line = trim_ws( strip_comment( line_buf ) );
     ++line_no;
@@ -142,7 +142,7 @@ char const* read_conf( char const *conf_file ) {
         section = PATTERNS;
       else
         PMESSAGE_EXIT( EX_CONFIG,
-          "%s:%d: \"%s\": invalid section\n",
+          "%s:%u: \"%s\": invalid section\n",
           conf_file, line_no, line
         );
       continue;
@@ -152,7 +152,7 @@ char const* read_conf( char const *conf_file ) {
     switch ( section ) {
       case NONE:
         PMESSAGE_EXIT( EX_CONFIG,
-          "%s:%d: \"%s\": line not within any section\n",
+          "%s:%u: \"%s\": line not within any section\n",
           conf_file, line_no, line
         );
       case ALIASES:

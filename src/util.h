@@ -94,7 +94,7 @@ char const* base_name( char const *path_name );
  * @param s The string to convert.
  * @return Returns the unsigned integer.
  */
-int check_atou( char const *s );
+unsigned check_atou( char const *s );
 
 /**
  * Calls \c realloc(3) and checks for failure.

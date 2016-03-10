@@ -49,7 +49,7 @@ static int          n_aliases = 0;      // number of aliases
  * @param conf_file The configuration file path-name.
  * @param line_no The line-number within \a conf_file.
  */
-static void alias_check_dup( char const *conf_file, int line_no ) {
+static void alias_check_dup( char const *conf_file, unsigned line_no ) {
   assert( conf_file );
   if ( n_aliases > 1 ) {
     //
@@ -61,7 +61,7 @@ static void alias_check_dup( char const *conf_file, int line_no ) {
     while ( --i >= 0 ) {
       if ( strcmp( aliases[i].argv[0], last_name ) == 0 )
         PMESSAGE_EXIT( EX_CONFIG,
-          "%s:%d: \"%s\": duplicate alias name (first is on line %d)\n",
+          "%s:%u: \"%s\": duplicate alias name (first is on line %u)\n",
           conf_file, line_no, last_name, aliases[i].line_no
         );
     } // while
@@ -96,7 +96,7 @@ alias_t const* alias_find( char const *name ) {
   return NULL;
 }
 
-void alias_parse( char const *line, char const *conf_file, int line_no ) {
+void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
   assert( line );
   assert( conf_file );
 
@@ -130,12 +130,12 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
   // part 2: whitespace
   line += strspn( line, " \t" );
   if ( !*line )
-    PMESSAGE_EXIT( EX_CONFIG, "%s:%d: '=' expected\n", conf_file, line_no );
+    PMESSAGE_EXIT( EX_CONFIG, "%s:%u: '=' expected\n", conf_file, line_no );
 
   // part 3: =
   if ( *line != '=' )
     PMESSAGE_EXIT( EX_CONFIG,
-      "%s:%d: '%c': unexpected character; '=' expected\n",
+      "%s:%u: '%c': unexpected character; '=' expected\n",
       conf_file, line_no, *line
     );
   ++line;                               // skip '='
@@ -146,7 +146,7 @@ void alias_parse( char const *line, char const *conf_file, int line_no ) {
     if ( !*line ) {
       if ( alias->argc == 1 )
         PMESSAGE_EXIT( EX_CONFIG,
-          "%s:%d: option(s) expected after '='\n",
+          "%s:%u: option(s) expected after '='\n",
           conf_file, line_no
         );
       break;

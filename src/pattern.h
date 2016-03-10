@@ -56,7 +56,7 @@ alias_t const* pattern_find( char const *file_name );
  * @param conf_file The configuration file path-name.
  * @param line_no The line-number of \a line from \a conf_file.
  */
-void pattern_parse( char const *line, char const *conf_file, int line_no );
+void pattern_parse( char const *line, char const *conf_file, unsigned line_no );
 
 ///////////////////////////////////////////////////////////////////////////////
 

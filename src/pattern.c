@@ -65,7 +65,7 @@ alias_t const* pattern_find( char const *file_name ) {
   return NULL;
 }
 
-void pattern_parse( char const *line, char const *conf_file, int line_no ) {
+void pattern_parse( char const *line, char const *conf_file, unsigned line_no ) {
   assert( line );
   assert( conf_file );
 
@@ -94,12 +94,12 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
   // part 2: whitespace
   line += strspn( line, " \t" );
   if ( !*line )
-    PMESSAGE_EXIT( EX_CONFIG, "%s:%d: '=' expected\n", conf_file, line_no );
+    PMESSAGE_EXIT( EX_CONFIG, "%s:%u: '=' expected\n", conf_file, line_no );
 
   // part 3: =
   if ( *line != '=' )
     PMESSAGE_EXIT( EX_CONFIG,
-      "%s:%d: '%c': unexpected character; '=' expected\n",
+      "%s:%u: '%c': unexpected character; '=' expected\n",
       conf_file, line_no, *line
     );
   ++line;                               // skip '='
@@ -108,7 +108,7 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
   line += strspn( line, " \t" );
   if ( !*line )
     PMESSAGE_EXIT( EX_CONFIG,
-      "%s:%d: alias name expected after '='\n",
+      "%s:%u: alias name expected after '='\n",
       conf_file, line_no
     );
 
@@ -116,7 +116,7 @@ void pattern_parse( char const *line, char const *conf_file, int line_no ) {
   alias_t const *const alias = alias_find( line );
   if ( !alias )
     PMESSAGE_EXIT( EX_CONFIG,
-      "%s:%d: \"%s\": no such alias\n", conf_file, line_no, line
+      "%s:%u: \"%s\": no such alias\n", conf_file, line_no, line
     );
   pattern->alias = alias;
 }

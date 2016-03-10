@@ -39,39 +39,39 @@
 #include <unistd.h>
 
 // extern variable definitions
-FILE       *fin;                        // file in
-FILE       *fout;                       // file out
-char const *me;                         // executable name
+FILE         *fin;                      // file in
+FILE         *fout;                     // file out
+char const   *me;                       // executable name
 
 // option variable definitions
-char const *opt_alias;
-char const *opt_conf_file;
-bool        opt_eos_delimit;            // end-of-sentence delimits para's?
-bool        opt_data_link_escape;       // respond to in-band control
-char const *opt_fin;                    // file in path
-char const *opt_fin_name;               // file in name (only)
-char const *opt_fout = NULL;            // file out path
-int         opt_hang_spaces;            // hanging-indent spaces
-int         opt_hang_tabs;              // hanging-indent tabs
-int         opt_indt_spaces;            // indent spaces
-int         opt_indt_tabs;              // indent tabs
-bool        opt_lead_dot_ignore;        // ignore lines starting with '.'?
-int         opt_lead_spaces;            // leading spaces
-int         opt_lead_tabs;              // leading tabs
-bool        opt_lead_ws_delimit;        // leading whitespace delimit para's?
-int         opt_line_width = LINE_WIDTH_DEFAULT;
-int         opt_mirror_spaces;
-int         opt_mirror_tabs;
-int         opt_newlines_delimit = NEWLINES_DELIMIT_DEFAULT;
-bool        opt_no_conf;                // do not read conf file
-char const *opt_para_delimiters = NULL; // additional para delimiter chars
-int         opt_tab_spaces = TAB_SPACES_DEFAULT;
-bool        opt_title_line;             // 1st para line is title?
+char const   *opt_alias;
+char const   *opt_conf_file;
+bool          opt_eos_delimit;          // end-of-sentence delimits para's?
+bool          opt_data_link_escape;     // respond to in-band control
+char const   *opt_fin;                  // file in path
+char const   *opt_fin_name;             // file in name (only)
+char const   *opt_fout = NULL;          // file out path
+size_t        opt_hang_spaces;          // hanging-indent spaces
+size_t        opt_hang_tabs;            // hanging-indent tabs
+size_t        opt_indt_spaces;          // indent spaces
+size_t        opt_indt_tabs;            // indent tabs
+bool          opt_lead_dot_ignore;      // ignore lines starting with '.'?
+size_t        opt_lead_spaces;          // leading spaces
+size_t        opt_lead_tabs;            // leading tabs
+bool          opt_lead_ws_delimit;      // leading whitespace delimit para's?
+size_t        opt_line_width = LINE_WIDTH_DEFAULT;
+size_t        opt_mirror_spaces;
+size_t        opt_mirror_tabs;
+size_t        opt_newlines_delimit = NEWLINES_DELIMIT_DEFAULT;
+bool          opt_no_conf;              // do not read conf file
+char const   *opt_para_delimiters;      // additional para delimiter chars
+size_t        opt_tab_spaces = TAB_SPACES_DEFAULT;
+bool          opt_title_line;           // 1st para line is title?
 
 // local variable definitions
-static char line_buf[ LINE_BUF_SIZE ];
-static int  line_count = 0;             // number of characters in buffer
-static int  line_width = 0;             // actual width of buffer
+static char   line_buf[ LINE_BUF_SIZE ];
+static size_t line_count = 0;           // number of characters in buffer
+static size_t line_width = 0;           // actual width of buffer
 
 static char const utf8_len_table[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
@@ -95,7 +95,7 @@ static char const utf8_len_table[] = {
 
 #define UTF8_BOM            "\xEF\xBB\xBF"
 #define UTF8_BOM_LEN        (sizeof( UTF8_BOM ) - 1 /* terminating null */)
-#define UTF8_LEN(C)         ((int)utf8_len_table[ (unsigned char)(C) ])
+#define UTF8_LEN(C)         ((size_t)utf8_len_table[ (unsigned char)(C) ])
 
 // local functions
 static bool copy_line( FILE*, FILE*, char*, size_t );
@@ -103,19 +103,19 @@ static void clean_up( void );
 static void hang_indent( void );
 static void init( int, char const*[] );
 static void print_lead_chars( void );
-static void print_line( int, bool );
-static void process_options( int , char const*[], char const*, int );
+static void print_line( size_t, bool );
+static void process_options( int, char const*[], char const*, unsigned );
 static void usage( void );
 
 ///////////////////////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
-  int wrap_pos = 0;                     // position at which we can wrap
+  size_t wrap_pos = 0;                  // position at which we can wrap
 
   //
   // Number of consecutive newlines.
   //
-  int  consec_newlines = 0;
+  unsigned consec_newlines = 0;
 
   //
   // True only when we should do hang-indenting after a title line.
@@ -151,7 +151,7 @@ int main( int argc, char const *argv[] ) {
   // to 1 when we encounter a whitespace character and 2 when was_eos_char is
   // true so as to put 2 characters after the end of a sentence.
   //
-  int  put_spaces = 0;
+  unsigned put_spaces = 0;
 
   //
   // True only if the previous character was an end-of-sentence character.
@@ -337,9 +337,9 @@ int main( int argc, char const *argv[] ) {
 
     if ( do_indent ) {
       line_count = 0;
-      for ( int i = 0; i < opt_indt_tabs; ++i )
+      for ( size_t i = 0; i < opt_indt_tabs; ++i )
         line_buf[ line_count++ ] = '\t';
-      for ( int i = 0; i < opt_indt_spaces; ++i )
+      for ( size_t i = 0; i < opt_indt_spaces; ++i )
         line_buf[ line_count++ ] = ' ';
       line_width = opt_indt_tabs * opt_tab_spaces + opt_indt_spaces;
       do_indent = false;
@@ -354,11 +354,11 @@ int main( int argc, char const *argv[] ) {
     //  INSERT NON-SPACE CHARACTER
     ///////////////////////////////////////////////////////////////////////////
 
-    int utf8_len = UTF8_LEN( c );       // bytes comprising UTF-8 character
+    size_t utf8_len = UTF8_LEN( c );    // bytes comprising UTF-8 character
     if ( !utf8_len )                    // unexpected UTF-8 continuation byte
       continue;
 
-    int tmp_line_count = line_count;    // save count in case invalid UTF-8
+    size_t tmp_line_count = line_count; // save count in case invalid UTF-8
     line_buf[ tmp_line_count++ ] = c;
 
     //
@@ -366,7 +366,7 @@ int main( int argc, char const *argv[] ) {
     // the remaining bytes comprising the character.  The entire muti-byte
     // UTF-8 character is always treated as having a width of 1.
     //
-    for ( int i = utf8_len; i > 1; --i ) {
+    for ( size_t i = utf8_len; i > 1; --i ) {
       if ( (c = getc( fin )) == EOF )
         goto done;                      // premature end of UTF-8 character
       line_buf[ tmp_line_count++ ] = c;
@@ -376,7 +376,7 @@ int main( int argc, char const *argv[] ) {
     line_count = tmp_line_count;        // UTF-8 is valid
 
     if ( utf8_len == UTF8_BOM_LEN ) {
-      int const utf8_start_pos = line_count - UTF8_BOM_LEN;
+      size_t const utf8_start_pos = line_count - UTF8_BOM_LEN;
       if ( strncmp( line_buf + utf8_start_pos, UTF8_BOM, UTF8_BOM_LEN ) == 0 )
         continue;                       // discard UTF-8 BOM
     }
@@ -414,7 +414,7 @@ int main( int argc, char const *argv[] ) {
     // Slide the partial word to the left where we can pick up from where we
     // left off the next time around.
     //
-    for ( int from = wrap_pos + 1; from < tmp_line_count; ++from ) {
+    for ( size_t from = wrap_pos + 1; from < tmp_line_count; ++from ) {
       c = line_buf[ from ];
       if ( !isspace( c ) ) {
         line_buf[ line_count++ ] = c;
@@ -502,9 +502,9 @@ static bool copy_line( FILE *fin, FILE *fout, char *buf, size_t buf_size ) {
 }
 
 static void hang_indent( void ) {
-  for ( int i = 0; i < opt_hang_tabs; ++i )
+  for ( size_t i = 0; i < opt_hang_tabs; ++i )
     line_buf[ line_count++ ] = '\t';
-  for ( int i = 0; i < opt_hang_spaces; ++i )
+  for ( size_t i = 0; i < opt_hang_spaces; ++i )
     line_buf[ line_count++ ] = ' ';
   line_width += opt_hang_tabs * opt_tab_spaces + opt_hang_spaces;
 }
@@ -551,7 +551,8 @@ static void init( int argc, char const *argv[] ) {
 
   if ( opt_line_width < LINE_WIDTH_MINIMUM )
     PMESSAGE_EXIT( EX_USAGE,
-      "line-width (%d) is too small (<%d)\n", opt_line_width, LINE_WIDTH_MINIMUM
+      "line-width (%zu) is too small (<%d)\n",
+      opt_line_width, LINE_WIDTH_MINIMUM
     );
 
   opt_lead_tabs   += opt_mirror_tabs;
@@ -559,13 +560,13 @@ static void init( int argc, char const *argv[] ) {
 }
 
 static void print_lead_chars( void ) {
-  for ( int i = 0; i < opt_lead_tabs; ++i )
+  for ( size_t i = 0; i < opt_lead_tabs; ++i )
     FPUTC( '\t', fout );
-  for ( int i = 0; i < opt_lead_spaces; ++i )
+  for ( size_t i = 0; i < opt_lead_spaces; ++i )
     FPUTC( ' ', fout );
 }
 
-static void print_line( int len, bool newline ) {
+static void print_line( size_t len, bool newline ) {
   line_buf[ len ] = '\0';
   if ( len )
     FPRINTF( fout, newline ? "%s\n" : "%s", line_buf );
@@ -573,7 +574,7 @@ static void print_line( int len, bool newline ) {
 }
 
 static void process_options( int argc, char const *argv[], char const *opts,
-                             int line_no ) {
+                             unsigned line_no ) {
   assert( opts );
 
   optind = opterr = 1;
@@ -584,7 +585,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
     SET_OPTION( opt );
     if ( line_no && strchr( "acCDfFov", opt ) )
       PMESSAGE_EXIT( EX_CONFIG,
-        "%s:%d: '%c': option not allowed in configuration file\n",
+        "%s:%u: '%c': option not allowed in configuration file\n",
         opt_conf_file, line_no, opt
       );
     switch ( opt ) {

@@ -40,11 +40,11 @@ char const* base_name( char const *path_name ) {
   return path_name;
 }
 
-int check_atou( char const *s ) {
+unsigned check_atou( char const *s ) {
   assert( s );
   if ( s[ strspn( s, "0123456789" ) ] )
     PMESSAGE_EXIT( EX_USAGE, "\"%s\": invalid integer\n", s );
-  return (int)strtol( s, NULL, 10 );
+  return (unsigned)strtoul( s, NULL, 10 );
 }
 
 void* check_realloc( void *p, size_t size ) {
