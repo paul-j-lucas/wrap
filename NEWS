@@ -1,7 +1,14 @@
 Wrap NEWS -- history of user-visible changes.
 
-Copyright (C) 1996-2015 Paul J. Lucas.
+Copyright (C) 1996-2016 Paul J. Lucas.
 See the end of the file for license conditions.
+
+* Changes in Wrap 3.3
+
+** Special-case handling of non-comment lines.
+In wrapc, if the first line isn't a comment, then the leading whitespace alone
+is used as a prototype for subsequent lines and wrap(1) is never told to copy
+lines verbatim.
 
 * Changes in Wrap 3.2
 
