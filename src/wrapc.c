@@ -2,7 +2,7 @@
 **      wrapc -- comment reformatter
 **      wrapc.c
 **
-**      Copyright (C) 1996-2015  Paul J. Lucas
+**      Copyright (C) 1996-2016  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -151,9 +151,20 @@ static pid_t child_1( void ) {
   // write first line to wrap
   FPUTS( line_buf + leader_len, fwrap );
 
+  // get first non-whitespace character on the line
+  char first_nws = line_buf[ strspn( line_buf, WS_CHARS ) ];
+
+  //
+  // As a special-case, if the first line is NOT a comment, then just wrap all
+  // lines using the leading whitespace of the first line as a prototype for
+  // all subsequent lines, i.e., do NOT ever tell wrap(1) to pass text through
+  // verbatim (below).
+  //
+  bool const first_line_is_comment = strchr( COMMENT_CHARS, first_nws );
+
   while ( fgets( line_buf, sizeof( line_buf ), fin ) ) {
-    char const first_nws = line_buf[ strspn( line_buf, WS_CHARS ) ];
-    if ( !strchr( COMMENT_CHARS, first_nws ) ) {
+    first_nws = line_buf[ strspn( line_buf, WS_CHARS ) ];
+    if ( first_line_is_comment && !strchr( COMMENT_CHARS, first_nws ) ) {
       //
       // The line's first non-whitespace character isn't a comment character:
       // we've reached the end of the comment. Signal wrap that we're now

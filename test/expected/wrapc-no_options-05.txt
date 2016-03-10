@@ -1,0 +1,3 @@
+  If a subsequent line does not start with whitespace followed by comment
+  delimiters, it signals the end of the comment and all remaining lines are
+  passed through verbatim.

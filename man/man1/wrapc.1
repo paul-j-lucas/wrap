@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\f1 1 "October 27, 2015" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "March 10, 2016" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -79,7 +79,7 @@ After reformatting,
 the prototype characters
 of the first comment line
 are prepended at the start of each line.
-All other white-space characters are folded
+All other whitespace characters are folded
 in the same manner as in
 .BR wrap .
 .P
@@ -88,6 +88,12 @@ followed by comment delimiters,
 it signals the end of the comment
 and all remaining lines
 are passed through verbatim.
+However,
+if the first line starts with whitespace
+but is
+.I not
+followed by comment delimiters,
+then the whitespace alone is used as the prototype for all lines.
 .SH OPTIONS
 An option argument
 .I f

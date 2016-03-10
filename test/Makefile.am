@@ -2,7 +2,7 @@
 #	wrap -- text reformatter
 #	test/Makefile.am
 #
-#	Copyright (C) 2013-2015  Paul J. Lucas
+#	Copyright (C) 2013-2016  Paul J. Lucas
 #
 #	This program is free software; you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -58,7 +58,8 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc-no_options-01.test \
 	tests/wrapc-no_options-02.test \
 	tests/wrapc-no_options-03.test \
-	tests/wrapc-no_options-04.test
+	tests/wrapc-no_options-04.test \
+	tests/wrapc-no_options-05.test
 
 AM_TESTS_ENVIRONMENT = BUILD_SRC=$(top_builddir)/src; export BUILD_SRC ;
 TEST_EXTENSIONS = .test
