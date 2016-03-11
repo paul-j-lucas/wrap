@@ -94,6 +94,21 @@ static char const*  str_status( int );
 static void         usage( void );
 static void         wait_for_child_processes( void );
 
+////////// inline functions ///////////////////////////////////////////////////
+
+/**
+ * Gets whether the first non-whitespace character in \a buf is a comment
+ * character.
+ *
+ * @param buf The buffer to check.
+ * @return Returns \c true only if the first non-whitespace character in \a buf
+ * is a comment character.
+ */
+static inline bool first_nws_is_comment( char const *buf ) {
+  char const first_nws = buf[ strspn( buf, WS_CHARS ) ];
+  return strchr( COMMENT_CHARS, first_nws );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
@@ -151,20 +166,16 @@ static pid_t child_1( void ) {
   // write first line to wrap
   FPUTS( line_buf + leader_len, fwrap );
 
-  // get first non-whitespace character on the line
-  char first_nws = line_buf[ strspn( line_buf, WS_CHARS ) ];
-
   //
   // As a special-case, if the first line is NOT a comment, then just wrap all
   // lines using the leading whitespace of the first line as a prototype for
   // all subsequent lines, i.e., do NOT ever tell wrap(1) to pass text through
   // verbatim (below).
   //
-  bool const first_line_is_comment = strchr( COMMENT_CHARS, first_nws );
+  bool const first_line_is_comment = first_nws_is_comment( line_buf );
 
   while ( fgets( line_buf, sizeof( line_buf ), fin ) ) {
-    first_nws = line_buf[ strspn( line_buf, WS_CHARS ) ];
-    if ( first_line_is_comment && !strchr( COMMENT_CHARS, first_nws ) ) {
+    if ( first_line_is_comment && !first_nws_is_comment( line_buf ) ) {
       //
       // The line's first non-whitespace character isn't a comment character:
       // we've reached the end of the comment. Signal wrap that we're now
