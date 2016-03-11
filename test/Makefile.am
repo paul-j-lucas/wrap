@@ -54,6 +54,9 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrap-pattern-alias_exp.test \
 	tests/wrap-pattern-no_equal.test \
 	tests/wrap-pattern-unexp_char.test \
+	tests/wrap-P-01.test \
+	tests/wrap-P-02.test \
+	tests/wrap-P-03.test \
 	tests/wrap-t1.test \
 	tests/wrapc-no_options-01.test \
 	tests/wrapc-no_options-02.test \

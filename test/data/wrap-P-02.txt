@@ -1,0 +1,2 @@
+	Both wrap and wrapc now support aliases.
+An alias is a user-defined, short-hand name for command-line options that are frequently used together.

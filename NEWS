@@ -5,6 +5,10 @@ See the end of the file for license conditions.
 
 * Changes in Wrap 3.3
 
+** Added whitespace prototype option.
+Wrap now has a -P option that treats the leading whitespace on the first line
+as a prototype for all subsequent lines.
+
 ** Special-case handling of non-comment lines.
 In wrapc, if the first line isn't a comment, then the leading whitespace alone
 is used as a prototype for subsequent lines and wrap(1) is never told to copy
@@ -75,8 +79,8 @@ Both wrap and wrapc now have -f and -o command-line options for specifying the
 input file to read from and the output file to write to, respectively.
 
 ** Added [nt]roff/man-page file support.
-Wrap now had the -d command-line option that does not alter lines that begin
-with a '.' (dot) presumed to be [nt]roff control lines.
+Wrap now has a -d command-line option that does not alter lines that begin with
+a '.' (dot) presumed to be [nt]roff control lines.
 
 ** Added paragraph-delimiter option.
 Both wrap and wrapc now have a -p command-line option that allows additional

@@ -65,13 +65,17 @@ size_t        opt_mirror_tabs;
 size_t        opt_newlines_delimit = NEWLINES_DELIMIT_DEFAULT;
 bool          opt_no_conf;              // do not read conf file
 char const   *opt_para_delimiters;      // additional para delimiter chars
+bool          opt_prototype;            // first line whitespace is prototype?
 size_t        opt_tab_spaces = TAB_SPACES_DEFAULT;
 bool          opt_title_line;           // 1st para line is title?
 
 // local variable definitions
 static char   line_buf[ LINE_BUF_SIZE ];
-static size_t line_count = 0;           // number of characters in buffer
-static size_t line_width = 0;           // actual width of buffer
+static size_t line_count;               // number of characters in buffer
+static size_t line_width;               // actual width of buffer
+static char   prototype_buf[ LINE_BUF_SIZE ];
+static size_t prototype_count;
+static size_t prototype_width;
 
 static char const utf8_len_table[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
@@ -180,6 +184,8 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( c == '\n' ) {
+      opt_prototype = false;            // the prototype is complete
+
       if ( ++consec_newlines >= opt_newlines_delimit ) {
         //
         // At least opt_newlines_delimit consecutive newlines: set that the
@@ -222,6 +228,17 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( isspace( c ) ) {
+      if ( opt_prototype ) {
+        if ( prototype_count < sizeof( prototype_buf ) - 1 ) {
+          static size_t tab_pos;
+          prototype_buf[ prototype_count++ ] = c;
+          prototype_width += c == '\t' ?
+            (opt_tab_spaces - tab_pos % opt_tab_spaces) : 1;
+          ++tab_pos;
+          opt_line_width = LINE_WIDTH_DEFAULT - prototype_width;
+        }
+        continue;
+      }
       if ( is_long_line ) {
         //
         // We've been handling a "long line" and finally got a whitespace
@@ -289,6 +306,12 @@ int main( int argc, char const *argv[] ) {
 
     if ( iscntrl( c ) )
       continue;
+
+    ///////////////////////////////////////////////////////////////////////////
+    //  NON-WHITESPACE CHARACTERS
+    ///////////////////////////////////////////////////////////////////////////
+
+    opt_prototype = false;              // the prototype is complete
 
     ///////////////////////////////////////////////////////////////////////////
     //  HANDLE LEADING-DOT, END-OF-SENTENCE, AND PARAGRAPH-DELIMITERS
@@ -513,7 +536,7 @@ static void init( int argc, char const *argv[] ) {
   me = base_name( argv[0] );
   atexit( clean_up );
 
-  char const opts[] = "a:bc:CdDef:F:h:H:i:I:l:m:M:nNo:p:s:S:t:Tvw:W";
+  char const opts[] = "a:bc:CdDef:F:h:H:i:I:l:m:M:nNo:p:Ps:S:t:Tvw:W";
   process_options( argc, argv, opts, 0 );
   argc -= optind, argv += optind;
   if ( argc )
@@ -560,10 +583,14 @@ static void init( int argc, char const *argv[] ) {
 }
 
 static void print_lead_chars( void ) {
-  for ( size_t i = 0; i < opt_lead_tabs; ++i )
-    FPUTC( '\t', fout );
-  for ( size_t i = 0; i < opt_lead_spaces; ++i )
-    FPUTC( ' ', fout );
+  if ( prototype_buf[0] ) {
+    FPUTS( prototype_buf, fout );
+  } else {
+    for ( size_t i = 0; i < opt_lead_tabs; ++i )
+      FPUTC( '\t', fout );
+    for ( size_t i = 0; i < opt_lead_spaces; ++i )
+      FPUTC( ' ', fout );
+  }
 }
 
 static void print_line( size_t len, bool newline ) {
@@ -607,6 +634,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'N': opt_newlines_delimit  = 1;                          break;
       case 'o': opt_fout              = optarg;                     break;
       case 'p': opt_para_delimiters   = optarg;                     break;
+      case 'P': opt_prototype         = true;                       break;
       case 's': opt_tab_spaces        = check_atou( optarg );       break;
       case 'S': opt_lead_spaces       = check_atou( optarg );       break;
       case 't': opt_lead_tabs         = check_atou( optarg );       break;
@@ -622,6 +650,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
 
   check_mutually_exclusive( "f", "F" );
   check_mutually_exclusive( "n", "N" );
+  check_mutually_exclusive( "P", "hHiImMStW" );
   check_mutually_exclusive( "v", "abcCdDefFhHiIlmMnNopsStTwW" );
 
   if ( print_version ) {
@@ -651,6 +680,7 @@ static void usage( void ) {
 "       -N         Treat every newline as a paragraph delimiter.\n"
 "       -o file    Write to this file [default: stdout].\n"
 "       -p string  Specify additional paragraph delimiter characters.\n"
+"       -P         Treat leading whitespace on first line as prototype.\n"
 "       -s number  Specify tab-spaces equivalence [default: %d].\n"
 "       -S number  Prepend leading spaces after leading tabs to each line.\n"
 "       -t number  Prepend leading tabs to each line.\n"

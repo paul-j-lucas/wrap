@@ -2,7 +2,7 @@
 .\"	wrap -- text reformatter
 .\"	wrap.1: manual page
 .\"
-.\"	Copyright (C) 1996-2015  Paul J. Lucas
+.\"	Copyright (C) 1996-2016  Paul J. Lucas
 .\"
 .\"	This program is free software; you can redistribute it and/or modify
 .\"	it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\f1 1 "October 27, 2015" "PJL TOOLS"
+.TH \f3wrap\f1 1 "March 10, 2016" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -238,6 +238,10 @@ Writes to file
 Treats the given characters in
 .I s
 as paragraph delimiters.
+.TP
+.B \-P
+Treats the leading whitespace on the first line
+as a prototype for all subsequent lines.
 .TP
 .BI \-s " n"
 Sets
