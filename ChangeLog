@@ -1,5 +1,11 @@
 2016-03-10  Paul J. Lucas <paul@lucasmail.org>
 
+   * NEWS, wrap.1, wrap.c, test/Makefile.am, wrap-P-01.txt, wrap-P-02.txt,
+     wrap-P-03.txt, wrap-P-04.txt, wrap-P-01.txt, wrap-P-02.txt, wrap-P-03.txt,
+     wrap-P-04.txt, wrap-P-01.test, wrap-P-02.test, wrap-P-03.test,
+     wrap-P-04.test: Added -P option.
+   * alias.c, alias.h, pattern.c, pattern.h, read_conf.c, util.c, util.h,
+     wrap.c: Now using size_t/unsigned instead of int.
    * NEWS: Added 3.3 news.
    * configure.ac, wrapc.1, wrapc.c, test/Makefile.am, wrapc-04.txt,
      wrapc-no_options-05.txt, wrapc-no_options-05.test: wrapc now special-cases
