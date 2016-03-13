@@ -49,12 +49,16 @@ AC_DEFUN([gl_EARLY],
   # Code from module extensions:
   # Code from module extern-inline:
   # Code from module fnmatch:
+  # Code from module getopt-gnu:
+  # Code from module getopt-posix:
+  # Code from module gettext-h:
   # Code from module include_next:
   # Code from module localcharset:
   # Code from module mbrtowc:
   # Code from module mbsinit:
   # Code from module mbsrtowcs:
   # Code from module memchr:
+  # Code from module nocrash:
   # Code from module snippet/_Noreturn:
   # Code from module snippet/arg-nonnull:
   # Code from module snippet/c++defs:
@@ -100,6 +104,27 @@ AC_DEFUN([gl_INIT],
     AC_LIBOBJ([fnmatch])
     gl_PREREQ_FNMATCH
   fi
+  gl_FUNC_GETOPT_GNU
+  if test $REPLACE_GETOPT = 1; then
+    AC_LIBOBJ([getopt])
+    AC_LIBOBJ([getopt1])
+    gl_PREREQ_GETOPT
+    dnl Arrange for unistd.h to include getopt.h.
+    GNULIB_GL_UNISTD_H_GETOPT=1
+  fi
+  AC_SUBST([GNULIB_GL_UNISTD_H_GETOPT])
+  gl_MODULE_INDICATOR_FOR_TESTS([getopt-gnu])
+  gl_FUNC_GETOPT_POSIX
+  if test $REPLACE_GETOPT = 1; then
+    AC_LIBOBJ([getopt])
+    AC_LIBOBJ([getopt1])
+    gl_PREREQ_GETOPT
+    dnl Arrange for unistd.h to include getopt.h.
+    GNULIB_GL_UNISTD_H_GETOPT=1
+  fi
+  AC_SUBST([GNULIB_GL_UNISTD_H_GETOPT])
+  AC_SUBST([LIBINTL])
+  AC_SUBST([LTLIBINTL])
   gl_LOCALCHARSET
   LOCALCHARSET_TESTS_ENVIRONMENT="CHARSETALIASDIR=\"\$(abs_top_builddir)/$gl_source_base\""
   AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
@@ -300,6 +325,11 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fnmatch.c
   lib/fnmatch.in.h
   lib/fnmatch_loop.c
+  lib/getopt.c
+  lib/getopt.in.h
+  lib/getopt1.c
+  lib/getopt_int.h
+  lib/gettext.h
   lib/localcharset.c
   lib/localcharset.h
   lib/mbrtowc.c
@@ -337,6 +367,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/extern-inline.m4
   m4/fcntl-o.m4
   m4/fnmatch.m4
+  m4/getopt.m4
   m4/glibc21.m4
   m4/gnulib-common.m4
   m4/include_next.m4
@@ -350,6 +381,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mbstate_t.m4
   m4/memchr.m4
   m4/mmap-anon.m4
+  m4/nocrash.m4
   m4/off_t.m4
   m4/onceonly.m4
   m4/ssize_t.m4

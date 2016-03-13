@@ -22,7 +22,6 @@
 #include "config.h"
 #include "alias.h"
 #include "common.h"
-#include "getopt.h"
 #include "options.h"
 #include "pattern.h"
 #include "read_conf.h"
@@ -32,6 +31,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
+#include <getopt.h>
 #include <limits.h>                     /* for INT_MAX */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit(), ... */
@@ -608,7 +608,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
   bool print_version = false;
   CLEAR_OPTIONS();
 
-  for ( int opt; (opt = pjl_getopt( argc, argv, opts )) != EOF; ) {
+  for ( int opt; (opt = getopt( argc, (char**)argv, opts )) != EOF; ) {
     SET_OPTION( opt );
     if ( line_no && strchr( "acCDfFov", opt ) )
       PMESSAGE_EXIT( EX_CONFIG,

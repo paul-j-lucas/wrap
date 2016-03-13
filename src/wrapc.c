@@ -20,13 +20,13 @@
 
 // local
 #include "common.h"
-#include "getopt.h"
 #include "options.h"
 #include "util.h"
 
 // standard
 #include <assert.h>
 #include <errno.h>
+#include <getopt.h>
 #include <limits.h>                     /* for PATH_MAX */
 #include <signal.h>                     /* for kill() */
 #include <stdio.h>
@@ -387,7 +387,7 @@ static void process_options( int argc, char const *argv[] ) {
   me = base_name( argv[0] );
 
   opterr = 1;
-  for ( int opt; (opt = pjl_getopt( argc, argv, opts )) != EOF; ) {
+  for ( int opt; (opt = getopt( argc, (char**)argv, opts )) != EOF; ) {
     SET_OPTION( opt );
     switch ( opt ) {
       case 'a': opt_alias           = optarg;                       break;
