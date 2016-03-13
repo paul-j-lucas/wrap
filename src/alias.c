@@ -43,6 +43,26 @@ static int          n_aliases = 0;      // number of aliases
 ////////// local functions ////////////////////////////////////////////////////
 
 /**
+ * Allocates a new alias.
+ *
+ * @return Returns a new, uninitialzed alias.
+ */
+static alias_t* alias_alloc() {
+  static int n_aliases_alloc = 0;     // number of aliases allocated
+
+  if ( !n_aliases_alloc ) {
+    n_aliases_alloc = ALIAS_ALLOC_DEFAULT;
+    aliases = MALLOC( alias_t, n_aliases_alloc );
+  } else if ( n_aliases > n_aliases_alloc ) {
+    n_aliases_alloc += ALIAS_ALLOC_INCREMENT;
+    REALLOC( aliases, alias_t, n_aliases_alloc );
+  }
+  if ( !aliases )
+    PERROR_EXIT( EX_OSERR );
+  return &aliases[ n_aliases++ ];
+}
+
+/**
  * Checks the most-recently-added alias against all previous aliases for a
  * duplicate name.
  *
@@ -100,20 +120,8 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
   assert( line );
   assert( conf_file );
 
-  static int n_aliases_alloc = 0;     // number of aliases allocated
-
-  if ( !n_aliases_alloc ) {
-    n_aliases_alloc = ALIAS_ALLOC_DEFAULT;
-    aliases = MALLOC( alias_t, n_aliases_alloc );
-  } else if ( n_aliases > n_aliases_alloc ) {
-    n_aliases_alloc += ALIAS_ALLOC_INCREMENT;
-    REALLOC( aliases, alias_t, n_aliases_alloc );
-  }
-  if ( !aliases )
-    PERROR_EXIT( EX_OSERR );
-
   int n_argv_alloc = ALIAS_ARGV_ALLOC_DEFAULT;
-  alias_t *const alias = &aliases[ n_aliases++ ];
+  alias_t *const alias = alias_alloc();
   alias->line_no = line_no;
   alias->argc = 1;
   alias->argv = MALLOC( char const*, n_argv_alloc );

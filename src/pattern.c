@@ -40,6 +40,26 @@ static pattern_t   *patterns = NULL;    // global list of patterns
 ////////// local functions ////////////////////////////////////////////////////
 
 /**
+ * Allocates a new pattern.
+ *
+ * @return Returns a new, uninitialzed pattern.
+ */
+static pattern_t* pattern_alloc() {
+  static int n_patterns_alloc = 0;      // number of patterns allocated
+
+  if ( !n_patterns_alloc ) {
+    n_patterns_alloc = PATTERN_ALLOC_DEFAULT;
+    patterns = MALLOC( pattern_t, n_patterns_alloc );
+  } else if ( n_patterns > n_patterns_alloc ) {
+    n_patterns_alloc += PATTERN_ALLOC_INCREMENT;
+    REALLOC( patterns, pattern_t, n_patterns_alloc );
+  }
+  if ( !patterns )
+    PERROR_EXIT( EX_OSERR );
+  return &patterns[ n_patterns++ ];
+}
+
+/**
  * Frees all memory used by a pattern.
  *
  * @param pattern The pattern to free.
@@ -65,23 +85,12 @@ alias_t const* pattern_find( char const *file_name ) {
   return NULL;
 }
 
-void pattern_parse( char const *line, char const *conf_file, unsigned line_no ) {
+void pattern_parse( char const *line, char const *conf_file,
+                    unsigned line_no ) {
   assert( line );
   assert( conf_file );
 
-  static int n_patterns_alloc = 0;      // number of patterns allocated
-
-  if ( !n_patterns_alloc ) {
-    n_patterns_alloc = PATTERN_ALLOC_DEFAULT;
-    patterns = MALLOC( pattern_t, n_patterns_alloc );
-  } else if ( n_patterns > n_patterns_alloc ) {
-    n_patterns_alloc += PATTERN_ALLOC_INCREMENT;
-    REALLOC( patterns, pattern_t, n_patterns_alloc );
-  }
-  if ( !patterns )
-    PERROR_EXIT( EX_OSERR );
-
-  pattern_t *const pattern = &patterns[ n_patterns++ ];
+  pattern_t *const pattern = pattern_alloc();
 
   // pattern line: <pattern>[<ws>]=[<ws>]<alias>
   //        parts:     1      2   3  4      5   
