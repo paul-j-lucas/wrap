@@ -55,10 +55,10 @@ char const   *opt_alias;
 char const   *opt_conf_file;            // full path to conf file
 bool          opt_eos_delimit;          // end-of-sentence delimits para's?
 char const   *opt_fin_name;             // file in name
-int           opt_line_width = LINE_WIDTH_DEFAULT;
+size_t        opt_line_width = LINE_WIDTH_DEFAULT;
 bool          opt_no_conf;              // do not read conf file
 char const   *opt_para_delimiters;      // additional para delimiter chars
-int           opt_tab_spaces = TAB_SPACES_DEFAULT;
+size_t        opt_tab_spaces = TAB_SPACES_DEFAULT;
 bool          opt_title_line;           // 1st para line is title?
 
 // local variables
@@ -243,9 +243,9 @@ static void child_2( pid_t pid_1 ) {
   /*  5 */ IF_ARG_DUP( opt_eos_delimit    , "-e"    );
   /*  6 */ IF_ARG_FMT( opt_fin_name       , "-F%s"  );
   /*  7 */ IF_ARG_FMT( opt_para_delimiters, "-p%s"  );
-  /*  8 */    ARG_FMT( opt_tab_spaces     , "-s%d"  );
+  /*  8 */    ARG_FMT( opt_tab_spaces     , "-s%zu" );
   /*  9 */ IF_ARG_DUP( opt_title_line     , "-T"    );
-  /* 10 */    ARG_FMT( opt_line_width     , "-w%d"  );
+  /* 10 */    ARG_FMT( opt_line_width     , "-w%zu" );
   /* 11 */ argv[ argc ] = NULL;
 
   REDIRECT( STDIN_FILENO, 0 );
@@ -374,7 +374,8 @@ static void parse_leader( char const *buf, char *leader, size_t *leader_len ) {
   opt_line_width -= leader_width( leader );
   if ( opt_line_width < LINE_WIDTH_MINIMUM )
     PMESSAGE_EXIT( EX_USAGE,
-      "line-width (%d) is too small (<%d)\n", opt_line_width, LINE_WIDTH_MINIMUM
+      "line-width (%zu) is too small (<%d)\n",
+      opt_line_width, LINE_WIDTH_MINIMUM
     );
 }
 
