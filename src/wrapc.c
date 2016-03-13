@@ -67,10 +67,14 @@ static char   leader[ LINE_BUF_SIZE ];  // characters stripped/prepended
 static size_t leader_len;
 //
 // Two pipes:
-// + pipes[0] goes between child 1 (read_source_write_wrap) and child 2 (wrap)
-// + pipes[1] goes between child 2 (wrap) and parent (read_wrap)
+// + pipes[0] goes between read_source_write_wrap() in the parent process
+//   and wrap(1).
+// + pipes[1] goes between wrap(1) and read_wrap() in the parent process.
 //
 static int    pipes[2][2];
+
+#define TO_WRAP       0                 /* pipes[0] */
+#define FROM_WRAP     1                 /* pipes[1] */
 
 #define COMMENT_CHARS \
   "!"   /* HTML and XML comments */                               \
@@ -128,8 +132,8 @@ int main( int argc, char const *argv[] ) {
   //
   // Open the pipes, fork the child processes, and go.
   //
-  PIPE( pipes[0] );
-  PIPE( pipes[1] );
+  PIPE( pipes[ TO_WRAP ] );
+  PIPE( pipes[ FROM_WRAP ] );
   fork_exec_wrap( read_source_write_wrap() );
   read_wrap();
 
@@ -146,12 +150,12 @@ int main( int argc, char const *argv[] ) {
  * (in case we need to kill it).
  */
 static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
-  pid_t const pid_2 = fork();
-  if ( pid_2 == -1 ) {                  // we failed, so kill the first child
+  pid_t const pid = fork();
+  if ( pid == -1 ) {                    // we failed, so kill the first child
     kill( read_source_write_wrap_pid, SIGTERM );
     PERROR_EXIT( EX_OSERR );
   }
-  if ( pid_2 != 0 )                     // parent process
+  if ( pid != 0 )                       // parent process
     return;
 
   typedef char arg_buf[ ARG_BUF_SIZE ];
@@ -193,11 +197,11 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   /* 11 */ argv[ argc ] = NULL;
 
   //
-  // Read from pipes[0] (read_source_write_wrap) and write to pipes[1]
-  // (parent); exec into wrap.
+  // Read from pipes[TO_WRAP] (read_source_write_wrap() in child 1) and write
+  // to pipes[FROM_WRAP] (read_wrap() in parent); exec into wrap(1).
   //
-  REDIRECT( STDIN_FILENO, 0 );
-  REDIRECT( STDOUT_FILENO, 1 );
+  REDIRECT( STDIN_FILENO, TO_WRAP );
+  REDIRECT( STDOUT_FILENO, FROM_WRAP );
   execvp( PACKAGE, argv );
   PERROR_EXIT( EX_OSERR );
 }
@@ -214,13 +218,15 @@ static pid_t read_source_write_wrap( void ) {
     PERROR_EXIT( EX_OSERR );
   if ( pid != 0 )                       // parent process
     return pid;
-
   //
-  // Close both ends of pipes[1] since it doesn't use it; read from our
-  // original stdin and write to pipes[0] (wrap).
+  // We don't use these here.
   //
-  CLOSE_PIPES( 1 );
-  FILE *const fwrap = fdopen( pipes[0][ STDOUT_FILENO ], "w" );
+  CLOSE_PIPES( FROM_WRAP );
+  close( pipes[ TO_WRAP ][ STDIN_FILENO ] );
+  //
+  // Read from fin and write to pipes[TO_WRAP] (wrap).
+  //
+  FILE *const fwrap = fdopen( pipes[ TO_WRAP ][ STDOUT_FILENO ], "w" );
   if ( !fwrap )
     PMESSAGE_EXIT( EX_OSERR,
       "child can't open pipe for writing: %s\n", ERROR_STR
@@ -264,12 +270,14 @@ static pid_t read_source_write_wrap( void ) {
  */
 static void read_wrap( void ) {
   //
-  // Close both ends of pipes[0] since it doesn't use it; close the write end
-  // of pipes[1]; read from pipes[1] (wrap).
+  // We don't use these here.
   //
-  CLOSE_PIPES( 0 );
-  close( pipes[1][ STDOUT_FILENO ] );
-  FILE *const from_wrap = fdopen( pipes[1][ STDIN_FILENO ], "r" );
+  CLOSE_PIPES( TO_WRAP );
+  close( pipes[ FROM_WRAP ][ STDOUT_FILENO ] );
+  //
+  // Read from pipes[FROM_WRAP] (wrap) and write to fout.
+  //
+  FILE *const from_wrap = fdopen( pipes[ FROM_WRAP ][ STDIN_FILENO ], "r" );
   if ( !from_wrap )
     PMESSAGE_EXIT( EX_OSERR,
       "parent can't open pipe for reading: %s\n", ERROR_STR
@@ -294,16 +302,16 @@ static void read_wrap( void ) {
   leader[ tnws_len ] = '\0';
 
   while ( fgets( line_buf, sizeof( line_buf ), from_wrap ) ) {
-    char *pbuf = line_buf;
-    if ( line_buf[0] == ASCII_DLE ) {
-      switch ( line_buf[1] ) {
+    char const *line = line_buf;
+    if ( line[0] == ASCII_DLE ) {
+      switch ( line[1] ) {
         case ASCII_ETB:
           //
           // We've been told by child 1 (read_source_write_wrap, via child 2,
           // wrap) that we've reached the end of the comment: dump any
           // remaining buffer and pass text through verbatim.
           //
-          FPUTS( line_buf + 2, fout );
+          FPUTS( line + 2, fout );
           fcopy( from_wrap, fout );
           goto break_loop;
         default:
@@ -311,12 +319,12 @@ static void read_wrap( void ) {
           // We got an ETB followed by an unexpected character: skip over the
           // ETB and format the remaining buffer.
           //
-          ++pbuf;
+          ++line;
       } // switch
     }
     // don't emit leader_tws for blank lines
-    bool const is_blank_line = strcmp( pbuf, "\n" ) == 0;
-    FPRINTF( fout, "%s%s%s", leader, is_blank_line ? "" : leader_tws, pbuf );
+    bool const is_blank_line = strcmp( line, "\n" ) == 0;
+    FPRINTF( fout, "%s%s%s", leader, is_blank_line ? "" : leader_tws, line );
   } // while
 break_loop:
 
