@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      util.h
 **
-**      Copyright (C) 1996-2015  Paul J. Lucas
+**      Copyright (C) 1996-2016  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>                      /* for FILE */
 #include <stdlib.h>                     /* for exit(3) */
+#include <sysexits.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 
