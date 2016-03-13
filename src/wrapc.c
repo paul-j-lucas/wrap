@@ -83,13 +83,13 @@ static int    pipes[2][2];
 #define WS_CHARS    " \t"               /* whitespace characters */
 
 // local functions
-static pid_t        child_1( void );
-static void         child_2( pid_t );
+static void         fork_exec_wrap( pid_t );
 static size_t       leader_span( char const* );
 static size_t       leader_width( char const* );
-static void         parent( void );
 static void         parse_leader( char const*, char*, size_t* );
 static void         process_options( int, char const*[] );
+static pid_t        read_source_write_wrap( void );
+static void         read_wrap( void );
 static char const*  str_status( int );
 static void         usage( void );
 static void         wait_for_child_processes( void );
@@ -129,8 +129,8 @@ int main( int argc, char const *argv[] ) {
   //
   PIPE( pipes[0] );
   PIPE( pipes[1] );
-  child_2( child_1() );
-  parent();
+  fork_exec_wrap( read_source_write_wrap() );
+  read_wrap();
 
   wait_for_child_processes();
   exit( EX_OK );
@@ -139,72 +139,15 @@ int main( int argc, char const *argv[] ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Child 1
+ * Forks and execs into wrap(1).
  *
- * Close both ends of pipes[1] since it doesn't use it; read from our original
- * stdin and write to pipes[0] (child 2, wrap).
- *
- * Write the first and all subsequent lines with the leading characters
- * stripped from the beginning of each line.
- *
- * @return Returns the child's process ID.
+ * @param read_source_write_wrap_pid The process ID of read_source_write_wrap()
+ * (in case we need to kill it).
  */
-static pid_t child_1( void ) {
-  pid_t const pid = fork();
-  if ( pid == -1 )
-    PERROR_EXIT( EX_OSERR );
-  if ( pid != 0 )                       // parent process
-    return pid;
-
-  CLOSE_PIPES( 1 );
-  FILE *const fwrap = fdopen( pipes[0][ STDOUT_FILENO ], "w" );
-  if ( !fwrap )
-    PMESSAGE_EXIT( EX_OSERR,
-      "child can't open pipe for writing: %s\n", ERROR_STR
-    );
-
-  // write first line to wrap
-  FPUTS( line_buf + leader_len, fwrap );
-
-  //
-  // As a special-case, if the first line is NOT a comment, then just wrap all
-  // lines using the leading whitespace of the first line as a prototype for
-  // all subsequent lines, i.e., do NOT ever tell wrap(1) to pass text through
-  // verbatim (below).
-  //
-  bool const first_line_is_comment = first_nws_is_comment( line_buf );
-
-  while ( fgets( line_buf, sizeof( line_buf ), fin ) ) {
-    if ( first_line_is_comment && !first_nws_is_comment( line_buf ) ) {
-      //
-      // The line's first non-whitespace character isn't a comment character:
-      // we've reached the end of the comment. Signal wrap that we're now
-      // passing text through verbatim.
-      //
-      FPRINTF( fwrap, "%c%c%s", ASCII_DLE, ASCII_ETB, line_buf );
-      fcopy( fin, fwrap );
-      exit( EX_OK );
-    }
-    leader_len = leader_span( line_buf );
-    if ( !line_buf[ leader_len ] )      // no non-leading characters
-      FPUTC( '\n', fwrap );
-    else
-      FPUTS( line_buf + leader_len, fwrap );
-  } // while
-  CHECK_FERROR( fin );
-  exit( EX_OK );
-}
-
-/**
- * Child 2
- *
- * Read from pipes[0] (child 1) and write to pipes[1] (parent); exec into
- * wrap.
- */
-static void child_2( pid_t pid_1 ) {
+static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   pid_t const pid_2 = fork();
-  if ( pid_2 == -1 ) {
-    kill( pid_1, SIGTERM );             // we failed, so kill child 1
+  if ( pid_2 == -1 ) {                  // we failed, so kill the first child
+    kill( read_source_write_wrap_pid, SIGTERM );
     PERROR_EXIT( EX_OSERR );
   }
   if ( pid_2 != 0 )                     // parent process
@@ -248,6 +191,10 @@ static void child_2( pid_t pid_1 ) {
   /* 10 */    ARG_FMT( opt_line_width     , "-w%zu" );
   /* 11 */ argv[ argc ] = NULL;
 
+  //
+  // Read from pipes[0] (read_source_write_wrap) and write to pipes[1]
+  // (parent); exec into wrap.
+  //
   REDIRECT( STDIN_FILENO, 0 );
   REDIRECT( STDOUT_FILENO, 1 );
   execvp( PACKAGE, argv );
@@ -255,59 +202,72 @@ static void child_2( pid_t pid_1 ) {
 }
 
 /**
- * Spans the initial part of \a s for the "leader."  The leader is defined as
- * \c ^{WS}*{CC}+{WS}* where \c WS is whitespace and \c CC are comment
- * characters.
+ * Reads the source text to be wrapped and writes it, with the leading
+ * whitespace and comment characters stripped from each line, to wrap(1).
  *
- * @param s The string to span.
- * @return Returns the length of the leader.
+ * @return Returns the child's process ID.
  */
-static size_t leader_span( char const *s ) {
-  assert( s );
-  size_t ws_len = strspn( s, WS_CHARS );
-  size_t const cc_len = strspn( s += ws_len, COMMENT_CHARS );
-  if ( cc_len )
-    ws_len += strspn( s + cc_len, WS_CHARS );
-  return ws_len + cc_len;
-}
+static pid_t read_source_write_wrap( void ) {
+  pid_t const pid = fork();
+  if ( pid == -1 )
+    PERROR_EXIT( EX_OSERR );
+  if ( pid != 0 )                       // parent process
+    return pid;
 
-/**
- * Compute the actual width of the leader: tabs are equal to <opt_tab_spaces>
- * spaces minus the number of spaces we're into a tab-stop; all others are
- * equal to 1.
- *
- * @param leader The leader string to calculate the width of.
- * @return Returns said width.
- */
-static size_t leader_width( char const *leader ) {
-  assert( leader );
+  //
+  // Close both ends of pipes[1] since it doesn't use it; read from our
+  // original stdin and write to pipes[0] (wrap).
+  //
+  CLOSE_PIPES( 1 );
+  FILE *const fwrap = fdopen( pipes[0][ STDOUT_FILENO ], "w" );
+  if ( !fwrap )
+    PMESSAGE_EXIT( EX_OSERR,
+      "child can't open pipe for writing: %s\n", ERROR_STR
+    );
 
-  size_t spaces = 0, width = 0;
-  for ( char const *c = leader; *c; ++c ) {
-    if ( *c == '\t' ) {
-      width += opt_tab_spaces - spaces;
-      spaces = 0;
-    } else {
-      ++width;
-      spaces = (spaces + 1) % opt_tab_spaces;
+  // write first line to wrap
+  FPUTS( line_buf + leader_len, fwrap );
+
+  //
+  // As a special-case, if the first line is NOT a comment, then just wrap all
+  // lines using the leading whitespace of the first line as a prototype for
+  // all subsequent lines, i.e., do NOT ever tell wrap(1) to pass text through
+  // verbatim (below).
+  //
+  bool const first_line_is_comment = first_nws_is_comment( line_buf );
+
+  while ( fgets( line_buf, sizeof( line_buf ), fin ) ) {
+    if ( first_line_is_comment && !first_nws_is_comment( line_buf ) ) {
+      //
+      // The line's first non-whitespace character isn't a comment character:
+      // we've reached the end of the comment. Signal wrap that we're now
+      // passing text through verbatim.
+      //
+      FPRINTF( fwrap, "%c%c%s", ASCII_DLE, ASCII_ETB, line_buf );
+      fcopy( fin, fwrap );
+      exit( EX_OK );
     }
-  } // for
-  return width;
+    leader_len = leader_span( line_buf );
+    if ( !line_buf[ leader_len ] )      // no non-leading characters
+      FPUTC( '\n', fwrap );
+    else
+      FPUTS( line_buf + leader_len, fwrap );
+  } // while
+  CHECK_FERROR( fin );
+  exit( EX_OK );
 }
 
 /**
- * Parent
- *
- * Close both ends of pipes[0] since it doesn't use it; close the write end of
- * pipes[1].
- *
- * Read from pipes[1] (child 2, wrap) and prepend the leading text to each
- * line.
+ * Reads the output of wrap(1) and prepends the leading whitespace and comment
+ * characters back to each line.
  */
-static void parent( void ) {
+static void read_wrap( void ) {
+  //
+  // Close both ends of pipes[0] since it doesn't use it; close the write end
+  // of pipes[1]; read from pipes[1] (wrap).
+  //
   CLOSE_PIPES( 0 );
   close( pipes[1][ STDOUT_FILENO ] );
-
   FILE *const from_wrap = fdopen( pipes[1][ STDIN_FILENO ], "r" );
   if ( !from_wrap )
     PMESSAGE_EXIT( EX_OSERR,
@@ -360,6 +320,49 @@ static void parent( void ) {
 break_loop:
 
   CHECK_FERROR( from_wrap );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Spans the initial part of \a s for the "leader."  The leader is defined as
+ * \c ^{WS}*{CC}+{WS}* where \c WS is whitespace and \c CC are comment
+ * characters.
+ *
+ * @param s The string to span.
+ * @return Returns the length of the leader.
+ */
+static size_t leader_span( char const *s ) {
+  assert( s );
+  size_t ws_len = strspn( s, WS_CHARS );
+  size_t const cc_len = strspn( s += ws_len, COMMENT_CHARS );
+  if ( cc_len )
+    ws_len += strspn( s + cc_len, WS_CHARS );
+  return ws_len + cc_len;
+}
+
+/**
+ * Compute the actual width of the leader: tabs are equal to <opt_tab_spaces>
+ * spaces minus the number of spaces we're into a tab-stop; all others are
+ * equal to 1.
+ *
+ * @param leader The leader string to calculate the width of.
+ * @return Returns said width.
+ */
+static size_t leader_width( char const *leader ) {
+  assert( leader );
+
+  size_t spaces = 0, width = 0;
+  for ( char const *c = leader; *c; ++c ) {
+    if ( *c == '\t' ) {
+      width += opt_tab_spaces - spaces;
+      spaces = 0;
+    } else {
+      ++width;
+      spaces = (spaces + 1) % opt_tab_spaces;
+    }
+  } // for
+  return width;
 }
 
 static void parse_leader( char const *buf, char *leader, size_t *leader_len ) {
