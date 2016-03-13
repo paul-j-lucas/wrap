@@ -44,7 +44,7 @@ static pattern_t   *patterns = NULL;    // global list of patterns
  *
  * @return Returns a new, uninitialzed pattern.
  */
-static pattern_t* pattern_alloc() {
+static pattern_t* pattern_alloc( void ) {
   static int n_patterns_alloc = 0;      // number of patterns allocated
 
   if ( !n_patterns_alloc ) {

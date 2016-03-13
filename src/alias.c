@@ -47,7 +47,7 @@ static int          n_aliases = 0;      // number of aliases
  *
  * @return Returns a new, uninitialzed alias.
  */
-static alias_t* alias_alloc() {
+static alias_t* alias_alloc( void ) {
   static int n_aliases_alloc = 0;     // number of aliases allocated
 
   if ( !n_aliases_alloc ) {
