@@ -66,8 +66,9 @@ static char   line_buf[ LINE_BUF_SIZE ];
 static char   leader[ LINE_BUF_SIZE ];  // characters stripped/prepended
 static size_t leader_len;
 //
-// Two pipes: pipes[0] goes between child 1 and child 2 (wrap)
-//            pipes[1] goes between child 2 (wrap) and parent
+// Two pipes:
+// + pipes[0] goes between child 1 (read_source_write_wrap) and child 2 (wrap)
+// + pipes[1] goes between child 2 (wrap) and parent (read_wrap)
 //
 static int    pipes[2][2];
 
@@ -298,9 +299,9 @@ static void read_wrap( void ) {
       switch ( line_buf[1] ) {
         case ASCII_ETB:
           //
-          // We've been told by child 1 (via wrap, child 2) that we've reached
-          // the end of the comment: dump any remaining buffer and pass text
-          // through verbatim.
+          // We've been told by child 1 (read_source_write_wrap, via child 2,
+          // wrap) that we've reached the end of the comment: dump any
+          // remaining buffer and pass text through verbatim.
           //
           FPUTS( line_buf + 2, fout );
           fcopy( from_wrap, fout );
