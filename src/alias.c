@@ -119,6 +119,7 @@ alias_t const* alias_find( char const *name ) {
 void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
   assert( line );
   assert( conf_file );
+  assert( line_no );
 
   int n_argv_alloc = ALIAS_ARGV_ALLOC_DEFAULT;
   alias_t *const alias = alias_alloc();

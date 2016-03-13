@@ -89,6 +89,7 @@ void pattern_parse( char const *line, char const *conf_file,
                     unsigned line_no ) {
   assert( line );
   assert( conf_file );
+  assert( line_no );
 
   pattern_t *const pattern = pattern_alloc();
 
