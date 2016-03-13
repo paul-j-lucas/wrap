@@ -67,9 +67,10 @@ static char   leader[ LINE_BUF_SIZE ];  // characters stripped/prepended
 static size_t leader_len;
 //
 // Two pipes:
-// + pipes[0] goes between read_source_write_wrap() in the parent process
-//   and wrap(1).
-// + pipes[1] goes between wrap(1) and read_wrap() in the parent process.
+// + pipes[0][0] -> wrap(1)                   [child 2]
+//           [1] <- read_source_write_wrap()  [child 1]
+// + pipes[1][0] -> read_wrap()               [parent]
+//           [1] <- wrap(1)                   [child 2]
 //
 static int    pipes[2][2];
 
@@ -307,7 +308,7 @@ static void read_wrap( void ) {
       switch ( line[1] ) {
         case ASCII_ETB:
           //
-          // We've been told by child 1 (read_source_write_wrap, via child 2,
+          // We've been told by child 1 (read_source_write_wrap(), via child 2,
           // wrap) that we've reached the end of the comment: dump any
           // remaining buffer and pass text through verbatim.
           //
