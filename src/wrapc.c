@@ -37,6 +37,17 @@
 
 #define ARG_BUF_SIZE  25                /* max wrap command-line arg size */
 
+#define COMMENT_DELIMS_DEFAULT \
+  "!"   /* HTML and XML comments */                               \
+  "#"   /* CMake, Make, Perl, Python, Ruby, and Shell comments */ \
+  "%"   /* PostScript comments */                                 \
+  "/*"  /* C, C++, and Java comments */                           \
+  ":"   /* XQuery comments */                                     \
+  ";"   /* Assember and Lisp comments */                          \
+  ">"   /* Forward mail indicator */
+
+#define WS_CHARS    " \t"               /* whitespace characters */
+
 // Close both ends of pipe P.
 #define CLOSE_PIPES(P) \
   BLOCK( close( pipes[P][ STDIN_FILENO ] ); close( pipes[P][ STDOUT_FILENO ] ); )
@@ -53,11 +64,12 @@ char const   *me;                       // executable name
 // option variable definitions
 char const   *opt_alias;
 char const   *opt_conf_file;            // full path to conf file
+char const   *opt_comment_delims = COMMENT_DELIMS_DEFAULT;
 bool          opt_eos_delimit;          // end-of-sentence delimits para's?
 char const   *opt_fin_name;             // file in name
 size_t        opt_line_width = LINE_WIDTH_DEFAULT;
 bool          opt_no_conf;              // do not read conf file
-char const   *opt_para_delimiters;      // additional para delimiter chars
+char const   *opt_para_delims;          // additional para delimiter chars
 size_t        opt_tab_spaces = TAB_SPACES_DEFAULT;
 bool          opt_title_line;           // 1st para line is title?
 
@@ -76,17 +88,6 @@ static int    pipes[2][2];
 
 #define TO_WRAP       0                 /* pipes[0] */
 #define FROM_WRAP     1                 /* pipes[1] */
-
-#define COMMENT_CHARS \
-  "!"   /* HTML and XML comments */                               \
-  "#"   /* CMake, Make, Perl, Python, Ruby, and Shell comments */ \
-  "%"   /* PostScript comments */                                 \
-  "/*"  /* C, C++, and Java comments */                           \
-  ":"   /* XQuery comments */                                     \
-  ";"   /* Assember and Lisp comments */                          \
-  ">"   /* Forward mail indicator */
-
-#define WS_CHARS    " \t"               /* whitespace characters */
 
 // local functions
 static void         fork_exec_wrap( pid_t );
@@ -112,7 +113,7 @@ static void         wait_for_child_processes( void );
  */
 static inline bool first_nws_is_comment( char const *buf ) {
   char const first_nws = buf[ strspn( buf, WS_CHARS ) ];
-  return strchr( COMMENT_CHARS, first_nws );
+  return strchr( opt_comment_delims, first_nws );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -165,7 +166,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   arg_buf arg_opt_conf_file;
   char    arg_opt_fin_name[ PATH_MAX ];
   arg_buf arg_opt_line_width;
-  arg_buf arg_opt_para_delimiters;
+  arg_buf arg_opt_para_delims;
   arg_buf arg_opt_tab_spaces;
 
   int argc = 0;
@@ -184,17 +185,17 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 
   // Quoting string arguments is unnecessary since no shell is involved.
 
-  /*  0 */    ARG_DUP(                      PACKAGE );
-  /*  1 */ IF_ARG_FMT( opt_alias          , "-a%s"  );
-  /*  2 */ IF_ARG_FMT( opt_conf_file      , "-c%s"  );
-  /*  3 */ IF_ARG_DUP( opt_no_conf        , "-C"    );
-  /*  4 */    ARG_DUP(                      "-D"    );
-  /*  5 */ IF_ARG_DUP( opt_eos_delimit    , "-e"    );
-  /*  6 */ IF_ARG_FMT( opt_fin_name       , "-F%s"  );
-  /*  7 */ IF_ARG_FMT( opt_para_delimiters, "-p%s"  );
-  /*  8 */    ARG_FMT( opt_tab_spaces     , "-s%zu" );
-  /*  9 */ IF_ARG_DUP( opt_title_line     , "-T"    );
-  /* 10 */    ARG_FMT( opt_line_width     , "-w%zu" );
+  /*  0 */    ARG_DUP(                  PACKAGE );
+  /*  1 */ IF_ARG_FMT( opt_alias      , "-a%s"  );
+  /*  2 */ IF_ARG_FMT( opt_conf_file  , "-c%s"  );
+  /*  3 */ IF_ARG_DUP( opt_no_conf    , "-C"    );
+  /*  4 */    ARG_DUP(                  "-D"    );
+  /*  5 */ IF_ARG_DUP( opt_eos_delimit, "-e"    );
+  /*  6 */ IF_ARG_FMT( opt_fin_name   , "-F%s"  );
+  /*  7 */ IF_ARG_FMT( opt_para_delims, "-p%s"  );
+  /*  8 */    ARG_FMT( opt_tab_spaces , "-s%zu" );
+  /*  9 */ IF_ARG_DUP( opt_title_line , "-T"    );
+  /* 10 */    ARG_FMT( opt_line_width , "-w%zu" );
   /* 11 */ argv[ argc ] = NULL;
 
   //
@@ -345,7 +346,7 @@ break_loop:
 static size_t leader_span( char const *s ) {
   assert( s );
   size_t ws_len = strspn( s, WS_CHARS );
-  size_t const cc_len = strspn( s += ws_len, COMMENT_CHARS );
+  size_t const cc_len = strspn( s += ws_len, opt_comment_delims );
   if ( cc_len )
     ws_len += strspn( s + cc_len, WS_CHARS );
   return ws_len + cc_len;
@@ -395,7 +396,7 @@ static void parse_leader( char const *buf, char *leader, size_t *leader_len ) {
 static void process_options( int argc, char const *argv[] ) {
   char const *opt_fin = NULL;           // file in name
   char const *opt_fout = NULL;          // file out name
-  char const  opts[] = "a:c:Cef:F:l:o:p:s:Tvw:";
+  char const  opts[] = "a:c:CD:ef:F:l:o:p:s:Tvw:";
   bool        print_version = false;
 
   me = base_name( argv[0] );
@@ -407,11 +408,12 @@ static void process_options( int argc, char const *argv[] ) {
       case 'a': opt_alias           = optarg;                       break;
       case 'c': opt_conf_file       = optarg;                       break;
       case 'C': opt_no_conf         = true;                         break;
+      case 'D': opt_comment_delims  = optarg;                       break;
       case 'e': opt_eos_delimit     = true;                         break;
       case 'f': opt_fin             = optarg;                 // no break;
       case 'F': opt_fin_name        = base_name( optarg );          break;
       case 'o': opt_fout            = optarg;                       break;
-      case 'p': opt_para_delimiters = optarg;                       break;
+      case 'p': opt_para_delims     = optarg;                       break;
       case 's': opt_tab_spaces      = check_atou( optarg );         break;
       case 'T': opt_title_line      = true;                         break;
       case 'v': print_version       = true;                         break;
@@ -465,16 +467,18 @@ static void usage( void ) {
 "       -a alias   Use alias from configuration file.\n"
 "       -c file    Specify the configuration file [default: ~/%s].\n"
 "       -C         Supress reading configuration file.\n"
+"       -D chars   Specify comment delimiter characters [default: %s].\n"
 "       -e         Treat white-space after end-of-sentence as new paragraph.\n"
 "       -f file    Read from this file [default: stdin].\n"
 "       -F string  Specify filename for stdin.\n"
 "       -o file    Write to this file [default: stdout].\n"
-"       -p string  Specify additional paragraph delimiter characters.\n"
+"       -p chars   Specify additional paragraph delimiter characters.\n"
 "       -s number  Specify tab-spaces equivalence [default: %d].\n"
 "       -T         Treat paragraph first line as title.\n"
 "       -w number  Specify line width [default: %d]\n"
 "       -v         Print version an exit.\n"
-    , me, me, CONF_FILE_NAME, TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
+    , me, me, CONF_FILE_NAME, COMMENT_DELIMS_DEFAULT, TAB_SPACES_DEFAULT,
+    LINE_WIDTH_DEFAULT
   );
   exit( EX_USAGE );
 }

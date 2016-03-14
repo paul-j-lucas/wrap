@@ -9,6 +9,10 @@ See the end of the file for license conditions.
 Wrap now has a -P option that treats the leading whitespace on the first line
 as a prototype for all subsequent lines.
 
+** Added commend-delimiters option.
+In wrapc, the comment delimiter characters can now be overridden via the new -D
+command-line option.
+
 ** Special-case handling of non-comment lines.
 In wrapc, if the first line isn't a comment, then the leading whitespace alone
 is used as a prototype for subsequent lines and wrap(1) is never told to copy
