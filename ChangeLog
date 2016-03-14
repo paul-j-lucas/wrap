@@ -1,3 +1,30 @@
+2016-03-14  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, wrapc.1, wrapc.c, test/Makefile.am, wrapc-D-01.txt, wrapc-D-01.txt,
+     wrapc-D-01.test: Added wrapc -D option.
+
+2016-03-13  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Comment tweak.
+   * wrapc.c: Added FROM_WRAP & TO_WRAP.
+   * wrapc.c: Comment clean-up.
+
+2016-03-12  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Function renaming/reordering.
+   * alias.c, pattern.c: Added "void".
+   * alias.c, pattern.c: Added assert( line_no ).
+   * alias.c, pattern.c: Added alias_alloc(), pattern_alloc().
+   * wrapc.c: wrapc.c is now using size_t.
+   * lib/Makefile.am, getopt.c, getopt.in.h, getopt1.c, getopt_int.h,
+     gettext.h, getopt.m4, gnulib-cache.m4, gnulib-comp.m4, nocrash.m4,
+     src/Makefile.am, wrap.c, wrapc.c: Now using GNU getopt().
+   * common.h, util.h: Moved #include <sysexits.h>.
+
+2016-03-11  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac, wrapc.c: Now using inline function in wrapc.
+
 2016-03-10  Paul J. Lucas <paul@lucasmail.org>
 
    * NEWS, wrap.1, wrap.c, test/Makefile.am, wrap-P-01.txt, wrap-P-02.txt,
