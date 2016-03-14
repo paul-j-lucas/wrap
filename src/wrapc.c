@@ -278,8 +278,8 @@ static void read_wrap( void ) {
   //
   // Read from pipes[FROM_WRAP] (wrap) and write to fout.
   //
-  FILE *const from_wrap = fdopen( pipes[ FROM_WRAP ][ STDIN_FILENO ], "r" );
-  if ( !from_wrap )
+  FILE *const fwrap = fdopen( pipes[ FROM_WRAP ][ STDIN_FILENO ], "r" );
+  if ( !fwrap )
     PMESSAGE_EXIT( EX_OSERR,
       "parent can't open pipe for reading: %s\n", ERROR_STR
     );
@@ -302,7 +302,7 @@ static void read_wrap( void ) {
   strcpy( leader_tws, leader + tnws_len );
   leader[ tnws_len ] = '\0';
 
-  while ( fgets( line_buf, sizeof( line_buf ), from_wrap ) ) {
+  while ( fgets( line_buf, sizeof( line_buf ), fwrap ) ) {
     char const *line = line_buf;
     if ( line[0] == ASCII_DLE ) {
       switch ( line[1] ) {
@@ -313,7 +313,7 @@ static void read_wrap( void ) {
           // remaining buffer and pass text through verbatim.
           //
           FPUTS( line + 2, fout );
-          fcopy( from_wrap, fout );
+          fcopy( fwrap, fout );
           goto break_loop;
         default:
           //
@@ -329,7 +329,7 @@ static void read_wrap( void ) {
   } // while
 break_loop:
 
-  CHECK_FERROR( from_wrap );
+  CHECK_FERROR( fwrap );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
