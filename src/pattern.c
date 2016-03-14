@@ -30,11 +30,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define PATTERN_ALLOC_DEFAULT       10
-#define PATTERN_ALLOC_INCREMENT     10
+static size_t const PATTERN_ALLOC_DEFAULT   = 10;
+static size_t const PATTERN_ALLOC_INCREMENT = 10;
 
 extern char const  *me;
-static int          n_patterns = 0;     // number of patterns
+static size_t       n_patterns = 0;     // number of patterns
 static pattern_t   *patterns = NULL;    // global list of patterns
 
 ////////// local functions ////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ static pattern_t   *patterns = NULL;    // global list of patterns
  * @return Returns a new, uninitialzed pattern.
  */
 static pattern_t* pattern_alloc( void ) {
-  static int n_patterns_alloc = 0;      // number of patterns allocated
+  static size_t n_patterns_alloc = 0;   // number of patterns allocated
 
   if ( !n_patterns_alloc ) {
     n_patterns_alloc = PATTERN_ALLOC_DEFAULT;
@@ -79,7 +79,7 @@ void pattern_cleanup( void ) {
 
 alias_t const* pattern_find( char const *file_name ) {
   assert( file_name );
-  for ( int i = 0; i < n_patterns; ++i )
+  for ( size_t i = 0; i < n_patterns; ++i )
     if ( fnmatch( patterns[i].pattern, file_name, 0 ) == 0 )
       return patterns[i].alias;
   return NULL;

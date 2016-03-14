@@ -29,16 +29,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ALIAS_ALLOC_DEFAULT         10
-#define ALIAS_ALLOC_INCREMENT       10
-#define ALIAS_ARGV_ALLOC_DEFAULT    10
-#define ALIAS_ARGV_ALLOC_INCREMENT  10
-#define ALIAS_NAME_CHARS \
-  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
+static size_t const ALIAS_ALLOC_DEFAULT         = 10;
+static size_t const ALIAS_ALLOC_INCREMENT       = 10;
+static size_t const ALIAS_ARGV_ALLOC_DEFAULT    = 10;
+static size_t const ALIAS_ARGV_ALLOC_INCREMENT  = 10;
+static char const   ALIAS_NAME_CHARS[]          = "abcdefghijklmnopqrstuvwxyz"
+                                                  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                                  "0123456789_";
 
 static alias_t     *aliases = NULL;     // global list of aliases
 extern char const  *me;
-static int          n_aliases = 0;      // number of aliases
+static size_t       n_aliases = 0;      // number of aliases
 
 ////////// local functions ////////////////////////////////////////////////////
 
@@ -48,7 +49,7 @@ static int          n_aliases = 0;      // number of aliases
  * @return Returns a new, uninitialzed alias.
  */
 static alias_t* alias_alloc( void ) {
-  static int n_aliases_alloc = 0;     // number of aliases allocated
+  static size_t n_aliases_alloc = 0;    // number of aliases allocated
 
   if ( !n_aliases_alloc ) {
     n_aliases_alloc = ALIAS_ALLOC_DEFAULT;
@@ -76,7 +77,7 @@ static void alias_check_dup( char const *conf_file, unsigned line_no ) {
     // The number of aliases is assumed to be small, so linear search is good
     // enough.
     //
-    int i = n_aliases - 1;
+    int i = (int)n_aliases - 1;
     char const *const last_name = aliases[i].argv[0];
     while ( --i >= 0 ) {
       if ( strcmp( aliases[i].argv[0], last_name ) == 0 )
@@ -110,7 +111,7 @@ void alias_cleanup( void ) {
 
 alias_t const* alias_find( char const *name ) {
   assert( name );
-  for ( int i = 0; i < n_aliases; ++i )
+  for ( size_t i = 0; i < n_aliases; ++i )
     if ( strcmp( aliases[i].argv[0], name ) == 0 )
       return &aliases[i];
   return NULL;
@@ -121,7 +122,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
   assert( conf_file );
   assert( line_no );
 
-  int n_argv_alloc = ALIAS_ARGV_ALLOC_DEFAULT;
+  size_t n_argv_alloc = ALIAS_ARGV_ALLOC_DEFAULT;
   alias_t *const alias = alias_alloc();
   alias->line_no = line_no;
   alias->argc = 1;

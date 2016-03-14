@@ -39,45 +39,14 @@
 #include <unistd.h>
 
 // extern variable definitions
-FILE         *fin;                      // file in
-FILE         *fout;                     // file out
-char const   *me;                       // executable name
+FILE               *fin;                // file in
+FILE               *fout;               // file out
+char const         *me;                 // executable name
 
-// option variable definitions
-char const   *opt_alias;
-char const   *opt_conf_file;
-bool          opt_eos_delimit;          // end-of-sentence delimits para's?
-bool          opt_data_link_escape;     // respond to in-band control
-char const   *opt_fin;                  // file in path
-char const   *opt_fin_name;             // file in name (only)
-char const   *opt_fout = NULL;          // file out path
-size_t        opt_hang_spaces;          // hanging-indent spaces
-size_t        opt_hang_tabs;            // hanging-indent tabs
-size_t        opt_indt_spaces;          // indent spaces
-size_t        opt_indt_tabs;            // indent tabs
-bool          opt_lead_dot_ignore;      // ignore lines starting with '.'?
-size_t        opt_lead_spaces;          // leading spaces
-size_t        opt_lead_tabs;            // leading tabs
-bool          opt_lead_ws_delimit;      // leading whitespace delimit para's?
-size_t        opt_line_width = LINE_WIDTH_DEFAULT;
-size_t        opt_mirror_spaces;
-size_t        opt_mirror_tabs;
-size_t        opt_newlines_delimit = NEWLINES_DELIMIT_DEFAULT;
-bool          opt_no_conf;              // do not read conf file
-char const   *opt_para_delimiters;      // additional para delimiter chars
-bool          opt_prototype;            // first line whitespace is prototype?
-size_t        opt_tab_spaces = TAB_SPACES_DEFAULT;
-bool          opt_title_line;           // 1st para line is title?
-
-// local variable definitions
-static char   line_buf[ LINE_BUF_SIZE ];
-static size_t line_count;               // number of characters in buffer
-static size_t line_width;               // actual width of buffer
-static char   prototype_buf[ LINE_BUF_SIZE ];
-static size_t prototype_count;
-static size_t prototype_width;
-
-static char const utf8_len_table[] = {
+// local constant definitions
+static char const   UTF8_BOM[] = "\xEF\xBB\xBF";
+static size_t const UTF8_BOM_LEN = sizeof( UTF8_BOM ) - 1; // terminating null
+static char const   UTF8_LEN_TABLE[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
   /* 0 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
   /* 1 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -97,9 +66,39 @@ static char const utf8_len_table[] = {
   /* F */ 4,4,4,4,4,4,4,4,5,5,5,5,6,6,0,0
 };
 
-#define UTF8_BOM            "\xEF\xBB\xBF"
-#define UTF8_BOM_LEN        (sizeof( UTF8_BOM ) - 1 /* terminating null */)
-#define UTF8_LEN(C)         ((size_t)utf8_len_table[ (unsigned char)(C) ])
+// option local variable definitions
+static char const  *opt_alias;
+static char const  *opt_conf_file;
+static bool         opt_eos_delimit;    // end-of-sentence delimits para's?
+static bool         opt_data_link_esc;  // respond to in-band control
+static char const  *opt_fin;            // file in path
+static char const  *opt_fin_name;       // file in name (only)
+static char const  *opt_fout = NULL;    // file out path
+static size_t       opt_hang_spaces;    // hanging-indent spaces
+static size_t       opt_hang_tabs;      // hanging-indent tabs
+static size_t       opt_indt_spaces;    // indent spaces
+static size_t       opt_indt_tabs;      // indent tabs
+static bool         opt_lead_dot_ignore;// ignore lines starting with '.'?
+static size_t       opt_lead_spaces;    // leading spaces
+static size_t       opt_lead_tabs;      // leading tabs
+static bool         opt_lead_ws_delimit;// leading whitespace delimit para's?
+static size_t       opt_line_width = LINE_WIDTH_DEFAULT;
+static size_t       opt_mirror_spaces;
+static size_t       opt_mirror_tabs;
+static size_t       opt_newlines_delimit = NEWLINES_DELIMIT_DEFAULT;
+static bool         opt_no_conf;        // do not read conf file
+static char const  *opt_para_delims;    // additional para delimiter chars
+static bool         opt_prototype;      // first line whitespace is prototype?
+static size_t       opt_tab_spaces = TAB_SPACES_DEFAULT;
+static bool         opt_title_line;     // 1st para line is title?
+
+// other local variable definitions
+static char         line_buf[ LINE_BUF_SIZE ];
+static size_t       line_count;         // number of characters in buffer
+static size_t       line_width;         // actual width of buffer
+static char         prototype_buf[ LINE_BUF_SIZE ];
+static size_t       prototype_count;
+static size_t       prototype_width;
 
 // local functions
 static bool copy_line( FILE*, FILE*, char*, size_t );
@@ -110,6 +109,12 @@ static void print_lead_chars( void );
 static void print_line( size_t, bool );
 static void process_options( int, char const*[], char const*, unsigned );
 static void usage( void );
+
+////////// inline functions ///////////////////////////////////////////////////
+
+static inline size_t utf8_len( char c ) {
+  return (size_t)UTF8_LEN_TABLE[ (unsigned char)c ];
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -264,7 +269,7 @@ int main( int argc, char const *argv[] ) {
       if ( was_para_delim_char ) {
         //
         // The previous character was a paragraph-delimiter character (set only
-        // if opt_para_delimiters was set): delimit the paragraph.
+        // if opt_para_delims was set): delimit the paragraph.
         //
         goto delimit_paragraph;
       }
@@ -282,7 +287,7 @@ int main( int argc, char const *argv[] ) {
     //  HANDLE WRAP/WRAPC INTERPROCESS MESSAGE
     ///////////////////////////////////////////////////////////////////////////
 
-    if ( opt_data_link_escape && c == ASCII_DLE ) {
+    if ( opt_data_link_esc && c == ASCII_DLE ) {
       switch ( c = getc( fin ) ) {
         case ASCII_ETB:
           //
@@ -329,8 +334,8 @@ int main( int argc, char const *argv[] ) {
     if ( !(was_eos_char && strchr( "'\")]", c )) )
       was_eos_char = (strchr( ".?!", c ) != NULL);
 
-    if ( opt_para_delimiters )
-      was_para_delim_char = (strchr( opt_para_delimiters, c ) != NULL);
+    if ( opt_para_delims )
+      was_para_delim_char = (strchr( opt_para_delims, c ) != NULL);
 
     ///////////////////////////////////////////////////////////////////////////
     //  INSERT SPACES
@@ -377,8 +382,8 @@ int main( int argc, char const *argv[] ) {
     //  INSERT NON-SPACE CHARACTER
     ///////////////////////////////////////////////////////////////////////////
 
-    size_t utf8_len = UTF8_LEN( c );    // bytes comprising UTF-8 character
-    if ( !utf8_len )                    // unexpected UTF-8 continuation byte
+    size_t len = utf8_len( c );       // bytes comprising UTF-8 character
+    if ( !len )                       // unexpected UTF-8 continuation byte
       continue;
 
     size_t tmp_line_count = line_count; // save count in case invalid UTF-8
@@ -389,16 +394,16 @@ int main( int argc, char const *argv[] ) {
     // the remaining bytes comprising the character.  The entire muti-byte
     // UTF-8 character is always treated as having a width of 1.
     //
-    for ( size_t i = utf8_len; i > 1; --i ) {
+    for ( size_t i = len; i > 1; --i ) {
       if ( (c = getc( fin )) == EOF )
         goto done;                      // premature end of UTF-8 character
       line_buf[ tmp_line_count++ ] = c;
-      if ( UTF8_LEN( c ) )              // unexpected UTF-8 start byte
+      if ( utf8_len( c ) )              // unexpected UTF-8 start byte
         goto continue_outer_loop;       // skip entire UTF-8 character
     } // for
     line_count = tmp_line_count;        // UTF-8 is valid
 
-    if ( utf8_len == UTF8_BOM_LEN ) {
+    if ( len == UTF8_BOM_LEN ) {
       size_t const utf8_start_pos = line_count - UTF8_BOM_LEN;
       if ( strncmp( line_buf + utf8_start_pos, UTF8_BOM, UTF8_BOM_LEN ) == 0 )
         continue;                       // discard UTF-8 BOM
@@ -442,7 +447,7 @@ int main( int argc, char const *argv[] ) {
       if ( !isspace( c ) ) {
         line_buf[ line_count++ ] = c;
         ++line_width;
-        for ( utf8_len = UTF8_LEN( c ); utf8_len > 1; --utf8_len )
+        for ( len = utf8_len( c ); len > 1; --len )
           line_buf[ line_count++ ] = line_buf[ ++from ];
       }
     } // for
@@ -620,7 +625,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'c': opt_conf_file         = optarg;                     break;
       case 'C': opt_no_conf           = true;                       break;
       case 'd': opt_lead_dot_ignore   = true;                       break;
-      case 'D': opt_data_link_escape  = true;                       break;
+      case 'D': opt_data_link_esc     = true;                       break;
       case 'e': opt_eos_delimit       = true;                       break;
       case 'f': opt_fin               = optarg;               // no break;
       case 'F': opt_fin_name          = base_name( optarg );        break;
@@ -633,7 +638,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'n': opt_newlines_delimit  = INT_MAX;                    break;
       case 'N': opt_newlines_delimit  = 1;                          break;
       case 'o': opt_fout              = optarg;                     break;
-      case 'p': opt_para_delimiters   = optarg;                     break;
+      case 'p': opt_para_delims       = optarg;                     break;
       case 'P': opt_prototype         = true;                       break;
       case 's': opt_tab_spaces        = check_atou( optarg );       break;
       case 'S': opt_lead_spaces       = check_atou( optarg );       break;

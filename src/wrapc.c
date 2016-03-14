@@ -35,19 +35,6 @@
 #include <sys/wait.h>                   /* for wait() */
 #include <unistd.h>                     /* for close(), fork(), ... */
 
-#define ARG_BUF_SIZE  25                /* max wrap command-line arg size */
-
-#define COMMENT_DELIMS_DEFAULT \
-  "!"   /* HTML and XML comments */                               \
-  "#"   /* CMake, Make, Perl, Python, Ruby, and Shell comments */ \
-  "%"   /* PostScript comments */                                 \
-  "/*"  /* C, C++, and Java comments */                           \
-  ":"   /* XQuery comments */                                     \
-  ";"   /* Assember and Lisp comments */                          \
-  ">"   /* Forward mail indicator */
-
-#define WS_CHARS    " \t"               /* whitespace characters */
-
 // Close both ends of pipe P.
 #define CLOSE_PIPES(P) \
   BLOCK( close( pipes[P][ STDIN_FILENO ] ); close( pipes[P][ STDOUT_FILENO ] ); )
@@ -57,26 +44,38 @@
   BLOCK( close( FD ); DUP( pipes[P][FD] ); CLOSE_PIPES( P ); )
 
 // extern variable definitions
-FILE         *fin;                      // file in
-FILE         *fout;                     // file out
-char const   *me;                       // executable name
+FILE               *fin;                // file in
+FILE               *fout;               // file out
+char const         *me;                 // executable name
 
-// option variable definitions
-char const   *opt_alias;
-char const   *opt_conf_file;            // full path to conf file
-char const   *opt_comment_delims = COMMENT_DELIMS_DEFAULT;
-bool          opt_eos_delimit;          // end-of-sentence delimits para's?
-char const   *opt_fin_name;             // file in name
-size_t        opt_line_width = LINE_WIDTH_DEFAULT;
-bool          opt_no_conf;              // do not read conf file
-char const   *opt_para_delims;          // additional para delimiter chars
-size_t        opt_tab_spaces = TAB_SPACES_DEFAULT;
-bool          opt_title_line;           // 1st para line is title?
+// local constant definitions
+static size_t const ARG_BUF_SIZE = 25;  // max wrap command-line arg size
+static char const   COMMENT_DELIMS_DEFAULT[] =
+  "!"   // HTML and XML comments
+  "#"   // CMake, Make, Perl, Python, Ruby, and Shell comments
+  "%"   // PostScript comments
+  "/*"  // C, C++, and Java comments
+  ":"   // XQuery comments
+  ";"   // Assember and Lisp comments
+  ">";  // Forward mail indicator
+static char const   WS_CHARS[] = " \t"; /* whitespace characters */
 
-// local variables
-static char   line_buf[ LINE_BUF_SIZE ];
-static char   leader[ LINE_BUF_SIZE ];  // characters stripped/prepended
-static size_t leader_len;
+// option local variable definitions
+static char const  *opt_alias;
+static char const  *opt_conf_file;      // full path to conf file
+static char const  *opt_comment_delims = COMMENT_DELIMS_DEFAULT;
+static bool         opt_eos_delimit;    // end-of-sentence delimits para's?
+static char const  *opt_fin_name;       // file in name
+static size_t       opt_line_width = LINE_WIDTH_DEFAULT;
+static bool         opt_no_conf;        // do not read conf file
+static char const  *opt_para_delims;    // additional para delimiter chars
+static size_t       opt_tab_spaces = TAB_SPACES_DEFAULT;
+static bool         opt_title_line;     // 1st para line is title?
+
+// other local variable definitions
+static char         line_buf[ LINE_BUF_SIZE ];
+static char         leader[ LINE_BUF_SIZE ]; // characters stripped/prepended
+static size_t       leader_len;
 //
 // Two pipes:
 // + pipes[0][0] -> wrap(1)                   [child 2]
@@ -84,10 +83,10 @@ static size_t leader_len;
 // + pipes[1][0] -> read_wrap()               [parent]
 //           [1] <- wrap(1)                   [child 2]
 //
-static int    pipes[2][2];
+static int          pipes[2][2];
 
-#define TO_WRAP       0                 /* pipes[0] */
-#define FROM_WRAP     1                 /* pipes[1] */
+#define TO_WRAP     0                   /* to refer to pipes[0] */
+#define FROM_WRAP   1                   /* to refer to pipes[1] */
 
 // local functions
 static void         fork_exec_wrap( pid_t );

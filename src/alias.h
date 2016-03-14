@@ -21,11 +21,14 @@
 #ifndef wrap_alias_H
 #define wrap_alias_H
 
+// standard
+#include <stddef.h>                     /* for size_t */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 struct alias_s {
   unsigned line_no;                     // line in conf file defined on
-  int argc;                             // number of arguments + 1
+  size_t argc;                          // number of arguments + 1
   char const** argv;                    // argv[0] = alias name
 };
 typedef struct alias_s alias_t;
