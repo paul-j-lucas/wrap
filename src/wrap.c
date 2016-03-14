@@ -119,7 +119,7 @@ static inline size_t utf8_len( char c ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
-  size_t wrap_pos = 0;                  // position at which we can wrap
+  init( argc, argv );
 
   //
   // Number of consecutive newlines.
@@ -151,9 +151,11 @@ int main( int argc, char const *argv[] ) {
   bool is_long_line = false;
 
   //
-  // True when the next line to be read will be a title line.
+  // True when the next line to be read will be a title line.  The first
+  // non-all-whitespace line of the first paragraph is a title line only if
+  // opt_title_line (-T) is true.
   //
-  bool next_line_is_title;
+  bool next_line_is_title = opt_title_line;
 
   //
   // Number of spaces to output before the next non-whitespace character: set
@@ -174,13 +176,7 @@ int main( int argc, char const *argv[] ) {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  init( argc, argv );
-
-  //
-  // The first non-all-whitespace line of the first paragraph is a title line
-  // only if opt_title_line (-T) is true.
-  //
-  next_line_is_title = opt_title_line;
+  size_t wrap_pos = 0;                  // position at which we can wrap
 
   for ( int c, prev_c = '\0'; (c = getc( fin )) != EOF; prev_c = c ) {
 
