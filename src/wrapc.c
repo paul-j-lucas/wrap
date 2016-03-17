@@ -84,6 +84,7 @@ static size_t       leader_len;
 //           [1] <- wrap(1)                   [child 2]
 //
 static int          pipes[2][2];
+static bool         set_comment_delims; // was -D given on the command-line?
 
 #define TO_WRAP     0                   /* to refer to pipes[0] */
 #define FROM_WRAP   1                   /* to refer to pipes[1] */
@@ -111,8 +112,15 @@ static void         wait_for_child_processes( void );
  * is a comment character.
  */
 static inline bool first_nws_is_comment( char const *buf ) {
-  char const first_nws = buf[ strspn( buf, WS_CHARS ) ];
-  return strchr( opt_comment_delims, first_nws );
+  char const *const first_nws = &buf[ strspn( buf, WS_CHARS ) ];
+  if ( !set_comment_delims && strncmp( first_nws, "*/", 2 ) == 0 ) {
+    //
+    // As a special-case, treat */ (the end of a C-style comment) as not being
+    // a comment so we'll tell wrap(1) to pass it through verbatim.
+    //
+    return false;
+  }
+  return strchr( opt_comment_delims, *first_nws );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -407,7 +415,8 @@ static void process_options( int argc, char const *argv[] ) {
       case 'a': opt_alias           = optarg;                       break;
       case 'c': opt_conf_file       = optarg;                       break;
       case 'C': opt_no_conf         = true;                         break;
-      case 'D': opt_comment_delims  = optarg;                       break;
+      case 'D': opt_comment_delims  = optarg;
+                set_comment_delims  = true;                         break;
       case 'e': opt_eos_delimit     = true;                         break;
       case 'f': opt_fin             = optarg;                 // no break;
       case 'F': opt_fin_name        = base_name( optarg );          break;

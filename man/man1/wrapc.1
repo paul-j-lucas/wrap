@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\f1 1 "March 14, 2016" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "March 16, 2016" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -69,6 +69,12 @@ Quoted mail indicator.
 .P
 Comment delimiters are treated as such
 only when they are the first non-whitespace characters on a line.
+As a special-case,
+the end of a C-style comment
+(\f(CW*/\fP)
+is not treated as a comment delimiter
+which means that its line is passed through verbatim
+(see below).
 .P
 Leading whitespace and comment delimiters
 of the first line
