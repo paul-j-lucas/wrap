@@ -58,7 +58,7 @@ static char const   COMMENT_DELIMS_DEFAULT[] =
   ":"   // XQuery comments
   ";"   // Assember and Lisp comments
   ">";  // Forward mail indicator
-static char const   WS_CHARS[] = " \t"; /* whitespace characters */
+static char const   WS_CHARS[] = " \t"; // whitespace characters
 
 // option local variable definitions
 static char const  *opt_alias;
