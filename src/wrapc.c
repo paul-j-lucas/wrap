@@ -473,7 +473,7 @@ static void usage( void ) {
 "options:\n"
 "       -a alias   Use alias from configuration file.\n"
 "       -c file    Specify the configuration file [default: ~/%s].\n"
-"       -C         Supress reading configuration file.\n"
+"       -C         Suppress reading configuration file.\n"
 "       -D chars   Specify comment delimiter characters [default: %s].\n"
 "       -e         Treat white-space after end-of-sentence as new paragraph.\n"
 "       -f file    Read from this file [default: stdin].\n"
