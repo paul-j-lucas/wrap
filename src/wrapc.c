@@ -90,6 +90,7 @@ static bool         set_comment_delims; // was -D given on the command-line?
 #define FROM_WRAP   1                   /* to refer to pipes[1] */
 
 // local functions
+static bool         first_nws_is_comment( char const* );
 static void         fork_exec_wrap( pid_t );
 static size_t       leader_span( char const* );
 static size_t       leader_width( char const* );
@@ -100,28 +101,6 @@ static void         read_wrap( void );
 static char const*  str_status( int );
 static void         usage( void );
 static void         wait_for_child_processes( void );
-
-////////// inline functions ///////////////////////////////////////////////////
-
-/**
- * Gets whether the first non-whitespace character in \a buf is a comment
- * character.
- *
- * @param buf The buffer to check.
- * @return Returns \c true only if the first non-whitespace character in \a buf
- * is a comment character.
- */
-static inline bool first_nws_is_comment( char const *buf ) {
-  char const *const first_nws = &buf[ strspn( buf, WS_CHARS ) ];
-  if ( !set_comment_delims && strncmp( first_nws, "*/", 2 ) == 0 ) {
-    //
-    // As a special-case, treat */ (the end of a C-style comment) as not being
-    // a comment so we'll tell wrap(1) to pass it through verbatim.
-    //
-    return false;
-  }
-  return strchr( opt_comment_delims, *first_nws );
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -151,6 +130,26 @@ int main( int argc, char const *argv[] ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Gets whether the first non-whitespace character in \a buf is a comment
+ * character.
+ *
+ * @param buf The buffer to check.
+ * @return Returns \c true only if the first non-whitespace character in \a buf
+ * is a comment character.
+ */
+static bool first_nws_is_comment( char const *buf ) {
+  char const *const first_nws = &buf[ strspn( buf, WS_CHARS ) ];
+  if ( !set_comment_delims && strncmp( first_nws, "*/", 2 ) == 0 ) {
+    //
+    // As a special-case, treat */ (the end of a C-style comment) as not being
+    // a comment so we'll tell wrap(1) to pass it through verbatim.
+    //
+    return false;
+  }
+  return strchr( opt_comment_delims, *first_nws );
+}
 
 /**
  * Forks and execs into wrap(1).
