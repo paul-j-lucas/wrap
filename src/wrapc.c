@@ -35,11 +35,11 @@
 #include <sys/wait.h>                   /* for wait() */
 #include <unistd.h>                     /* for close(), fork(), ... */
 
-// Close both ends of pipe P.
+// Closes both ends of pipe P.
 #define CLOSE_PIPES(P) \
   BLOCK( close( pipes[P][ STDIN_FILENO ] ); close( pipes[P][ STDOUT_FILENO ] ); )
 
-// Redirect file-descriptor FD to/from pipe P.
+// Redirects file-descriptor FD to/from pipe P.
 #define REDIRECT(FD,P) \
   BLOCK( close( FD ); DUP( pipes[P][FD] ); CLOSE_PIPES( P ); )
 
@@ -73,7 +73,10 @@ static size_t       opt_tab_spaces = TAB_SPACES_DEFAULT;
 static bool         opt_title_line;     // 1st para line is title?
 
 // other local variable definitions
+static bool         c_style_delims;     // opt_comment_delims contains "/*"?
+static bool         is_c_style_comment;
 static char         line_buf[ LINE_BUF_SIZE ];
+static char         line_buf2[ LINE_BUF_SIZE ];
 static char         leader[ LINE_BUF_SIZE ]; // characters stripped/prepended
 static size_t       leader_len;
 //
@@ -84,7 +87,6 @@ static size_t       leader_len;
 //           [1] <- wrap(1)                   [child 2]
 //
 static int          pipes[2][2];
-static bool         set_comment_delims; // was -D given on the command-line?
 
 #define TO_WRAP     0                   /* to refer to pipes[0] */
 #define FROM_WRAP   1                   /* to refer to pipes[1] */
@@ -92,9 +94,11 @@ static bool         set_comment_delims; // was -D given on the command-line?
 // local functions
 static bool         first_nws_is_comment( char const* );
 static void         fork_exec_wrap( pid_t );
+static bool         is_c_style_comment_begin( char const* );
+static bool         is_c_style_comment_end( char const* );
+static void         read_leader( void );
 static size_t       leader_span( char const* );
 static size_t       leader_width( char const* );
-static void         parse_leader( char const*, char*, size_t* );
 static void         process_options( int, char const*[] );
 static pid_t        read_source_write_wrap( void );
 static void         read_wrap( void );
@@ -102,34 +106,32 @@ static char const*  str_status( int );
 static void         usage( void );
 static void         wait_for_child_processes( void );
 
-///////////////////////////////////////////////////////////////////////////////
+////////// inline functions ///////////////////////////////////////////////////
+
+/**
+ * Gets a pointer to the first non-whitespace character in \a s.
+ *
+ * @param s The string to use.
+ * @return Returns a pointer to the first non-whitespace character.
+ */
+static inline char const* first_nws( char const *s ) {
+  return s + strspn( s, WS_CHARS );
+}
+
+////////// main ///////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
   process_options( argc, argv );
-
-  //
-  // Read the first line of input to obtain a sequence of leading characters to
-  // be the prototype for all lines.
-  //
-  if ( !fgets( line_buf, sizeof( line_buf ), fin ) ) {
-    CHECK_FERROR( fin );
-    exit( EX_OK );
-  }
-  parse_leader( line_buf, leader, &leader_len );
-
-  //
-  // Open the pipes, fork the child processes, and go.
-  //
+  read_leader();
   PIPE( pipes[ TO_WRAP ] );
   PIPE( pipes[ FROM_WRAP ] );
   fork_exec_wrap( read_source_write_wrap() );
   read_wrap();
-
   wait_for_child_processes();
   exit( EX_OK );
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////// local functions ////////////////////////////////////////////////////
 
 /**
  * Gets whether the first non-whitespace character in \a buf is a comment
@@ -140,15 +142,15 @@ int main( int argc, char const *argv[] ) {
  * is a comment character.
  */
 static bool first_nws_is_comment( char const *buf ) {
-  char const *const first_nws = &buf[ strspn( buf, WS_CHARS ) ];
-  if ( !set_comment_delims && strncmp( first_nws, "*/", 2 ) == 0 ) {
+  char const *const nws = first_nws( buf );
+  if ( c_style_delims && is_c_style_comment_end( nws ) ) {
     //
     // As a special-case, treat */ (the end of a C-style comment) as not being
     // a comment so we'll tell wrap(1) to pass it through verbatim.
     //
     return false;
   }
-  return strchr( opt_comment_delims, *first_nws );
+  return strchr( opt_comment_delims, *nws );
 }
 
 /**
@@ -215,6 +217,69 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 }
 
 /**
+ * Checks whether the given string is the beginning of a C-style comment:
+ * starts with '/', '*', and contains only non-alpha characters thereafter.
+ *
+ * @param s The string to check.
+ * @return Returns \c true only if \a s is the beginning of a C-style comment.
+ */
+static bool is_c_style_comment_begin( char const *s ) {
+  if ( s[0] == '/' && s[1] == '*' ) {
+    for ( s += 2; *s && *s != '\n' && !isalpha( *s ); ++s )
+      ;
+    return *s == '\n';
+  }
+  return false;
+}
+
+/**
+ * Checks whether the given string is the end of a C-style comment: contains
+ * only non-alpha characters followed by '*', '/'.
+ *
+ * @param s The string to check.
+ * @return Returns \c true only if \a s is the end of a C-style comment.
+ */
+static bool is_c_style_comment_end( char const *s ) {
+  for ( ; *s && *s != '\n' && !isalpha( *s ); ++s )
+    if ( s[0] == '*' && s[1] == '/' )
+      return true;
+  return false;
+}
+
+/**
+ * Reads the first line of input to obtain a sequence of leading characters to
+ * be the prototype for all lines.  Handles C-style block comments as a special
+ * case.
+ */
+static void read_leader( void ) {
+  if ( !fgets( line_buf, sizeof( line_buf ), fin ) ) {
+    CHECK_FERROR( fin );
+    exit( EX_OK );
+  }
+
+  char const *leader_buf = line_buf;
+
+  if ( c_style_delims && is_c_style_comment_begin( first_nws( line_buf ) ) ) {
+    is_c_style_comment = true;
+    if ( !fgets( line_buf2, sizeof( line_buf2 ), fin ) )
+      CHECK_FERROR( fin );
+    else
+      leader_buf = line_buf2;
+  }
+
+  leader_len = leader_span( leader_buf );
+  strncpy( leader, leader_buf, leader_len );
+  leader[ leader_len ] = '\0';
+
+  opt_line_width -= leader_width( leader );
+  if ( opt_line_width < LINE_WIDTH_MINIMUM )
+    PMESSAGE_EXIT( EX_USAGE,
+      "line-width (%zu) is too small (<%d)\n",
+      opt_line_width, LINE_WIDTH_MINIMUM
+    );
+}
+
+/**
  * Reads the source text to be wrapped and writes it, with the leading
  * whitespace and comment characters stripped from each line, to wrap(1).
  *
@@ -240,8 +305,19 @@ static pid_t read_source_write_wrap( void ) {
       "child can't open pipe for writing: %s\n", ERROR_STR
     );
 
-  // write first line to wrap
-  FPUTS( line_buf + leader_len, fwrap );
+  if ( is_c_style_comment ) {
+    //
+    // For C-style comments, write the first line verbatim directly to the
+    // output and the second line, if any, to wrap(1).
+    //
+    FPUTS( line_buf, fout );
+    FPUTS( line_buf2 + leader_len, fwrap );
+  } else {
+    //
+    // Otherwise just write the first line to wrap(1).
+    //
+    FPUTS( line_buf + leader_len, fwrap );
+  }
 
   //
   // As a special-case, if the first line is NOT a comment, then just wrap all
@@ -249,7 +325,7 @@ static pid_t read_source_write_wrap( void ) {
   // all subsequent lines, i.e., do NOT ever tell wrap(1) to pass text through
   // verbatim (below).
   //
-  bool const first_line_is_comment = first_nws_is_comment( line_buf );
+  bool const first_line_is_comment = first_nws_is_comment( *line_buf2 ? line_buf2 : line_buf );
 
   while ( fgets( line_buf, sizeof( line_buf ), fin ) ) {
     if ( first_line_is_comment && !first_nws_is_comment( line_buf ) ) {
@@ -343,7 +419,7 @@ break_loop:
 
 /**
  * Spans the initial part of \a s for the "leader."  The leader is defined as
- * \c ^{WS}*{CC}+{WS}* where \c WS is whitespace and \c CC are comment
+ * \c ^{WS}*{CC}*{WS}* where \c WS is whitespace and \c CC are comment
  * characters.
  *
  * @param s The string to span.
@@ -382,23 +458,6 @@ static size_t leader_width( char const *leader ) {
   return width;
 }
 
-static void parse_leader( char const *buf, char *leader, size_t *leader_len ) {
-  assert( buf );
-  assert( leader );
-  assert( leader_len );
-
-  *leader_len = leader_span( buf );
-  strncpy( leader, buf, *leader_len );
-  leader[ *leader_len ] = '\0';
-
-  opt_line_width -= leader_width( leader );
-  if ( opt_line_width < LINE_WIDTH_MINIMUM )
-    PMESSAGE_EXIT( EX_USAGE,
-      "line-width (%zu) is too small (<%d)\n",
-      opt_line_width, LINE_WIDTH_MINIMUM
-    );
-}
-
 static void process_options( int argc, char const *argv[] ) {
   char const *opt_fin = NULL;           // file in name
   char const *opt_fout = NULL;          // file out name
@@ -415,7 +474,6 @@ static void process_options( int argc, char const *argv[] ) {
       case 'c': opt_conf_file       = optarg;                       break;
       case 'C': opt_no_conf         = true;                         break;
       case 'D': opt_comment_delims  = optarg;
-                set_comment_delims  = true;                         break;
       case 'e': opt_eos_delimit     = true;                         break;
       case 'f': opt_fin             = optarg;                 // no break;
       case 'F': opt_fin_name        = base_name( optarg );          break;
@@ -450,6 +508,10 @@ static void process_options( int argc, char const *argv[] ) {
     fin = stdin;
   if ( !fout )
     fout = stdout;
+
+  c_style_delims =
+    strchr( opt_comment_delims, '/' ) &&
+    strchr( opt_comment_delims, '*' );
 }
 
 static char const* str_status( int status ) {
