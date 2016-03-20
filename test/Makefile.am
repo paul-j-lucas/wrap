@@ -63,7 +63,7 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc-no_options-03.test \
 	tests/wrapc-no_options-04.test \
 	tests/wrapc-no_options-05.test \
-	tests/wrapc-C_comment-01.test \
+	tests/wrapc-C_style-01.test \
 	tests/wrapc-D-01.test
 
 AM_TESTS_ENVIRONMENT = BUILD_SRC=$(top_builddir)/src; export BUILD_SRC ;
