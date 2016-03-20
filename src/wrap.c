@@ -112,6 +112,13 @@ static void usage( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
 
+/**
+ * Gets the number of bytes comprising the UTF-8 encoding of a Unicode
+ * codepoint.
+ *
+ * @param c The first byte of the UTF-8 encoded codepoint.
+ * @return Returns 1-6, or 0 if \a c is invalid.
+ */
 static inline size_t utf8_len( char c ) {
   return (size_t)UTF8_LEN_TABLE[ (unsigned char)c ];
 }
