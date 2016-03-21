@@ -576,15 +576,16 @@ static void init( int argc, char const *argv[] ) {
   if ( !fout )
     fout = stdout;
 
-  opt_line_width -=
-    2 * (opt_mirror_tabs * opt_tab_spaces + opt_mirror_spaces) +
-    opt_lead_tabs * opt_tab_spaces + opt_lead_spaces;
+  int const line_width = (int)opt_line_width -
+    (int)(2 * (opt_mirror_tabs * opt_tab_spaces + opt_mirror_spaces) +
+          opt_lead_tabs * opt_tab_spaces + opt_lead_spaces);
 
-  if ( opt_line_width < LINE_WIDTH_MINIMUM )
+  if ( line_width < LINE_WIDTH_MINIMUM )
     PMESSAGE_EXIT( EX_USAGE,
-      "line-width (%zu) is too small (<%d)\n",
-      opt_line_width, LINE_WIDTH_MINIMUM
+      "line-width (%d) is too small (<%d)\n",
+      line_width, LINE_WIDTH_MINIMUM
     );
+  opt_line_width = line_width;
 
   opt_lead_tabs   += opt_mirror_tabs;
   opt_lead_spaces += opt_mirror_spaces;

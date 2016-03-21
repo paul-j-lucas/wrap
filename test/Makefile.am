@@ -58,6 +58,7 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrap-P-02.test \
 	tests/wrap-P-03.test \
 	tests/wrap-t1.test \
+	tests/wrap-t11.test \
 	tests/wrapc-no_options-01.test \
 	tests/wrapc-no_options-02.test \
 	tests/wrapc-no_options-03.test \
