@@ -13,15 +13,18 @@ as a prototype for all subsequent lines.
 In wrapc, the comment delimiter characters can now be overridden via the new -D
 command-line option.
 
-** Added special-case handling of the end of C-style comments.
-In wrapc, a line that is the end of a C-style comment ("*/") is now treated as
-not being a comment line.  The upshot of this is that it's passed through
-verbatim.
+** Added special-case handling of the end of C-style block comments.
+In wrapc, C-style block comments are now handled specially in that the first
+and last lines are not altered.
 
 ** Added special-case handling of non-comment lines.
 In wrapc, if the first line isn't a comment, then the leading whitespace alone
-is used as a prototype for subsequent lines and wrap(1) is never told to copy
-lines verbatim.
+is used as a prototype for subsequent lines.
+
+** Added block characters option.
+In wrapc, blocks of text started by certain characters can now delimit
+paragraphs via a new -b command-line option.  This allows things like Javadoc
+or Doxygen @ characters, e.g., @param, to remain on their own lines.
 
 * Changes in Wrap 3.2
 
