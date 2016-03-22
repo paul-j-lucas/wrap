@@ -66,6 +66,7 @@ static char const  *opt_conf_file;      // full path to conf file
 static char const  *opt_comment_delims = COMMENT_DELIMS_DEFAULT;
 static bool         opt_eos_delimit;    // end-of-sentence delimits para's?
 static char const  *opt_fin_name;       // file in name
+static char const  *opt_lead_para_delims;
 static size_t       opt_line_width = LINE_WIDTH_DEFAULT;
 static bool         opt_no_conf;        // do not read conf file
 static char const  *opt_para_delims;    // additional para delimiter chars
@@ -173,12 +174,13 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   arg_buf arg_opt_alias;
   arg_buf arg_opt_conf_file;
   char    arg_opt_fin_name[ PATH_MAX ];
+  arg_buf arg_opt_lead_para_delims;
   arg_buf arg_opt_line_width;
   arg_buf arg_opt_para_delims;
   arg_buf arg_opt_tab_spaces;
 
   int argc = 0;
-  char *argv[12];                       // must be +1 of greatest arg below
+  char *argv[13];                       // must be +1 of greatest arg below
 
 #define ARG_SET(ARG)          argv[ argc++ ] = (ARG)
 #define ARG_DUP(FMT)          ARG_SET( strdup( FMT ) )
@@ -194,17 +196,18 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   // Quoting string arguments is unnecessary since no shell is involved.
 
   /*  0 */    ARG_DUP(                  PACKAGE );
-  /*  1 */ IF_ARG_FMT( opt_alias      , "-a%s"  );
-  /*  2 */ IF_ARG_FMT( opt_conf_file  , "-c%s"  );
-  /*  3 */ IF_ARG_DUP( opt_no_conf    , "-C"    );
-  /*  4 */    ARG_DUP(                  "-D"    );
-  /*  5 */ IF_ARG_DUP( opt_eos_delimit, "-e"    );
-  /*  6 */ IF_ARG_FMT( opt_fin_name   , "-F%s"  );
-  /*  7 */ IF_ARG_FMT( opt_para_delims, "-p%s"  );
-  /*  8 */    ARG_FMT( opt_tab_spaces , "-s%zu" );
-  /*  9 */ IF_ARG_DUP( opt_title_line , "-T"    );
-  /* 10 */    ARG_FMT( opt_line_width , "-w%zu" );
-  /* 11 */ argv[ argc ] = NULL;
+  /*  1 */ IF_ARG_FMT( opt_alias           , "-a%s"  );
+  /*  2 */ IF_ARG_FMT( opt_lead_para_delims, "-b%s"  );
+  /*  3 */ IF_ARG_FMT( opt_conf_file       , "-c%s"  );
+  /*  4 */ IF_ARG_DUP( opt_no_conf         , "-C"    );
+  /*  5 */    ARG_DUP(                       "-D"    );
+  /*  6 */ IF_ARG_DUP( opt_eos_delimit     , "-e"    );
+  /*  7 */ IF_ARG_FMT( opt_fin_name        , "-F%s"  );
+  /*  8 */ IF_ARG_FMT( opt_para_delims     , "-p%s"  );
+  /*  9 */    ARG_FMT( opt_tab_spaces      , "-s%zu" );
+  /* 10 */ IF_ARG_DUP( opt_title_line      , "-T"    );
+  /* 11 */    ARG_FMT( opt_line_width      , "-w%zu" );
+  /* 12 */ argv[ argc ] = NULL;
 
   //
   // Read from pipes[TO_WRAP] (read_source_write_wrap() in child 1) and write
@@ -325,7 +328,8 @@ static pid_t read_source_write_wrap( void ) {
   // all subsequent lines, i.e., do NOT ever tell wrap(1) to pass text through
   // verbatim (below).
   //
-  bool const first_line_is_comment = first_nws_is_comment( *line_buf2 ? line_buf2 : line_buf );
+  bool const first_line_is_comment =
+    first_nws_is_comment( *line_buf2 ? line_buf2 : line_buf );
 
   while ( fgets( line_buf, sizeof( line_buf ), fin ) ) {
     if ( first_line_is_comment && !first_nws_is_comment( line_buf ) ) {
@@ -461,7 +465,7 @@ static size_t leader_width( char const *leader ) {
 static void process_options( int argc, char const *argv[] ) {
   char const *opt_fin = NULL;           // file in name
   char const *opt_fout = NULL;          // file out name
-  char const  opts[] = "a:c:CD:ef:F:l:o:p:s:Tvw:";
+  char const  opts[] = "a:b:c:CD:ef:F:l:o:p:s:Tvw:";
   bool        print_version = false;
 
   me = base_name( argv[0] );
@@ -470,20 +474,21 @@ static void process_options( int argc, char const *argv[] ) {
   for ( int opt; (opt = getopt( argc, (char**)argv, opts )) != EOF; ) {
     SET_OPTION( opt );
     switch ( opt ) {
-      case 'a': opt_alias           = optarg;                       break;
-      case 'c': opt_conf_file       = optarg;                       break;
-      case 'C': opt_no_conf         = true;                         break;
-      case 'D': opt_comment_delims  = optarg;
-      case 'e': opt_eos_delimit     = true;                         break;
-      case 'f': opt_fin             = optarg;                 // no break;
-      case 'F': opt_fin_name        = base_name( optarg );          break;
-      case 'o': opt_fout            = optarg;                       break;
-      case 'p': opt_para_delims     = optarg;                       break;
-      case 's': opt_tab_spaces      = check_atou( optarg );         break;
-      case 'T': opt_title_line      = true;                         break;
-      case 'v': print_version       = true;                         break;
+      case 'a': opt_alias             = optarg;                     break;
+      case 'b': opt_lead_para_delims  = optarg;                     break;
+      case 'c': opt_conf_file         = optarg;                     break;
+      case 'C': opt_no_conf           = true;                       break;
+      case 'D': opt_comment_delims    = optarg;
+      case 'e': opt_eos_delimit       = true;                       break;
+      case 'f': opt_fin               = optarg;               // no break;
+      case 'F': opt_fin_name          = base_name( optarg );        break;
+      case 'o': opt_fout              = optarg;                     break;
+      case 'p': opt_para_delims       = optarg;                     break;
+      case 's': opt_tab_spaces        = check_atou( optarg );       break;
+      case 'T': opt_title_line        = true;                       break;
+      case 'v': print_version         = true;                       break;
       case 'l': // deprecated: now synonym for -w
-      case 'w': opt_line_width      = check_atou( optarg );         break;
+      case 'w': opt_line_width        = check_atou( optarg );       break;
       default : usage();
     } // switch
   } // for
@@ -534,10 +539,11 @@ static void usage( void ) {
 "\n"
 "options:\n"
 "       -a alias   Use alias from configuration file.\n"
+"       -b chars   Specify block leading delimiter characters.\n"
 "       -c file    Specify the configuration file [default: ~/%s].\n"
 "       -C         Suppress reading configuration file.\n"
 "       -D chars   Specify comment delimiter characters [default: %s].\n"
-"       -e         Treat white-space after end-of-sentence as new paragraph.\n"
+"       -e         Treat whitespace after end-of-sentence as new paragraph.\n"
 "       -f file    Read from this file [default: stdin].\n"
 "       -F string  Specify filename for stdin.\n"
 "       -o file    Write to this file [default: stdout].\n"

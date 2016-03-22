@@ -79,6 +79,7 @@ static size_t       opt_hang_tabs;      // hanging-indent tabs
 static size_t       opt_indt_spaces;    // indent spaces
 static size_t       opt_indt_tabs;      // indent tabs
 static bool         opt_lead_dot_ignore;// ignore lines starting with '.'?
+static char const  *opt_lead_para_delims;
 static size_t       opt_lead_spaces;    // leading spaces
 static size_t       opt_lead_tabs;      // leading tabs
 static bool         opt_lead_ws_delimit;// leading whitespace delimit para's?
@@ -150,6 +151,13 @@ int main( int argc, char const *argv[] ) {
   // newlines for subsequent paragraphs.
   //
   bool do_indent = true;
+
+  //
+  // True only when opt_lead_para_delims was set, the current character is
+  // among them, and the previous character was a '\n' (i.e., the line starts
+  // with a one of opt_lead_para_delims).
+  //
+  bool do_lead_para_delim = false;
 
   //
   // True only when we're handling a "long line" (a sequence of non-whitespace
@@ -232,7 +240,7 @@ int main( int argc, char const *argv[] ) {
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    //  HANDLE WHITE-SPACE
+    //  HANDLE WHITESPACE
     ///////////////////////////////////////////////////////////////////////////
 
     if ( isspace( c ) ) {
@@ -322,12 +330,19 @@ int main( int argc, char const *argv[] ) {
     opt_prototype = false;              // the prototype is complete
 
     ///////////////////////////////////////////////////////////////////////////
-    //  HANDLE LEADING-DOT, END-OF-SENTENCE, AND PARAGRAPH-DELIMITERS
+    //  HANDLE LEADING-PARAGRAPH-DELIMITERS, LEADING-DOT, END-OF-SENTENCE, AND
+    //  PARAGRAPH-DELIMITERS
     ///////////////////////////////////////////////////////////////////////////
 
-    if ( opt_lead_dot_ignore && prev_c == '\n' && c == '.' ) {
-      do_ignore_lead_dot = true;
-      goto delimit_paragraph;
+    if ( prev_c == '\n' ) {
+      if ( opt_lead_para_delims && strchr( opt_lead_para_delims, c ) ) {
+        do_lead_para_delim = true;
+        goto delimit_paragraph;
+      }
+      if ( opt_lead_dot_ignore && c == '.' ) {
+        do_ignore_lead_dot = true;
+        goto delimit_paragraph;
+      }
     }
 
     //
@@ -366,6 +381,7 @@ int main( int argc, char const *argv[] ) {
     //  PERFORM INDENTATION
     ///////////////////////////////////////////////////////////////////////////
 
+insert:
     if ( do_indent ) {
       line_count = 0;
       for ( size_t i = 0; i < opt_indt_tabs; ++i )
@@ -480,16 +496,26 @@ delimit_paragraph:
     put_spaces = 0;
     was_eos_char = was_para_delim_char = false;
 
-    if ( do_ignore_lead_dot ) {
+    if ( do_lead_para_delim ) {
+      do_lead_para_delim = false;
+      //
+      // The line starts with a leading paragraph delimiter and
+      // opt_lead_dot_ignore is true: write the delimiter now that we've
+      // delimited the paragraph.
+      //
+      goto insert;
+    }
+    else if ( do_ignore_lead_dot ) {
       do_ignore_lead_dot = false;
       //
       // The line starts with a leading dot and opt_lead_dot_ignore is true:
       // read/write the line as-is.
       //
-      FPUTC( '.', fout );
+      FPUTC( c, fout );
       if ( !copy_line( fin, fout, line_buf, sizeof( line_buf ) ) )
         goto done;
-    } else {
+    }
+    else {
       if ( consec_newlines == 2 ||
           (consec_newlines > 2 && opt_newlines_delimit == 1) ) {
         FPUTC( c, fout );
@@ -544,7 +570,7 @@ static void init( int argc, char const *argv[] ) {
   me = base_name( argv[0] );
   atexit( clean_up );
 
-  char const opts[] = "a:bc:CdDef:F:h:H:i:I:l:m:M:nNo:p:Ps:S:t:Tvw:W";
+  char const opts[] = "a:b:c:CdDef:F:h:H:i:I:l:m:M:nNo:p:Ps:S:t:Tvw:W";
   process_options( argc, argv, opts, 0 );
   argc -= optind, argv += optind;
   if ( argc )
@@ -629,6 +655,7 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'c': opt_conf_file         = optarg;                     break;
       case 'C': opt_no_conf           = true;                       break;
       case 'd': opt_lead_dot_ignore   = true;                       break;
+      case 'b': opt_lead_para_delims  = optarg;                     break;
       case 'D': opt_data_link_esc     = true;                       break;
       case 'e': opt_eos_delimit       = true;                       break;
       case 'f': opt_fin               = optarg;               // no break;
@@ -651,7 +678,6 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 'v': print_version         = true;                       break;
       case 'l': // deprecated: now synonym for -w
       case 'w': opt_line_width        = check_atou( optarg );       break;
-      case 'b': // deprecated: now synonym for -W
       case 'W': opt_lead_ws_delimit   = true;                       break;
       default : usage();
     } // switch
@@ -675,10 +701,11 @@ static void usage( void ) {
 "\n"
 "options:\n"
 "       -a alias   Use alias from configuration file.\n"
+"       -b chars   Specify block leading delimiter characters.\n"
 "       -c file    Specify the configuration file [default: ~/%s].\n"
 "       -C         Suppress reading configuration file.\n"
 "       -d         Does not alter lines that begin with '.' (dot).\n"
-"       -e         Treat white-space after end-of-sentence as new paragraph.\n"
+"       -e         Treat whitespace after end-of-sentence as new paragraph.\n"
 "       -f file    Read from this file [default: stdin].\n"
 "       -F string  Specify filename for stdin.\n"
 "       -h number  Hang-indent tabs for all but first line of each paragraph.\n"
@@ -688,7 +715,7 @@ static void usage( void ) {
 "       -n         Does not treat newlines as paragraph delimeters.\n"
 "       -N         Treat every newline as a paragraph delimiter.\n"
 "       -o file    Write to this file [default: stdout].\n"
-"       -p string  Specify additional paragraph delimiter characters.\n"
+"       -p chars   Specify additional paragraph delimiter characters.\n"
 "       -P         Treat leading whitespace on first line as prototype.\n"
 "       -s number  Specify tab-spaces equivalence [default: %d].\n"
 "       -S number  Prepend leading spaces after leading tabs to each line.\n"
@@ -696,7 +723,7 @@ static void usage( void ) {
 "       -T         Treat paragraph first line as title.\n"
 "       -v         Print version an exit.\n"
 "       -w number  Specify line width [default: %d]\n"
-"       -W         Treat line beginning with white-space as paragraph delimiter.\n"
+"       -W         Treat line beginning with whitespace as paragraph delimiter.\n"
     , me, me, CONF_FILE_NAME, TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
   );
   exit( EX_USAGE );

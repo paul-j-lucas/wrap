@@ -33,6 +33,9 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrap-alias-unexp_char.test \
 	tests/wrap-conf-not_found.test \
 	tests/wrap-conf-no_section.test \
+	tests/wrap-b.test \
+	tests/wrap-b-h1.test \
+	tests/wrap-b-t1.test \
 	tests/wrap-d.test \
 	tests/wrap-dep.test \
 	tests/wrap-f-F.test \
@@ -64,6 +67,7 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc-no_options-03.test \
 	tests/wrapc-no_options-04.test \
 	tests/wrapc-no_options-05.test \
+	tests/wrapc-b.test \
 	tests/wrapc-C_style-01.test \
 	tests/wrapc-C_style-02.test \
 	tests/wrapc-C_style-03.test \

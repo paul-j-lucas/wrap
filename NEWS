@@ -77,7 +77,7 @@ defines aliases and patterns.
 
 ** Added end-of-sentence option.
 Both wrap and wrapc now have a -e command-line option for specifying that
-white-space after an end-of-sentence character delimites a paragraph.
+whitespace after an end-of-sentence character delimites a paragraph.
 
 ** Added file-matching patterns.
 Both wrap and wrapc can now apply command-line options (via aliases) to files
