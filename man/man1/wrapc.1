@@ -67,42 +67,72 @@ Assember and Lisp comments.
 Quoted e-mail.
 .PD
 .P
+Comments are formatted subject to the following:
+.IP \[bu] 2
 Comment delimiters are treated as such
 only when they are the first non-whitespace characters on a line.
-As a special-case,
-the end of a C-style comment
-(\f(CW*/\fP)
-is not treated as a comment delimiter
-which means that its line is passed through verbatim
-(see below).
-.P
+.IP \[bu]
 Leading whitespace and comment delimiters
 of the first line
-are used as the prototype for all lines.
+are used as the ``prototype'' for all lines.
+.IP \[bu]
 For each line,
 all leading whitespace and comment delimiters are stripped
 before being passed to
 .BR wrap (1)
 for reformatting.
+.IP \[bu]
 After reformatting,
 the prototype characters
 of the first comment line
 are prepended at the start of each line.
-All other whitespace characters are folded
-in the same manner as in
-.BR wrap .
-.SS Non-Comment Passthrough
-If a subsequent line does not start with whitespace
+.SS Trailing Source Code Passthrough
+If a subsequent line does not start with any amount of whitespace
 followed by comment delimiters,
 it signals the end of the comment
 and all remaining lines
-are passed through verbatim.
-However,
-if the first line starts with whitespace
-but is
+are passed through unaltered.
+For example, given:
+.cS
+# We want to resolve the symbolic link of ONLY src_path
+# and not ALL the symbolic links in the entire path,
+# hence we can't use realpath().
+new_src_path = os.readlink( src_path )
+.cE
+.B wrapc
+will reformat the first three lines,
+but will not alter the fourth and remaining lines.
+.SS C-Style Block Comments
+C-style block comments,
+for example:
+.cS
+/*
+ * Reads the output of wrap(1) and prepends the leading
+ * whitespace and comment characters back to each line.
+ */
+static void read_wrap( void ) {
+.cE
+are treated specially in that:
+.IP \[bu] 2
+The first line is not altered
+if it starts with \f(CW/*\fP
+and is followed only by any number of non-alphabetic characters.
+.IP \[bu]
+Leading whitespace and comment delimiters of the
+.I second
+line are used as the ``prototype'' for all remaining comment lines.
+.IP \[bu]
+The last comment line,
+the one only containing any number of non-alphabetic characters
+followed by \f(CW*/\fP,
+and any subsequent lines are also not altered.
+.SS Non-Comments
+If the first line starts with any number of whitespace characters
+followed by non-whitespace characters that are
 .I not
-followed by comment delimiters,
-then the whitespace alone is used as the prototype for all lines.
+comment delimiters,
+then whatever leading whitespace alone
+is used as the prototype for all lines.
 .SH OPTIONS
 An option argument
 .I f
