@@ -1,3 +1,43 @@
+2016-03-21  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS: Updated.
+   * wrapc.1: Updated for C-style comments.
+   * wrap.1: Now using .IP \n[step].
+   * options.c, options.h: Updated GPL.
+   * wrapc.1, data-01.1, wrapc-01.txt, wrap-a.txt, wrap-d.txt, wrap-dep.txt,
+     wrapc-no_options-01.txt: s/white-space/whitespace/
+   * NEWS, wrap.1, wrapc.1, wrap.c, wrapc.c, test/Makefile.am, wrap-b.txt,
+     wrapc-b.txt, wrap-b-h1.txt, wrap-b-t1.txt, wrap-b.txt, wrapc-b.txt,
+     wrap-b-h1.test, wrap-b-t1.test, wrap-b.test, wrapc-b.test: Added -b
+     option.
+
+2016-03-20  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c, test/Makefile.am, wrap-t11.test: Fixed checking of too-small line
+     width.
+   * wrap.c: Comment tweaks.
+   * wrap.c: Added comment.
+   * wrap.c: s/2015/2016/
+   * wrapc.c, test/Makefile.am, wrapc-C_style-02.txt, wrapc-C_style-03.txt,
+     wrapc-C_style-04.txt, wrapc-C_style-05.txt, wrapc-C_style-02.txt,
+     wrapc-C_style-03.txt, wrapc-C_style-04.txt, wrapc-C_style-05.txt,
+     wrapc-C_style-02.test, wrapc-C_style-03.test, wrapc-C_style-04.test,
+     wrapc-C_style-05.test: Better support for C-style comments.
+   * wrapc.1: Added mention of Objective C and Swift.
+   * test/Makefile.am, wrapc-C_style-01.txt, wrapc-C_style-01.txt,
+     wrapc-C_style-01.test: Renamed test.
+
+2016-03-18  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c, wrapc.c: s/Supress/Suppress/
+   * wrapc.c: Made first_nws_is_comment() no longer inline.
+   * wrapc.c: Comment fix.
+
+2016-03-17  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1: Added "s" to the description of the -D option.
+   * wrap.1, wrapc.1: Added sysexits(3).
+
 2016-03-16  Paul J. Lucas <paul@lucasmail.org>
 
    * NEWS, wrapc.1, wrapc.c, test/Makefile.am, wrapc-C_comment-01.txt,
