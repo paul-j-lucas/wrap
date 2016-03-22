@@ -284,7 +284,7 @@ int main( int argc, char const *argv[] ) {
         //
         goto delimit_paragraph;
       }
-      if ( line_count && put_spaces < 1 + was_eos_char ) {
+      if ( line_count && put_spaces < 1u + was_eos_char ) {
         //
         // We are not at the beginning of a line: remember to insert 1 space
         // later and allow 2 after the end of a sentence.
