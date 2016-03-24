@@ -13,8 +13,8 @@ as a prototype for all subsequent lines.
 In wrapc, the comment delimiter characters can now be overridden via the new -D
 command-line option.
 
-** Added special-case handling of the end of C-style block comments.
-In wrapc, C-style block comments are now handled specially in that the first
+** Added special-case handling of delimited block comments.
+In wrapc, delimited block comments are now handled specially in that the first
 and last lines are not altered.
 
 ** Added special-case handling of non-comment lines.

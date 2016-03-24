@@ -68,6 +68,8 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc-no_options-04.test \
 	tests/wrapc-no_options-05.test \
 	tests/wrapc-b.test \
+	tests/wrapc-block-01.test \
+	tests/wrapc-block-02.test \
 	tests/wrapc-C_style-01.test \
 	tests/wrapc-C_style-02.test \
 	tests/wrapc-C_style-03.test \

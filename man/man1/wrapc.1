@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\f1 1 "March 21, 2016" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "March 24, 2016" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -102,8 +102,8 @@ new_src_path = os.readlink( src_path )
 .B wrapc
 will reformat the first three lines,
 but will not alter the fourth and remaining lines.
-.SS C-Style Block Comments
-C-style block comments,
+.SS Block Comments
+Block comments,
 for example:
 .cS
 /*
@@ -115,19 +115,17 @@ static void read_wrap( void ) {
 are treated specially in that:
 .IP \[bu] 2
 The first line is not altered
-if it starts with \f(CW/*\fP
-and is followed only by any number of non-alphabetic characters.
+if it only contains any number of non-alphabetic characters.
 .IP \[bu]
 Leading whitespace and comment delimiters of the
 .I second
 line are used as the ``prototype'' for all remaining comment lines.
 .IP \[bu]
 The last comment line,
-the one only containing any number of non-alphabetic characters
-followed by \f(CW*/\fP,
+the one only containing any number of non-alphabetic characters,
 and any subsequent lines are also not altered.
 .SS Non-Comments
-If the first line starts with any number of whitespace characters
+If the first line starts with any amount of whitespace
 followed by non-whitespace characters that are
 .I not
 comment delimiters,
