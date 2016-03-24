@@ -75,7 +75,6 @@ static bool         opt_title_line;     // 1st para line is title?
 
 // other local variable definitions
 static bool         c_style_delims;     // opt_comment_delims contains "/*"?
-static bool         is_c_style_comment;
 static char         line_buf[ LINE_BUF_SIZE ];
 static char         line_buf2[ LINE_BUF_SIZE ];
 static char         leader[ LINE_BUF_SIZE ]; // characters stripped/prepended
@@ -263,7 +262,6 @@ static void read_leader( void ) {
   char const *leader_buf = line_buf;
 
   if ( c_style_delims && is_c_style_comment_begin( first_nws( line_buf ) ) ) {
-    is_c_style_comment = true;
     if ( !fgets( line_buf2, sizeof( line_buf2 ), fin ) )
       CHECK_FERROR( fin );
     else
@@ -308,7 +306,7 @@ static pid_t read_source_write_wrap( void ) {
       "child can't open pipe for writing: %s\n", ERROR_STR
     );
 
-  if ( is_c_style_comment ) {
+  if ( line_buf2[0] ) {
     //
     // For C-style comments, write the first line verbatim directly to the
     // output and the second line, if any, to wrap(1).
