@@ -1,5 +1,7 @@
 [ALIASES]
+c   = -b@
 man = -dep,:;
 
 [PATTERNS]
+*.[ch] = c
 *.[1-9] = man
