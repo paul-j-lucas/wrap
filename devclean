@@ -2,7 +2,7 @@
 ##
 #       devclean -- remove all auto-generated files
 #
-#       Copyright (C) 2015  Paul J. Lucas
+#       Copyright (C) 2016  Paul J. Lucas
 #
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ shift $(( OPTIND - 1 ))
 find . -name .gitignore | while read ig_file
 do
   ig_dir=$(dirname $ig_file)
-  rm -f $ig_dir/*~
+  $ECHO rm -f $ig_dir/*~
   while read ig_pattern
   do
     no_slash=${ig_pattern#/}
