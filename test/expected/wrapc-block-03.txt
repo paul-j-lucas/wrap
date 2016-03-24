@@ -1,3 +1,5 @@
+	##
         # We want to resolve the symbolic link of ONLY src_path and not ALL the
         # symbolic links in the entire path, hence we can't use realpath().
 	##
+        new_src_path = os.readlink( src_path )

@@ -55,7 +55,7 @@ static char const   COMMENT_DELIMS_DEFAULT[] =
   "#"   // CMake, Make, Perl, Python, Ruby, and Shell comments
   "%"   // PostScript comments
   "/*"  // C, C++, and Java comments
-  ":"   // XQuery comments
+  "(:)" // XQuery comments
   ";"   // Assember and Lisp comments
   ">";  // Forward mail indicator
 static char const   WS_CHARS[] = " \t"; // whitespace characters
@@ -94,7 +94,7 @@ static int          pipes[2][2];
 
 // local functions
 static void         fork_exec_wrap( pid_t );
-static bool         is_block_comment_begin( char const* );
+static bool         is_block_comment( char const* );
 static bool         is_line_comment( char const* );
 static void         read_leader( void );
 static size_t       leader_span( char const* );
@@ -127,7 +127,8 @@ static inline char const* first_nws( char const *s ) {
  * is a comment character.
  */
 static inline bool is_line_comment( char const *s ) {
-  return strchr( opt_comment_delims, *first_nws( s ) );
+  char const *const nws = first_nws( s );
+  return *nws && strchr( opt_comment_delims, *nws );
 }
 
 /**
@@ -225,9 +226,9 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
  * @param s The string to check.
  * @return Returns \c true only if \a s is the beginning of a block comment.
  */
-static bool is_block_comment_begin( char const *s ) {
+static bool is_block_comment( char const *s ) {
   s = first_nws( s );
-  if ( strchr( opt_comment_delims, s[0] ) ) {
+  if ( s[0] && strchr( opt_comment_delims, s[0] ) ) {
     for ( ++s; *s && *s != '\n' && !isalpha( *s ); ++s )
       ;
     return *s == '\n';
@@ -248,7 +249,7 @@ static void read_leader( void ) {
 
   char const *leader_buf = cur_buf;
 
-  if ( is_block_comment_begin( cur_buf ) ) {
+  if ( is_block_comment( cur_buf ) ) {
     if ( !fgets( next_buf, LINE_BUF_SIZE, fin ) )
       CHECK_FERROR( fin );
     else
@@ -308,34 +309,59 @@ static pid_t read_source_write_wrap( void ) {
   // all subsequent lines, i.e., do NOT ever tell wrap(1) to pass text through
   // verbatim (below).
   //
-  bool const first_line_is_comment = is_line_comment( cur_buf );
+  bool const text_is_comment = is_line_comment( cur_buf );
 
-  while ( *cur_buf ) {
+  while ( cur_buf[0] ) {
+    //
+    // In order to know when a comment ends, we have to peek at the next line.
+    //
     if ( !fgets( next_buf, LINE_BUF_SIZE, fin ) ) {
       CHECK_FERROR( fin );
       next_buf[0] = '\0';
     }
 
-    if ( first_line_is_comment &&
-         (!is_line_comment( cur_buf ) || !is_line_comment( next_buf )) ) {
-      //
-      // The line's first non-whitespace character isn't a comment character:
-      // we've reached the end of the comment. Signal wrap that we're now
-      // passing text through verbatim.
-      //
-      FPRINTF( fwrap, "%c%c%s", ASCII_DLE, ASCII_ETB, cur_buf );
-      FPUTS( next_buf, fwrap );
-      fcopy( fin, fwrap );
-      exit( EX_OK );
+    if ( text_is_comment ) {
+      if ( next_buf[0] ) {
+        //
+        // This handles cases like:
+        //
+        //    cur_buf   ->  # This is a comment.
+        //    next_buf  ->  this_is_code();
+        //
+        if ( !is_line_comment( next_buf ) )
+          goto verbatim;
+      } else {
+        //
+        // This handles cases like:
+        //
+        //                  /*
+        //                   * This is a comment.
+        //    cur_buf   ->   */
+        //    next_buf  ->  [empty]
+        //
+        if ( is_block_comment( cur_buf ) )
+          goto verbatim;
+      }
     }
+
     leader_len = leader_span( cur_buf );
     if ( !cur_buf[ leader_len ] )       // no non-leading characters
       FPUTC( '\n', fwrap );
     else
       FPUTS( cur_buf + leader_len, fwrap );
+
     swap_bufs();
   } // while
-  //CHECK_FERROR( fin );
+  exit( EX_OK );
+
+verbatim:
+  //
+  // We've reached the end of the comment: signal wrap(1) that we're now
+  // passing text through verbatim and do so.
+  //
+  FPRINTF( fwrap, "%c%c%s", ASCII_DLE, ASCII_ETB, cur_buf );
+  FPUTS( next_buf, fwrap );
+  fcopy( fin, fwrap );
   exit( EX_OK );
 }
 
