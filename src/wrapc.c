@@ -490,7 +490,7 @@ static void process_options( int argc, char const *argv[] ) {
       case 'b': opt_lead_para_delims  = optarg;                     break;
       case 'c': opt_conf_file         = optarg;                     break;
       case 'C': opt_no_conf           = true;                       break;
-      case 'D': opt_comment_delims    = optarg;
+      case 'D': opt_comment_delims    = optarg;                     break;
       case 'e': opt_eos_delimit       = true;                       break;
       case 'f': opt_fin               = optarg;               // no break;
       case 'F': opt_fin_name          = base_name( optarg );        break;
