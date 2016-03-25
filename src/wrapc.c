@@ -194,7 +194,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 
   // Quoting string arguments is unnecessary since no shell is involved.
 
-  /*  0 */    ARG_DUP(                  PACKAGE );
+  /*  0 */    ARG_DUP(                       PACKAGE );
   /*  1 */ IF_ARG_FMT( opt_alias           , "-a%s"  );
   /*  2 */ IF_ARG_FMT( opt_lead_para_delims, "-b%s"  );
   /*  3 */ IF_ARG_FMT( opt_conf_file       , "-c%s"  );
