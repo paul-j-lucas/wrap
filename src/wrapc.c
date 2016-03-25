@@ -73,6 +73,7 @@ static size_t       opt_tab_spaces = TAB_SPACES_DEFAULT;
 static bool         opt_title_line;     // 1st para line is title?
 
 // other local variable definitions
+static char const  *comment_delims;     // actual comment delims found
 static char         line_buf[ LINE_BUF_SIZE ];
 static char         line_buf2[ LINE_BUF_SIZE ];
 static char        *cur_buf = line_buf;
@@ -94,7 +95,7 @@ static int          pipes[2][2];
 // local functions
 static void         fork_exec_wrap( pid_t );
 static bool         is_block_comment( char const* );
-static bool         is_line_comment( char const* );
+static char         is_line_comment( char const* );
 static void         read_leader( void );
 static size_t       leader_span( char const* );
 static size_t       leader_width( char const* );
@@ -125,9 +126,9 @@ static inline char const* first_nws( char const *s ) {
  * @return Returns \c true only if the first non-whitespace character in \a s
  * is a comment character.
  */
-static inline bool is_line_comment( char const *s ) {
+static inline char is_line_comment( char const *s ) {
   char const *const nws = first_nws( s );
-  return *nws && strchr( opt_comment_delims, *nws );
+  return *nws && strchr( comment_delims, *nws ) ? *nws : '\0';
 }
 
 /**
@@ -227,7 +228,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
  */
 static bool is_block_comment( char const *s ) {
   s = first_nws( s );
-  if ( s[0] && strchr( opt_comment_delims, s[0] ) ) {
+  if ( s[0] && strchr( comment_delims, s[0] ) ) {
     for ( ++s; *s && *s != '\n' && !isalpha( *s ); ++s )
       ;
     return *s == '\n';
@@ -244,6 +245,21 @@ static void read_leader( void ) {
   if ( !fgets( cur_buf, LINE_BUF_SIZE, fin ) ) {
     CHECK_FERROR( fin );
     exit( EX_OK );
+  }
+
+  char const comment_char = is_line_comment( cur_buf );
+  if ( comment_char ) {
+    static char comment_delim_buf[3];
+    char *s = comment_delim_buf;
+    *s++ = comment_char;
+    switch ( comment_char ) {
+      case '/': *s++ = '*'; break;
+      case '*': *s++ = '/'; break;
+      case '(': *s++ = ':'; break;
+      case ':': *s++ = ')'; break;
+    }
+    *s = '\0';
+    comment_delims = comment_delim_buf;
   }
 
   char const *leader_buf = cur_buf;
@@ -444,7 +460,7 @@ break_loop:
 static size_t leader_span( char const *s ) {
   assert( s );
   size_t ws_len = strspn( s, WS_CHARS );
-  size_t const cc_len = strspn( s += ws_len, opt_comment_delims );
+  size_t const cc_len = strspn( s += ws_len, comment_delims );
   if ( cc_len )
     ws_len += strspn( s + cc_len, WS_CHARS );
   return ws_len + cc_len;
@@ -525,6 +541,8 @@ static void process_options( int argc, char const *argv[] ) {
     fin = stdin;
   if ( !fout )
     fout = stdout;
+
+  comment_delims = opt_comment_delims;
 }
 
 static char const* str_status( int status ) {

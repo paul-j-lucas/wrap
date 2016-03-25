@@ -76,6 +76,7 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc-C_style-03.test \
 	tests/wrapc-C_style-04.test \
 	tests/wrapc-C_style-05.test \
+	tests/wrapc-C_style-06.test \
 	tests/wrapc-XQuery-01.test \
 	tests/wrapc-XQuery-02.test \
 	tests/wrapc-XQuery-03.test \
