@@ -51,7 +51,6 @@ char const         *me;                 // executable name
 // local constant definitions
 static size_t const ARG_BUF_SIZE = 25;  // max wrap command-line arg size
 static char const   COMMENT_DELIMS_DEFAULT[] =
-  "!"   // HTML and XML comments
   "#"   // CMake, Make, Perl, Python, Ruby, and Shell comments
   "%"   // PostScript comments
   "/*"  // C, C++, and Java comments
