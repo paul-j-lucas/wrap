@@ -83,15 +83,15 @@ Quoted e-mail
 .P
 Comments are formatted subject to the following:
 .IP \[bu] 2
-Comment delimiters are treated as such
+Comment characters are treated as such
 only when they are the first non-whitespace characters on a line.
 .IP \[bu]
-Leading whitespace and comment delimiters
+Leading whitespace and comment characters
 of the first line
 are used as the ``prototype'' for all lines.
 .IP \[bu]
 For each line,
-all leading whitespace and comment delimiters are stripped
+all leading whitespace and comment characters are stripped
 before being passed to
 .BR wrap (1)
 for reformatting.
@@ -102,7 +102,7 @@ of the first comment line
 are prepended at the start of each line.
 .SS Trailing Source Code Passthrough
 If a subsequent line does not start with any amount of whitespace
-followed by comment delimiters,
+followed by comment characters,
 it signals the end of the comment
 and all remaining lines
 are passed through unaltered.
@@ -131,7 +131,7 @@ are treated specially in that:
 The first line is not altered
 if it only contains any number of non-alphabetic characters.
 .IP \[bu]
-Leading whitespace and comment delimiters of the
+Leading whitespace and comment characters of the
 .I second
 line are used as the ``prototype'' for all remaining comment lines.
 .IP \[bu]
@@ -142,7 +142,7 @@ and any subsequent lines are also not altered.
 If the first line starts with any amount of whitespace
 followed by non-whitespace characters that are
 .I not
-comment delimiters,
+comment characters,
 then whatever leading whitespace alone
 is used as the prototype for all lines.
 .SH OPTIONS

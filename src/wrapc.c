@@ -50,7 +50,7 @@ char const         *me;                 // executable name
 
 // local constant definitions
 static size_t const ARG_BUF_SIZE = 25;  // max wrap command-line arg size
-static char const   COMMENT_DELIMS_DEFAULT[] =
+static char const   COMMENT_CHARS_DEFAULT[] =
   "#"   // CMake, Make, Perl, Python, R, Ruby, Shell
   "/*"  // C, Objective C, C++, C#, D, Go, Java, Rust, Swift
   "+"   // /+ D
@@ -68,7 +68,7 @@ static char const   WS_CHARS[] = " \t"; // whitespace characters
 // option local variable definitions
 static char const  *opt_alias;
 static char const  *opt_conf_file;      // full path to conf file
-static char const  *opt_comment_delims = COMMENT_DELIMS_DEFAULT;
+static char const  *opt_comment_chars = COMMENT_CHARS_DEFAULT;
 static bool         opt_eos_delimit;    // end-of-sentence delimits para's?
 static char const  *opt_fin_name;       // file in name
 static char const  *opt_lead_para_delims;
@@ -120,7 +120,7 @@ static void         wait_for_child_processes( void );
  * @return Returns \c true only if it is.
  */
 static inline bool is_comment_char( char c ) {
-  return c && strchr( opt_comment_delims, c ) != NULL;
+  return c && strchr( opt_comment_chars, c ) != NULL;
 }
 
 /**
@@ -137,7 +137,7 @@ static inline char const* first_nws( char const *s ) {
 
 /**
  * Gets whether the first non-whitespace character in \a s is a comment
- * delimiter.
+ * character.
  *
  * @param s The string to check.
  * @return Returns a pointer to the first non-whitespace character in \a s only
@@ -268,8 +268,8 @@ static void read_leader( void ) {
   if ( cc ) {
     static char comment_chars_buf[3];  // one (or two) chars + NULL
     //
-    // From now on, recognize only the character found as a comment delimiter.
-    // This handles cases like:
+    // From now on, recognize only the comment character found as a comment
+    // delimiter.  This handles cases like:
     //
     //    // This is a comment
     //    #define MACRO
@@ -292,7 +292,7 @@ static void read_leader( void ) {
         if ( cc[1] != cc[0] && is_comment_char( cc[1] ) )
           comment_chars_buf[1] = cc[1];
     } // switch
-    opt_comment_delims = comment_chars_buf;
+    opt_comment_chars = comment_chars_buf;
   }
 
   char const *leader_buf = cur_buf;
@@ -502,7 +502,7 @@ break_loop:
 static size_t leader_span( char const *s ) {
   assert( s );
   size_t ws_len = strspn( s, WS_CHARS );
-  size_t const cc_len = strspn( s += ws_len, opt_comment_delims );
+  size_t const cc_len = strspn( s += ws_len, opt_comment_chars );
   if ( cc_len )
     ws_len += strspn( s + cc_len, WS_CHARS );
   return ws_len + cc_len;
@@ -548,7 +548,7 @@ static void process_options( int argc, char const *argv[] ) {
       case 'b': opt_lead_para_delims  = optarg;                     break;
       case 'c': opt_conf_file         = optarg;                     break;
       case 'C': opt_no_conf           = true;                       break;
-      case 'D': opt_comment_delims    = optarg;                     break;
+      case 'D': opt_comment_chars     = optarg;                     break;
       case 'e': opt_eos_delimit       = true;                       break;
       case 'f': opt_fin               = optarg;               // no break;
       case 'F': opt_fin_name          = base_name( optarg );        break;
@@ -618,7 +618,7 @@ static void usage( void ) {
 "       -T         Treat paragraph first line as title.\n"
 "       -w number  Specify line width [default: %d]\n"
 "       -v         Print version an exit.\n"
-    , me, me, CONF_FILE_NAME, COMMENT_DELIMS_DEFAULT, TAB_SPACES_DEFAULT,
+    , me, me, CONF_FILE_NAME, COMMENT_CHARS_DEFAULT, TAB_SPACES_DEFAULT,
     LINE_WIDTH_DEFAULT
   );
   exit( EX_USAGE );
