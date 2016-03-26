@@ -2,7 +2,7 @@
 .\"	wrap -- text reformatter
 .\"	wraprc.5 manual page
 .\"
-.\"	Copyright (C) 2013-2015  Paul J. Lucas
+.\"	Copyright (C) 2013-2016  Paul J. Lucas
 .\"
 .\"	This program is free software; you can redistribute it and/or modify
 .\"	it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wraprc\f1 1 "October 29, 2014" "PJL TOOLS"
+.TH \f3wraprc\f1 1 "March 26, 2015" "PJL TOOLS"
 .SH NAME
 wraprc \- text reformatter runtime configuration file
 .SH DESCRIPTION
@@ -153,19 +153,38 @@ creates a pattern that matches all files ending in
 and will apply the options specified by the previously defined
 \f(CWhtml\f1
 alias.
+.P
+A file may match more than one pattern
+in which case the options of the corresponding aliases
+are applied in order of match.
+.SH ENVIRONMENT
+.TP
+.B HOME
+The user's home directory:
+used to locate the default configuration file.
+If unset,
+the home directory is obtained from the password database entry
+for the effective user.
+If that fails,
+no default configuration file is read.
 .SH FILES
-.IP "\f3~/.wraprc\f1" 5
+.TP
+.B ~/.wraprc
 The default configuration file.
 .SH EXAMPLE
 .nf
 .ft CW
 [ALIASES]
+c    = -b@       # @param, @return, etc.
 html = -ep,:;
 man  = -dep,:;
 
 [PATTERNS]
+*.[ch] = c
+*.cpp = c
 *.htm = html
 *.html = html
+*.java = c
 *.[1-9] = man
 .ft 1
 .fi
