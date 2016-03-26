@@ -51,12 +51,18 @@ char const         *me;                 // executable name
 // local constant definitions
 static size_t const ARG_BUF_SIZE = 25;  // max wrap command-line arg size
 static char const   COMMENT_DELIMS_DEFAULT[] =
-  "#"   // CMake, Make, Perl, Python, Ruby, and Shell comments
-  "%"   // PostScript comments
-  "/*"  // C, Objective C, C++, C#, Java, and Swift comments
-  "(:)" // XQuery comments
-  ";"   // Assember and Lisp comments
-  ">";  // Forward mail indicator
+  "#"   // CMake, Make, Perl, Python, R, Ruby, Shell
+  "/*"  // C, Objective C, C++, C#, D, Go, Java, Rust, Swift
+  "+"   // /+ D
+  "(:"  //    XQuery
+// (*   //    AppleScript, Delphi, ML, OCaml, Pascal
+  "{-"  //    Haskell
+// {    //    Pascal
+  "%"   //    Erlang, PostScript, Prolog, TeX
+  ";"   //    Assembly, Clojure, Lisp, Scheme
+  "<"   // <# PowerShell
+  ">"   //    Quoted e-mail
+  "|";  // |# Lisp, Racket, Scheme
 static char const   WS_CHARS[] = " \t"; // whitespace characters
 
 // option local variable definitions
@@ -94,7 +100,7 @@ static int          pipes[2][2];
 // local functions
 static void         fork_exec_wrap( pid_t );
 static bool         is_block_comment( char const* );
-static char         is_line_comment( char const* );
+static char const*  is_line_comment( char const* );
 static void         read_leader( void );
 static size_t       leader_span( char const* );
 static size_t       leader_width( char const* );
@@ -108,10 +114,22 @@ static void         wait_for_child_processes( void );
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
+ * Gets whether \a c is a comment character.
+ *
+ * @param c The character to check.
+ * @return Returns \c true only if it is.
+ */
+static inline bool is_comment_char( char c ) {
+  return c && strchr( opt_comment_delims, c ) != NULL;
+}
+
+/**
  * Gets a pointer to the first non-whitespace character in \a s.
  *
  * @param s The string to use.
- * @return Returns a pointer to the first non-whitespace character.
+ * @return Returns a pointer to the first non-whitespace character (that may be
+ * a pointer to the terminating NULL if there are no other non-whitespace
+ * characters).
  */
 static inline char const* first_nws( char const *s ) {
   return s + strspn( s, WS_CHARS );
@@ -122,12 +140,12 @@ static inline char const* first_nws( char const *s ) {
  * delimiter.
  *
  * @param s The string to check.
- * @return Returns the first non-whitespace character in \a s only if it's a
- * comment delimiter; NULL otherwise.
+ * @return Returns a pointer to the first non-whitespace character in \a s only
+ * if it's a comment character; NULL otherwise.
  */
-static inline char is_line_comment( char const *s ) {
-  char const nws = *first_nws( s );
-  return nws && strchr( opt_comment_delims, nws ) ? nws : '\0';
+static inline char const* is_line_comment( char const *s ) {
+  char const *const nws = first_nws( s );
+  return *nws && is_comment_char( *nws ) ? nws : NULL;
 }
 
 /**
@@ -227,7 +245,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
  */
 static bool is_block_comment( char const *s ) {
   s = first_nws( s );
-  if ( s[0] && strchr( opt_comment_delims, s[0] ) ) {
+  if ( s[0] && is_comment_char( s[0] ) ) {
     for ( ++s; *s && *s != '\n' && !isalpha( *s ); ++s )
       ;
     return *s == '\n';
@@ -246,13 +264,9 @@ static void read_leader( void ) {
     exit( EX_OK );
   }
 
-#define ADD_DELIM_IF_PRESENT(C) \
-  BLOCK( if ( strchr( opt_comment_delims, (C) ) ) *++s = (C); )
-
-  char const comment_delim = is_line_comment( cur_buf );
-  if ( comment_delim ) {
-    static char comment_delims_buf[3];  // one (or two) delims + NULL
-    char *s = comment_delims_buf;
+  char const *const cc = is_line_comment( cur_buf );
+  if ( cc ) {
+    static char comment_chars_buf[3];  // one (or two) chars + NULL
     //
     // From now on, recognize only the character found as a comment delimiter.
     // This handles cases like:
@@ -263,20 +277,22 @@ static void read_leader( void ) {
     // where a comment is followed by a line that is not part of the comment
     // even though it starts with the comment delimiter '#'.
     //
-    *s = comment_delim;
+    comment_chars_buf[0] = cc[0];
     //
-    // As special-cases, we also have to recognize the other characters of
-    // multi-character delimiters.
+    // As special-cases, we also have to recognize the second character of a
+    // two-character delimiters, but only if it's not the same as the first
+    // character and among the set of specified comment characters.
     //
-    switch ( comment_delim ) {
-      // C, Objective C, C++, C#, Java, and Swift comments
-      case '/': ADD_DELIM_IF_PRESENT( '*' ); break;
-      case '*': ADD_DELIM_IF_PRESENT( '/' ); break;
-      // XQuery comments
-      case '(': ADD_DELIM_IF_PRESENT( ':' ); break;
-      case ':': ADD_DELIM_IF_PRESENT( ')' ); break;
+    switch ( cc[0] ) {
+      case '#': // #| Lisp, Racket, Scheme
+      case '(': // (* AppleScript, Delphi, ML, OCaml, Pascal; (: XQuery
+      case '/': // /* C, Objective C, C++, C#, D, Go, Java, Rust, Swift
+      case '<': // <# PowerShell
+      case '{': // {- Haskell
+        if ( cc[1] != cc[0] && is_comment_char( cc[1] ) )
+          comment_chars_buf[1] = cc[1];
     } // switch
-    opt_comment_delims = comment_delims_buf;
+    opt_comment_delims = comment_chars_buf;
   }
 
   char const *leader_buf = cur_buf;
