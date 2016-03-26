@@ -276,7 +276,6 @@ static void read_leader( void ) {
       case '(': ADD_DELIM_IF_PRESENT( ':' ); break;
       case ':': ADD_DELIM_IF_PRESENT( ')' ); break;
     } // switch
-    *++s = '\0';
     opt_comment_delims = comment_delims_buf;
   }
 
