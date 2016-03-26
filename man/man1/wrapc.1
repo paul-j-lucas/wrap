@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\f1 1 "March 24, 2016" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "March 26, 2016" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -48,21 +48,37 @@ by wrapping and filling lines to a given
 .IR line-width ,
 the default for which is 80 characters.
 .P
-The characters that are recognized as comment delimiters by default are:
+The characters that are recognized
+by default
+as comment delimiters
+and the non-exhaustive set of languages that use them
+are the union of:
 .P
 .PD 0
 .IP "\f(CW#\f1" 5
-CMake, Make, Perl, Python, Ruby, and Shell comments.
+CMake, Make, Perl, Python, R, Ruby, Shell
+.IP "\f(CW#|\f1"
+Lisp, Racket, Scheme
 .IP "\f(CW/*\f1"
-C, Objective C, C++, C#, Java, and Swift comments.
+C, Objective C, C++, C#, D, Go, Java, Rust, Swift
+.IP "\f(CW/+\f1"
+D
+.IP "\f(CW(:\f1"
+XQuery
+.IP "\f(CW(*\f1"
+AppleScript, Delphi, ML, OCaml, Pascal
+.IP "\f(CW{-\f1"
+Haskell
+.IP "\f(CW{\f1"
+Pascal
 .IP "\f(CW%\f1"
-PostScript comments.
-.IP "\f(CW(:)\f1"
-XQuery comments.
+Erlang, PostScript, Prolog, TeX
 .IP "\f(CW;\f1"
-Assember and Lisp comments.
+Assembly, Clojure, Lisp, Scheme
+.IP "\f(CW<#\f1"
+PowerShell
 .IP "\f(CW>\f1"
-Quoted e-mail.
+Quoted e-mail
 .PD
 .P
 Comments are formatted subject to the following:
