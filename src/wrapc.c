@@ -53,7 +53,7 @@ static size_t const ARG_BUF_SIZE = 25;  // max wrap command-line arg size
 static char const   COMMENT_DELIMS_DEFAULT[] =
   "#"   // CMake, Make, Perl, Python, Ruby, and Shell comments
   "%"   // PostScript comments
-  "/*"  // C, C++, and Java comments
+  "/*"  // C, Objective C, C++, C#, Java, and Swift comments
   "(:)" // XQuery comments
   ";"   // Assember and Lisp comments
   ">";  // Forward mail indicator
@@ -73,7 +73,6 @@ static size_t       opt_tab_spaces = TAB_SPACES_DEFAULT;
 static bool         opt_title_line;     // 1st para line is title?
 
 // other local variable definitions
-static char const  *comment_delims;     // actual comment delims found
 static char         line_buf[ LINE_BUF_SIZE ];
 static char         line_buf2[ LINE_BUF_SIZE ];
 static char        *cur_buf = line_buf;
@@ -120,15 +119,15 @@ static inline char const* first_nws( char const *s ) {
 
 /**
  * Gets whether the first non-whitespace character in \a s is a comment
- * character.
+ * delimiter.
  *
  * @param s The string to check.
- * @return Returns \c true only if the first non-whitespace character in \a s
- * is a comment character.
+ * @return Returns the first non-whitespace character in \a s only if it's a
+ * comment delimiter; NULL otherwise.
  */
 static inline char is_line_comment( char const *s ) {
-  char const *const nws = first_nws( s );
-  return *nws && strchr( comment_delims, *nws ) ? *nws : '\0';
+  char const nws = *first_nws( s );
+  return nws && strchr( opt_comment_delims, nws ) ? nws : '\0';
 }
 
 /**
@@ -228,7 +227,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
  */
 static bool is_block_comment( char const *s ) {
   s = first_nws( s );
-  if ( s[0] && strchr( comment_delims, s[0] ) ) {
+  if ( s[0] && strchr( opt_comment_delims, s[0] ) ) {
     for ( ++s; *s && *s != '\n' && !isalpha( *s ); ++s )
       ;
     return *s == '\n';
@@ -247,19 +246,38 @@ static void read_leader( void ) {
     exit( EX_OK );
   }
 
-  char const comment_char = is_line_comment( cur_buf );
-  if ( comment_char ) {
-    static char comment_delim_buf[3];
-    char *s = comment_delim_buf;
-    *s++ = comment_char;
-    switch ( comment_char ) {
-      case '/': *s++ = '*'; break;
-      case '*': *s++ = '/'; break;
-      case '(': *s++ = ':'; break;
-      case ':': *s++ = ')'; break;
-    }
-    *s = '\0';
-    comment_delims = comment_delim_buf;
+#define ADD_DELIM_IF_PRESENT(C) \
+  BLOCK( if ( strchr( opt_comment_delims, (C) ) ) *++s = (C); )
+
+  char const comment_delim = is_line_comment( cur_buf );
+  if ( comment_delim ) {
+    static char comment_delims_buf[3];  // one (or two) delims + NULL
+    char *s = comment_delims_buf;
+    //
+    // From now on, recognize only the character found as a comment delimiter.
+    // This handles cases like:
+    //
+    //    // This is a comment
+    //    #define MACRO
+    //
+    // where a comment is followed by a line that is not part of the comment
+    // even though it starts with the comment delimiter '#'.
+    //
+    *s = comment_delim;
+    //
+    // As special-cases, we also have to recognize the other characters of
+    // multi-character delimiters.
+    //
+    switch ( comment_delim ) {
+      // C, Objective C, C++, C#, Java, and Swift comments
+      case '/': ADD_DELIM_IF_PRESENT( '*' ); break;
+      case '*': ADD_DELIM_IF_PRESENT( '/' ); break;
+      // XQuery comments
+      case '(': ADD_DELIM_IF_PRESENT( ':' ); break;
+      case ':': ADD_DELIM_IF_PRESENT( ')' ); break;
+    } // switch
+    *++s = '\0';
+    opt_comment_delims = comment_delims_buf;
   }
 
   char const *leader_buf = cur_buf;
@@ -460,7 +478,7 @@ break_loop:
 static size_t leader_span( char const *s ) {
   assert( s );
   size_t ws_len = strspn( s, WS_CHARS );
-  size_t const cc_len = strspn( s += ws_len, comment_delims );
+  size_t const cc_len = strspn( s += ws_len, opt_comment_delims );
   if ( cc_len )
     ws_len += strspn( s + cc_len, WS_CHARS );
   return ws_len + cc_len;
@@ -541,8 +559,6 @@ static void process_options( int argc, char const *argv[] ) {
     fin = stdin;
   if ( !fout )
     fout = stdout;
-
-  comment_delims = opt_comment_delims;
 }
 
 static char const* str_status( int status ) {
