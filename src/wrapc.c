@@ -280,12 +280,21 @@ static void read_leader( void ) {
   }
 
   char const *leader_buf = cur_buf;
-
   if ( is_block_comment( cur_buf ) ) {
+    //
+    // This handles cases like:
+    //
+    //    /*
+    //     * This is a comment.
+    //     */
+    //
+    // where the first line is the start of a block comment so:
+    // + The first line should not be altered.
+    // + The second line becomes the prototype.
+    //
     if ( !fgets( next_buf, LINE_BUF_SIZE, fin ) )
       CHECK_FERROR( fin );
-    else
-      leader_buf = next_buf;
+    leader_buf = next_buf;
   }
 
   leader_len = leader_span( leader_buf );
