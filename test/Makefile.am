@@ -79,6 +79,7 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc--C-05.test \
 	tests/wrapc--C-06.test \
 	tests/wrapc--D-01.test \
+	tests/wrapc--Haskell-01.test \
 	tests/wrapc--Pascal-01.test \
 	tests/wrapc--XQuery-01.test \
 	tests/wrapc--XQuery-02.test \
