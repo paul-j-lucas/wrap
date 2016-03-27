@@ -84,8 +84,8 @@ static char         line_buf[ LINE_BUF_SIZE ];
 static char         line_buf2[ LINE_BUF_SIZE ];
 static char        *cur_buf = line_buf;
 static char        *next_buf = line_buf2;
-static char         leader[ LINE_BUF_SIZE ]; // characters stripped/prepended
-static size_t       leader_len;
+static char         proto_buf[ LINE_BUF_SIZE ]; // characters stripped/prepended
+static size_t       proto_len;
 //
 // Two pipes:
 // + pipes[0][0] -> wrap(1)                   [child 2]
@@ -102,10 +102,10 @@ static int          pipes[2][2];
 static void         fork_exec_wrap( pid_t );
 static bool         is_block_comment( char const* );
 static char const*  is_line_comment( char const* );
-static void         read_leader( void );
-static size_t       leader_span( char const* );
-static size_t       leader_width( char const* );
 static void         process_options( int, char const*[] );
+static size_t       proto_span( char const* );
+static size_t       proto_width( char const* );
+static void         read_prototype( void );
 static pid_t        read_source_write_wrap( void );
 static void         read_wrap( void );
 static char const*  str_status( int );
@@ -161,7 +161,7 @@ static inline void swap_bufs() {
 
 int main( int argc, char const *argv[] ) {
   process_options( argc, argv );
-  read_leader();
+  read_prototype();
   PIPE( pipes[ TO_WRAP ] );
   PIPE( pipes[ FROM_WRAP ] );
   fork_exec_wrap( read_source_write_wrap() );
@@ -259,7 +259,7 @@ static bool is_block_comment( char const *s ) {
  * be the prototype for all lines.  Handles C-style block comments as a special
  * case.
  */
-static void read_leader( void ) {
+static void read_prototype( void ) {
   if ( !fgets( cur_buf, LINE_BUF_SIZE, fin ) ) {
     CHECK_FERROR( fin );
     exit( EX_OK );
@@ -280,7 +280,7 @@ static void read_leader( void ) {
     //
     comment_chars_buf[0] = cc[0];
     //
-    // As special-cases, we also have to recognize the second character of a
+    // As special-cases, we also have to recognize the second character of
     // two-character delimiters, but only if it's not the same as the first
     // character and among the set of specified comment characters.
     //
@@ -296,7 +296,7 @@ static void read_leader( void ) {
     opt_comment_chars = comment_chars_buf;
   }
 
-  char const *leader_buf = cur_buf;
+  char const *proto = cur_buf;
   if ( is_block_comment( cur_buf ) ) {
     //
     // This handles cases like:
@@ -311,14 +311,14 @@ static void read_leader( void ) {
     //
     if ( !fgets( next_buf, LINE_BUF_SIZE, fin ) )
       CHECK_FERROR( fin );
-    leader_buf = next_buf;
+    proto = next_buf;
   }
 
-  leader_len = leader_span( leader_buf );
-  strncpy( leader, leader_buf, leader_len );
-  leader[ leader_len ] = '\0';
+  proto_len = proto_span( proto );
+  strncpy( proto_buf, proto, proto_len );
+  proto_buf[ proto_len ] = '\0';
 
-  opt_line_width -= leader_width( leader );
+  opt_line_width -= proto_width( proto_buf );
   if ( opt_line_width < LINE_WIDTH_MINIMUM )
     PMESSAGE_EXIT( EX_USAGE,
       "line-width (%zu) is too small (<%d)\n",
@@ -406,20 +406,20 @@ static pid_t read_source_write_wrap( void ) {
       //
       // This handles cases like:
       //
-      //               /*
-      //    leader  -> This is a comment.
-      //    cur_buf -> */
+      //                 /*
+      //    proto_buf -> This is a comment.
+      //    cur_buf   -> */
       //
-      // where the leader text isn't a comment.
+      // where the prototype text isn't a comment.
       //
       goto verbatim;
     }
 
-    leader_len = leader_span( cur_buf );
-    if ( !cur_buf[ leader_len ] )       // no non-leading characters
+    proto_len = proto_span( cur_buf );
+    if ( !cur_buf[ proto_len ] )        // no non-leading characters
       FPUTC( '\n', fwrap );
     else
-      FPUTS( cur_buf + leader_len, fwrap );
+      FPUTS( cur_buf + proto_len, fwrap );
 
     swap_bufs();
   } // while
@@ -456,22 +456,23 @@ static void read_wrap( void ) {
     );
 
   //
-  // Split off the trailing non-whitespace (tnws) from the leader so that if we
-  // read a comment that's empty except for the leader, we won't emit trailing
-  // whitespace. For example, given:
+  // Split off the trailing non-whitespace (tnws) from the prototype so that if
+  // we read a comment that's empty except for the prototype, we won't emit
+  // trailing whitespace. For example, given:
   //
   //    # foo
   //    #
   //    # bar
   //
-  // the leader initially is "# " (because that's what's before "foo").  If we
-  // didn't split off trailing non-whitespace, then when we wrapped the comment
-  // above, the second line would become "# " containing a trailing whitespace.
+  // the prototype initially is "# " (because that's what's before "foo").  If
+  // we didn't split off trailing non-whitespace, then when we wrapped the
+  // comment above, the second line would become "# " containing a trailing
+  // whitespace.
   //
-  size_t const tnws_len = leader_len - strrspn( leader, WS_CHARS );
-  char leader_tws[ LINE_BUF_SIZE ];     // leader trailing whitespace, if any
-  strcpy( leader_tws, leader + tnws_len );
-  leader[ tnws_len ] = '\0';
+  size_t const tnws_len = proto_len - strrspn( proto_buf, WS_CHARS );
+  char proto_tws[ LINE_BUF_SIZE ];      // prototype trailing whitespace, if any
+  strcpy( proto_tws, proto_buf + tnws_len );
+  proto_buf[ tnws_len ] = '\0';
 
   while ( fgets( line_buf, LINE_BUF_SIZE, fwrap ) ) {
     char const *line = line_buf;
@@ -494,9 +495,9 @@ static void read_wrap( void ) {
           ++line;
       } // switch
     }
-    // don't emit leader_tws for blank lines
+    // don't emit proto_tws for blank lines
     bool const is_blank_line = strcmp( line, "\n" ) == 0;
-    FPRINTF( fout, "%s%s%s", leader, is_blank_line ? "" : leader_tws, line );
+    FPRINTF( fout, "%s%s%s", proto_buf, is_blank_line ? "" : proto_tws, line );
   } // while
 break_loop:
 
@@ -504,47 +505,6 @@ break_loop:
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
-/**
- * Spans the initial part of \a s for the "leader."  The leader is defined as
- * \c ^{WS}*{CC}*{WS}* where \c WS is whitespace and \c CC are comment
- * characters.
- *
- * @param s The string to span.
- * @return Returns the length of the leader.
- */
-static size_t leader_span( char const *s ) {
-  assert( s );
-  size_t ws_len = strspn( s, WS_CHARS );
-  size_t const cc_len = strspn( s += ws_len, opt_comment_chars );
-  if ( cc_len )
-    ws_len += strspn( s + cc_len, WS_CHARS );
-  return ws_len + cc_len;
-}
-
-/**
- * Compute the actual width of the leader: tabs are equal to <opt_tab_spaces>
- * spaces minus the number of spaces we're into a tab-stop; all others are
- * equal to 1.
- *
- * @param leader The leader string to calculate the width of.
- * @return Returns said width.
- */
-static size_t leader_width( char const *leader ) {
-  assert( leader );
-
-  size_t spaces = 0, width = 0;
-  for ( char const *c = leader; *c; ++c ) {
-    if ( *c == '\t' ) {
-      width += opt_tab_spaces - spaces;
-      spaces = 0;
-    } else {
-      ++width;
-      spaces = (spaces + 1) % opt_tab_spaces;
-    }
-  } // for
-  return width;
-}
 
 static void process_options( int argc, char const *argv[] ) {
   char const *opt_fin = NULL;           // file in name
@@ -597,6 +557,47 @@ static void process_options( int argc, char const *argv[] ) {
     fin = stdin;
   if ( !fout )
     fout = stdout;
+}
+
+/**
+ * Spans the initial part of \a s for the "prototype."  The prototype is
+ * defined as \c ^{WS}*{CC}*{WS}* where \c WS is whitespace and \c CC are
+ * comment characters.
+ *
+ * @param s The string to span.
+ * @return Returns the length of the prototype.
+ */
+static size_t proto_span( char const *s ) {
+  assert( s );
+  size_t ws_len = strspn( s, WS_CHARS );
+  size_t const cc_len = strspn( s += ws_len, opt_comment_chars );
+  if ( cc_len )
+    ws_len += strspn( s + cc_len, WS_CHARS );
+  return ws_len + cc_len;
+}
+
+/**
+ * Compute the actual width of the prototype: tabs are equal to <opt_tab_spaces>
+ * spaces minus the number of spaces we're into a tab-stop; all others are
+ * equal to 1.
+ *
+ * @param prototype The prototype string to calculate the width of.
+ * @return Returns said width.
+ */
+static size_t proto_width( char const *prototype ) {
+  assert( prototype );
+
+  size_t spaces = 0, width = 0;
+  for ( char const *c = prototype; *c; ++c ) {
+    if ( *c == '\t' ) {
+      width += opt_tab_spaces - spaces;
+      spaces = 0;
+    } else {
+      ++width;
+      spaces = (spaces + 1) % opt_tab_spaces;
+    }
+  } // for
+  return width;
 }
 
 static char const* str_status( int status ) {
