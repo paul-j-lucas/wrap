@@ -402,6 +402,17 @@ static pid_t read_source_write_wrap( void ) {
           goto verbatim;
         }
       }
+    } else if ( is_block_comment( cur_buf ) ) {
+      //
+      // This handles cases like:
+      //
+      //               /*
+      //    leader  -> This is a comment.
+      //    cur_buf -> */
+      //
+      // where the leader text isn't a comment.
+      //
+      goto verbatim;
     }
 
     leader_len = leader_span( cur_buf );
