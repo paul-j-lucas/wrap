@@ -71,18 +71,18 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc-block-01.test \
 	tests/wrapc-block-02.test \
 	tests/wrapc-block-03.test \
-	tests/wrapc-C_style-01.test \
-	tests/wrapc-C_style-02.test \
-	tests/wrapc-C_style-03.test \
-	tests/wrapc-C_style-04.test \
-	tests/wrapc-C_style-05.test \
-	tests/wrapc-C_style-06.test \
-	tests/wrapc-D_style-01.test \
-	tests/wrapc-XQuery-01.test \
-	tests/wrapc-XQuery-02.test \
-	tests/wrapc-XQuery-03.test \
-	tests/wrapc-XQuery-04.test \
-	tests/wrapc-D-01.test
+	tests/wrapc-D-01.test \
+	tests/wrapc--C-01.test \
+	tests/wrapc--C-02.test \
+	tests/wrapc--C-03.test \
+	tests/wrapc--C-04.test \
+	tests/wrapc--C-05.test \
+	tests/wrapc--C-06.test \
+	tests/wrapc--D-01.test \
+	tests/wrapc--XQuery-01.test \
+	tests/wrapc--XQuery-02.test \
+	tests/wrapc--XQuery-03.test \
+	tests/wrapc--XQuery-04.test
 
 AM_TESTS_ENVIRONMENT = BUILD_SRC=$(top_builddir)/src; export BUILD_SRC ;
 TEST_EXTENSIONS = .test
