@@ -1,0 +1,6 @@
+  // This comment ...
+  // 
+  // ... has trailing whitespace 
+  // on some of the lines.
+  //  
+  // It should be eliminated.

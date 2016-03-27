@@ -62,11 +62,11 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrap-P-03.test \
 	tests/wrap-t1.test \
 	tests/wrap-t11.test \
-	tests/wrapc-no_options-01.test \
-	tests/wrapc-no_options-02.test \
-	tests/wrapc-no_options-03.test \
-	tests/wrapc-no_options-04.test \
-	tests/wrapc-no_options-05.test \
+	tests/wrapc-01.test \
+	tests/wrapc-02.test \
+	tests/wrapc-03.test \
+	tests/wrapc-04.test \
+	tests/wrapc-05.test \
 	tests/wrapc-b.test \
 	tests/wrapc-block-01.test \
 	tests/wrapc-block-02.test \
