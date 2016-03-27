@@ -105,10 +105,12 @@ for reformatting.
 After reformatting,
 the prototype characters
 of the first comment line
-are prepended at the start of each line.
+are prepended to the start of each line.
 .SS Trailing Source Code Passthrough
-If a subsequent line does not start with any amount of whitespace
-followed by comment characters,
+If the first non-whitespace character of a subsequent line
+is
+.I not
+a comment character,
 it signals the end of the comment
 and all remaining lines
 are passed through unaltered.
@@ -145,11 +147,12 @@ The last comment line,
 the one only containing any number of non-alphabetic characters,
 and any subsequent lines are also not altered.
 .SS Non-Comments
-If the first line starts with any amount of whitespace
-followed by non-whitespace characters that are
+If the first non-whitespace character
+of the first line
+is
 .I not
-comment characters,
-then whatever leading whitespace alone
+a comment character,
+then whatever leading whitespace alone, if any,
 is used as the prototype for all lines.
 .SH OPTIONS
 An option argument
