@@ -51,8 +51,8 @@ char const         *me;                 // executable name
 // local constant definitions
 static size_t const ARG_BUF_SIZE = 25;  // max wrap command-line arg size
 static char const   COMMENT_CHARS_DEFAULT[] =
-  "#"   // CMake, Make, Perl, Python, R, Ruby, Shell
-  "/*"  // C, Objective C, C++, C#, D, Go, Java, Rust, Swift
+  "#"   //    CMake, Make, Perl, Python, R, Ruby, Shell
+  "/*"  //    C, Objective C, C++, C#, D, Go, Java, Rust, Swift
   "+"   // /+ D
   "(:"  //    XQuery
 // (*   //    AppleScript, Delphi, ML, OCaml, Pascal
