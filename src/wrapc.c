@@ -367,7 +367,7 @@ static pid_t read_source_write_wrap( void ) {
   // all subsequent lines, i.e., do NOT ever tell wrap(1) to pass text through
   // verbatim (below).
   //
-  bool const first_is_comment = is_line_comment( cur_buf );
+  bool const prototype_is_comment = is_line_comment( cur_buf );
 
   while ( cur_buf[0] ) {
     //
@@ -378,7 +378,7 @@ static pid_t read_source_write_wrap( void ) {
       next_buf[0] = '\0';
     }
 
-    if ( first_is_comment ) {
+    if ( prototype_is_comment ) {
       if ( next_buf[0] ) {
         if ( !is_line_comment( next_buf ) ) {
           //
