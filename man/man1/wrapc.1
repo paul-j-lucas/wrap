@@ -48,13 +48,16 @@ by wrapping and filling lines to a given
 .IR line-width ,
 the default for which is 80 characters.
 .P
-The characters that are recognized
+The
+.I characters
+that are recognized
 by default
 as comment delimiters
 and the non-exhaustive set of languages that use them
 are the union of:
 .P
 .PD 0
+.RS 5
 .IP "\f(CW#\f1" 5
 CMake, Make, Perl, Python, R, Ruby, Shell
 .IP "\f(CW#|\f1"
@@ -71,6 +74,8 @@ AppleScript, Delphi, ML, OCaml, Pascal
 Haskell
 .IP "\f(CW{\f1"
 Pascal
+.IP "\f(CW!\f1"
+Fortran
 .IP "\f(CW%\f1"
 Erlang, PostScript, Prolog, TeX
 .IP "\f(CW;\f1"
@@ -79,6 +84,7 @@ Assembly, Clojure, Lisp, Scheme
 PowerShell
 .IP "\f(CW>\f1"
 Quoted e-mail
+.RE
 .PD
 .P
 Comments are formatted subject to the following:
