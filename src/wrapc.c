@@ -58,6 +58,7 @@ static char const   COMMENT_CHARS_DEFAULT[] =
 // (*   //    AppleScript, Delphi, ML, OCaml, Pascal
   "{-"  //    Haskell
 // {    //    Pascal
+  "!"   //    Fortran
   "%"   //    Erlang, PostScript, Prolog, TeX
   ";"   //    Assembly, Clojure, Lisp, Scheme
   "<"   // <# PowerShell
@@ -604,20 +605,20 @@ static void usage( void ) {
 "       %s -v\n"
 "\n"
 "options:\n"
-"       -a alias   Use alias from configuration file.\n"
-"       -b chars   Specify block leading delimiter characters.\n"
-"       -c file    Specify the configuration file [default: ~/%s].\n"
-"       -C         Suppress reading configuration file.\n"
-"       -D chars   Specify comment delimiter characters [default: %s].\n"
-"       -e         Treat whitespace after end-of-sentence as new paragraph.\n"
-"       -f file    Read from this file [default: stdin].\n"
-"       -F string  Specify filename for stdin.\n"
-"       -o file    Write to this file [default: stdout].\n"
-"       -p chars   Specify additional paragraph delimiter characters.\n"
-"       -s number  Specify tab-spaces equivalence [default: %d].\n"
-"       -T         Treat paragraph first line as title.\n"
-"       -w number  Specify line width [default: %d]\n"
-"       -v         Print version an exit.\n"
+"  -a alias   Use alias from configuration file.\n"
+"  -b chars   Specify block leading delimiter characters.\n"
+"  -c file    Specify the configuration file [default: ~/%s].\n"
+"  -C         Suppress reading configuration file.\n"
+"  -D chars   Specify comment delimiter characters [default: %s].\n"
+"  -e         Treat whitespace after end-of-sentence as new paragraph.\n"
+"  -f file    Read from this file [default: stdin].\n"
+"  -F string  Specify filename for stdin.\n"
+"  -o file    Write to this file [default: stdout].\n"
+"  -p chars   Specify additional paragraph delimiter characters.\n"
+"  -s number  Specify tab-spaces equivalence [default: %d].\n"
+"  -T         Treat paragraph first line as title.\n"
+"  -w number  Specify line width [default: %d]\n"
+"  -v         Print version an exit.\n"
     , me, me, CONF_FILE_NAME, COMMENT_CHARS_DEFAULT, TAB_SPACES_DEFAULT,
     LINE_WIDTH_DEFAULT
   );
