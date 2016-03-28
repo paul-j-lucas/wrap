@@ -55,7 +55,7 @@ static char const   COMMENT_CHARS_DEFAULT[] =
   "/*"  //    C, Objective C, C++, C#, D, Go, Java, Rust, Swift
   "+"   // /+ D
   "(:"  //    XQuery
-// (*   //    AppleScript, Delphi, ML, OCaml, Pascal
+// (*   //    AppleScript, Delphi, ML, Modula-[23], Oberon, OCaml, Pascal
   "{-"  //    Haskell
   "}"   //    Pascal
   "!"   //    Fortran
