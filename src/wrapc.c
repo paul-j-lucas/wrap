@@ -57,7 +57,7 @@ static char const   COMMENT_CHARS_DEFAULT[] =
   "(:"  //    XQuery
 // (*   //    AppleScript, Delphi, ML, OCaml, Pascal
   "{-"  //    Haskell
-// {    //    Pascal
+  "}"   //    Pascal
   "!"   //    Fortran
   "%"   //    Erlang, PostScript, Prolog, TeX
   ";"   //    Assembly, Clojure, Lisp, Scheme
@@ -294,7 +294,8 @@ static void read_prototype( void ) {
         //      This is a block comment.
         //    }
         //
-        *s++ = '}';
+        if ( is_comment_char( '}' ) )
+          *s++ = '}';
         // no break;
       case '#':     // #| Lisp, Racket, Scheme
       case '(':     // (* AppleScript, Delphi, ML, OCaml, Pascal; (: XQuery
