@@ -1,0 +1,8 @@
+/+
+ + The D programming language is an object-oriented, imperative, multi-paradigm system programming language
+ + created by Walter Bright of Digital Mars
+ + and released in 2001.
+ +/
+void main() {
+  writeln( "hello, world" );
+}
