@@ -267,7 +267,8 @@ static void read_prototype( void ) {
 
   char const *const cc = is_line_comment( cur_buf );
   if ( cc ) {
-    static char comment_chars_buf[3];  // one (or two) chars + NULL
+    static char comment_chars_buf[4];   // 1-3 chars + NULL
+    char *s = comment_chars_buf;
     //
     // From now on, recognize only the comment character found as a comment
     // delimiter.  This handles cases like:
@@ -278,20 +279,29 @@ static void read_prototype( void ) {
     // where a comment is followed by a line that is not part of the comment
     // even though it starts with the comment delimiter '#'.
     //
-    comment_chars_buf[0] = cc[0];
+    *s++ = cc[0];
     //
     // As special-cases, we also have to recognize the second character of
     // two-character delimiters, but only if it's not the same as the first
     // character and among the set of specified comment characters.
     //
     switch ( cc[0] ) {
-      case '#': // #| Lisp, Racket, Scheme
-      case '(': // (* AppleScript, Delphi, ML, OCaml, Pascal; (: XQuery
-      case '/': // /* C, Objective C, C++, C#, D, Go, Java, Rust, Swift
-      case '<': // <# PowerShell
-      case '{': // {- Haskell
+      case '{':     // {- Haskell
+        //
+        // As even more special-case for Pascal, this handles the case like:
+        //
+        //    {
+        //      This is a block comment.
+        //    }
+        //
+        *s++ = '}';
+        // no break;
+      case '#':     // #| Lisp, Racket, Scheme
+      case '(':     // (* AppleScript, Delphi, ML, OCaml, Pascal; (: XQuery
+      case '/':     // /* C, Objective C, C++, C#, D, Go, Java, Rust, Swift
+      case '<':     // <# PowerShell
         if ( cc[1] != cc[0] && is_comment_char( cc[1] ) )
-          comment_chars_buf[1] = cc[1];
+          *s++ = cc[1];
     } // switch
     opt_comment_chars = comment_chars_buf;
   }
