@@ -95,11 +95,11 @@ static bool         opt_title_line;     // 1st para line is title?
 
 // other local variable definitions
 static char         line_buf[ LINE_BUF_SIZE ];
-static size_t       line_count;         // number of characters in buffer
+static size_t       line_len;           // number of characters in buffer
 static size_t       line_width;         // actual width of buffer
-static char         prototype_buf[ LINE_BUF_SIZE ];
-static size_t       prototype_count;
-static size_t       prototype_width;
+static char         proto_buf[ LINE_BUF_SIZE ];
+static size_t       proto_len;
+static size_t       proto_width;
 
 // local functions
 static bool copy_line( FILE*, FILE*, char*, size_t );
@@ -217,13 +217,13 @@ int main( int argc, char const *argv[] ) {
         //
         goto delimit_paragraph;
       }
-      if ( next_line_is_title && line_count ) {
+      if ( next_line_is_title && line_len ) {
         //
         // The first line of the next paragraph is title line and the buffer
         // isn't empty (there is a title): print the title.
         //
         print_lead_chars();
-        print_line( line_count, true );
+        print_line( line_len, true );
         do_hang_indent = true;
         next_line_is_title = false;
         continue;
@@ -245,13 +245,13 @@ int main( int argc, char const *argv[] ) {
 
     if ( isspace( c ) ) {
       if ( opt_prototype ) {
-        if ( prototype_count < sizeof( prototype_buf ) - 1 ) {
+        if ( proto_len < sizeof( proto_buf ) - 1 ) {
           static size_t tab_pos;
-          prototype_buf[ prototype_count++ ] = c;
-          prototype_width += c == '\t' ?
+          proto_buf[ proto_len++ ] = c;
+          proto_width += c == '\t' ?
             (opt_tab_spaces - tab_pos % opt_tab_spaces) : 1;
           ++tab_pos;
-          opt_line_width = LINE_WIDTH_DEFAULT - prototype_width;
+          opt_line_width = LINE_WIDTH_DEFAULT - proto_width;
         }
         continue;
       }
@@ -284,7 +284,7 @@ int main( int argc, char const *argv[] ) {
         //
         goto delimit_paragraph;
       }
-      if ( line_count && put_spaces < 1u + was_eos_char ) {
+      if ( line_len && put_spaces < 1u + was_eos_char ) {
         //
         // We are not at the beginning of a line: remember to insert 1 space
         // later and allow 2 after the end of a sentence.
@@ -307,7 +307,7 @@ int main( int argc, char const *argv[] ) {
           // message to the other wrapc process (parent), and pass text through
           // verbatim.
           //
-          print_line( line_count, true );
+          print_line( line_len, true );
           FPRINTF( fout, "%c%c", ASCII_DLE, ASCII_ETB );
           fcopy( fin, fout );
           exit( EX_OK );
@@ -360,14 +360,14 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( put_spaces ) {
-      if ( line_count ) {
+      if ( line_len ) {
         //
         // Mark position at a space to perform a wrap if necessary.
         //
-        wrap_pos = line_count;
+        wrap_pos = line_len;
         line_width += put_spaces;
         do {
-          line_buf[ line_count++ ] = ' ';
+          line_buf[ line_len++ ] = ' ';
         } while ( --put_spaces );
       } else {
         //
@@ -383,11 +383,11 @@ int main( int argc, char const *argv[] ) {
 
 insert:
     if ( do_indent ) {
-      line_count = 0;
+      line_len = 0;
       for ( size_t i = 0; i < opt_indt_tabs; ++i )
-        line_buf[ line_count++ ] = '\t';
+        line_buf[ line_len++ ] = '\t';
       for ( size_t i = 0; i < opt_indt_spaces; ++i )
-        line_buf[ line_count++ ] = ' ';
+        line_buf[ line_len++ ] = ' ';
       line_width = opt_indt_tabs * opt_tab_spaces + opt_indt_spaces;
       do_indent = false;
     }
@@ -405,8 +405,8 @@ insert:
     if ( !len )                       // unexpected UTF-8 continuation byte
       continue;
 
-    size_t tmp_line_count = line_count; // save count in case invalid UTF-8
-    line_buf[ tmp_line_count++ ] = c;
+    size_t tmp_line_len = line_len;   // save count in case invalid UTF-8
+    line_buf[ tmp_line_len++ ] = c;
 
     //
     // If we've just read the start byte of a multi-byte UTF-8 character, read
@@ -416,14 +416,14 @@ insert:
     for ( size_t i = len; i > 1; --i ) {
       if ( (c = getc( fin )) == EOF )
         goto done;                      // premature end of UTF-8 character
-      line_buf[ tmp_line_count++ ] = c;
+      line_buf[ tmp_line_len++ ] = c;
       if ( utf8_len( c ) )              // unexpected UTF-8 start byte
         goto continue_outer_loop;       // skip entire UTF-8 character
     } // for
-    line_count = tmp_line_count;        // UTF-8 is valid
+    line_len = tmp_line_len;            // UTF-8 is valid
 
     if ( len == UTF8_BOM_LEN ) {
-      size_t const utf8_start_pos = line_count - UTF8_BOM_LEN;
+      size_t const utf8_start_pos = line_len - UTF8_BOM_LEN;
       if ( strncmp( line_buf + utf8_start_pos, UTF8_BOM, UTF8_BOM_LEN ) == 0 )
         continue;                       // discard UTF-8 BOM
     }
@@ -446,14 +446,14 @@ insert:
       //
       if ( !is_long_line )
         print_lead_chars();
-      print_line( line_count, false );
+      print_line( line_len, false );
       is_long_line = true;
       continue;
     }
 
     is_long_line = false;
     print_lead_chars();
-    tmp_line_count = line_count;
+    tmp_line_len = line_len;
     print_line( wrap_pos, true );
     hang_indent();
 
@@ -461,13 +461,13 @@ insert:
     // Slide the partial word to the left where we can pick up from where we
     // left off the next time around.
     //
-    for ( size_t from = wrap_pos + 1; from < tmp_line_count; ++from ) {
+    for ( size_t from = wrap_pos + 1; from < tmp_line_len; ++from ) {
       c = line_buf[ from ];
       if ( !isspace( c ) ) {
-        line_buf[ line_count++ ] = c;
+        line_buf[ line_len++ ] = c;
         ++line_width;
         for ( len = utf8_len( c ); len > 1; --len )
-          line_buf[ line_count++ ] = line_buf[ ++from ];
+          line_buf[ line_len++ ] = line_buf[ ++from ];
       }
     } // for
 
@@ -479,7 +479,7 @@ continue_outer_loop:
     ///////////////////////////////////////////////////////////////////////////
 
 delimit_paragraph:
-    if ( line_count ) {
+    if ( line_len ) {
       //
       // Print what's in the buffer before delimiting the paragraph.  If we've
       // been handling a "long line," it's now finally ended; otherwise, print
@@ -489,7 +489,7 @@ delimit_paragraph:
         is_long_line = false;
       else
         print_lead_chars();
-      print_line( line_count, true );
+      print_line( line_len, true );
     } else if ( is_long_line )
       FPUTC( '\n', fout );              // delimit the "long line"
 
@@ -526,10 +526,10 @@ delimit_paragraph:
 
 done:
   CHECK_FERROR( fin );
-  if ( line_count ) {                   // print left-over text
+  if ( line_len ) {                     // print left-over text
     if ( !is_long_line )
       print_lead_chars();
-    print_line( line_count, true );
+    print_line( line_len, true );
   }
   exit( EX_OK );
 }
@@ -560,9 +560,9 @@ static bool copy_line( FILE *fin, FILE *fout, char *buf, size_t buf_size ) {
 
 static void hang_indent( void ) {
   for ( size_t i = 0; i < opt_hang_tabs; ++i )
-    line_buf[ line_count++ ] = '\t';
+    line_buf[ line_len++ ] = '\t';
   for ( size_t i = 0; i < opt_hang_spaces; ++i )
-    line_buf[ line_count++ ] = ' ';
+    line_buf[ line_len++ ] = ' ';
   line_width += opt_hang_tabs * opt_tab_spaces + opt_hang_spaces;
 }
 
@@ -618,8 +618,8 @@ static void init( int argc, char const *argv[] ) {
 }
 
 static void print_lead_chars( void ) {
-  if ( prototype_buf[0] ) {
-    FPUTS( prototype_buf, fout );
+  if ( proto_buf[0] ) {
+    FPUTS( proto_buf, fout );
   } else {
     for ( size_t i = 0; i < opt_lead_tabs; ++i )
       FPUTC( '\t', fout );
@@ -632,7 +632,7 @@ static void print_line( size_t len, bool newline ) {
   line_buf[ len ] = '\0';
   if ( len )
     FPRINTF( fout, newline ? "%s\n" : "%s", line_buf );
-  line_count = line_width = 0;
+  line_len = line_width = 0;
 }
 
 static void process_options( int argc, char const *argv[], char const *opts,
