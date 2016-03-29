@@ -15,7 +15,44 @@ title lines.
 
 It also includes **wrapc**
 that is useful for reformatting comments
-in source code.
+in source code for languages
+including
+(but not limited to if others do comments similarly):
+AppleScript,
+Assembly,
+C,
+Clojure,
+CMake,
+D,
+Delphi,
+Erlang,
+Fortran,
+Go,
+Haskell,
+Java,
+Lisp,
+Make,
+ML,
+Modula-[23],
+Oberon,
+Objective C,
+OCaml,
+Pascal,
+Perl,
+PostScript,
+PowerShell,
+Prolog,
+Python,
+R,
+Racket,
+Ruby,
+Rust,
+Scheme,
+Shell,
+Swift,
+TeX,
+and
+XQuery.
 
 ## Installation
 
