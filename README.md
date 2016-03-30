@@ -15,7 +15,7 @@ title lines.
 
 It also includes **wrapc**
 that is useful for reformatting comments
-in source code for languages
+while editing source code in languages
 including
 (but not limited to if others do comments similarly):
 AppleScript,
