@@ -570,7 +570,7 @@ static void init( int argc, char const *argv[] ) {
   me = base_name( argv[0] );
   atexit( clean_up );
 
-  char const opts[] = "a:b:c:CdDef:F:h:H:i:I:l:m:M:nNo:p:Ps:S:t:Tvw:W";
+  char const opts[] = "a:b:c:CdDef:F:h:H:i:I:m:M:nNo:p:Ps:S:t:Tvw:W";
   process_options( argc, argv, opts, 0 );
   argc -= optind, argv += optind;
   if ( argc )
@@ -676,7 +676,6 @@ static void process_options( int argc, char const *argv[], char const *opts,
       case 't': opt_lead_tabs         = check_atou( optarg );       break;
       case 'T': opt_title_line        = true;                       break;
       case 'v': print_version         = true;                       break;
-      case 'l': // deprecated: now synonym for -w
       case 'w': opt_line_width        = check_atou( optarg );       break;
       case 'W': opt_lead_ws_delimit   = true;                       break;
       default : usage();
