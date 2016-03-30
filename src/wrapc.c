@@ -520,7 +520,7 @@ break_loop:
 static void process_options( int argc, char const *argv[] ) {
   char const *opt_fin = NULL;           // file in name
   char const *opt_fout = NULL;          // file out name
-  char const  opts[] = "a:b:c:CD:ef:F:l:o:p:s:Tvw:";
+  char const  opts[] = "a:b:c:CD:ef:F:o:p:s:Tvw:";
   bool        print_version = false;
 
   me = base_name( argv[0] );
@@ -542,7 +542,6 @@ static void process_options( int argc, char const *argv[] ) {
       case 's': opt_tab_spaces        = check_atou( optarg );       break;
       case 'T': opt_title_line        = true;                       break;
       case 'v': print_version         = true;                       break;
-      case 'l': // deprecated: now synonym for -w
       case 'w': opt_line_width        = check_atou( optarg );       break;
       default : usage();
     } // switch
