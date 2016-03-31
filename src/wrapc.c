@@ -80,6 +80,7 @@ static size_t       opt_tab_spaces = TAB_SPACES_DEFAULT;
 static bool         opt_title_line;     // 1st para line is title?
 
 // other local variable definitions
+static bool         is_crlf;
 static char         line_buf[ LINE_BUF_SIZE ];
 static char         line_buf2[ LINE_BUF_SIZE ];
 static char        *cur_buf = line_buf;
@@ -265,6 +266,8 @@ static void read_prototype( void ) {
     exit( EX_OK );
   }
 
+  is_crlf = strchr( cur_buf, '\r' );
+
   char const *const cc = is_line_comment( cur_buf );
   if ( cc ) {
     static char comment_chars_buf[4];   // 1-3 chars + NULL
@@ -428,7 +431,7 @@ static pid_t read_source_write_wrap( void ) {
 
     proto_len = proto_span( cur_buf );
     if ( !cur_buf[ proto_len ] )        // no non-leading characters
-      FPUTC( '\n', fwrap );
+      FPUTS( (char const*)"\r\n" + !is_crlf, fwrap );
     else
       FPUTS( cur_buf + proto_len, fwrap );
 
@@ -507,7 +510,7 @@ static void read_wrap( void ) {
       } // switch
     }
     // don't emit proto_tws for blank lines
-    bool const is_blank_line = strcmp( line, "\n" ) == 0;
+    bool const is_blank_line = strcmp( line, is_crlf ? "\r\n" : "\n" ) == 0;
     FPRINTF( fout, "%s%s%s", proto_buf, is_blank_line ? "" : proto_tws, line );
   } // while
 break_loop:

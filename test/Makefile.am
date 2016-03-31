@@ -47,6 +47,9 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrap-I2-W.test \
 	tests/wrap-I2-w72.test \
 	tests/wrap-i2.test \
+	tests/wrap-li-01.test \
+	tests/wrap-lu-01.test \
+	tests/wrap-lu-02.test \
 	tests/wrap-long_line-01.test \
 	tests/wrap-long_line-02.test \
 	tests/wrap-long_line-03.test \
@@ -62,6 +65,10 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrap-P-03.test \
 	tests/wrap-t1.test \
 	tests/wrap-t11.test \
+	tests/crlf-01.test \
+	tests/crlf-ld-01.test \
+	tests/crlf-li-01.test \
+	tests/crlf-lw-01.test \
 	tests/wrapc-01.test \
 	tests/wrapc-02.test \
 	tests/wrapc-03.test \
