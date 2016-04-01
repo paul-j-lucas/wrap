@@ -282,8 +282,13 @@ static void read_prototype( void ) {
     exit( EX_OK );
   }
 
-  is_crlf = opt_eol == EOL_WINDOWS ||
-           (opt_eol == EOL_INPUT && strchr( cur_buf, '\r' ));
+  if ( opt_eol == EOL_INPUT && strchr( cur_buf, '\r' ) ) {
+    //
+    // Retroactively set opt_eol because we pass it to wrap(1).
+    //
+    opt_eol = EOL_WINDOWS;
+  }
+  is_crlf = opt_eol == EOL_WINDOWS;
 
   char const *const cc = is_line_comment( cur_buf );
   if ( cc ) {

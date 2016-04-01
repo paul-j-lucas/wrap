@@ -79,6 +79,7 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc-block-01.test \
 	tests/wrapc-block-02.test \
 	tests/wrapc-block-03.test \
+	tests/wrapc-crlf-01.test \
 	tests/wrapc-D-01.test \
 	tests/wrapc--C-01.test \
 	tests/wrapc--C-02.test \

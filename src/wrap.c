@@ -215,6 +215,14 @@ int main( int argc, char const *argv[] ) {
     //  HANDLE NEWLINE(s)
     ///////////////////////////////////////////////////////////////////////////
 
+    if ( c == '\r' ) {
+      //
+      // The code is simpler if we always strip \r and add it back later (if
+      // is_crlf is true).
+      //
+      continue;
+    }
+
     if ( c == '\n' ) {
       opt_prototype = false;            // the prototype is complete
 
@@ -255,13 +263,6 @@ int main( int argc, char const *argv[] ) {
         continue;
       }
     } else {
-      if ( c == '\r' ) {
-        //
-        // The code is simpler if we always strip \r and add it back later (if
-        // is_crlf is true).
-        //
-        continue;
-      }
       consec_newlines = 0;
     }
 
