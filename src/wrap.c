@@ -38,13 +38,6 @@
 #include <string.h>
 #include <unistd.h>
 
-enum eol {                              // end-of-line
-  EOL_INPUT,                            // do newlines the way the input does
-  EOL_UNIX,
-  EOL_WINDOWS
-};
-typedef enum eol eol_t;
-
 // extern variable definitions
 FILE               *fin;                // file in
 FILE               *fout;               // file out
@@ -90,7 +83,7 @@ static char const  *opt_lead_para_delims;
 static size_t       opt_lead_spaces;    // leading spaces
 static size_t       opt_lead_tabs;      // leading tabs
 static bool         opt_lead_ws_delimit;// leading whitespace delimit para's?
-static eol_t        opt_eol;
+static eol_t        opt_eol = EOL_INPUT;
 static size_t       opt_line_width = LINE_WIDTH_DEFAULT;
 static size_t       opt_mirror_spaces;
 static size_t       opt_mirror_tabs;
@@ -648,24 +641,6 @@ static void init( int argc, char const *argv[] ) {
 
   opt_lead_tabs   += opt_mirror_tabs;
   opt_lead_spaces += opt_mirror_spaces;
-}
-
-static eol_t parse_eol( char const *s ) {
-  assert( s );
-  switch ( tolower( s[0] ) ) {
-    case 'i':
-    case '-':
-      return EOL_INPUT;
-    case 'u': // unix
-      return EOL_UNIX;
-    case 'd': // dos
-    case 'w': // windows
-      return EOL_WINDOWS;
-    default:
-      PMESSAGE_EXIT( EX_USAGE,
-        "\"%s\": invalid value for -l; must be one of [-diuw]\n", s
-      );
-  } // switch
 }
 
 static void print_lead_chars( void ) {

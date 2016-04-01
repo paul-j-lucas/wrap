@@ -30,6 +30,16 @@
 #define OPTION_VALUE(OPT) opts_given[ !islower(OPT) ][ toupper(OPT) - 'A' ]
 #define SET_OPTION(OPT)   OPTION_VALUE(OPT) = (OPT)
 
+/**
+ * End-of-Line formats.
+ */
+enum eol {
+  EOL_INPUT   = 'i',                    // do newlines the way the input does
+  EOL_UNIX    = 'u',
+  EOL_WINDOWS = 'w'
+};
+typedef enum eol eol_t;
+
 ////////// extern variables ///////////////////////////////////////////////////
 
 typedef char opts_given_t[ 2 /* lower/upper */ ][ 26 + 1 /*NULL*/ ];
@@ -47,6 +57,15 @@ extern opts_given_t opts_given;         // options given
  * @param opts2 The second set of short options.
  */
 void check_mutually_exclusive( char const *opts1, char const *opts2 );
+
+/**
+ * Parses an End-of-Line value.
+ *
+ * @param s The NULL-terminated string to parse.
+ * @return Returns the corresponding \c eol_t
+ * or prints an error message and exits if \a s is invalid.
+ */
+eol_t parse_eol( char const *s );
 
 ///////////////////////////////////////////////////////////////////////////////
 

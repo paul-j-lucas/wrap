@@ -58,5 +58,23 @@ void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
   } // for
 }
 
+eol_t parse_eol( char const *s ) {
+  assert( s );
+  switch ( tolower( s[0] ) ) {
+    case 'i':
+    case '-':
+      return EOL_INPUT;
+    case 'u': // unix
+      return EOL_UNIX;
+    case 'd': // dos
+    case 'w': // windows
+      return EOL_WINDOWS;
+    default:
+      PMESSAGE_EXIT( EX_USAGE,
+        "\"%s\": invalid value for -l; must be one of [-diuw]\n", s
+      );
+  } // switch
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 /* vim:set et sw=2 ts=2: */
