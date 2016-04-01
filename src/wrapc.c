@@ -277,12 +277,13 @@ static bool is_block_comment( char const *s ) {
  * case.
  */
 static void read_prototype( void ) {
-  if ( !fgets( cur_buf, LINE_BUF_SIZE, fin ) ) {
+  size_t size = LINE_BUF_SIZE;
+  if ( !fgetsz( cur_buf, &size, fin ) ) {
     CHECK_FERROR( fin );
     exit( EX_OK );
   }
 
-  if ( opt_eol == EOL_INPUT && strchr( cur_buf, '\r' ) ) {
+  if ( opt_eol == EOL_INPUT && size >= 2 && cur_buf[ size - 2 ] == '\r' ) {
     //
     // Retroactively set opt_eol because we pass it to wrap(1).
     //

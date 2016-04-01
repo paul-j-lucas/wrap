@@ -116,6 +116,19 @@ void* check_realloc( void *p, size_t size );
 void fcopy( FILE *ffrom, FILE *fto );
 
 /**
+ * Gets a newline-terminated line from \a ffrom reading at most one fewer
+ * characters than that given by \a size.
+ *
+ * @param buf A pointer to the buffer to receive the line.
+ * @param size A pointer to the capacity of \a buf.  On return, it is set to
+ * the number of characters read.
+ * @param ffrom The \c FILE to read from.
+ * @return Returns \a buf if any characters have been read or NULL on either
+ * EOF or error.
+ */
+char* fgetsz( char *buf, size_t *size, FILE *ffrom );
+
+/**
  * Peeks at the next character on the given file stream, but does not advance
  * the \c FILE pointer.
  *
