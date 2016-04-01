@@ -38,7 +38,7 @@
 #include <string.h>
 #include <unistd.h>
 
-enum eol {
+enum eol {                              // end-of-line
   EOL_INPUT,                            // do newlines the way the input does
   EOL_UNIX,
   EOL_WINDOWS
