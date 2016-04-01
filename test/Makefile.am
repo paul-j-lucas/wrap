@@ -50,6 +50,7 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrap-li-01.test \
 	tests/wrap-lu-01.test \
 	tests/wrap-lu-02.test \
+	tests/wrap-lx.test \
 	tests/wrap-long_line-01.test \
 	tests/wrap-long_line-02.test \
 	tests/wrap-long_line-03.test \
