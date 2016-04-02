@@ -44,8 +44,6 @@
   BLOCK( close( FD ); DUP( pipes[P][FD] ); CLOSE_PIPES( P ); )
 
 // extern variable definitions
-FILE               *fin;                // file in
-FILE               *fout;               // file out
 char const         *me;                 // executable name
 
 // local constant definitions
@@ -80,6 +78,8 @@ static size_t       opt_tab_spaces = TAB_SPACES_DEFAULT;
 static bool         opt_title_line;     // 1st para line is title?
 
 // other local variable definitions
+static FILE        *fin;                // file in
+static FILE        *fout;               // file out
 static char         line_buf[ LINE_BUF_SIZE ];
 static char         line_buf2[ LINE_BUF_SIZE ];
 static char        *cur_buf = line_buf;
