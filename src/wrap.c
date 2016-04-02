@@ -103,16 +103,20 @@ static size_t       proto_len;
 static size_t       proto_width;
 
 // local functions
-static bool copy_line( FILE*, FILE*, char*, size_t );
-static void clean_up( void );
-static void hang_indent( void );
-static void init( int, char const*[] );
-static void print_lead_chars( void );
-static void print_line( size_t, bool, bool );
-static void process_options( int, char const*[], char const*, unsigned );
-static void usage( void );
+static bool         copy_line( FILE*, FILE*, char*, size_t );
+static void         clean_up( void );
+static void         hang_indent( void );
+static char const*  init( int, char const*[] );
+static void         parse_options( int, char const*[], char const*, unsigned );
+static void         print_lead_chars( void );
+static void         print_line( size_t, bool, bool );
+static void         usage( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
+
+static inline int my_getc( char const **s ) {
+  return **s ? *(*s)++ : getc( fin );
+}
 
 /**
  * Prints a newline.
@@ -137,7 +141,8 @@ static inline size_t utf8_len( char c ) {
 ////////// main ///////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
-  init( argc, argv );
+
+  char const *first_line = init( argc, argv );
 
   //
   // Number of consecutive newlines.
@@ -209,7 +214,7 @@ int main( int argc, char const *argv[] ) {
 
   size_t wrap_pos = 0;                  // position at which we can wrap
 
-  for ( int c, prev_c = '\0'; (c = getc( fin )) != EOF; prev_c = c ) {
+  for ( int c, prev_c = '\0'; (c = my_getc( &first_line )) != EOF; prev_c = c ) {
 
     ///////////////////////////////////////////////////////////////////////////
     //  HANDLE NEWLINE(s)
@@ -326,7 +331,7 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( opt_data_link_esc && c == ASCII_DLE ) {
-      switch ( c = getc( fin ) ) {
+      switch ( c = my_getc( &first_line ) ) {
         case ASCII_ETB:
           //
           // We've been told by wrapc (child 1) that we've reached the end of
@@ -336,6 +341,7 @@ int main( int argc, char const *argv[] ) {
           //
           print_line( line_len, true, is_crlf );
           FPRINTF( fout, "%c%c", ASCII_DLE, ASCII_ETB );
+          FPUTS( first_line, fout );
           fcopy( fin, fout );
           exit( EX_OK );
         case EOF:
@@ -441,7 +447,7 @@ insert:
     // UTF-8 character is always treated as having a width of 1.
     //
     for ( size_t i = len; i > 1; --i ) {
-      if ( (c = getc( fin )) == EOF )
+      if ( (c = my_getc( &first_line )) == EOF )
         goto done;                      // premature end of UTF-8 character
       line_buf[ tmp_line_len++ ] = c;
       if ( utf8_len( c ) )              // unexpected UTF-8 start byte
@@ -593,17 +599,17 @@ static void hang_indent( void ) {
   line_width += opt_hang_tabs * opt_tab_spaces + opt_hang_spaces;
 }
 
-static void init( int argc, char const *argv[] ) {
+static char const* init( int argc, char const *argv[] ) {
   me = base_name( argv[0] );
   atexit( clean_up );
 
   char const opts[] = "a:b:c:CdDef:F:h:H:i:I:l:m:M:nNo:p:Ps:S:t:Tvw:W";
-  process_options( argc, argv, opts, 0 );
+  parse_options( argc, argv, opts, 0 );
   argc -= optind, argv += optind;
   if ( argc )
     usage();
 
-  if ( !opt_no_conf && (opt_alias || opt_fin_name ) ) {
+  if ( !opt_no_conf && (opt_alias || opt_fin_name) ) {
     alias_t const *alias = NULL;
     opt_conf_file = read_conf( opt_conf_file );
     if ( opt_alias ) {
@@ -616,7 +622,7 @@ static void init( int argc, char const *argv[] ) {
     else if ( opt_fin_name )
       alias = pattern_find( opt_fin_name );
     if ( alias )
-      process_options( alias->argc, alias->argv, opts, alias->line_no );
+      parse_options( alias->argc, alias->argv, opts, alias->line_no );
   }
 
   if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
@@ -642,31 +648,23 @@ static void init( int argc, char const *argv[] ) {
 
   opt_lead_tabs   += opt_mirror_tabs;
   opt_lead_spaces += opt_mirror_spaces;
-}
 
-static void print_lead_chars( void ) {
-  if ( proto_buf[0] ) {
-    FPUTS( proto_buf, fout );
-  } else {
-    for ( size_t i = 0; i < opt_lead_tabs; ++i )
-      FPUTC( '\t', fout );
-    for ( size_t i = 0; i < opt_lead_spaces; ++i )
-      FPUTC( ' ', fout );
+  static char first_line_buf[ LINE_BUF_SIZE ];
+  if ( opt_eol == EOL_INPUT ) {
+    size_t size = sizeof first_line_buf;
+    if ( !fgetsz( first_line_buf, &size, fin ) ) {
+      CHECK_FERROR( fin );
+      exit( EX_OK );
+    }
+    if ( size >= 2 && first_line_buf[ size - 2 ] == '\r' ) {
+      opt_eol = EOL_WINDOWS;
+    }
   }
+  return first_line_buf;
 }
 
-static void print_line( size_t len, bool do_newline, bool is_crlf ) {
-  line_buf[ len ] = '\0';
-  if ( len ) {
-    FPUTS( line_buf, fout );
-    if ( do_newline )
-      print_newline( is_crlf );
-  }
-  line_len = line_width = 0;
-}
-
-static void process_options( int argc, char const *argv[], char const *opts,
-                             unsigned line_no ) {
+static void parse_options( int argc, char const *argv[], char const *opts,
+                           unsigned line_no ) {
   assert( opts );
 
   optind = opterr = 1;
@@ -722,6 +720,27 @@ static void process_options( int argc, char const *argv[], char const *opts,
     PRINT_ERR( "%s\n", PACKAGE_STRING );
     exit( EX_OK );
   }
+}
+
+static void print_lead_chars( void ) {
+  if ( proto_buf[0] ) {
+    FPUTS( proto_buf, fout );
+  } else {
+    for ( size_t i = 0; i < opt_lead_tabs; ++i )
+      FPUTC( '\t', fout );
+    for ( size_t i = 0; i < opt_lead_spaces; ++i )
+      FPUTC( ' ', fout );
+  }
+}
+
+static void print_line( size_t len, bool do_newline, bool is_crlf ) {
+  line_buf[ len ] = '\0';
+  if ( len ) {
+    FPUTS( line_buf, fout );
+    if ( do_newline )
+      print_newline( is_crlf );
+  }
+  line_len = line_width = 0;
 }
 
 static void usage( void ) {
