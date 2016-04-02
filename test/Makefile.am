@@ -91,6 +91,7 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc--C-hello-07.test \
 	tests/wrapc--C-define.test \
 	tests/wrapc--D-01.test \
+	tests/wrapc--Haskell-00.test \
 	tests/wrapc--Haskell-01.test \
 	tests/wrapc--Haskell-02.test \
 	tests/wrapc--Pascal-01.test \
