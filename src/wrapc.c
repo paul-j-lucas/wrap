@@ -44,8 +44,6 @@
   BLOCK( close( FD ); DUP( pipes[P][FD] ); CLOSE_PIPES( P ); )
 
 // extern variable definitions
-FILE               *fin;                // file in
-FILE               *fout;               // file out
 char const         *me;                 // executable name
 
 // local constant definitions
@@ -81,6 +79,8 @@ static size_t       opt_tab_spaces = TAB_SPACES_DEFAULT;
 static bool         opt_title_line;     // 1st para line is title?
 
 // other local variable definitions
+static FILE        *fin;                // file in
+static FILE        *fout;               // file out
 static bool         is_crlf;            // true if end-of-line is CR+LF
 static char         line_buf[ LINE_BUF_SIZE ];
 static char         line_buf2[ LINE_BUF_SIZE ];
@@ -104,7 +104,7 @@ static int          pipes[2][2];
 static void         fork_exec_wrap( pid_t );
 static bool         is_block_comment( char const* );
 static char const*  is_line_comment( char const* );
-static void         process_options( int, char const*[] );
+static void         parse_options( int, char const*[] );
 static size_t       proto_span( char const* );
 static size_t       proto_width( char const* );
 static void         read_prototype( void );
@@ -175,7 +175,7 @@ static inline void swap_bufs() {
 ////////// main ///////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
-  process_options( argc, argv );
+  parse_options( argc, argv );
   read_prototype();
   PIPE( pipes[ TO_WRAP ] );
   PIPE( pipes[ FROM_WRAP ] );
@@ -544,7 +544,7 @@ break_loop:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static void process_options( int argc, char const *argv[] ) {
+static void parse_options( int argc, char const *argv[] ) {
   char const *opt_fin = NULL;           // file in name
   char const *opt_fout = NULL;          // file out name
   char const  opts[] = "a:b:c:CD:ef:F:l:o:p:s:Tvw:";

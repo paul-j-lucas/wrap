@@ -39,8 +39,6 @@
 #include <unistd.h>
 
 // extern variable definitions
-FILE               *fin;                // file in
-FILE               *fout;               // file out
 char const         *me;                 // executable name
 
 // local constant definitions
@@ -95,6 +93,8 @@ static size_t       opt_tab_spaces = TAB_SPACES_DEFAULT;
 static bool         opt_title_line;     // 1st para line is title?
 
 // other local variable definitions
+static FILE        *fin;                // file in
+static FILE        *fout;               // file out
 static char         line_buf[ LINE_BUF_SIZE ];
 static size_t       line_len;           // number of characters in buffer
 static size_t       line_width;         // actual width of buffer
