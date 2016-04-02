@@ -100,7 +100,10 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc--XQuery-01.test \
 	tests/wrapc--XQuery-02.test \
 	tests/wrapc--XQuery-03.test \
-	tests/wrapc--XQuery-04.test
+	tests/wrapc--XQuery-04.test \
+	tests/wrapc--XQuery-05.test \
+	tests/wrapc--XQuery-06.test \
+	tests/wrapc--XQuery-07.test
 
 AM_TESTS_ENVIRONMENT = BUILD_SRC=$(top_builddir)/src; export BUILD_SRC ;
 TEST_EXTENSIONS = .test
