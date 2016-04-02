@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\f1 1 "March 29, 2016" "PJL TOOLS"
+.TH \f3wrapc\f1 1 "March 31, 2016" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -222,6 +222,20 @@ in a configuration file to use an alias
 while still allowing
 .B wrapc
 to be used as part of a shell pipeline.)
+.TP
+.BI \-l " s"
+Specifies the line-endings to use
+.IR s ,
+one of
+\- or \f(CWi\fP (whatever the input uses, the default),
+\f(CWd\fP or \f(CWw\fP (DOS/Windows: CR+LF),
+or
+\f(CWu\fP (Unix: LF).
+Only the first character of
+.I s
+is significant
+and case-insensitive
+(hence, for example, \f(CWdos\fP can be spelled out).
 .TP
 .BI \-o " f"
 Writes to file

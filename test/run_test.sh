@@ -190,7 +190,11 @@ CONFIG=`echo $CONFIG`                   # trims whitespace
 [ "$CONFIG" != /dev/null ] && CONFIG=$DATA_DIR/$CONFIG
 INPUT=$DATA_DIR/`echo $INPUT`           # trims whitespace
 EXPECTED_EXIT=`echo $EXPECTED_EXIT`     # trims whitespace
-EXPECTED_OUTPUT="$EXPECTED_DIR/`echo $TEST_NAME | sed 's/test$/txt/'`"
+if echo $TEST | grep crlf >/dev/null
+then EXT=crlf
+else EXT=txt
+fi
+EXPECTED_OUTPUT="$EXPECTED_DIR/`echo $TEST_NAME | sed s/test$/$EXT/`"
 
 ##
 # Must put BUILD_SRC first in PATH so we get the correct version of wrap/wrapc.

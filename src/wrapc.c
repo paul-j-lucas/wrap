@@ -68,6 +68,7 @@ static char const   WS_CHARS[] = " \t"; // whitespace characters
 static char const  *opt_alias;
 static char const  *opt_conf_file;      // full path to conf file
 static char const  *opt_comment_chars = COMMENT_CHARS_DEFAULT;
+static eol_t        opt_eol = EOL_INPUT;
 static bool         opt_eos_delimit;    // end-of-sentence delimits para's?
 static char const  *opt_fin_name;       // file in name
 static char const  *opt_lead_para_delims;
@@ -80,6 +81,7 @@ static bool         opt_title_line;     // 1st para line is title?
 // other local variable definitions
 static FILE        *fin;                // file in
 static FILE        *fout;               // file out
+static bool         is_crlf;            // true if end-of-line is CR+LF
 static char         line_buf[ LINE_BUF_SIZE ];
 static char         line_buf2[ LINE_BUF_SIZE ];
 static char        *cur_buf = line_buf;
@@ -113,6 +115,19 @@ static void         usage( void );
 static void         wait_for_child_processes( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
+
+/**
+ * Checks whether \a s is a blank like, that is a line consisting only of an
+ * end-of-line.
+ *
+ * @param s The string to check.
+ * @return Returns \c true only if \a s is a blank line.
+ */
+static inline bool is_blank_line( char const *s ) {
+  if ( is_crlf && s[0] == '\r' )
+    ++s;
+  return s[0] == '\n' && !s[1];
+}
 
 /**
  * Gets whether \a c is a comment character.
@@ -191,6 +206,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 
   arg_buf arg_opt_alias;
   arg_buf arg_opt_conf_file;
+  arg_buf arg_opt_eol;
   char    arg_opt_fin_name[ PATH_MAX ];
   arg_buf arg_opt_lead_para_delims;
   arg_buf arg_opt_line_width;
@@ -198,7 +214,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   arg_buf arg_opt_tab_spaces;
 
   int argc = 0;
-  char *argv[13];                       // must be +1 of greatest arg below
+  char *argv[14];                       // must be +1 of greatest arg below
 
 #define ARG_SET(ARG)          argv[ argc++ ] = (ARG)
 #define ARG_DUP(FMT)          ARG_SET( strdup( FMT ) )
@@ -221,11 +237,12 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   /*  5 */    ARG_DUP(                       "-D"    );
   /*  6 */ IF_ARG_DUP( opt_eos_delimit     , "-e"    );
   /*  7 */ IF_ARG_FMT( opt_fin_name        , "-F%s"  );
-  /*  8 */ IF_ARG_FMT( opt_para_delims     , "-p%s"  );
-  /*  9 */    ARG_FMT( opt_tab_spaces      , "-s%zu" );
-  /* 10 */ IF_ARG_DUP( opt_title_line      , "-T"    );
-  /* 11 */    ARG_FMT( opt_line_width      , "-w%zu" );
-  /* 12 */ argv[ argc ] = NULL;
+  /*  8 */    ARG_FMT( opt_eol             , "-l%c"  );
+  /*  9 */ IF_ARG_FMT( opt_para_delims     , "-p%s"  );
+  /* 10 */    ARG_FMT( opt_tab_spaces      , "-s%zu" );
+  /* 11 */ IF_ARG_DUP( opt_title_line      , "-T"    );
+  /* 12 */    ARG_FMT( opt_line_width      , "-w%zu" );
+  /* 13 */ argv[ argc ] = NULL;
 
   //
   // Read from pipes[TO_WRAP] (read_source_write_wrap() in child 1) and write
@@ -260,10 +277,19 @@ static bool is_block_comment( char const *s ) {
  * case.
  */
 static void read_prototype( void ) {
-  if ( !fgets( cur_buf, LINE_BUF_SIZE, fin ) ) {
+  size_t size = LINE_BUF_SIZE;
+  if ( !fgetsz( cur_buf, &size, fin ) ) {
     CHECK_FERROR( fin );
     exit( EX_OK );
   }
+
+  if ( opt_eol == EOL_INPUT && size >= 2 && cur_buf[ size - 2 ] == '\r' ) {
+    //
+    // Retroactively set opt_eol because we pass it to wrap(1).
+    //
+    opt_eol = EOL_WINDOWS;
+  }
+  is_crlf = opt_eol == EOL_WINDOWS;
 
   char const *const cc = is_line_comment( cur_buf );
   if ( cc ) {
@@ -428,7 +454,7 @@ static pid_t read_source_write_wrap( void ) {
 
     proto_len = proto_span( cur_buf );
     if ( !cur_buf[ proto_len ] )        // no non-leading characters
-      FPUTC( '\n', fwrap );
+      FPUTS( (char const*)"\r\n" + !is_crlf, fwrap );
     else
       FPUTS( cur_buf + proto_len, fwrap );
 
@@ -507,8 +533,9 @@ static void read_wrap( void ) {
       } // switch
     }
     // don't emit proto_tws for blank lines
-    bool const is_blank_line = strcmp( line, "\n" ) == 0;
-    FPRINTF( fout, "%s%s%s", proto_buf, is_blank_line ? "" : proto_tws, line );
+    FPRINTF(
+      fout, "%s%s%s", proto_buf, is_blank_line( line ) ? "" : proto_tws, line
+    );
   } // while
 break_loop:
 
@@ -520,7 +547,7 @@ break_loop:
 static void parse_options( int argc, char const *argv[] ) {
   char const *opt_fin = NULL;           // file in name
   char const *opt_fout = NULL;          // file out name
-  char const  opts[] = "a:b:c:CD:ef:F:o:p:s:Tvw:";
+  char const  opts[] = "a:b:c:CD:ef:F:l:o:p:s:Tvw:";
   bool        print_version = false;
 
   me = base_name( argv[0] );
@@ -529,20 +556,21 @@ static void parse_options( int argc, char const *argv[] ) {
   for ( int opt; (opt = getopt( argc, (char**)argv, opts )) != EOF; ) {
     SET_OPTION( opt );
     switch ( opt ) {
-      case 'a': opt_alias             = optarg;                     break;
-      case 'b': opt_lead_para_delims  = optarg;                     break;
-      case 'c': opt_conf_file         = optarg;                     break;
-      case 'C': opt_no_conf           = true;                       break;
-      case 'D': opt_comment_chars     = optarg;                     break;
-      case 'e': opt_eos_delimit       = true;                       break;
-      case 'f': opt_fin               = optarg;               // no break;
-      case 'F': opt_fin_name          = base_name( optarg );        break;
-      case 'o': opt_fout              = optarg;                     break;
-      case 'p': opt_para_delims       = optarg;                     break;
-      case 's': opt_tab_spaces        = check_atou( optarg );       break;
-      case 'T': opt_title_line        = true;                       break;
-      case 'v': print_version         = true;                       break;
-      case 'w': opt_line_width        = check_atou( optarg );       break;
+      case 'a': opt_alias             = optarg;               break;
+      case 'b': opt_lead_para_delims  = optarg;               break;
+      case 'c': opt_conf_file         = optarg;               break;
+      case 'C': opt_no_conf           = true;                 break;
+      case 'D': opt_comment_chars     = optarg;               break;
+      case 'e': opt_eos_delimit       = true;                 break;
+      case 'f': opt_fin               = optarg;         // no break;
+      case 'F': opt_fin_name          = base_name( optarg );  break;
+      case 'l': opt_eol               = parse_eol( optarg );  break;
+      case 'o': opt_fout              = optarg;               break;
+      case 'p': opt_para_delims       = optarg;               break;
+      case 's': opt_tab_spaces        = check_atou( optarg ); break;
+      case 'T': opt_title_line        = true;                 break;
+      case 'v': print_version         = true;                 break;
+      case 'w': opt_line_width        = check_atou( optarg ); break;
       default : usage();
     } // switch
   } // for
@@ -637,6 +665,7 @@ static void usage( void ) {
 "  -e         Treat whitespace after end-of-sentence as new paragraph.\n"
 "  -f file    Read from this file [default: stdin].\n"
 "  -F string  Specify filename for stdin.\n"
+"  -l char    Specify line-endings as input/Unix/Windows [default: input].\n"
 "  -o file    Write to this file [default: stdout].\n"
 "  -p chars   Specify additional paragraph delimiter characters.\n"
 "  -s number  Specify tab-spaces equivalence [default: %d].\n"

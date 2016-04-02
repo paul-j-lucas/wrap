@@ -81,6 +81,7 @@ static char const  *opt_lead_para_delims;
 static size_t       opt_lead_spaces;    // leading spaces
 static size_t       opt_lead_tabs;      // leading tabs
 static bool         opt_lead_ws_delimit;// leading whitespace delimit para's?
+static eol_t        opt_eol = EOL_INPUT;
 static size_t       opt_line_width = LINE_WIDTH_DEFAULT;
 static size_t       opt_mirror_spaces;
 static size_t       opt_mirror_tabs;
@@ -102,16 +103,38 @@ static size_t       proto_len;
 static size_t       proto_width;
 
 // local functions
-static bool copy_line( FILE*, FILE*, char*, size_t );
-static void clean_up( void );
-static void hang_indent( void );
-static void init( int, char const*[] );
-static void print_lead_chars( void );
-static void print_line( size_t, bool );
-static void process_options( int, char const*[], char const*, unsigned );
-static void usage( void );
+static bool         copy_line( FILE*, FILE*, char*, size_t );
+static void         clean_up( void );
+static void         hang_indent( void );
+static char const*  init( int, char const*[] );
+static void         parse_options( int, char const*[], char const*, unsigned );
+static void         print_lead_chars( void );
+static void         print_line( size_t, bool, bool );
+static void         usage( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
+
+/**
+ * Gets the next character from the input, either directly or from a previously
+ * read string.
+ *
+ * @param ps A pointer to a pointer to a NULL-terminated string.  If the
+ * pointed-to pointer points at a non-NULL character, the pointer is advanced
+ * by one.
+ * @return Returns the next character or EOF upon either end-of-file or error.
+ */
+static inline int fl_getc( char const **ps ) {
+  return **ps ? *(*ps)++ : getc( fin );
+}
+
+/**
+ * Prints a newline.
+ *
+ * @param is_crlf If \c true, prints a CR+LF; if \c false, prints a LF alone.
+ */
+static inline void print_newline( bool is_crlf ) {
+  FPUTS( (char const*)"\r\n" + !is_crlf, fout );
+}
 
 /**
  * Gets the number of bytes comprising the UTF-8 encoding of a Unicode
@@ -127,7 +150,7 @@ static inline size_t utf8_len( char c ) {
 ////////// main ///////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
-  init( argc, argv );
+  char const *first_line = init( argc, argv );
 
   //
   // Number of consecutive newlines.
@@ -158,6 +181,12 @@ int main( int argc, char const *argv[] ) {
   // with a one of opt_lead_para_delims).
   //
   bool do_lead_para_delim = false;
+
+  //
+  // True when either the file contains DOS/Windows newlines (CR+LF) or the
+  // user specifically requests them.
+  //
+  bool is_crlf = opt_eol == EOL_WINDOWS;
 
   //
   // True only when we're handling a "long line" (a sequence of non-whitespace
@@ -193,14 +222,26 @@ int main( int argc, char const *argv[] ) {
 
   size_t wrap_pos = 0;                  // position at which we can wrap
 
-  for ( int c, prev_c = '\0'; (c = getc( fin )) != EOF; prev_c = c ) {
+  for ( int c, prev_c = '\0'; (c = fl_getc( &first_line )) != EOF;
+        prev_c = c ) {
 
     ///////////////////////////////////////////////////////////////////////////
     //  HANDLE NEWLINE(s)
     ///////////////////////////////////////////////////////////////////////////
 
+    if ( c == '\r' ) {
+      //
+      // The code is simpler if we always strip \r and add it back later (if
+      // is_crlf is true).
+      //
+      continue;
+    }
+
     if ( c == '\n' ) {
       opt_prototype = false;            // the prototype is complete
+
+      if ( prev_c == '\r' && opt_eol == EOL_INPUT )
+        is_crlf = true;                 // encountered \r\n
 
       if ( ++consec_newlines >= opt_newlines_delimit ) {
         //
@@ -223,7 +264,7 @@ int main( int argc, char const *argv[] ) {
         // isn't empty (there is a title): print the title.
         //
         print_lead_chars();
-        print_line( line_len, true );
+        print_line( line_len, true, is_crlf );
         do_hang_indent = true;
         next_line_is_title = false;
         continue;
@@ -299,7 +340,7 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( opt_data_link_esc && c == ASCII_DLE ) {
-      switch ( c = getc( fin ) ) {
+      switch ( c = fl_getc( &first_line ) ) {
         case ASCII_ETB:
           //
           // We've been told by wrapc (child 1) that we've reached the end of
@@ -307,8 +348,9 @@ int main( int argc, char const *argv[] ) {
           // message to the other wrapc process (parent), and pass text through
           // verbatim.
           //
-          print_line( line_len, true );
+          print_line( line_len, true, is_crlf );
           FPRINTF( fout, "%c%c", ASCII_DLE, ASCII_ETB );
+          FPUTS( first_line, fout );
           fcopy( fin, fout );
           exit( EX_OK );
         case EOF:
@@ -414,7 +456,7 @@ insert:
     // UTF-8 character is always treated as having a width of 1.
     //
     for ( size_t i = len; i > 1; --i ) {
-      if ( (c = getc( fin )) == EOF )
+      if ( (c = fl_getc( &first_line )) == EOF )
         goto done;                      // premature end of UTF-8 character
       line_buf[ tmp_line_len++ ] = c;
       if ( utf8_len( c ) )              // unexpected UTF-8 start byte
@@ -446,7 +488,7 @@ insert:
       //
       if ( !is_long_line )
         print_lead_chars();
-      print_line( line_len, false );
+      print_line( line_len, false, is_crlf );
       is_long_line = true;
       continue;
     }
@@ -454,7 +496,7 @@ insert:
     is_long_line = false;
     print_lead_chars();
     tmp_line_len = line_len;
-    print_line( wrap_pos, true );
+    print_line( wrap_pos, true, is_crlf );
     hang_indent();
 
     //
@@ -489,9 +531,9 @@ delimit_paragraph:
         is_long_line = false;
       else
         print_lead_chars();
-      print_line( line_len, true );
+      print_line( line_len, true, is_crlf );
     } else if ( is_long_line )
-      FPUTC( '\n', fout );              // delimit the "long line"
+      print_newline( is_crlf );         // delimit the "long line"
 
     put_spaces = 0;
     was_eos_char = was_para_delim_char = false;
@@ -518,7 +560,7 @@ delimit_paragraph:
     else {
       if ( consec_newlines == 2 ||
           (consec_newlines > 2 && opt_newlines_delimit == 1) ) {
-        FPUTC( c, fout );
+        print_newline( is_crlf );
       }
       do_indent = true;
     }
@@ -529,7 +571,7 @@ done:
   if ( line_len ) {                     // print left-over text
     if ( !is_long_line )
       print_lead_chars();
-    print_line( line_len, true );
+    print_line( line_len, true, is_crlf );
   }
   exit( EX_OK );
 }
@@ -566,17 +608,26 @@ static void hang_indent( void ) {
   line_width += opt_hang_tabs * opt_tab_spaces + opt_hang_spaces;
 }
 
-static void init( int argc, char const *argv[] ) {
+/**
+ * Sets-up clean-up, parses-command-line options, reads the conf. file, sets-up
+ * I/O, and probes the input for end-of-line type.
+ *
+ * @param argc The number of command-line arguments from main().
+ * @param argv The command-line arguments from main().
+ * @return Returns either a pointer to the first line of input (when opt_eol ==
+ * EOL_INPUT) or a pointer to am empty string otherwise.
+ */
+static char const* init( int argc, char const *argv[] ) {
   me = base_name( argv[0] );
   atexit( clean_up );
 
-  char const opts[] = "a:b:c:CdDef:F:h:H:i:I:m:M:nNo:p:Ps:S:t:Tvw:W";
-  process_options( argc, argv, opts, 0 );
+  char const opts[] = "a:b:c:CdDef:F:h:H:i:I:l:m:M:nNo:p:Ps:S:t:Tvw:W";
+  parse_options( argc, argv, opts, 0 );
   argc -= optind, argv += optind;
   if ( argc )
     usage();
 
-  if ( !opt_no_conf && (opt_alias || opt_fin_name ) ) {
+  if ( !opt_no_conf && (opt_alias || opt_fin_name) ) {
     alias_t const *alias = NULL;
     opt_conf_file = read_conf( opt_conf_file );
     if ( opt_alias ) {
@@ -589,7 +640,7 @@ static void init( int argc, char const *argv[] ) {
     else if ( opt_fin_name )
       alias = pattern_find( opt_fin_name );
     if ( alias )
-      process_options( alias->argc, alias->argv, opts, alias->line_no );
+      parse_options( alias->argc, alias->argv, opts, alias->line_no );
   }
 
   if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
@@ -615,28 +666,38 @@ static void init( int argc, char const *argv[] ) {
 
   opt_lead_tabs   += opt_mirror_tabs;
   opt_lead_spaces += opt_mirror_spaces;
-}
 
-static void print_lead_chars( void ) {
-  if ( proto_buf[0] ) {
-    FPUTS( proto_buf, fout );
-  } else {
-    for ( size_t i = 0; i < opt_lead_tabs; ++i )
-      FPUTC( '\t', fout );
-    for ( size_t i = 0; i < opt_lead_spaces; ++i )
-      FPUTC( ' ', fout );
+  static char first_line_buf[ LINE_BUF_SIZE ];
+  if ( opt_eol == EOL_INPUT ) {
+    //
+    // We're supposed to use the same end-of-lines as the input, but we can't
+    // just wait until we read a \r as part of the normal character-at-a-time
+    // input stream to know it's using Windows end-of-lines because if the
+    // first line is a long line, we'll need to wrap it (by emitting a newline)
+    // before we get to the end of the line and read the \r.
+    //
+    // Therefore, we have to read only the first line in its entirety and peek
+    // ahead to see if it ends with \r\n.
+    //
+    size_t size = sizeof first_line_buf;
+    if ( !fgetsz( first_line_buf, &size, fin ) ) {
+      CHECK_FERROR( fin );
+      exit( EX_OK );
+    }
+    if ( size >= 2 && first_line_buf[ size - 2 ] == '\r' ) {
+      //
+      // The next-to-last character is \r (and we know the last character is \n
+      // because that's what fgetsz() returns), so the input is using Windows
+      // end-of-lines.
+      //
+      opt_eol = EOL_WINDOWS;
+    }
   }
+  return first_line_buf;
 }
 
-static void print_line( size_t len, bool newline ) {
-  line_buf[ len ] = '\0';
-  if ( len )
-    FPRINTF( fout, newline ? "%s\n" : "%s", line_buf );
-  line_len = line_width = 0;
-}
-
-static void process_options( int argc, char const *argv[], char const *opts,
-                             unsigned line_no ) {
+static void parse_options( int argc, char const *argv[], char const *opts,
+                           unsigned line_no ) {
   assert( opts );
 
   optind = opterr = 1;
@@ -651,33 +712,34 @@ static void process_options( int argc, char const *argv[], char const *opts,
         opt_conf_file, line_no, opt
       );
     switch ( opt ) {
-      case 'a': opt_alias             = optarg;                     break;
-      case 'c': opt_conf_file         = optarg;                     break;
-      case 'C': opt_no_conf           = true;                       break;
-      case 'd': opt_lead_dot_ignore   = true;                       break;
-      case 'b': opt_lead_para_delims  = optarg;                     break;
-      case 'D': opt_data_link_esc     = true;                       break;
-      case 'e': opt_eos_delimit       = true;                       break;
-      case 'f': opt_fin               = optarg;               // no break;
-      case 'F': opt_fin_name          = base_name( optarg );        break;
-      case 'h': opt_hang_tabs         = check_atou( optarg );       break;
-      case 'H': opt_hang_spaces       = check_atou( optarg );       break;
-      case 'i': opt_indt_tabs         = check_atou( optarg );       break;
-      case 'I': opt_indt_spaces       = check_atou( optarg );       break;
-      case 'm': opt_mirror_tabs       = check_atou( optarg );       break;
-      case 'M': opt_mirror_spaces     = check_atou( optarg );       break;
-      case 'n': opt_newlines_delimit  = INT_MAX;                    break;
-      case 'N': opt_newlines_delimit  = 1;                          break;
-      case 'o': opt_fout              = optarg;                     break;
-      case 'p': opt_para_delims       = optarg;                     break;
-      case 'P': opt_prototype         = true;                       break;
-      case 's': opt_tab_spaces        = check_atou( optarg );       break;
-      case 'S': opt_lead_spaces       = check_atou( optarg );       break;
-      case 't': opt_lead_tabs         = check_atou( optarg );       break;
-      case 'T': opt_title_line        = true;                       break;
-      case 'v': print_version         = true;                       break;
-      case 'w': opt_line_width        = check_atou( optarg );       break;
-      case 'W': opt_lead_ws_delimit   = true;                       break;
+      case 'a': opt_alias             = optarg;               break;
+      case 'c': opt_conf_file         = optarg;               break;
+      case 'C': opt_no_conf           = true;                 break;
+      case 'd': opt_lead_dot_ignore   = true;                 break;
+      case 'b': opt_lead_para_delims  = optarg;               break;
+      case 'D': opt_data_link_esc     = true;                 break;
+      case 'e': opt_eos_delimit       = true;                 break;
+      case 'f': opt_fin               = optarg;         // no break;
+      case 'F': opt_fin_name          = base_name( optarg );  break;
+      case 'h': opt_hang_tabs         = check_atou( optarg ); break;
+      case 'H': opt_hang_spaces       = check_atou( optarg ); break;
+      case 'i': opt_indt_tabs         = check_atou( optarg ); break;
+      case 'I': opt_indt_spaces       = check_atou( optarg ); break;
+      case 'l': opt_eol               = parse_eol( optarg );  break;
+      case 'm': opt_mirror_tabs       = check_atou( optarg ); break;
+      case 'M': opt_mirror_spaces     = check_atou( optarg ); break;
+      case 'n': opt_newlines_delimit  = INT_MAX;              break;
+      case 'N': opt_newlines_delimit  = 1;                    break;
+      case 'o': opt_fout              = optarg;               break;
+      case 'p': opt_para_delims       = optarg;               break;
+      case 'P': opt_prototype         = true;                 break;
+      case 's': opt_tab_spaces        = check_atou( optarg ); break;
+      case 'S': opt_lead_spaces       = check_atou( optarg ); break;
+      case 't': opt_lead_tabs         = check_atou( optarg ); break;
+      case 'T': opt_title_line        = true;                 break;
+      case 'v': print_version         = true;                 break;
+      case 'w': opt_line_width        = check_atou( optarg ); break;
+      case 'W': opt_lead_ws_delimit   = true;                 break;
       default : usage();
     } // switch
   } // for
@@ -691,6 +753,27 @@ static void process_options( int argc, char const *argv[], char const *opts,
     PRINT_ERR( "%s\n", PACKAGE_STRING );
     exit( EX_OK );
   }
+}
+
+static void print_lead_chars( void ) {
+  if ( proto_buf[0] ) {
+    FPUTS( proto_buf, fout );
+  } else {
+    for ( size_t i = 0; i < opt_lead_tabs; ++i )
+      FPUTC( '\t', fout );
+    for ( size_t i = 0; i < opt_lead_spaces; ++i )
+      FPUTC( ' ', fout );
+  }
+}
+
+static void print_line( size_t len, bool do_newline, bool is_crlf ) {
+  line_buf[ len ] = '\0';
+  if ( len ) {
+    FPUTS( line_buf, fout );
+    if ( do_newline )
+      print_newline( is_crlf );
+  }
+  line_len = line_width = 0;
 }
 
 static void usage( void ) {
@@ -711,6 +794,7 @@ static void usage( void ) {
 "  -H number  Hang-indent spaces for all but first line of each paragraph.\n"
 "  -i number  Indent tabs for first line of each paragraph.\n"
 "  -I number  Indent spaces for first line of each paragraph.\n"
+"  -l char    Specify end-of-lines as input/Unix/Windows [default: input].\n"
 "  -n         Does not treat newlines as paragraph delimeters.\n"
 "  -N         Treat every newline as a paragraph delimiter.\n"
 "  -o file    Write to this file [default: stdout].\n"

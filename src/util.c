@@ -70,6 +70,28 @@ void fcopy( FILE *ffrom, FILE *fto ) {
   CHECK_FERROR( ffrom );
 }
 
+char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
+  //
+  // Based on the implementation given in:
+  //
+  //    Brian W. Kernighan and Dennis M. Ritchie: "The C Programming Language,"
+  //    2nd ed., section 7.7 "Line Input and Output," Prentice Hall, 1988, p.
+  //    134.
+  //
+  int c;
+  char *s = buf;
+
+  for ( size_t n = *size; n > 0 && (c = getc( ffrom )) != EOF; --n ) {
+    if ( (*s++ = c) == '\n' )
+        break;
+  } // for
+
+  *s = '\0';
+  *size = s - buf;
+
+  return c == EOF && !*size ? NULL : buf;
+}
+
 int peekc( FILE *file ) {
   int const c = getc( file );
   if ( c == EOF )
