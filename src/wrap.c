@@ -115,7 +115,8 @@ static void         usage( void );
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
- * Gets the next character from the input.
+ * Gets the next character from the input, either directly or from a previously
+ * read string.
  *
  * @param ps A pointer to a pointer to a NULL-terminated string.  If the
  * pointed-to pointer points at a non-NULL character, the pointer is advanced
@@ -149,7 +150,6 @@ static inline size_t utf8_len( char c ) {
 ////////// main ///////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
-
   char const *first_line = init( argc, argv );
 
   //
