@@ -84,7 +84,7 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
   for ( size_t n = *size; n > 0 && (c = getc( ffrom )) != EOF; --n ) {
     if ( (*s++ = c) == '\n' )
         break;
-  }
+  } // for
 
   *s = '\0';
   *size = s - buf;
