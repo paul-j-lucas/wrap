@@ -34,7 +34,7 @@
  * End-of-Line formats.
  */
 enum eol {
-  EOL_INPUT   = 'i',                    // do newlines the way the input does
+  EOL_INPUT   = 'i',                    // do whatever the input does
   EOL_UNIX    = 'u',
   EOL_WINDOWS = 'w'
 };
