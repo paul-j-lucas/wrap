@@ -268,8 +268,8 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 }
 
 /**
- * Checks whether the given string is the beginning of a block comment:
- * starts with '/', '*', and contains only non-alpha characters thereafter.
+ * Checks whether the given string is the beginning of a block comment: starts
+ * with a comment character and contains only non-alpha characters thereafter.
  *
  * @param s The string to check.
  * @return Returns \c true only if \a s is the beginning of a block comment.
