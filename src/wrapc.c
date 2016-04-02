@@ -35,6 +35,17 @@
 #include <sys/wait.h>                   /* for wait() */
 #include <unistd.h>                     /* for close(), fork(), ... */
 
+/**
+ * Uncomment the line below to debug read_source_write_wrap() (RSWW) by not
+ * forking or exec'ing and just writing to stdout directly.
+ */
+//#define DEBUG_RSWW
+
+#ifdef DEBUG_RSWW
+# undef PIPE
+# define PIPE(P) (void)0                /* need something to eat the ';' */
+#endif /* DEBUG_RSWW */
+
 // Closes both ends of pipe P.
 #define CLOSE_PIPES(P) \
   BLOCK( close( pipes[P][ STDIN_FILENO ] ); close( pipes[P][ STDOUT_FILENO ] ); )
@@ -160,8 +171,8 @@ static inline char const* first_nws( char const *s ) {
  * if it's a comment character; NULL otherwise.
  */
 static inline char const* is_line_comment( char const *s ) {
-  char const *const nws = first_nws( s );
-  return *nws && is_comment_char( *nws ) ? nws : NULL;
+  s = first_nws( s );
+  return s[0] && is_comment_char( s[0] ) ? s : NULL;
 }
 
 /**
@@ -194,6 +205,7 @@ int main( int argc, char const *argv[] ) {
  * (in case we need to kill it).
  */
 static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
+#ifndef DEBUG_RSWW
   pid_t const pid = fork();
   if ( pid == -1 ) {                    // we failed, so kill the first child
     kill( read_source_write_wrap_pid, SIGTERM );
@@ -252,6 +264,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   REDIRECT( STDOUT_FILENO, FROM_WRAP );
   execvp( PACKAGE, argv );
   PERROR_EXIT( EX_OSERR );
+#endif /* DEBUG_RSWW */
 }
 
 /**
@@ -262,8 +275,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
  * @return Returns \c true only if \a s is the beginning of a block comment.
  */
 static bool is_block_comment( char const *s ) {
-  s = first_nws( s );
-  if ( s[0] && is_comment_char( s[0] ) ) {
+  if ( (s = is_line_comment( s )) ) {
     for ( ++s; *s && *s != '\n' && !isalpha( *s ); ++s )
       ;
     return *s == '\n';
@@ -372,6 +384,7 @@ static void read_prototype( void ) {
  * @return Returns the child's process ID.
  */
 static pid_t read_source_write_wrap( void ) {
+#ifndef DEBUG_RSWW
   pid_t const pid = fork();
   if ( pid == -1 )
     PERROR_EXIT( EX_OSERR );
@@ -390,6 +403,9 @@ static pid_t read_source_write_wrap( void ) {
     PMESSAGE_EXIT( EX_OSERR,
       "child can't open pipe for writing: %s\n", ERROR_STR
     );
+#else
+  FILE *const fwrap = stdout;
+#endif /* DEBUG_RSWW */
 
   if ( next_buf[0] ) {
     //
@@ -480,6 +496,7 @@ verbatim:
  * characters back to each line.
  */
 static void read_wrap( void ) {
+#ifndef DEBUG_RSWW
   //
   // We don't use these here.
   //
@@ -542,6 +559,7 @@ static void read_wrap( void ) {
 break_loop:
 
   CHECK_FERROR( fwrap );
+#endif /* DEBUG_RSWW */
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -681,6 +699,7 @@ static void usage( void ) {
 }
 
 static void wait_for_child_processes( void ) {
+#ifndef DEBUG_RSWW
   int wait_status;
   for ( pid_t pid; (pid = wait( &wait_status )) > 0; ) {
     if ( WIFEXITED( wait_status ) ) {
@@ -699,6 +718,7 @@ static void wait_for_child_processes( void ) {
       );
     }
   } // for
+#endif /* DEBUG_RSWW */
 }
 
 ///////////////////////////////////////////////////////////////////////////////
