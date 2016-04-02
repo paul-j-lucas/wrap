@@ -114,8 +114,16 @@ static void         usage( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
 
-static inline int my_getc( char const **s ) {
-  return **s ? *(*s)++ : getc( fin );
+/**
+ * Gets the next character from the input.
+ *
+ * @param ps A pointer to a pointer to a NULL-terminated string.  If the
+ * pointed-to pointer points at a non-NULL character, the pointer is advanced
+ * by one.
+ * @return Returns the next character or EOF upon either end-of-file or error.
+ */
+static inline int fl_getc( char const **ps ) {
+  return **ps ? *(*ps)++ : getc( fin );
 }
 
 /**
@@ -214,7 +222,8 @@ int main( int argc, char const *argv[] ) {
 
   size_t wrap_pos = 0;                  // position at which we can wrap
 
-  for ( int c, prev_c = '\0'; (c = my_getc( &first_line )) != EOF; prev_c = c ) {
+  for ( int c, prev_c = '\0'; (c = fl_getc( &first_line )) != EOF;
+        prev_c = c ) {
 
     ///////////////////////////////////////////////////////////////////////////
     //  HANDLE NEWLINE(s)
@@ -331,7 +340,7 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( opt_data_link_esc && c == ASCII_DLE ) {
-      switch ( c = my_getc( &first_line ) ) {
+      switch ( c = fl_getc( &first_line ) ) {
         case ASCII_ETB:
           //
           // We've been told by wrapc (child 1) that we've reached the end of
@@ -447,7 +456,7 @@ insert:
     // UTF-8 character is always treated as having a width of 1.
     //
     for ( size_t i = len; i > 1; --i ) {
-      if ( (c = my_getc( &first_line )) == EOF )
+      if ( (c = fl_getc( &first_line )) == EOF )
         goto done;                      // premature end of UTF-8 character
       line_buf[ tmp_line_len++ ] = c;
       if ( utf8_len( c ) )              // unexpected UTF-8 start byte
@@ -599,6 +608,15 @@ static void hang_indent( void ) {
   line_width += opt_hang_tabs * opt_tab_spaces + opt_hang_spaces;
 }
 
+/**
+ * Sets-up clean-up, parses-command-line options, reads the conf. file, sets-up
+ * I/O, and probes the input for end-of-line type.
+ *
+ * @param argc The number of command-line arguments from main().
+ * @param argv The command-line arguments from main().
+ * @return Returns either a pointer to the first line of input (when opt_eol ==
+ * EOL_INPUT) or a pointer to am empty string otherwise.
+ */
 static char const* init( int argc, char const *argv[] ) {
   me = base_name( argv[0] );
   atexit( clean_up );
@@ -651,12 +669,27 @@ static char const* init( int argc, char const *argv[] ) {
 
   static char first_line_buf[ LINE_BUF_SIZE ];
   if ( opt_eol == EOL_INPUT ) {
+    //
+    // We're supposed to use the same end-of-lines as the input, but we can't
+    // just wait until we read a \r as part of the normal character-at-a-time
+    // input stream to know it's using Windows end-of-lines because if the
+    // first line is a long line, we'll need to wrap it (by emitting a newline)
+    // before we get to the end of the line and read the \r.
+    //
+    // Therefore, we have to read only the first line in its entirety and peek
+    // ahead to see if it ends with \r\n.
+    //
     size_t size = sizeof first_line_buf;
     if ( !fgetsz( first_line_buf, &size, fin ) ) {
       CHECK_FERROR( fin );
       exit( EX_OK );
     }
     if ( size >= 2 && first_line_buf[ size - 2 ] == '\r' ) {
+      //
+      // The next-to-last character is \r (and we know the last character is \n
+      // because that's what fgetsz() returns), so the input is using Windows
+      // end-of-lines.
+      //
       opt_eol = EOL_WINDOWS;
     }
   }
@@ -761,7 +794,7 @@ static void usage( void ) {
 "  -H number  Hang-indent spaces for all but first line of each paragraph.\n"
 "  -i number  Indent tabs for first line of each paragraph.\n"
 "  -I number  Indent spaces for first line of each paragraph.\n"
-"  -l char    Specify line-endings as input/Unix/Windows [default: input].\n"
+"  -l char    Specify end-of-lines as input/Unix/Windows [default: input].\n"
 "  -n         Does not treat newlines as paragraph delimeters.\n"
 "  -N         Treat every newline as a paragraph delimiter.\n"
 "  -o file    Write to this file [default: stdout].\n"
