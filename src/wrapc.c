@@ -314,7 +314,9 @@ static void read_prototype( void ) {
     switch ( cc[0] ) {
       case '{':     // {- Haskell
         //
-        // As even a more special-case for Pascal, this handles the case like:
+        // As even a more special-case for Pascal (which is perhaps unique
+        // among languages since it uses a single-character delimiter for block
+        // comments), this handles the case like:
         //
         //    {
         //      This is a block comment.
