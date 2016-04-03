@@ -71,7 +71,7 @@ static bool         opt_eos_delimit;    // end-of-sentence delimits para's?
 static bool         opt_data_link_esc;  // respond to in-band control
 static char const  *opt_fin;            // file in path
 static char const  *opt_fin_name;       // file in name (only)
-static char const  *opt_fout = NULL;    // file out path
+static char const  *opt_fout;           // file out path
 static size_t       opt_hang_spaces;    // hanging-indent spaces
 static size_t       opt_hang_tabs;      // hanging-indent tabs
 static size_t       opt_indt_spaces;    // indent spaces
