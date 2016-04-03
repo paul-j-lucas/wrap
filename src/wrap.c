@@ -95,9 +95,9 @@ static bool         opt_title_line;     // 1st para line is title?
 // other local variable definitions
 static FILE        *fin;                // file in
 static FILE        *fout;               // file out
-static char         line_buf[ LINE_BUF_SIZE ];
-static size_t       line_len;           // number of characters in buffer
-static size_t       line_width;         // actual width of buffer
+static char         out_buf[ LINE_BUF_SIZE ];
+static size_t       out_len;            // number of characters in buffer
+static size_t       out_width;          // actual width of buffer
 static char         proto_buf[ LINE_BUF_SIZE ];
 static size_t       proto_len;
 static size_t       proto_width;
@@ -105,11 +105,11 @@ static size_t       proto_width;
 // local functions
 static bool         copy_line( FILE*, FILE*, char*, size_t );
 static void         clean_up( void );
-static void         hang_indent( void );
 static char const*  init( int, char const*[] );
 static void         parse_options( int, char const*[], char const*, unsigned );
 static void         print_lead_chars( void );
 static void         print_line( size_t, bool, bool );
+static void         put_tabs_spaces( size_t, size_t );
 static void         usage( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
@@ -257,13 +257,13 @@ int main( int argc, char const *argv[] ) {
         //
         goto delimit_paragraph;
       }
-      if ( next_line_is_title && line_len ) {
+      if ( next_line_is_title && out_len ) {
         //
         // The first line of the next paragraph is title line and the buffer
         // isn't empty (there is a title): print the title.
         //
         print_lead_chars();
-        print_line( line_len, true, is_crlf );
+        print_line( out_len, true, is_crlf );
         do_hang_indent = true;
         next_line_is_title = false;
         continue;
@@ -324,7 +324,7 @@ int main( int argc, char const *argv[] ) {
         //
         goto delimit_paragraph;
       }
-      if ( line_len && put_spaces < 1u + was_eos_char ) {
+      if ( out_len && put_spaces < 1u + was_eos_char ) {
         //
         // We are not at the beginning of a line: remember to insert 1 space
         // later and allow 2 after the end of a sentence.
@@ -347,7 +347,7 @@ int main( int argc, char const *argv[] ) {
           // message to the other wrapc process (parent), and pass text through
           // verbatim.
           //
-          print_line( line_len, true, is_crlf );
+          print_line( out_len, true, is_crlf );
           FPRINTF( fout, "%c%c", ASCII_DLE, ASCII_ETB );
           FPUTS( first_line, fout );
           fcopy( fin, fout );
@@ -401,14 +401,14 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( put_spaces ) {
-      if ( line_len ) {
+      if ( out_len ) {
         //
         // Mark position at a space to perform a wrap if necessary.
         //
-        wrap_pos = line_len;
-        line_width += put_spaces;
+        wrap_pos = out_len;
+        out_width += put_spaces;
         do {
-          line_buf[ line_len++ ] = ' ';
+          out_buf[ out_len++ ] = ' ';
         } while ( --put_spaces );
       } else {
         //
@@ -424,17 +424,13 @@ int main( int argc, char const *argv[] ) {
 
 insert:
     if ( do_indent ) {
-      line_len = 0;
-      for ( size_t i = 0; i < opt_indt_tabs; ++i )
-        line_buf[ line_len++ ] = '\t';
-      for ( size_t i = 0; i < opt_indt_spaces; ++i )
-        line_buf[ line_len++ ] = ' ';
-      line_width = opt_indt_tabs * opt_tab_spaces + opt_indt_spaces;
+      out_len = out_width = 0;
+      put_tabs_spaces( opt_indt_tabs, opt_indt_spaces );
       do_indent = false;
     }
 
     if ( do_hang_indent ) {
-      hang_indent();
+      put_tabs_spaces( opt_hang_tabs, opt_hang_spaces );
       do_hang_indent = false;
     }
 
@@ -446,8 +442,8 @@ insert:
     if ( !len )                       // unexpected UTF-8 continuation byte
       continue;
 
-    size_t tmp_line_len = line_len;   // save count in case invalid UTF-8
-    line_buf[ tmp_line_len++ ] = c;
+    size_t tmp_out_len = out_len;     // save count in case invalid UTF-8
+    out_buf[ tmp_out_len++ ] = c;
 
     //
     // If we've just read the start byte of a multi-byte UTF-8 character, read
@@ -457,19 +453,19 @@ insert:
     for ( size_t i = len; i > 1; --i ) {
       if ( (c = sgetc( &first_line )) == EOF )
         goto done;                      // premature end of UTF-8 character
-      line_buf[ tmp_line_len++ ] = c;
+      out_buf[ tmp_out_len++ ] = c;
       if ( utf8_len( c ) )              // unexpected UTF-8 start byte
         goto continue_outer_loop;       // skip entire UTF-8 character
     } // for
-    line_len = tmp_line_len;            // UTF-8 is valid
+    out_len = tmp_out_len;              // UTF-8 is valid
 
     if ( len == UTF8_BOM_LEN ) {
-      size_t const utf8_start_pos = line_len - UTF8_BOM_LEN;
-      if ( strncmp( line_buf + utf8_start_pos, UTF8_BOM, UTF8_BOM_LEN ) == 0 )
+      size_t const utf8_start_pos = out_len - UTF8_BOM_LEN;
+      if ( strncmp( out_buf + utf8_start_pos, UTF8_BOM, UTF8_BOM_LEN ) == 0 )
         continue;                       // discard UTF-8 BOM
     }
 
-    if ( ++line_width < opt_line_width ) {
+    if ( ++out_width < opt_line_width ) {
       //
       // We haven't exceeded the line width yet.
       //
@@ -487,28 +483,28 @@ insert:
       //
       if ( !is_long_line )
         print_lead_chars();
-      print_line( line_len, false, is_crlf );
+      print_line( out_len, false, is_crlf );
       is_long_line = true;
       continue;
     }
 
     is_long_line = false;
     print_lead_chars();
-    tmp_line_len = line_len;
+    tmp_out_len = out_len;
     print_line( wrap_pos, true, is_crlf );
-    hang_indent();
+    put_tabs_spaces( opt_hang_tabs, opt_hang_spaces );
 
     //
     // Slide the partial word to the left where we can pick up from where we
     // left off the next time around.
     //
-    for ( size_t from = wrap_pos + 1; from < tmp_line_len; ++from ) {
-      c = line_buf[ from ];
+    for ( size_t from = wrap_pos + 1; from < tmp_out_len; ++from ) {
+      c = out_buf[ from ];
       if ( !isspace( c ) ) {
-        line_buf[ line_len++ ] = c;
-        ++line_width;
+        out_buf[ out_len++ ] = c;
+        ++out_width;
         for ( len = utf8_len( c ); len > 1; --len )
-          line_buf[ line_len++ ] = line_buf[ ++from ];
+          out_buf[ out_len++ ] = out_buf[ ++from ];
       }
     } // for
 
@@ -520,7 +516,7 @@ continue_outer_loop:
     ///////////////////////////////////////////////////////////////////////////
 
 delimit_paragraph:
-    if ( line_len ) {
+    if ( out_len ) {
       //
       // Print what's in the buffer before delimiting the paragraph.  If we've
       // been handling a "long line," it's now finally ended; otherwise, print
@@ -530,7 +526,7 @@ delimit_paragraph:
         is_long_line = false;
       else
         print_lead_chars();
-      print_line( line_len, true, is_crlf );
+      print_line( out_len, true, is_crlf );
     } else if ( is_long_line )
       print_newline( is_crlf );         // delimit the "long line"
 
@@ -553,7 +549,7 @@ delimit_paragraph:
       // read/write the line as-is.
       //
       FPUTC( c, fout );
-      if ( !copy_line( fin, fout, line_buf, sizeof line_buf ) )
+      if ( !copy_line( fin, fout, out_buf, sizeof out_buf ) )
         goto done;
     }
     else {
@@ -567,10 +563,10 @@ delimit_paragraph:
 
 done:
   FERROR( fin );
-  if ( line_len ) {                     // print left-over text
+  if ( out_len ) {                      // print left-over text
     if ( !is_long_line )
       print_lead_chars();
-    print_line( line_len, true, is_crlf );
+    print_line( out_len, true, is_crlf );
   }
   exit( EX_OK );
 }
@@ -597,14 +593,6 @@ static bool copy_line( FILE *fin, FILE *fout, char *buf, size_t buf_size ) {
     FPUTS( buf, fout );
   } while ( *last && *last != '\n' );
   return true;
-}
-
-static void hang_indent( void ) {
-  for ( size_t i = 0; i < opt_hang_tabs; ++i )
-    line_buf[ line_len++ ] = '\t';
-  for ( size_t i = 0; i < opt_hang_spaces; ++i )
-    line_buf[ line_len++ ] = ' ';
-  line_width += opt_hang_tabs * opt_tab_spaces + opt_hang_spaces;
 }
 
 /**
@@ -652,16 +640,16 @@ static char const* init( int argc, char const *argv[] ) {
   if ( !fout )
     fout = stdout;
 
-  int const line_width = (int)opt_line_width -
+  int const out_width = (int)opt_line_width -
     (int)(2 * (opt_mirror_tabs * opt_tab_spaces + opt_mirror_spaces) +
           opt_lead_tabs * opt_tab_spaces + opt_lead_spaces);
 
-  if ( line_width < LINE_WIDTH_MINIMUM )
+  if ( out_width < LINE_WIDTH_MINIMUM )
     PMESSAGE_EXIT( EX_USAGE,
       "line-width (%d) is too small (<%d)\n",
-      line_width, LINE_WIDTH_MINIMUM
+      out_width, LINE_WIDTH_MINIMUM
     );
-  opt_line_width = line_width;
+  opt_line_width = out_width;
 
   opt_lead_tabs   += opt_mirror_tabs;
   opt_lead_spaces += opt_mirror_spaces;
@@ -766,13 +754,21 @@ static void print_lead_chars( void ) {
 }
 
 static void print_line( size_t len, bool do_newline, bool is_crlf ) {
-  line_buf[ len ] = '\0';
+  out_buf[ len ] = '\0';
   if ( len ) {
-    FPUTS( line_buf, fout );
+    FPUTS( out_buf, fout );
     if ( do_newline )
       print_newline( is_crlf );
   }
-  line_len = line_width = 0;
+  out_len = out_width = 0;
+}
+
+static void put_tabs_spaces( size_t tabs, size_t spaces ) {
+  out_width += tabs * opt_tab_spaces + spaces;
+  for ( ; tabs > 0; --tabs )
+    out_buf[ out_len++ ] = '\t';
+  for ( ; spaces > 0; --spaces )
+    out_buf[ out_len++ ] = ' ';
 }
 
 static void usage( void ) {
