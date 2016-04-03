@@ -6,6 +6,8 @@ and therefore it has found lasting use in applications that had formerly been co
 including operating systems,
 as well as various application software for computers ranging from supercomputers to embedded systems.
 */
+#include <stdio.h>
+
 int main( void ) {
   printf( "hello, world\n" );
 }

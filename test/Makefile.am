@@ -91,7 +91,6 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc--C-hello-05.test \
 	tests/wrapc--C-hello-06.test \
 	tests/wrapc--C-hello-07.test \
-	tests/wrapc--C-define.test \
 	tests/wrapc--C++-00.test \
 	tests/wrapc--C++-01.test \
 	tests/wrapc--D-01.test \
