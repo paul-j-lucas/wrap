@@ -72,14 +72,15 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/crlf-lw-01.test \
 	tests/wrapc-01.test \
 	tests/wrapc-02.test \
-	tests/wrapc-03.test \
-	tests/wrapc-04.test \
-	tests/wrapc-05.test \
 	tests/wrapc-b.test \
 	tests/wrapc-block-01.test \
 	tests/wrapc-block-02.test \
 	tests/wrapc-block-03.test \
+	tests/wrapc-bullet-01.test \
 	tests/wrapc-crlf-01.test \
+	tests/wrapc-noncomment-01.test \
+	tests/wrapc-noncomment-02.test \
+	tests/wrapc-trailing-ws-01.test \
 	tests/wrapc-D-01.test \
 	tests/wrapc--Bash-01.test \
 	tests/wrapc--Bash-02.test \
