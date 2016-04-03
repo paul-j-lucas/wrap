@@ -20,9 +20,7 @@
 
 AUTOMAKE_OPTIONS = 1.12			# needed for TEST_LOG_DRIVER
 
-TESTS =	tests/ETB-no_options-01.test \
-	tests/ETB-no_options-02.test \
-	tests/utf8-w77.test \
+TESTS =	tests/utf8-w77.test \
 	tests/utf8-w78.test \
 	tests/utf8-w79.test \
 	tests/utf8-w80.test \
@@ -81,6 +79,7 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc-crlf-01.test \
 	tests/wrapc-noncomment-01.test \
 	tests/wrapc-noncomment-02.test \
+	tests/wrapc-single_line-01.test \
 	tests/wrapc-trailing-ws-01.test \
 	tests/wrapc-D-01.test \
 	tests/wrapc--Bash-01.test \

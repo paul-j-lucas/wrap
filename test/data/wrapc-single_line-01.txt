@@ -1,0 +1,2 @@
+// extern variable definitions
+char const         *me;                 // executable name
