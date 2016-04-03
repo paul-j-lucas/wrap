@@ -83,14 +83,14 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc-D-01.test \
 	tests/wrapc--Bash-01.test \
 	tests/wrapc--Bash-02.test \
-	tests/wrapc--C-hello-00.test \
-	tests/wrapc--C-hello-01.test \
-	tests/wrapc--C-hello-02.test \
-	tests/wrapc--C-hello-03.test \
-	tests/wrapc--C-hello-04.test \
-	tests/wrapc--C-hello-05.test \
-	tests/wrapc--C-hello-06.test \
-	tests/wrapc--C-hello-07.test \
+	tests/wrapc--C-00.test \
+	tests/wrapc--C-01.test \
+	tests/wrapc--C-02.test \
+	tests/wrapc--C-03.test \
+	tests/wrapc--C-04.test \
+	tests/wrapc--C-05.test \
+	tests/wrapc--C-06.test \
+	tests/wrapc--C-07.test \
 	tests/wrapc--C++-00.test \
 	tests/wrapc--C++-01.test \
 	tests/wrapc--D-01.test \
