@@ -115,6 +115,15 @@ static void         usage( void );
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
+ * Prints a newline.
+ *
+ * @param is_crlf If \c true, prints a CR+LF; if \c false, prints a LF alone.
+ */
+static inline void print_newline( bool is_crlf ) {
+  FPUTS( (char const*)"\r\n" + !is_crlf, fout );
+}
+
+/**
  * Gets the next character from the input, either directly or from a previously
  * read string.
  *
@@ -123,17 +132,8 @@ static void         usage( void );
  * by one.
  * @return Returns the next character or EOF upon either end-of-file or error.
  */
-static inline int fl_getc( char const **ps ) {
+static inline int sgetc( char const **ps ) {
   return **ps ? *(*ps)++ : getc( fin );
-}
-
-/**
- * Prints a newline.
- *
- * @param is_crlf If \c true, prints a CR+LF; if \c false, prints a LF alone.
- */
-static inline void print_newline( bool is_crlf ) {
-  FPUTS( (char const*)"\r\n" + !is_crlf, fout );
 }
 
 /**
@@ -222,8 +222,7 @@ int main( int argc, char const *argv[] ) {
 
   size_t wrap_pos = 0;                  // position at which we can wrap
 
-  for ( int c, prev_c = '\0'; (c = fl_getc( &first_line )) != EOF;
-        prev_c = c ) {
+  for ( int c, prev_c = '\0'; (c = sgetc( &first_line )) != EOF; prev_c = c ) {
 
     ///////////////////////////////////////////////////////////////////////////
     //  HANDLE NEWLINE(s)
@@ -340,7 +339,7 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( opt_data_link_esc && c == ASCII_DLE ) {
-      switch ( c = fl_getc( &first_line ) ) {
+      switch ( c = sgetc( &first_line ) ) {
         case ASCII_ETB:
           //
           // We've been told by wrapc (child 1) that we've reached the end of
@@ -456,7 +455,7 @@ insert:
     // UTF-8 character is always treated as having a width of 1.
     //
     for ( size_t i = len; i > 1; --i ) {
-      if ( (c = fl_getc( &first_line )) == EOF )
+      if ( (c = sgetc( &first_line )) == EOF )
         goto done;                      // premature end of UTF-8 character
       line_buf[ tmp_line_len++ ] = c;
       if ( utf8_len( c ) )              // unexpected UTF-8 start byte
