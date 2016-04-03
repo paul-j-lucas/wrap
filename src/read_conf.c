@@ -43,6 +43,23 @@ extern char const *me;
 ////////// local functions ////////////////////////////////////////////////////
 
 /**
+ * Gets the full path of the user's home directory.
+ *
+ * @return Returns said directory or NULL if it is not obtainable.
+ */
+static char const* home_dir() {
+  char const *home = getenv( "HOME" );
+#if HAVE_GETEUID && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR
+  if ( !home ) {
+    struct passwd *const pw = getpwuid( geteuid() );
+    if ( pw )
+      home = pw->pw_dir;
+  }
+#endif /* HAVE_GETEUID && && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR */
+  return home;
+}
+
+/**
  * Appends a component to a path ensuring that exactly one \c / separates them.
  *
  * @param path The path to append to.
@@ -101,17 +118,9 @@ char const* read_conf( char const *conf_file ) {
 
   // locate default configuration file
   if ( !conf_file ) {
-    char const *home = getenv( "HOME" );
-    if ( !home ) {
-#if HAVE_GETEUID && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR
-      struct passwd *const pw = getpwuid( geteuid() );
-      if ( !pw )
-        return NULL;
-      home = pw->pw_dir;
-#else
+    char const *const home = home_dir();
+    if ( !home )
       return NULL;
-#endif /* HAVE_GETEUID && && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR */
-    }
     strcpy( conf_path_buf, home );
     path_append( conf_path_buf, CONF_FILE_NAME );
     conf_file = conf_path_buf;
