@@ -41,11 +41,11 @@
 #define PMESSAGE_EXIT(STATUS,FORMAT,...) \
   BLOCK( PRINT_ERR( "%s: " FORMAT, me, __VA_ARGS__ ); exit( STATUS ); )
 
-#define CHECK_FERROR(STREAM) \
-  BLOCK( if ( ferror( STREAM ) ) PERROR_EXIT( EX_IOERR ); )
-
 #define DUP(P) \
   BLOCK( if ( dup( P ) == -1 ) PERROR_EXIT( EX_OSERR ); )
+
+#define FERROR(STREAM) \
+  BLOCK( if ( ferror( STREAM ) ) PERROR_EXIT( EX_IOERR ); )
 
 #define FPRINTF(STREAM,...) \
   BLOCK( if ( fprintf( (STREAM), __VA_ARGS__ ) < 0 ) PERROR_EXIT( EX_IOERR ); )

@@ -67,7 +67,7 @@ void fcopy( FILE *ffrom, FILE *fto ) {
   char buf[ LINE_BUF_SIZE ];
   for ( size_t size; (size = fread( buf, 1, sizeof( buf ), ffrom )) > 0; )
     FWRITE( buf, 1, size, fto );
-  CHECK_FERROR( ffrom );
+  FERROR( ffrom );
 }
 
 char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
@@ -95,7 +95,7 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
 int peekc( FILE *file ) {
   int const c = getc( file );
   if ( c == EOF )
-    CHECK_FERROR( file );
+    FERROR( file );
   else
     UNGETC( c, file );
   return c;

@@ -291,7 +291,7 @@ static bool is_block_comment( char const *s ) {
 static void read_prototype( void ) {
   size_t size = LINE_BUF_SIZE;
   if ( !fgetsz( cur_buf, &size, fin ) ) {
-    CHECK_FERROR( fin );
+    FERROR( fin );
     exit( EX_OK );
   }
 
@@ -361,7 +361,7 @@ static void read_prototype( void ) {
     // + The second line becomes the prototype.
     //
     if ( !fgets( next_buf, LINE_BUF_SIZE, fin ) )
-      CHECK_FERROR( fin );
+      FERROR( fin );
     proto = next_buf;
   }
 
@@ -429,7 +429,7 @@ static pid_t read_source_write_wrap( void ) {
     // In order to know when a comment ends, we have to peek at the next line.
     //
     if ( !fgets( next_buf, LINE_BUF_SIZE, fin ) ) {
-      CHECK_FERROR( fin );
+      FERROR( fin );
       next_buf[0] = '\0';
     }
 
@@ -549,7 +549,7 @@ static void read_wrap( void ) {
   } // while
 break_loop:
 
-  CHECK_FERROR( fwrap );
+  FERROR( fwrap );
 #endif /* DEBUG_RSWW */
 }
 

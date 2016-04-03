@@ -567,7 +567,7 @@ delimit_paragraph:
   } // for
 
 done:
-  CHECK_FERROR( fin );
+  FERROR( fin );
   if ( line_len ) {                     // print left-over text
     if ( !is_long_line )
       print_lead_chars();
@@ -592,7 +592,7 @@ static bool copy_line( FILE *fin, FILE *fout, char *buf, size_t buf_size ) {
   do {
     *last = '\0';
     if ( !fgets( buf, buf_size, fin ) ) {
-      CHECK_FERROR( fin );
+      FERROR( fin );
       return false;
     }
     FPUTS( buf, fout );
@@ -681,7 +681,7 @@ static char const* init( int argc, char const *argv[] ) {
     //
     size_t size = sizeof first_line_buf;
     if ( !fgetsz( first_line_buf, &size, fin ) ) {
-      CHECK_FERROR( fin );
+      FERROR( fin );
       exit( EX_OK );
     }
     if ( size >= 2 && first_line_buf[ size - 2 ] == '\r' ) {
