@@ -1,0 +1,14 @@
+##
+# Bash is a Unix shell and command language written by Brian Fox for the GNU #
+# Project as a free software replacement for the Bourne shell.  Released in
+# 1989, it has been distributed widely as the shell for the GNU operating
+# system and as a default shell on Linux and OS X.
+#
+# The name itself is an acronym, a pun, and a description.  As an acronym, it
+# stands for Bourne-again shell, referring to its objective as a free
+# replacement for the Bourne shell.  As a pun, it expressed that objective in a
+# phrase that sounds similar to born again, a term for spiritual rebirth.  The
+# name is also descriptive of what it did, bashing together the features of sh,
+# csh, and ksh.
+##
+echo "hello, world"

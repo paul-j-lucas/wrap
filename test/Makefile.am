@@ -82,6 +82,7 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc-crlf-01.test \
 	tests/wrapc-D-01.test \
 	tests/wrapc--Bash-01.test \
+	tests/wrapc--Bash-02.test \
 	tests/wrapc--C-hello-00.test \
 	tests/wrapc--C-hello-01.test \
 	tests/wrapc--C-hello-02.test \
