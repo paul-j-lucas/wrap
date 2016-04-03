@@ -92,15 +92,6 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
   return c == EOF && !*size ? NULL : buf;
 }
 
-int peekc( FILE *file ) {
-  int const c = getc( file );
-  if ( c == EOF )
-    FERROR( file );
-  else
-    UNGETC( c, file );
-  return c;
-}
-
 size_t strrspn( char const *s, char const *set ) {
   assert( s );
   assert( set );

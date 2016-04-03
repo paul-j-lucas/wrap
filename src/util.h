@@ -129,15 +129,6 @@ void fcopy( FILE *ffrom, FILE *fto );
 char* fgetsz( char *buf, size_t *size, FILE *ffrom );
 
 /**
- * Peeks at the next character on the given file stream, but does not advance
- * the \c FILE pointer.
- *
- * @param file The file to peek from.
- * @return Returns the next character, if any, or \c EOF if none.
- */
-int peekc( FILE *file );
-
-/**
  * Reverse strspn(3): spans the trailing part of \a s as long as characters
  * from \a s occur in \a set.
  *
