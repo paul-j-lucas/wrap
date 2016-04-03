@@ -1,5 +1,193 @@
+2016-04-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * test/Makefile.am, wrapc-single_line-01.txt, wrapc-single_line-01.txt,
+     wrapc-single_line-01.test: Remmoved ETB tests -- no longer needed; added
+     single-line test.
+   * test/Makefile.am, wrapc-bullet-02.txt, wrapc-bullet-02.txt,
+     wrapc-bullet-02.test: Another bullet test.
+   * test/Makefile.am, wrapc-bullet-01.txt, wrapc-noncomment-01.txt,
+     wrapc-noncomment-02.txt, wrapc-trailing-ws-01.txt, wrapc-bullet-01.txt,
+     wrapc-noncomment-01.txt, wrapc-noncomment-02.txt,
+     wrapc-trailing-ws-01.txt, wrapc-bullet-01.test, wrapc-noncomment-01.test,
+     wrapc-noncomment-02.test, wrapc-trailing-ws-01.test: More test renaming;
+     another noncomment test.
+   * test/Makefile.am, wrapc--C-00.txt, wrapc--C-01.txt, wrapc--C-02.txt,
+     wrapc--C-03.txt, wrapc--C-04.txt, wrapc--C-05.txt, wrapc--C-06.txt,
+     wrapc--C-07.txt, wrapc--C-00.test, wrapc--C-01.test, wrapc--C-02.test,
+     wrapc--C-03.test, wrapc--C-04.test, wrapc--C-05.test, wrapc--C-06.test,
+     wrapc--C-07.test: Renamed C tests.
+   * test/Makefile.am, hello_00.c, hello_01.c, hello_02.c, hello_03.c,
+     hello_04.c, hello_05.c, hello_06.c, hello_07.c, wrapc--C-hello-00.txt,
+     wrapc--C-hello-01.txt, wrapc--C-hello-02.txt, wrapc--C-hello-03.txt,
+     wrapc--C-hello-04.txt, wrapc--C-hello-05.txt, wrapc--C-hello-06.txt,
+     wrapc--C-hello-07.txt: Updated C tests; removed define test -- no longer
+     necessary.
+   * test/Makefile.am: Fixed C++ tests.
+   * test/Makefile.am, hello_00.cpp, hello_01.cpp, wrapc--C++-00.txt,
+     wrapc--C++-01.txt, wrapc--C++-00.test, wrapc--C++-01.test: Other C++
+     tests.
+
+2016-04-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * test/Makefile.am, hello_02.sh, wrapc--Bash-02.txt, wrapc--Bash-02.test:
+     Another Bash test.
+   * wrapc.c: Bug-fix clean-up.
+   * wrapc.c, test/Makefile.am, hello_01.sh, wrapc--Bash-01.txt,
+     wrapc--Bash-01.test: Fixed bug; added Bash test.
+   * wrapc.c: Fixed comment.
+   * wrapc.c: Added DEBUG_RSWW.
+   * test/Makefile.am, hello_02.pas, hello_03.pas, wrapc--Pascal-02.txt,
+     wrapc--Pascal-03.txt, wrapc--Pascal-03.test: Another Pascal test.
+   * test/Makefile.am, xquery_01.xq, xquery_02.xq, xquery_03.xq, xquery_04.xq,
+     xquery_05.xq, xquery_06.xq, xquery_07.xq, wrapc--XQuery-03.txt,
+     wrapc--XQuery-04.txt, wrapc--XQuery-05.txt, wrapc--XQuery-06.txt,
+     wrapc--XQuery-07.txt, wrapc--XQuery-01.test, wrapc--XQuery-02.test,
+     wrapc--XQuery-03.test, wrapc--XQuery-04.test, wrapc--XQuery-05.test,
+     wrapc--XQuery-06.test, wrapc--XQuery-07.test: More XQuery tests.
+   * test/Makefile.am, hello_00.pas, hello_01.pas, hello_02.pas,
+     wrapc--Pascal-00.txt, wrapc--Pascal-00.test, wrapc--Pascal-01.test,
+     wrapc--Pascal-02.test: Added Pascal test.
+   * wrapc.c: Updated comment.
+   * test/Makefile.am, hello_00.hs, wrapc--Haskell-00.txt,
+     wrapc--Haskell-00.test: Added another Haskell test.
+   * hello_01.hs, hello_02.hs, wrapc--Haskell-01.test, wrapc--Haskell-02.test:
+     Renamed Haskell data.
+   * test/Makefile.am, define.h, hello_00.c, hello_01.c, hello_02.c,
+     hello_03.c, hello_04.c, hello_05.c, hello_06.c, hello_07.c,
+     wrapc--C-define.txt, wrapc--C-hello-00.txt, wrapc--C-hello-01.txt,
+     wrapc--C-hello-02.txt, wrapc--C-hello-03.txt, wrapc--C-hello-04.txt,
+     wrapc--C-hello-05.txt, wrapc--C-hello-06.txt, wrapc--C-hello-07.txt,
+     wrapc--C-define.test, wrapc--C-hello-00.test, wrapc--C-hello-01.test,
+     wrapc--C-hello-02.test, wrapc--C-hello-03.test, wrapc--C-hello-04.test,
+     wrapc--C-hello-05.test, wrapc--C-hello-06.test, wrapc--C-hello-07.test:
+     Test rename.
+
+2016-04-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.1, wrapc.1, options.c, options.h, util.c, util.h, wrap.c, wrapc.c,
+     test/Makefile.am, data-01.crlf, data-01.txt, hello.c.crlf, crlf-01.crlf,
+     crlf-ld-01.crlf, crlf-li-01.crlf, crlf-lw-01.crlf, wrap-li-01.txt,
+     wrap-lu-01.txt, wrap-lu-02.txt, wrapc-crlf-01.crlf, run_test.sh,
+     crlf-01.test, crlf-ld-01.test, crlf-li-01.test, crlf-lw-01.test,
+     wrap-li-01.test, wrap-lu-01.test, wrap-lu-02.test, wrap-lx.test,
+     wrapc-crlf-01.test: Added support for different line-endings.
+   * wrapc.c: s/process_options/parse_options/
+   * wrap.c, wrapc.c: Made fin & fout static.
+   * configure.ac: Added -Winline.
+
+2016-03-31  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Fixed comment.
+
+2016-03-29  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1, wrapc.c: Removed deprecated -l option.
+   * wrap.c: Removed deprecated -l option.
+   * wrap.1: Removed deprecated -l option.
+   * wrap.1: Now explicitly saying "non-whitespace" for -b.
+   * wrap.1: Added fold(1).
+   * wrap.c: Clean-up.
+
+2016-03-28  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Shifted usage options left.
+   * test/Makefile.am, hello_2.hs, wrapc--Haskell-02.txt,
+     wrapc--Haskell-02.test: Added another Haskell test.
+   * wrapc.1, wrapc.c: Added mentions of Modula-[23] and Oberon.
+   * wrapc.1: Added '}' for Pascal.
+   * wrapc.c: Now adding '}' for Pascal only if it's among the initial comment
+     characters.
+   * wrapc.c, test/Makefile.am, hello_2.pas, wrapc--Pascal-02.txt,
+     wrapc--Pascal-02.test: Now handling Pascal { } block comments.
+
+2016-03-27  Paul J. Lucas <paul@lucasmail.org>
+
+   * hello.d, wrapc--D-01.txt, wrapc--D-01.test: Updated D test.
+   * wrapc.c: s/leader/proto/
+   * wrapc.c: Fixed comment.
+   * wrapc.1: Better wording.
+   * wrapc.c, test/Makefile.am, wrapc-07.c, wrapc-08.c, wrapc-09.c,
+     wrapc--C-07.txt, wrapc--C-08.txt, wrapc--C-09.txt, wrapc--C-07.test,
+     wrapc--C-08.test, wrapc--C-09.test: Now handling non-comment text ending
+     in a block comment delimiter.
+   * wrapc.c: Variable rename.
+   * wrapc.c: Cosmetic change.
+   * hello.pas, wrapc--Pascal-01.test: Renamed Pascal test data.
+   * test/Makefile.am, hello.hs, wrapc--Haskell-01.txt, wrapc--Haskell-01.test:
+     Added Haskell test.
+   * test/Makefile.am, wrapc-01.pas, wrapc--Pascal-01.txt,
+     wrapc--Pascal-01.test: Added Pascal test.
+   * wrapc-04.cpp, wrapc-04.test: More test renaming.
+   * wrapc-05.cpp, wrapc-05.test: More test renaming.
+   * test/Makefile.am, wrapc-01.cpp, wrapc-02.cpp, wrapc-03.cpp, wrapc-04.cpp,
+     wrapc-01.txt, wrapc-02.txt, wrapc-03.txt, wrapc-04.txt, wrapc-05.txt,
+     wrapc-01.test, wrapc-02.test, wrapc-03.test, wrapc-04.test, wrapc-05.test:
+     More test renaming.
+
+2016-03-26  Paul J. Lucas <paul@lucasmail.org>
+
+   * test/Makefile.am, wrapc-01.d, wrapc-01.xq, wrapc-02.xq, wrapc-03.xq,
+     wrapc-04.xq, wrapc--C-01.txt, wrapc--C-02.txt, wrapc--C-03.txt,
+     wrapc--C-04.txt, wrapc--C-05.txt, wrapc--C-06.txt, wrapc--D-01.txt,
+     wrapc--XQuery-01.txt, wrapc--XQuery-02.txt, wrapc--XQuery-03.txt,
+     wrapc--XQuery-04.txt, wrapc--C-01.test, wrapc--C-02.test,
+     wrapc--C-03.test, wrapc--C-04.test, wrapc--C-05.test, wrapc--C-06.test,
+     wrapc--D-01.test, wrapc--XQuery-01.test, wrapc--XQuery-02.test,
+     wrapc--XQuery-03.test, wrapc--XQuery-04.test: Test renaming.
+   * wrapc-01.c, wrapc-02.c, wrapc-03.c, wrapc-04.c, wrapc-05.c, wrapc-06.c,
+     wrapc-C_style-01.test, wrapc-C_style-02.test, wrapc-C_style-03.test,
+     wrapc-C_style-04.test, wrapc-C_style-05.test, wrapc-C_style-06.test: C
+     data file renaming.
+   * wrapc.c: Added Fortran.
+   * wrapc.1: 1. Added Fortran. 2. Indented comment delimiters.
+   * test/Makefile.am, wrapc-D-01.txt, wrapc-D_style-01.txt, wrapc-D-01.txt,
+     wrapc-D_style-01.txt, wrapc-D-01.test, wrapc-D_style-01.test: Change -D
+     test; added D test.
+   * wrapc.1, wrapc.c: Replaced delim(eter) with char(acter) in some places.
+   * wrapc.c: Even better handling of two-character delimiters.
+   * wrapc.1: Updated comments/languages.
+   * wrapc.c: Added comment.
+   * wrapc.c: A static buf is null by default.
+   * wrapc.c: Better implementation/comments for multi-character delimiters.
+   * wraprc.5: 1. Added mention of what happens of a file matches more than one
+     pattern. 2. Added 'c' example alias.
+
+2016-03-25  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c, test/Makefile.am, wrapc-C_style-06.txt, wrapc-C_style-06.txt,
+     wrapc-C_style-06.test: Fixed # line following C-style comment.
+   * wrapc.c: Added missing "break".
+   * wrapc.c: Formatting tweak.
+
+2016-03-24  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1, wrapc.c: Removed HTML/XML comments; added ')' to man page for
+     XQuery comments.
+   * wrapc-XQuery-01.test, wrapc-XQuery-02.test, wrapc-XQuery-03.test,
+     wrapc-XQuery-04.test: Fixed case.
+   * wrapc.1, wrapc.c, test/Makefile.am, wrapc-XQuery-01.txt,
+     wrapc-XQuery-02.txt, wrapc-XQuery-03.txt, wrapc-XQuery-04.txt,
+     wrapc-block-01.txt, wrapc-block-02.txt, wrapc-block-03.txt,
+     wrapc-XQuery-01.txt, wrapc-XQuery-02.txt, wrapc-XQuery-03.txt,
+     wrapc-XQuery-04.txt, wrapc-block-01.txt, wrapc-block-02.txt,
+     wrapc-block-03.txt, wrapc-XQuery-01.test, wrapc-XQuery-02.test,
+     wrapc-XQuery-03.test, wrapc-XQuery-04.test, wrapc-block-03.test: Handling
+     of block comments other than C-style, part 2.
+   * NEWS, wrapc.1, wrapc.c, test/Makefile.am, wrapc-block-01.txt,
+     wrapc-block-02.txt, wrapc-block-01.txt, wrapc-block-02.txt,
+     wrapc-block-01.test, wrapc-block-02.test: Handling of block comments other
+     than C-style.
+
+2016-03-23  Paul J. Lucas <paul@lucasmail.org>
+
+   * devclean: Added $ECHO.
+   * wrapc-01.txt: Better test data.
+   * wrapc.c: Removed is_c_style_comment variable.
+   * config.wraprc: Added "c" alias.
+
 2016-03-21  Paul J. Lucas <paul@lucasmail.org>
 
+   * wrap.c: Got rid of signed/unsigned comparison warning.
    * NEWS: Updated.
    * wrapc.1: Updated for C-style comments.
    * wrap.1: Now using .IP \n[step].
