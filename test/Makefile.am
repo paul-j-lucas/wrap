@@ -77,6 +77,7 @@ TESTS =	tests/ETB-no_options-01.test \
 	tests/wrapc-block-02.test \
 	tests/wrapc-block-03.test \
 	tests/wrapc-bullet-01.test \
+	tests/wrapc-bullet-02.test \
 	tests/wrapc-crlf-01.test \
 	tests/wrapc-noncomment-01.test \
 	tests/wrapc-noncomment-02.test \
