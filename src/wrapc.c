@@ -172,7 +172,7 @@ static inline char const* first_nws( char const *s ) {
  */
 static inline char const* is_line_comment( char const *s ) {
   s = first_nws( s );
-  return s[0] && is_comment_char( s[0] ) ? s : NULL;
+  return is_comment_char( s[0] ) ? s : NULL;
 }
 
 /**
@@ -422,7 +422,7 @@ static pid_t read_source_write_wrap( void ) {
   // all subsequent lines, i.e., do NOT ever tell wrap(1) to pass text through
   // verbatim (below).
   //
-  bool const prototype_is_comment = is_line_comment( cur_buf );
+  bool const proto_is_comment = is_line_comment( cur_buf );
 
   while ( cur_buf[0] ) {
     //
@@ -433,33 +433,30 @@ static pid_t read_source_write_wrap( void ) {
       next_buf[0] = '\0';
     }
 
-    if ( !(next_buf[0] && prototype_is_comment) &&
+    if ( proto_is_comment && !is_line_comment( cur_buf ) ) {
+      //
+      // This handles cases like:
+      //
+      //    proto_buf ->  # This is a comment.
+      //    cur_buf   ->  not_a_comment();
+      //
+      goto verbatim;
+    }
+
+    if ( !(proto_is_comment && is_line_comment( next_buf )) &&
          is_block_comment( cur_buf ) ) {
       //
       // This handles cases like:
       //
       //                  /*
-      //                   * This is a comment.
-      //    cur_buf   ->   */
-      //    next_buf  ->  [empty]
-      //
-      // or:
-      //                  /*
       //    proto_buf ->  This is a comment.
       //    cur_buf   ->  */
       //
-      goto verbatim;
-    }
-
-    if ( prototype_is_comment &&
-      (!is_line_comment( cur_buf ) ||
-        (!(next_buf[0] && is_line_comment( next_buf )) &&
-          is_block_comment( cur_buf ))) ) {
-      //
-      // This handles cases like:
-      //
-      //    cur_buf   ->  # This is a comment.
-      //    next_buf  ->  this_is_code();
+      // or:
+      //                  /*
+      //                   * This is a comment.
+      //    cur_buf   ->   */
+      //    next_buf  ->  [empty]
       //
       goto verbatim;
     }
