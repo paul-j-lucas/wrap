@@ -1,0 +1,11 @@
+// C++ is a general-purpose programming language.
+// It has imperative, object-oriented and generic programming features, while also providing facilities for low-level memory manipulation.
+//
+// Before the initial standardization in 1998,
+// C++ was developed by Bjarne Stroustrup at Bell Labs since 1979,
+// as an extension of the C language as he wanted an efficient and flexible language similar to C, which also provided high-level features for program organization.
+#include <iostream>
+
+int main() {
+  std::cout << "hello, world\n";
+}
