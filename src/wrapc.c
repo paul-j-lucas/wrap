@@ -433,39 +433,33 @@ static pid_t read_source_write_wrap( void ) {
       next_buf[0] = '\0';
     }
 
-    if ( prototype_is_comment ) {
-      if ( next_buf[0] ) {
-        if ( !is_line_comment( next_buf ) ) {
-          //
-          // This handles cases like:
-          //
-          //    cur_buf   ->  # This is a comment.
-          //    next_buf  ->  this_is_code();
-          //
-          goto verbatim;
-        }
-      } else {
-        if ( is_block_comment( cur_buf ) ) {
-          //
-          // This handles cases like:
-          //
-          //                  /*
-          //                   * This is a comment.
-          //    cur_buf   ->   */
-          //    next_buf  ->  [empty]
-          //
-          goto verbatim;
-        }
-      }
-    } else if ( is_block_comment( cur_buf ) ) {
+    if ( !(next_buf[0] && prototype_is_comment) &&
+         is_block_comment( cur_buf ) ) {
       //
       // This handles cases like:
       //
-      //                 /*
-      //    proto_buf -> This is a comment.
-      //    cur_buf   -> */
+      //                  /*
+      //                   * This is a comment.
+      //    cur_buf   ->   */
+      //    next_buf  ->  [empty]
       //
-      // where the prototype text isn't a comment.
+      // or:
+      //                  /*
+      //    proto_buf ->  This is a comment.
+      //    cur_buf   ->  */
+      //
+      goto verbatim;
+    }
+
+    if ( prototype_is_comment &&
+      (!is_line_comment( cur_buf ) ||
+        (!(next_buf[0] && is_line_comment( next_buf )) &&
+          is_block_comment( cur_buf ))) ) {
+      //
+      // This handles cases like:
+      //
+      //    cur_buf   ->  # This is a comment.
+      //    next_buf  ->  this_is_code();
       //
       goto verbatim;
     }
