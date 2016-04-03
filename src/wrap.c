@@ -43,7 +43,7 @@ char const         *me;                 // executable name
 
 // local constant definitions
 static char const   UTF8_BOM[] = "\xEF\xBB\xBF";
-static size_t const UTF8_BOM_LEN = sizeof( UTF8_BOM ) - 1; // terminating null
+static size_t const UTF8_BOM_LEN = sizeof UTF8_BOM - 1; // terminating null
 static char const   UTF8_LEN_TABLE[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
   /* 0 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -286,7 +286,7 @@ int main( int argc, char const *argv[] ) {
 
     if ( isspace( c ) ) {
       if ( opt_prototype ) {
-        if ( proto_len < sizeof( proto_buf ) - 1 ) {
+        if ( proto_len < sizeof proto_buf - 1 ) {
           static size_t tab_pos;
           proto_buf[ proto_len++ ] = c;
           proto_width += c == '\t' ?
@@ -554,7 +554,7 @@ delimit_paragraph:
       // read/write the line as-is.
       //
       FPUTC( c, fout );
-      if ( !copy_line( fin, fout, line_buf, sizeof( line_buf ) ) )
+      if ( !copy_line( fin, fout, line_buf, sizeof line_buf ) )
         goto done;
     }
     else {

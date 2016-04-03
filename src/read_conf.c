@@ -128,7 +128,7 @@ char const* read_conf( char const *conf_file ) {
   // parse configuration file
   char line_buf[ LINE_BUF_SIZE ];
   unsigned line_no = 0;
-  while ( fgets( line_buf, sizeof( line_buf ), fconf ) ) {
+  while ( fgets( line_buf, sizeof line_buf, fconf ) ) {
     char const *const line = trim_ws( strip_comment( line_buf ) );
     ++line_no;
     if ( !*line )

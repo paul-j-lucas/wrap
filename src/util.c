@@ -65,7 +65,7 @@ void* check_realloc( void *p, size_t size ) {
 
 void fcopy( FILE *ffrom, FILE *fto ) {
   char buf[ LINE_BUF_SIZE ];
-  for ( size_t size; (size = fread( buf, 1, sizeof( buf ), ffrom )) > 0; )
+  for ( size_t size; (size = fread( buf, 1, sizeof buf, ffrom )) > 0; )
     FWRITE( buf, 1, size, fto );
   FERROR( ffrom );
 }
