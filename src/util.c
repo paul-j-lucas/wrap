@@ -71,6 +71,8 @@ void fcopy( FILE *ffrom, FILE *fto ) {
 }
 
 char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
+  assert( buf );
+  assert( size );
   //
   // Based on the implementation given in:
   //
