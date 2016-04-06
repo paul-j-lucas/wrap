@@ -700,10 +700,10 @@ static void parse_options( int argc, char const *argv[], char const *opts,
       );
     switch ( opt ) {
       case 'a': opt_alias             = optarg;               break;
+      case 'b': opt_lead_para_delims  = optarg;               break;
       case 'c': opt_conf_file         = optarg;               break;
       case 'C': opt_no_conf           = true;                 break;
       case 'd': opt_lead_dot_ignore   = true;                 break;
-      case 'b': opt_lead_para_delims  = optarg;               break;
       case 'D': opt_data_link_esc     = true;                 break;
       case 'e': opt_eos_delimit       = true;                 break;
       case 'f': opt_fin               = optarg;         // no break;
