@@ -69,6 +69,7 @@ static char const  *opt_alias;
 static char const  *opt_conf_file;
 static bool         opt_eos_delimit;    // end-of-sentence delimits para's?
 static bool         opt_data_link_esc;  // respond to in-band control
+static eol_t        opt_eol = EOL_INPUT;
 static char const  *opt_fin;            // file in path
 static char const  *opt_fin_name;       // file in name (only)
 static char const  *opt_fout;           // file out path
@@ -81,7 +82,6 @@ static char const  *opt_lead_para_delims;
 static size_t       opt_lead_spaces;    // leading spaces
 static size_t       opt_lead_tabs;      // leading tabs
 static bool         opt_lead_ws_delimit;// leading whitespace delimit para's?
-static eol_t        opt_eol = EOL_INPUT;
 static size_t       opt_line_width = LINE_WIDTH_DEFAULT;
 static size_t       opt_mirror_spaces;
 static size_t       opt_mirror_tabs;
