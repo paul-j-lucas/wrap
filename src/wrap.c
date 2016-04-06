@@ -790,6 +790,8 @@ static void usage( void ) {
 "  -i number  Indent tabs for first line of each paragraph.\n"
 "  -I number  Indent spaces for first line of each paragraph.\n"
 "  -l char    Specify end-of-lines as input/Unix/Windows [default: input].\n"
+"  -m number  Mirror tabs.\n"
+"  -M number  Mirror spaces.\n"
 "  -n         Does not treat newlines as paragraph delimeters.\n"
 "  -N         Treat every newline as a paragraph delimiter.\n"
 "  -o file    Write to this file [default: stdout].\n"
