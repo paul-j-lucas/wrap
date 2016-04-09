@@ -82,6 +82,9 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc-single_line-01.test \
 	tests/wrapc-trailing-ws-01.test \
 	tests/wrapc-D-01.test \
+	tests/wrapc--Ada-00.test \
+	tests/wrapc--Ada-01.test \
+	tests/wrapc--Ada-02.test \
 	tests/wrapc--Bash-01.test \
 	tests/wrapc--Bash-02.test \
 	tests/wrapc--C-00.test \

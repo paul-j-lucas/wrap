@@ -63,9 +63,10 @@ static char const   COMMENT_CHARS_DEFAULT[] =
   "#"   //    CMake, Make, Perl, Python, R, Ruby, Shell
   "/*"  //    C, Objective C, C++, C#, D, Go, Java, Rust, Swift
   "+"   // /+ D
+  "-"   // -- Ada, AppleScript
   "(:"  //    XQuery
 // (*   //    AppleScript, Delphi, ML, Modula-[23], Oberon, OCaml, Pascal
-  "{-"  //    Haskell
+  "{"   // {- Haskell
   "}"   //    Pascal
   "!"   //    Fortran
   "%"   //    Erlang, PostScript, Prolog, TeX

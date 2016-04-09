@@ -18,6 +18,7 @@ that is useful for reformatting comments
 while editing source code in languages
 including
 (but not limited to if others do comments similarly):
+Ada,
 AppleScript,
 Assembly,
 C,
@@ -25,12 +26,14 @@ Clojure,
 CMake,
 D,
 Delphi,
+Eiffel,
 Erlang,
 Fortran,
 Go,
 Haskell,
 Java,
 Lisp,
+Lua,
 Make,
 ML,
 Modula-[23],
