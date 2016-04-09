@@ -19,6 +19,7 @@ while editing source code in languages
 including
 (but not limited to if others do comments similarly):
 Ada,
+AWK,
 AppleScript,
 Assembly,
 C,

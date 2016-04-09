@@ -101,6 +101,10 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--Haskell-00.test \
 	tests/wrapc--Haskell-01.test \
 	tests/wrapc--Haskell-02.test \
+	tests/wrapc--Julia-00.test \
+	tests/wrapc--Julia-01.test \
+	tests/wrapc--Julia-02.test \
+	tests/wrapc--Julia-03.test \
 	tests/wrapc--Pascal-00.test \
 	tests/wrapc--Pascal-01.test \
 	tests/wrapc--Pascal-02.test \

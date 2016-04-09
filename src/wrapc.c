@@ -60,7 +60,7 @@ char const         *me;                 // executable name
 // local constant definitions
 static size_t const ARG_BUF_SIZE = 25;  // max wrap command-line arg size
 static char const   COMMENT_CHARS_DEFAULT[] =
-  "#"   //    CMake, Make, Perl, Python, R, Ruby, Shell
+  "#"   //    AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell
   "/*"  //    C, Objective C, C++, C#, D, Go, Java, Rust, Swift
   "+"   // /+ D
   "-"   // -- Ada, AppleScript
@@ -72,6 +72,7 @@ static char const   COMMENT_CHARS_DEFAULT[] =
   "%"   //    Erlang, PostScript, Prolog, TeX
   ";"   //    Assembly, Clojure, Lisp, Scheme
   "<"   // <# PowerShell
+  "="   // #= Julia
   ">"   //    Quoted e-mail
   "|";  // |# Lisp, Racket, Scheme
 static char const   WS_CHARS[] = " \t"; // whitespace characters
