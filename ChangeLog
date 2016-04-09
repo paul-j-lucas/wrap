@@ -1,5 +1,29 @@
+2016-04-09  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1, wrapc.c, test/Makefile.am, hello_00.adb, hello_01.adb,
+     hello_02.adb, wrapc--Ada-00.txt, wrapc--Ada-01.txt, wrapc--Ada-02.txt,
+     wrapc--Ada-00.test, wrapc--Ada-01.test, wrapc--Ada-02.test: Added "--"
+     comment support (Ada, AppleScript,Eiffel, Haskell, & Lua).
+
+2016-04-06  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Sorted -b option.
+
+2016-04-05  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Sorted opt_eol.
+   * wrap.c: Added missing -m and -M from usage.
+   * util.c: Added asserts.
+
 2016-04-03  Paul J. Lucas <paul@lucasmail.org>
 
+   * util.c, util.h: Removed peekc() -- not used.
+   * wrap.c: Clean-up; renaming.
+   * wrap.c: s/fl_getc/sgetc/
+   * read_conf.c: Factored out home_dir().
+   * read_conf.c, util.c, wrap.c: sizeof clean-up.
+   * util.c, util.h, wrap.c, wrapc.c: s/CHECK_FERROR/FERROR/
+   * wrap.c: Removed uncesessary NULL.
    * test/Makefile.am, wrapc-single_line-01.txt, wrapc-single_line-01.txt,
      wrapc-single_line-01.test: Remmoved ETB tests -- no longer needed; added
      single-line test.
