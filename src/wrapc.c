@@ -61,7 +61,7 @@ char const         *me;                 // executable name
 static size_t const ARG_BUF_SIZE = 25;  // max wrap command-line arg size
 static char const   COMMENT_CHARS_DEFAULT[] =
   "#"   //    AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell
-  "/*"  //    C, Objective C, C++, C#, D, Go, Java, Rust, Swift
+  "/*"  //    C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift
   "+"   // /+ D
   "-"   // -- Ada, AppleScript
   "(:"  //    XQuery
