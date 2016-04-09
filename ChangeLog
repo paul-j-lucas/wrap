@@ -1,5 +1,11 @@
 2016-04-09  Paul J. Lucas <paul@lucasmail.org>
 
+   * wrapc.1, wrapc.c: Add mention of Scala.
+   * wrapc.1, wrapc.c, test/Makefile.am, hello_00.jl, hello_01.jl, hello_02.jl,
+     hello_03.jl, wrapc--Julia-00.txt, wrapc--Julia-01.txt,
+     wrapc--Julia-02.txt, wrapc--Julia-03.txt, wrapc--Julia-00.test,
+     wrapc--Julia-01.test, wrapc--Julia-02.test, wrapc--Julia-03.test: Added
+     mention of AWK and support for #= Julia comments.
    * wrapc.1, wrapc.c, test/Makefile.am, hello_00.adb, hello_01.adb,
      hello_02.adb, wrapc--Ada-00.txt, wrapc--Ada-01.txt, wrapc--Ada-02.txt,
      wrapc--Ada-00.test, wrapc--Ada-01.test, wrapc--Ada-02.test: Added "--"
