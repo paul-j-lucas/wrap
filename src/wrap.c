@@ -38,6 +38,16 @@
 #include <string.h>
 #include <unistd.h>
 
+/**
+ * Line indentation type.
+ */
+enum indentation {
+  INDENT_NONE,
+  INDENT_LINE,
+  INDENT_HANG
+};
+typedef enum indentation indent_t;
+
 // extern variable definitions
 char const         *me;                 // executable name
 
@@ -158,22 +168,10 @@ int main( int argc, char const *argv[] ) {
   unsigned consec_newlines = 0;
 
   //
-  // True only when we should do hang-indenting after a title line.
-  //
-  bool do_hang_indent = false;
-
-  //
   // True only when opt_lead_dot_ignore = true, the current character is a '.',
   // and the previous character was a '\n' (i.e., the line starts with a '.').
   //
   bool do_ignore_lead_dot = false;
-
-  //
-  // True only when we should do indenting: set initially to indent the first
-  // line of a paragraph and after opt_newlines_delimit or more consecutive
-  // newlines for subsequent paragraphs.
-  //
-  bool do_indent = true;
 
   //
   // True only when opt_lead_para_delims was set, the current character is
@@ -181,6 +179,12 @@ int main( int argc, char const *argv[] ) {
   // with a one of opt_lead_para_delims).
   //
   bool do_lead_para_delim = false;
+
+  //
+  // The type of indentint to do, if any.  Set initially to INDENT_LINE to
+  // indent the first line of the first paragraph.
+  //
+  indent_t indent = INDENT_LINE;
 
   //
   // True when either the file contains DOS/Windows newlines (CR+LF) or the
@@ -264,7 +268,7 @@ int main( int argc, char const *argv[] ) {
         //
         print_lead_chars();
         print_line( out_len, true, is_crlf );
-        do_hang_indent = true;
+        indent = INDENT_HANG;
         next_line_is_title = false;
         continue;
       }
@@ -423,15 +427,19 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
 insert:
-    if ( do_indent ) {
-      out_len = out_width = 0;
-      put_tabs_spaces( opt_indt_tabs, opt_indt_spaces );
-      do_indent = false;
-    }
-
-    if ( do_hang_indent ) {
-      put_tabs_spaces( opt_hang_tabs, opt_hang_spaces );
-      do_hang_indent = false;
+    if ( indent ) {
+      switch ( indent ) {
+        case INDENT_HANG:
+          put_tabs_spaces( opt_hang_tabs, opt_hang_spaces );
+          break;
+        case INDENT_LINE:
+          out_len = out_width = 0;
+          put_tabs_spaces( opt_indt_tabs, opt_indt_spaces );
+          break;
+        case INDENT_NONE:
+          /* suppress warning */;
+      } // switch
+      indent = INDENT_NONE;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -557,7 +565,7 @@ delimit_paragraph:
           (consec_newlines > 2 && opt_newlines_delimit == 1) ) {
         print_newline( is_crlf );
       }
-      do_indent = true;
+      indent = INDENT_LINE;
     }
   } // for
 
