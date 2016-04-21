@@ -24,11 +24,28 @@
 
 // standard
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>                     /* for atoi(), malloc(), ... */
+#include <stdlib.h>                     /* for malloc(), ... */
 #include <string.h>
 
-extern char const *me;
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * A node for a singly linked list of pointers to memory to be freed via
+ * \c atexit().
+ */
+struct free_node {
+  void *ptr;
+  struct free_node *next;
+};
+typedef struct free_node free_node_t;
+
+// extern variable declarations
+extern char const  *me;
+
+// local variable definitions
+static free_node_t *free_head;          // linked list of stuff to free
 
 ////////// extern functions ///////////////////////////////////////////////////
 
@@ -63,6 +80,14 @@ void* check_realloc( void *p, size_t size ) {
   return r;
 }
 
+char* check_strdup( char const *s ) {
+  assert( s );
+  char *const dup = strdup( s );
+  if ( !dup )
+    PERROR_EXIT( EX_OSERR );
+  return dup;
+}
+
 void fcopy( FILE *ffrom, FILE *fto ) {
   char buf[ LINE_BUF_SIZE ];
   for ( size_t size; (size = fread( buf, 1, sizeof buf, ffrom )) > 0; )
@@ -94,6 +119,25 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
   return c == EOF && !*size ? NULL : buf;
 }
 
+void* free_later( void *p ) {
+  assert( p );
+  free_node_t *const new_node = MALLOC( free_node_t, 1 );
+  new_node->ptr = p;
+  new_node->next = free_head;
+  free_head = new_node;
+  return p;
+}
+
+void free_now() {
+  for ( free_node_t *p = free_head; p; ) {
+    free_node_t *const next = p->next;
+    free( p->ptr );
+    free( p );
+    p = next;
+  } // for
+  free_head = NULL;
+}
+
 size_t strrspn( char const *s, char const *set ) {
   assert( s );
   assert( set );
@@ -102,6 +146,13 @@ size_t strrspn( char const *s, char const *set ) {
   for ( char const *t = s + strlen( s ); t-- > s && strchr( set, *t ); ++n )
     ;
   return n;
+}
+
+char* tolower_s( char *s ) {
+  assert( s );
+  for ( char *t = s; *t; ++t )
+    *t = tolower( *t );
+  return s;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

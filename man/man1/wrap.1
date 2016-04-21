@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\f1 1 "March 30, 2016" "PJL TOOLS"
+.TH \f3wrap\f1 1 "April 20, 2016" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -206,15 +206,25 @@ more spaces for the first line of each paragraph after any tabs.
 Specifies the line-endings to use
 .IR s ,
 one of
-\- or \f(CWi\fP (whatever the input uses, the default),
-\f(CWd\fP or \f(CWw\fP (DOS/Windows: CR+LF),
+\f(CW-\fP,
+\f(CWi\fP,
 or
-\f(CWu\fP (Unix: LF).
-Only the first character of
-.I s
-is significant
-and case-insensitive
-(hence, for example, \f(CWdos\fP can be spelled out).
+\f(CWinput\fP
+(whatever the input uses, the default);
+\f(CWcrlf\fP,
+\f(CWd\fP,
+\f(CWdos\fP,
+\f(CWw\fP,
+or
+\f(CWwindows\fP
+(DOS/Windows: CR+LF);
+or
+\f(CWlf\fP,
+\f(CWu\fP,
+or
+\f(CWunix\fP
+(Unix: LF);
+all case-insensitive.
 .TP
 .BI \-m " n"
 Mirrors tabs; equivalent to:

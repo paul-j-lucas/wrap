@@ -59,21 +59,53 @@ void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
 }
 
 eol_t parse_eol( char const *s ) {
+  struct eol_map {
+    char const *map_name;
+    eol_t       map_eol;
+  };
+  typedef struct eol_map eol_map_t;
+
+  static eol_map_t const eol_map[] = {
+    { "-",        EOL_INPUT   },
+    { "crlf",     EOL_WINDOWS },
+    { "d",        EOL_WINDOWS },
+    { "dos",      EOL_WINDOWS },
+    { "i",        EOL_INPUT   },
+    { "input",    EOL_INPUT   },
+    { "lf",       EOL_UNIX    },
+    { "u",        EOL_UNIX    },
+    { "unix",     EOL_UNIX    },
+    { "w",        EOL_WINDOWS },
+    { "windows",  EOL_WINDOWS },
+    { NULL,       EOL_INPUT   }
+  };
+
   assert( s );
-  switch ( tolower( s[0] ) ) {
-    case 'i':
-    case '-':
-      return EOL_INPUT;
-    case 'u': // unix
-      return EOL_UNIX;
-    case 'd': // dos
-    case 'w': // windows
-      return EOL_WINDOWS;
-    default:
-      PMESSAGE_EXIT( EX_USAGE,
-        "\"%s\": invalid value for -l; must be one of [-diuw]\n", s
-      );
-  } // switch
+  char const *const s_lc = tolower_s( (char*)free_later( check_strdup( s ) ) );
+  size_t names_buf_size = 1;            // for trailing null
+
+  for ( eol_map_t const *m = eol_map; m->map_name; ++m ) {
+    if ( strcmp( s_lc, m->map_name ) == 0 )
+      return m->map_eol;
+      // sum sizes of names in case we need to construct an error message
+      names_buf_size += strlen( m->map_name ) + 2 /* ", " */;
+  } // for
+
+  // name not found: construct valid name list for an error message
+  char *const names_buf = (char*)free_later( MALLOC( char, names_buf_size ) );
+  char *pnames = names_buf;
+  for ( eol_map_t const *m = eol_map; m->map_name; ++m ) {
+    if ( pnames > names_buf ) {
+      strcpy( pnames, ", " );
+      pnames += 2;
+    }
+    strcpy( pnames, m->map_name );
+    pnames += strlen( m->map_name );
+  } // for
+  PMESSAGE_EXIT( EX_USAGE,
+    "\"%s\": invalid value for -%c; must be one of:\n\t%s\n",
+    s, 'l', names_buf
+  );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

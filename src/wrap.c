@@ -583,7 +583,12 @@ done:
 
 static void clean_up( void ) {
   alias_cleanup();
+  free_now();
   pattern_cleanup();
+  if ( fin )
+    fclose( fin );
+  if ( fout )
+    fclose( fout );
 }
 
 static bool copy_line( FILE *fin, FILE *fout, char *buf, size_t buf_size ) {

@@ -108,6 +108,15 @@ unsigned check_atou( char const *s );
 void* check_realloc( void *p, size_t size );
 
 /**
+ * Calls \c strdup(3) and checks for failure.
+ * If memory allocation fails, prints an error message and exits.
+ *
+ * @param s The NULL-terminated string to duplicate.
+ * @return Returns a copy of \a s.
+ */
+char* check_strdup( char const *s );
+
+/**
  * Copies \a ffrom to \a fto until EOF.
  *
  * @param ffrom The \c FILE to copy from.
@@ -129,6 +138,19 @@ void fcopy( FILE *ffrom, FILE *fto );
 char* fgetsz( char *buf, size_t *size, FILE *ffrom );
 
 /**
+ * Adds a pointer to the head of the free-later-list.
+ *
+ * @param p The pointer to add.
+ * @return Returns \a p.
+ */
+void* free_later( void *p );
+
+/**
+ * Frees all the memory pointed to by all the nodes in the free-later-list.
+ */
+void free_now( void );
+
+/**
  * Reverse strspn(3): spans the trailing part of \a s as long as characters
  * from \a s occur in \a set.
  *
@@ -137,6 +159,14 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom );
  * @return Returns the number of characters spanned.
  */
 size_t strrspn( char const *s, char const *set );
+
+/**
+ * Converts a string to lower-case in-place.
+ *
+ * @param s The NULL-terminated string to convert.
+ * @return Returns \a s.
+ */
+char* tolower_s( char *s );
 
 ///////////////////////////////////////////////////////////////////////////////
 
