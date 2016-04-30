@@ -82,17 +82,6 @@ static inline bool is_html_char( char c ) {
 }
 
 /**
- * Checks whether \a c is either a space or a tab only since \r or \n mean the
- * end of a line.
- *
- * @param c The character to check.
- * @return Returns \c true only if \a c is a space or a tab.
- */
-static inline bool is_space( char c ) {
-  return c == ' ' || c == '\t';
-}
-
-/**
  * Checks whether the line is a Markdown link title attribute.
  *
  * @param s The null-terminated line to check.

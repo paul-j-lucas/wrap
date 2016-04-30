@@ -187,8 +187,6 @@ int main( int argc, char const *argv[] ) {
     }
 
     if ( c == '\n' ) {
-      opt_prototype = false;            // the prototype is complete
-
       if ( ++consec_newlines >= opt_newlines_delimit ) {
         //
         // At least opt_newlines_delimit consecutive newlines: set that the
@@ -231,17 +229,6 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( isspace( c ) ) {
-      if ( opt_prototype ) {
-        if ( proto_len < sizeof proto_buf - 1 ) {
-          static size_t tab_pos;
-          proto_buf[ proto_len++ ] = c;
-          proto_width += c == '\t' ?
-            (opt_tab_spaces - tab_pos % opt_tab_spaces) : 1;
-          ++tab_pos;
-          line_width = opt_line_width - proto_width;
-        }
-        continue;
-      }
       if ( is_long_line ) {
         //
         // We've been handling a "long line" and finally got a whitespace
@@ -310,12 +297,6 @@ int main( int argc, char const *argv[] ) {
 
     if ( iscntrl( c ) )
       continue;
-
-    ///////////////////////////////////////////////////////////////////////////
-    //  NON-WHITESPACE CHARACTERS
-    ///////////////////////////////////////////////////////////////////////////
-
-    opt_prototype = false;              // the prototype is complete
 
     ///////////////////////////////////////////////////////////////////////////
     //  HANDLE LEADING-PARAGRAPH-DELIMITERS, LEADING-DOT, END-OF-SENTENCE, AND
@@ -570,20 +551,35 @@ static void init( int argc, char const *argv[] ) {
   if ( opt_markdown )
     opt_tab_spaces =  TAB_SPACES_MARKDOWN;
 
-  //
-  // We're supposed to use the same end-of-lines as the input, but we can't
-  // just wait until we read a \r as part of the normal character-at-a-time
-  // input stream to know it's using Windows end-of-lines because if the first
-  // line is a long line, we'll need to wrap it (by emitting a newline) before
-  // we get to the end of the line and read the \r.
-  //
-  // Therefore, we have to read only the first line in its entirety and peek
-  // ahead to see if it ends with \r\n.
-  //
   size_t const bytes_read = read_line( in_buf );
   if ( !bytes_read )
     exit( EX_OK );
+
+  if ( opt_prototype ) {
+    //
+    // Copy the prototype and calculate its width.
+    //
+    size_t pos = 0;
+    for ( char const *s = in_buf; *s && is_space( *s ); ++s, ++pos ) {
+      if ( proto_len == sizeof proto_buf - 1 )
+        break;
+      proto_buf[ proto_len++ ] = *s;
+      proto_width += *s == '\t' ? (opt_tab_spaces - pos % opt_tab_spaces) : 1;
+    } // for
+    line_width = opt_line_width - proto_width;
+  }
+
   if ( opt_eol == EOL_INPUT ) {
+    //
+    // We're supposed to use the same end-of-lines as the input, but we can't
+    // just wait until we read a \r as part of the normal character-at-a-time
+    // input stream to know it's using Windows end-of-lines because if the
+    // first line is a long line, we'll need to wrap it (by emitting a newline)
+    // before we get to the end of the line and read the \r.
+    //
+    // Therefore, we have to read only the first line in its entirety and peek
+    // ahead to see if it ends with \r\n.
+    //
     opt_eol = bytes_read >= 2 && in_buf[ bytes_read - 2 ] == '\r' ?
       EOL_WINDOWS : EOL_UNIX;
   }

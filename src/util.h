@@ -180,6 +180,17 @@ inline bool is_eol( char c ) {
 }
 
 /**
+ * Checks whether \a c is either a space or a tab only since \r or \n mean the
+ * end of a line.
+ *
+ * @param c The character to check.
+ * @return Returns \c true only if \a c is a space or a tab.
+ */
+inline bool is_space( char c ) {
+  return c == ' ' || c == '\t';
+}
+
+/**
  * Reverse strspn(3): spans the trailing part of \a s as long as characters
  * from \a s occur in \a set.
  *

@@ -47,6 +47,7 @@ static free_node_t *free_head;          // linked list of stuff to free
 // inline functions
 extern bool         is_blank_line( char const* );
 extern bool         is_eol( char );
+inline bool         is_space( char );
 
 ////////// extern functions ///////////////////////////////////////////////////
 
