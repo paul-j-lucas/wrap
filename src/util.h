@@ -25,10 +25,12 @@
 #include "config.h"
 
 // standard
+#include <errno.h>
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>                      /* for FILE */
 #include <stdlib.h>                     /* for exit(3) */
+#include <string.h>                     /* for strspn(3) */
 #include <sysexits.h>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -68,10 +70,15 @@
 #define REALLOC(PTR,TYPE,N) \
   (PTR) = (TYPE*)check_realloc( (PTR), sizeof(TYPE) * (N) )
 
+#define SKIP_WS(EXPR)       ((EXPR) += strspn( (EXPR), " \t\r" ))
+
 #define UNGETC(C,STREAM) \
   BLOCK( if ( ungetc( (C), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
 
-///////////////////////////////////////////////////////////////////////////////
+// extern variable definitions
+extern char const  *me;                 // executable name
+
+////////// extern functions ///////////////////////////////////////////////////
 
 /**
  * Extracts the base portion of a path-name.
@@ -111,7 +118,7 @@ void* check_realloc( void *p, size_t size );
  * Calls \c strdup(3) and checks for failure.
  * If memory allocation fails, prints an error message and exits.
  *
- * @param s The NULL-terminated string to duplicate.
+ * @param s The null-terminated string to duplicate.
  * @return Returns a copy of \a s.
  */
 char* check_strdup( char const *s );
@@ -151,6 +158,28 @@ void* free_later( void *p );
 void free_now( void );
 
 /**
+ * Checks whether \a s is a blank like, that is a line consisting only
+ * whitespace followed by an end-of-line.
+ *
+ * @param s The null-terminated string to check.
+ * @return Returns \c true only if \a s is a blank line.
+ */
+inline bool is_blank_line( char const *s ) {
+  SKIP_WS( s );
+  return s[0] == '\n' && !s[1];
+}
+
+/**
+ * Checks whether \a c is an end-of-line character.
+ *
+ * @param c The character to check.
+ * @return Returns \c true only if it is.
+ */
+inline bool is_eol( char c ) {
+  return c == '\n' || c == '\r';
+}
+
+/**
  * Reverse strspn(3): spans the trailing part of \a s as long as characters
  * from \a s occur in \a set.
  *
@@ -163,7 +192,7 @@ size_t strrspn( char const *s, char const *set );
 /**
  * Converts a string to lower-case in-place.
  *
- * @param s The NULL-terminated string to convert.
+ * @param s The null-terminated string to convert.
  * @return Returns \a s.
  */
 char* tolower_s( char *s );

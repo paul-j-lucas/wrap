@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      util.c
 **
-**      Copyright (C) 2013-2015  Paul J. Lucas
+**      Copyright (C) 2013-2016  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -41,11 +41,12 @@ struct free_node {
 };
 typedef struct free_node free_node_t;
 
-// extern variable declarations
-extern char const  *me;
-
 // local variable definitions
 static free_node_t *free_head;          // linked list of stuff to free
+
+// inline functions
+extern bool         is_blank_line( char const* );
+extern bool         is_eol( char );
 
 ////////// extern functions ///////////////////////////////////////////////////
 
@@ -101,7 +102,7 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
   //
   // Based on the implementation given in:
   //
-  //    Brian W. Kernighan and Dennis M. Ritchie: "The C Programming Language,"
+  //  + Brian W. Kernighan and Dennis M. Ritchie: "The C Programming Language,"
   //    2nd ed., section 7.7 "Line Input and Output," Prentice Hall, 1988, p.
   //    134.
   //
@@ -144,7 +145,7 @@ size_t strrspn( char const *s, char const *set ) {
 
   size_t n = 0;
   for ( char const *t = s + strlen( s ); t-- > s && strchr( set, *t ); ++n )
-    ;
+    /* empty */;
   return n;
 }
 

@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      options.h
 **
-**      Copyright (C) 1996-2015  Paul J. Lucas
+**      Copyright (C) 1996-2016  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -22,13 +22,28 @@
 #define wrap_options_H
 
 // standard
-#include <ctype.h>
-#include <string.h>                     /* for memset(3) */
+#include <stdbool.h>
+#include <stddef.h>                     /* for size_t */
+#include <stdio.h>
 
-#define CLEAR_OPTIONS()   memset( opts_given, 0, sizeof opts_given )
-#define GAVE_OPTION(OPT)  isalpha( OPTION_VALUE(OPT) )
-#define OPTION_VALUE(OPT) opts_given[ !islower(OPT) ][ toupper(OPT) - 'A' ]
-#define SET_OPTION(OPT)   OPTION_VALUE(OPT) = (OPT)
+///////////////////////////////////////////////////////////////////////////////
+
+#define COMMENT_CHARS_DEFAULT \
+  "#"   /*    AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell       */ \
+  "/*"  /*    C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift    */ \
+  "+"   /* /+ D                                                           */ \
+  "-"   /* -- Ada, AppleScript                                            */ \
+  "(:"  /*    XQuery                                                      */ \
+/* (*   |*    AppleScript, Delphi, ML, Modula-[23], Oberon, OCaml, Pascal */ \
+  "{"   /* {- Haskell                                                     */ \
+  "}"   /*    Pascal                                                      */ \
+  "!"   /*    Fortran                                                     */ \
+  "%"   /*    Erlang, PostScript, Prolog, TeX                             */ \
+  ";"   /*    Assembly, Clojure, Lisp, Scheme                             */ \
+  "<"   /* <# PowerShell                                                  */ \
+  "="   /* #= Julia                                                       */ \
+  ">"   /*    Quoted e-mail                                               */ \
+  "|"   /* |# Lisp, Racket, Scheme                                        */
 
 /**
  * End-of-Line formats.
@@ -40,32 +55,51 @@ enum eol {
 };
 typedef enum eol eol_t;
 
-////////// extern variables ///////////////////////////////////////////////////
+// extern option variables
+extern char const  *opt_alias;
+extern char const  *opt_comment_chars;
+extern char const  *opt_conf_file;
+extern bool         opt_data_link_esc;  // respond to in-band control
+extern eol_t        opt_eol;
+extern bool         opt_eos_delimit;    // end-of-sentence delimits para's?
+extern char const  *opt_fin;            // file in path
+extern char const  *opt_fin_name;       // file in name (only)
+extern char const  *opt_fout;           // file out path
+extern size_t       opt_hang_spaces;    // hanging-indent spaces
+extern size_t       opt_hang_tabs;      // hanging-indent tabs
+extern size_t       opt_indt_spaces;    // indent spaces
+extern size_t       opt_indt_tabs;      // indent tabs
+extern bool         opt_lead_dot_ignore;// ignore lines starting with '.'?
+extern char const  *opt_lead_para_delims;
+extern size_t       opt_lead_spaces;    // leading spaces
+extern size_t       opt_lead_tabs;      // leading tabs
+extern bool         opt_lead_ws_delimit;// leading whitespace delimit para's?
+extern size_t       opt_line_width;
+extern bool         opt_markdown;
+extern size_t       opt_mirror_spaces;
+extern size_t       opt_mirror_tabs;
+extern size_t       opt_newlines_delimit;
+extern bool         opt_no_conf;        // do not read conf file
+extern char const  *opt_para_delims;    // additional para delimiter chars
+extern bool         opt_prototype;      // first line whitespace is prototype?
+extern size_t       opt_tab_spaces;
+extern bool         opt_title_line;     // 1st para line is title?
 
-typedef char opts_given_t[ 2 /* lower/upper */ ][ 26 + 1 /*NULL*/ ];
-
-extern opts_given_t opts_given;         // options given
+// other extern variables
+extern FILE        *fin;                // file in
+extern FILE        *fout;               // file out
 
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
- * Checks that no options were given that are among the two given mutually
- * exclusive sets of short options.
- * Prints an error message and exits if any such options are found.
+ * Initializes command-line option variables.
  *
- * @param opts1 The first set of short options.
- * @param opts2 The second set of short options.
+ * @param argc The argument count from \c main().
+ * @param argv The argument values from \c main().
+ * @param usage A pointer to a function to print a usage message.  It must not
+ * return.
  */
-void check_mutually_exclusive( char const *opts1, char const *opts2 );
-
-/**
- * Parses an End-of-Line value.
- *
- * @param s The NULL-terminated string to parse.
- * @return Returns the corresponding \c eol_t
- * or prints an error message and exits if \a s is invalid.
- */
-eol_t parse_eol( char const *s );
+void init_options( int argc, char const *argv[], void (*usage)(void) );
 
 ///////////////////////////////////////////////////////////////////////////////
 

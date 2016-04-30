@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      read_conf.c
 **
-**      Copyright (C) 2013-2015  Paul J. Lucas
+**      Copyright (C) 2013-2016  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -37,8 +37,6 @@
 #include <stdlib.h>                     /* for getenv(), ... */
 #include <string.h>
 #include <unistd.h>                     /* for geteuid() */
-
-extern char const *me;
 
 ////////// local functions ////////////////////////////////////////////////////
 
@@ -101,7 +99,7 @@ static char* strip_comment( char *line ) {
  */
 static char* trim_ws( char *s ) {
   assert( s );
-  s += strspn( s, " \t" );
+  SKIP_WS( s );
   for ( size_t len = strlen( s ); len > 0 && isspace( s[ --len ] ); )
     s[ len ] = '\0';
   return s;

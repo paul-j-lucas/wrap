@@ -20,7 +20,7 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-AC_INIT([wrap], [3.3], [paul@lucasmail.org],,[https://github.com/paul-j-lucas/wrap])
+AC_INIT([wrap], [4.0], [paul@lucasmail.org],,[https://github.com/paul-j-lucas/wrap])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
@@ -46,7 +46,6 @@ AC_HEADER_STDBOOL
 gl_INIT
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_C_INLINE
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_CHECK_MEMBERS([struct passwd.pw_dir],[],[],[[#include <pwd.h>]])

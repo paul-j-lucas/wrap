@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      options.c
 **
-**      Copyright (C) 1996-2015  Paul J. Lucas
+**      Copyright (C) 1996-2016  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -19,19 +19,78 @@
 */
 
 // local
+#include "alias.h"
 #include "common.h"
 #include "options.h"
+#include "pattern.h"
+#include "read_conf.h"
 #include "util.h"
 
 // standard
 #include <assert.h>
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <getopt.h>
+#include <string.h>                     /* for memset(3) */
 
-extern char const  *me;
-opts_given_t        opts_given;
+///////////////////////////////////////////////////////////////////////////////
 
-////////// extern functions ///////////////////////////////////////////////////
+#define CLEAR_OPTIONS()     memset( opts_given, 0, sizeof opts_given )
+#define GAVE_OPTION(OPT)    isalpha( OPTION_VALUE(OPT) )
+#define OPTION_VALUE(OPT)   opts_given[ !islower(OPT) ][ toupper(OPT) - 'A' ]
+#define SET_OPTION(OPT)     OPTION_VALUE(OPT) = (OPT)
 
-void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
+typedef char opts_given_t[ 2 /* lower/upper */ ][ 26 + 1 /*NULL*/ ];
+
+// extern option variables
+char const         *opt_alias;
+char const         *opt_comment_chars = COMMENT_CHARS_DEFAULT;
+char const         *opt_conf_file;
+bool                opt_eos_delimit;
+bool                opt_data_link_esc;
+eol_t               opt_eol = EOL_INPUT;
+char const         *opt_fin;
+char const         *opt_fin_name;
+char const         *opt_fout;
+size_t              opt_hang_spaces;
+size_t              opt_hang_tabs;
+size_t              opt_indt_spaces;
+size_t              opt_indt_tabs;
+bool                opt_lead_dot_ignore;
+char const         *opt_lead_para_delims;
+size_t              opt_lead_spaces;
+size_t              opt_lead_tabs;
+bool                opt_lead_ws_delimit;
+size_t              opt_line_width = LINE_WIDTH_DEFAULT;
+bool                opt_markdown;
+size_t              opt_mirror_spaces;
+size_t              opt_mirror_tabs;
+size_t              opt_newlines_delimit = NEWLINES_DELIMIT_DEFAULT;
+bool                opt_no_conf;
+char const         *opt_para_delims;
+bool                opt_prototype;
+size_t              opt_tab_spaces = TAB_SPACES_DEFAULT;
+bool                opt_title_line;
+
+// other extern variables
+FILE               *fin;
+FILE               *fout;
+
+// local variables
+static opts_given_t opts_given;         // options given
+
+////////// local functions ////////////////////////////////////////////////////
+
+/**
+ * Checks that no options were given that are among the two given mutually
+ * exclusive sets of short options.
+ * Prints an error message and exits if any such options are found.
+ *
+ * @param opts1 The first set of short options.
+ * @param opts2 The second set of short options.
+ */
+static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
   assert( opts1 );
   assert( opts2 );
 
@@ -58,7 +117,14 @@ void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
   } // for
 }
 
-eol_t parse_eol( char const *s ) {
+/**
+ * Parses an End-of-Line value.
+ *
+ * @param s The null-terminated string to parse.
+ * @return Returns the corresponding \c eol_t
+ * or prints an error message and exits if \a s is invalid.
+ */
+static eol_t parse_eol( char const *s ) {
   struct eol_map {
     char const *map_name;
     eol_t       map_eol;
@@ -87,8 +153,8 @@ eol_t parse_eol( char const *s ) {
   for ( eol_map_t const *m = eol_map; m->map_name; ++m ) {
     if ( strcmp( s_lc, m->map_name ) == 0 )
       return m->map_eol;
-      // sum sizes of names in case we need to construct an error message
-      names_buf_size += strlen( m->map_name ) + 2 /* ", " */;
+    // sum sizes of names in case we need to construct an error message
+    names_buf_size += strlen( m->map_name ) + 2 /* ", " */;
   } // for
 
   // name not found: construct valid name list for an error message
@@ -106,6 +172,123 @@ eol_t parse_eol( char const *s ) {
     "\"%s\": invalid value for -%c; must be one of:\n\t%s\n",
     s, 'l', names_buf
   );
+}
+
+/**
+ * Parses command-line options.
+ *
+ * @param argc The argument count from \c main().
+ * @param argv The argument values from \c main().
+ * @param opts The set of options as required by \c getopt(3).
+ * @param line_no When parsing options from a configuration file, the
+ * originating line number; zero otherwise.
+ */
+static void parse_options( int argc, char const *argv[], char const *opts,
+                           void (*usage)(void), unsigned line_no ) {
+  assert( opts );
+
+  optind = opterr = 1;
+  bool print_version = false;
+  CLEAR_OPTIONS();
+
+  for ( int opt; (opt = getopt( argc, (char**)argv, opts )) != EOF; ) {
+    SET_OPTION( opt );
+    if ( line_no && strchr( "acCfFov", opt ) )
+      PMESSAGE_EXIT( EX_CONFIG,
+        "%s:%u: '%c': option not allowed in configuration file\n",
+        opt_conf_file, line_no, opt
+      );
+    switch ( opt ) {
+      case 'a': opt_alias             = optarg;               break;
+      case 'b': opt_lead_para_delims  = optarg;               break;
+      case 'c': opt_conf_file         = optarg;               break;
+      case 'C': opt_no_conf           = true;                 break;
+      case 'd': opt_lead_dot_ignore   = true;                 break;
+      case 'D': opt_comment_chars     = optarg;               break;
+      case 'e': opt_eos_delimit       = true;                 break;
+      case 'E': opt_data_link_esc     = true;                 break;
+      case 'f': opt_fin               = optarg;         // no break;
+      case 'F': opt_fin_name          = base_name( optarg );  break;
+      case 'h': opt_hang_tabs         = check_atou( optarg ); break;
+      case 'H': opt_hang_spaces       = check_atou( optarg ); break;
+      case 'i': opt_indt_tabs         = check_atou( optarg ); break;
+      case 'I': opt_indt_spaces       = check_atou( optarg ); break;
+      case 'l': opt_eol               = parse_eol( optarg );  break;
+      case 'm': opt_mirror_tabs       = check_atou( optarg ); break;
+      case 'M': opt_mirror_spaces     = check_atou( optarg ); break;
+      case 'n': opt_newlines_delimit  = SIZE_T_MAX;           break;
+      case 'N': opt_newlines_delimit  = 1;                    break;
+      case 'o': opt_fout              = optarg;               break;
+      case 'p': opt_para_delims       = optarg;               break;
+      case 'P': opt_prototype         = true;                 break;
+      case 's': opt_tab_spaces        = check_atou( optarg ); break;
+      case 'S': opt_lead_spaces       = check_atou( optarg ); break;
+      case 't': opt_lead_tabs         = check_atou( optarg ); break;
+      case 'T': opt_title_line        = true;                 break;
+      case 'u': opt_markdown          = true;                 break;
+      case 'v': print_version         = true;                 break;
+      case 'w': opt_line_width        = check_atou( optarg ); break;
+      case 'W': opt_lead_ws_delimit   = true;                 break;
+      default : usage();
+    } // switch
+  } // for
+
+  check_mutually_exclusive( "f", "F" );
+  check_mutually_exclusive( "n", "N" );
+  check_mutually_exclusive( "Pu", "dhHiImMStW" );
+  check_mutually_exclusive( "u", "sT" );
+  check_mutually_exclusive( "v", "abcCdeEfFhHiIlmMnNopsStTuwW" );
+
+  if ( print_version ) {
+    PRINT_ERR( "%s\n", PACKAGE_STRING );
+    exit( EX_OK );
+  }
+}
+
+////////// extern functions ///////////////////////////////////////////////////
+
+#define COMMON_OPTS         "a:b:c:Cef:F:l:o:p:s:Tuvw:"
+
+void init_options( int argc, char const *argv[], void (*usage)(void) ) {
+  static char const wrap_opts [] = COMMON_OPTS "dEh:H:i:I:m:M:nNPS:t:W";
+  static char const wrapc_opts[] = COMMON_OPTS "D:";
+
+  assert( usage );
+  me = base_name( argv[0] );
+  bool const is_wrap = strcmp( me, PACKAGE ) == 0;
+
+  parse_options( argc, argv, is_wrap ? wrap_opts : wrapc_opts, usage, 0 );
+  argc -= optind, argv += optind;
+  if ( argc )
+    usage();
+
+  if ( !opt_no_conf && (opt_alias || opt_fin_name) ) {
+    alias_t const *alias = NULL;
+    opt_conf_file = read_conf( opt_conf_file );
+    if ( opt_alias ) {
+      if ( !(alias = alias_find( opt_alias )) )
+        PMESSAGE_EXIT( EX_USAGE,
+          "\"%s\": no such alias in %s\n",
+          opt_alias, opt_conf_file
+        );
+    }
+    else if ( opt_fin_name )
+      alias = pattern_find( opt_fin_name );
+    if ( alias )
+      parse_options(
+        alias->argc, alias->argv, wrap_opts, usage, alias->line_no
+      );
+  }
+
+  if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
+    PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", optarg, ERROR_STR );
+  if ( opt_fout && !(fout = fopen( opt_fout, "w" )) )
+    PMESSAGE_EXIT( EX_CANTCREAT, "\"%s\": %s\n", optarg, ERROR_STR );
+
+  if ( !fin )
+    fin = stdin;
+  if ( !fout )
+    fout = stdout;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

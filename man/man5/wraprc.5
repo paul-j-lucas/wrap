@@ -1,21 +1,21 @@
 .\"
-.\"	wrap -- text reformatter
-.\"	wraprc.5 manual page
+.\"     wrap -- text reformatter
+.\"     wraprc.5 manual page
 .\"
-.\"	Copyright (C) 2013-2016  Paul J. Lucas
+.\"     Copyright (C) 2013-2016  Paul J. Lucas
 .\"
-.\"	This program is free software; you can redistribute it and/or modify
-.\"	it under the terms of the GNU General Public License as published by
-.\"	the Free Software Foundation; either version 2 of the Licence, or
-.\"	(at your option) any later version.
-.\" 
-.\"	This program is distributed in the hope that it will be useful,
-.\"	but WITHOUT ANY WARRANTY; without even the implied warranty of
-.\"	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-.\"	GNU General Public License for more details.
-.\" 
-.\"	You should have received a copy of the GNU General Public License
-.\"	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+.\"     This program is free software; you can redistribute it and/or modify
+.\"     it under the terms of the GNU General Public License as published by
+.\"     the Free Software Foundation; either version 2 of the Licence, or
+.\"     (at your option) any later version.
+.\"
+.\"     This program is distributed in the hope that it will be useful,
+.\"     but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\"     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\"     GNU General Public License for more details.
+.\"
+.\"     You should have received a copy of the GNU General Public License
+.\"     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .\"
 .\" ---------------------------------------------------------------------------
 .\" define code-start macro
@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wraprc\f1 1 "March 26, 2015" "PJL TOOLS"
+.TH \f3wraprc\fP 1 "April 26, 2015" "PJL TOOLS"
 .SH NAME
 wraprc \- text reformatter runtime configuration file
 .SH DESCRIPTION
@@ -90,7 +90,7 @@ For example:
 html = -ep,;:
 .cE
 creates an alias named
-\f(CWhtml\f1
+\f(CWhtml\fP
 for the options shown.
 Once specified,
 an alias can be requested via the
@@ -148,10 +148,10 @@ For example:
 *.html = html
 .cE
 creates a pattern that matches all files ending in
-\f(CW.html\f1
+\f(CW.html\fP
 (HTML files)
 and will apply the options specified by the previously defined
-\f(CWhtml\f1
+\f(CWhtml\fP
 alias.
 .P
 A file may match more than one pattern
@@ -175,16 +175,16 @@ The default configuration file.
 .nf
 .ft CW
 [ALIASES]
-c    = -b@       # @param, @return, etc.
+code = -b@ -u    # @param, @return, etc.
 html = -ep,:;
 man  = -dep,:;
 
 [PATTERNS]
-*.[ch] = c
-*.cpp = c
+*.[ch] = code
+*.cpp = code
 *.htm = html
 *.html = html
-*.java = c
+*.java = code
 *.[1-9] = man
 .ft 1
 .fi
@@ -195,3 +195,4 @@ Paul J. Lucas
 .BR wrap (1),
 .BR wrapc (1),
 .BR fnmatch (3)
+.\" vim:set et sw=2 ts=2:

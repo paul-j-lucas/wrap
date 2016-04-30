@@ -64,6 +64,70 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap-P-03.test \
 	tests/wrap-t1.test \
 	tests/wrap-t11.test \
+	tests/wrap--Markdown-atx-01.test \
+	tests/wrap--Markdown-atx-02.test \
+	tests/wrap--Markdown-atx-03.test \
+	tests/wrap--Markdown-code-01.test \
+	tests/wrap--Markdown-code-02.test \
+	tests/wrap--Markdown-hr-01a.test \
+	tests/wrap--Markdown-hr-01b.test \
+	tests/wrap--Markdown-hr-01c.test \
+	tests/wrap--Markdown-hr-02a.test \
+	tests/wrap--Markdown-hr-02b.test \
+	tests/wrap--Markdown-hr-02c.test \
+	tests/wrap--Markdown-hr-03a.test \
+	tests/wrap--Markdown-hr-03b.test \
+	tests/wrap--Markdown-hr-03c.test \
+	tests/wrap--Markdown-html-01.test \
+	tests/wrap--Markdown-html-01a.test \
+	tests/wrap--Markdown-html-02.test \
+	tests/wrap--Markdown-html-02a.test \
+	tests/wrap--Markdown-html-03.test \
+	tests/wrap--Markdown-html-03a.test \
+	tests/wrap--Markdown-html-04.test \
+	tests/wrap--Markdown-html-04a.test \
+	tests/wrap--Markdown-html-05.test \
+	tests/wrap--Markdown-link-01a.test \
+	tests/wrap--Markdown-link-01b.test \
+	tests/wrap--Markdown-link-01c.test \
+	tests/wrap--Markdown-link-01d.test \
+	tests/wrap--Markdown-link-02a.test \
+	tests/wrap--Markdown-link-02b.test \
+	tests/wrap--Markdown-link-02c.test \
+	tests/wrap--Markdown-link-02d.test \
+	tests/wrap--Markdown-link-03a.test \
+	tests/wrap--Markdown-link-03b.test \
+	tests/wrap--Markdown-link-03c.test \
+	tests/wrap--Markdown-link-03d.test \
+	tests/wrap--Markdown-link-04a.test \
+	tests/wrap--Markdown-link-04b.test \
+	tests/wrap--Markdown-link-04c.test \
+	tests/wrap--Markdown-link-04d.test \
+	tests/wrap--Markdown-link-05a.test \
+	tests/wrap--Markdown-link-05b.test \
+	tests/wrap--Markdown-link-05c.test \
+	tests/wrap--Markdown-link-05d.test \
+	tests/wrap--Markdown-ol-01s.test \
+	tests/wrap--Markdown-ol-02s.test \
+	tests/wrap--Markdown-ol-03s.test \
+	tests/wrap--Markdown-ol-04s.test \
+	tests/wrap--Markdown-ol-11s.test \
+	tests/wrap--Markdown-ul-01sa.test \
+	tests/wrap--Markdown-ul-01sb.test \
+	tests/wrap--Markdown-ul-01sc.test \
+	tests/wrap--Markdown-ul-02sa.test \
+	tests/wrap--Markdown-ul-02sb.test \
+	tests/wrap--Markdown-ul-02sc.test \
+	tests/wrap--Markdown-ul-03sa.test \
+	tests/wrap--Markdown-ul-03sb.test \
+	tests/wrap--Markdown-ul-03sc.test \
+	tests/wrap--Markdown-ul-04sa.test \
+	tests/wrap--Markdown-nested-01s.test \
+	tests/wrap--Markdown-nested-02s.test \
+	tests/wrap--Markdown-Setext-01.test \
+	tests/wrap--Markdown-Setext-02.test \
+	tests/wrap--Markdown-Setext-03.test \
+	tests/wrap--Markdown-Setext-04.test \
 	tests/crlf-01.test \
 	tests/crlf-ld-01.test \
 	tests/crlf-li-01.test \
@@ -105,6 +169,10 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--Julia-01.test \
 	tests/wrapc--Julia-02.test \
 	tests/wrapc--Julia-03.test \
+	tests/wrapc--Markdown-code-02c.test \
+	tests/wrapc--Markdown-code-03c.test \
+	tests/wrapc--Markdown-ul-01.test \
+	tests/wrapc--Markdown-ul-02.test \
 	tests/wrapc--Pascal-00.test \
 	tests/wrapc--Pascal-01.test \
 	tests/wrapc--Pascal-02.test \

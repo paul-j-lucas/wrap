@@ -12,6 +12,8 @@ mirroring (equal left and right margins),
 when to delimit paragraphs,
 and
 title lines.
+Additionally,
+it can reformat Markdown text.
 
 It also includes **wrapc**
 that is useful for reformatting comments

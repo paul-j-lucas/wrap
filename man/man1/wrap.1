@@ -1,21 +1,21 @@
 .\"
-.\"	wrap -- text reformatter
-.\"	wrap.1: manual page
+.\"     wrap -- text reformatter
+.\"     wrap.1: manual page
 .\"
-.\"	Copyright (C) 1996-2016  Paul J. Lucas
+.\"     Copyright (C) 1996-2016  Paul J. Lucas
 .\"
-.\"	This program is free software; you can redistribute it and/or modify
-.\"	it under the terms of the GNU General Public License as published by
-.\"	the Free Software Foundation; either version 2 of the Licence, or
-.\"	(at your option) any later version.
-.\" 
-.\"	This program is distributed in the hope that it will be useful,
-.\"	but WITHOUT ANY WARRANTY; without even the implied warranty of
-.\"	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-.\"	GNU General Public License for more details.
-.\" 
-.\"	You should have received a copy of the GNU General Public License
-.\"	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+.\"     This program is free software; you can redistribute it and/or modify
+.\"     it under the terms of the GNU General Public License as published by
+.\"     the Free Software Foundation; either version 2 of the Licence, or
+.\"     (at your option) any later version.
+.\"
+.\"     This program is distributed in the hope that it will be useful,
+.\"     but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\"     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\"     GNU General Public License for more details.
+.\"
+.\"     You should have received a copy of the GNU General Public License
+.\"     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .\"
 .\" ---------------------------------------------------------------------------
 .\" define code-start macro
@@ -24,7 +24,6 @@
 .nf
 .RS 5
 .ft CW
-.ta .5i 1i 1.5i 2i 2.5i 3i 3.5i 4i 4.5i 5i 5.5i
 ..
 .\" define code-end macro
 .de cE
@@ -34,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\f1 1 "April 20, 2016" "PJL TOOLS"
+.TH \f3wrap\fP 1 "April 30, 2016" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -91,7 +90,8 @@ two consecutive newline characters delimit a paragraph and are not folded;
 more than two are folded.
 If
 .B \-n
-is specified, newlines receive no special treatment.
+is specified,
+newlines receive no special treatment.
 If
 .B \-N
 is specified, every newline delimits a paragraph.
@@ -99,14 +99,22 @@ is specified, every newline delimits a paragraph.
 If the
 .B \-d
 option is specified,
-a line beginning with a `\f(CW.\f1' (dot),
+a line beginning with a `\f(CW.\fP' (dot),
 presumed to be an
-.BR [nt]roff (1)
+.RB [ nt ] roff (1)
 control line,
 is not altered.
+.IP \n+[step].
+If the
+.B \-u
+option is specified,
+exceptions are made in order to pretty-print Markdown text
+(see
+.B MARKDOWN FORMATTING
+below).
 .SS Character Encoding
 Text is assumed to be encoded in UTF-8.
-All multi-byte, UTF-8-encoded characters
+All multiple-byte, UTF-8-encoded characters
 are considered to have a width of 1.
 UTF-8 Byte-Order Marks (BOMs)
 are discarded.
@@ -284,6 +292,9 @@ leading tabs to each line.
 Treats the first line of every paragraph as a title
 and puts it on a line by itself.
 .TP
+.B \-u
+Format Markdown text.
+.TP
 .B \-v
 Prints the version number to
 .I stderr
@@ -299,6 +310,249 @@ characters
 .TP
 .B \-W
 Treats a line beginning with whitespace as a paragraph delimiter.
+.SH MARKDOWN FORMATTING
+Via the
+.B \-u
+option,
+.B wrap
+can reformat Markdown text.
+Unlike most Markdown formatters,
+.B wrap
+reformats Markdown to Markdown
+(to make the source text itself look nice)
+and not to some other format,
+e.g., HTML.
+As such,
+only block elements of Markdown are supported
+because span elements play no role in reformatting
+and need no treatment different from the surrounding text.
+.SS Paragraphs
+Paragraphs,
+one or more consecutive lines of text
+separated by one or more blank lines,
+are reformatted as normal.
+.SS Headers
+Setext-style headers are supported:
+.cS
+This is an H1
+=============
+
+This is an H2
+-------------
+.cE
+Any number of \f(CW=\fP's or \f(CW-\fP's will work
+and need not match the number of characters
+on the preceding line.
+Atx-style headers are also supported:
+.cS
+# This is an H1
+
+## This is an H2
+
+###### This is an H6
+.cE
+that is 1\-6 \f(CW#\fP characters.
+Optionally,
+atx-style headers may be ``closed''
+with trailing \f(CW#\fP characters,
+but the number of closing \f(CW#\fP characters
+need not match the number of opening characters.
+Headers of either style
+.I must not
+be indented.
+.SS Unordered/Bulleted Lists
+Unordered lists use asterisks, plusses, and minuses
+(interchangably)
+as list item markers:
+.cS
+* Red
+* Green
+* Blue
+.cE
+Markers may be indented by up to 3 spaces and
+.I must
+be followed by a space.
+Multiline items may either be hang-indented:
+.cS
++ Lorem ipsum dolor sit amet, ligula suspendisse nulla pretium,
+  rhoncus tempor fermentum, enim integer ad vestibulum volutpat.
++ Nisl rhoncus turpis est, vel elit, congue wisi enim nunc
+  ultricies sit, magna tincidunt.
+.cE
+or not:
+.cS
++ Lorem ipsum dolor sit amet, ligula suspendisse nulla pretium,
+rhoncus tempor fermentum, enim integer ad vestibulum volutpat.
++ Nisl rhoncus turpis est, vel elit, congue wisi enim nunc
+ultricies sit, magna tincidunt.
+.cE
+Items may be separated by blank lines:
+.cS
++ Lorem ipsum dolor sit amet, ligula suspendisse nulla pretium,
+  rhoncus tempor fermentum, enim integer ad vestibulum volutpat.
+
++ Nisl rhoncus turpis est, vel elit, congue wisi enim nunc
+  ultricies sit, magna tincidunt.
+.cE
+Items may be multiple paragraphs
+where the first line of subsequent paragraphs
+.I must
+be indented,
+but others need not be:
+.cS
++ Lorem ipsum dolor sit amet, ligula suspendisse nulla pretium,
+  rhoncus tempor fermentum, enim integer ad vestibulum volutpat.
+
+  Nisl rhoncus turpis est, vel elit, congue wisi enim nunc
+  ultricies sit, magna tincidunt.
+
++ Maecenas aliquam maecenas ligula nostra, accumsan taciti.
+Sociis mauris in integer, a dolor netus non dui aliquet,
+sagittis felis sodales, dolor sociis mauris, vel eu libero
+cras.
+
+  Faucibus at. Arcu habitasse elementum est, ipsum purus pede
+porttitor class, ut adipiscing, aliquet sed auctor, imperdiet
+arcu per diam dapibus libero duis.
+.cE
+(The original Markdown specification
+.I requires
+subsequent paragraphs to be indented by
+.I 4
+spaces;
+.B wrap
+allows paragraphs to be indented less
+to match the hang-indent.)
+.P
+When reformatted,
+multiple-line items are
+.I always
+hang-indented.
+.SS Ordered/Numbered Lists
+Ordered lists use numbers followed by a period and a space:
+.cS
+1. Chocolate
+2. Vanilla
+3. Strawberry
+.cE
+When reformatted,
+out-of-sequence numbers will automatically be renumbered
+starting at the first number.
+(This differs from the Markdown specification
+that always starts numbering at 1.
+This difference is necessary
+since one common use
+is to reformat only a selection of text of a document
+from within a text editor
+rather than the entire document.)
+.P
+Aside from using numbers as list item markers,
+everything else about unordered lists
+applies to ordered lists.
+.SS Nested Lists
+The original Markdown specification
+does not support nested lists;
+other Markdowns and
+.BR wrap ,
+however,
+do.
+Nested lists
+.I must
+be indented 4 spaces per nesting level
+and may be any mixture or unordered and ordered lists:
+.cS
+1. First outermost list item.
+    * First nested list item.
+    * Second nested list item.
+2. Second outermost list item.
+.cE
+Nested lists support blank lines
+and multiple-line and multiple-paragraph list items.
+.SS Code Blocks
+Code blocks
+are one or more lines
+indented by at least 4 spaces or 1 tab:
+.cS
+In C, the program to print ``hello, world'' is
+
+    #include <stdio.h>
+
+    int main() {
+      printf( "hello, world\\n" );
+    }
+
+Just how to run this program depends on the system you are using.
+.cE
+Code blocks are passed through unaltered.
+Code blocks nested inside lists
+.I must
+be indented
+.I twice
+\(em 8 spaces or 2 tabs.
+.SS Horizontal Rules
+Horitontal rules
+(lines separating sections of a document)
+are three or more
+hyphens,
+asterisks,
+or
+underscores
+on a line by themselves.
+Any amount of whitespace may also be used.
+Examples include:
+.cS
+---
+***
+___
+* * *
+----------
+.cE
+Since a non-indented \f(CW---\fP
+would be ambiguous with a Setext 2nd-level header,
+the latter
+.I must
+have a non-blank line preceding it.
+.SS Block-Level HTML
+Block-level HTML are lines
+that are bracketed by a beginning and ending tag
+of any HTML element:
+.cS
+<table>
+  <tr>
+    <td>Aha!</td>
+  </tr>
+</table>
+.cE
+HTML blocks are passed through unaltered.
+Unlike the original Markdown specification,
+the beginning and ending HTML tags
+need not be separated from surrounding text
+by blank lines
+and the tags may be indented
+by up to 3 spaces.
+However, the tags must be on lines by themselves.
+.SS Links
+Neither inline nor reference links need any special treatment;
+however,
+reference link label lines such as:
+.cS
+[1]: https://github.com/paul-j-lucas/wrap
+.cE
+are passed through unaltered.
+Link labels may be indented by up to 3 spaces.
+The URL may optionally be followed by title:
+.cS
+[1]: https://github.com/paul-j-lucas/wrap "Wrap"
+.cE
+enclosed in one of double quotes, single quotes, or parentheses.
+The title attribute may instead be put on the following line,
+optionally indented by any number of spaces or tabs:
+.cS
+[md]: https://daringfireball.net/projects/markdown/
+    "Markdown"
+.cE 0
+.SS Blockquotes
+Blockquotes are currently not supported.
 .SH EXIT STATUS
 .PD 0
 .IP 0
@@ -362,5 +616,9 @@ Paul J. Lucas
 .BR wraprc (5)
 .P
 .nf
-.I "UTF-8, a transformation format of ISO 10646,"
+.IR "Markdown" ", John Gruber,"
+.RI < https://daringfireball.net/projects/markdown/ >
+.P
+.IR "UTF-8, a transformation format of ISO 10646" ,
 RFC 3629, Francois Yergeau, November 2003.
+.\" vim:set et sw=2 ts=2:

@@ -1,21 +1,21 @@
 .\"
-.\"	wrapc -- comment reformatter
-.\"	wrapc.1: manual page
+.\"     wrapc -- comment reformatter
+.\"     wrapc.1: manual page
 .\"
-.\"	Copyright (C) 1996-2016  Paul J. Lucas
+.\"     Copyright (C) 1996-2016  Paul J. Lucas
 .\"
-.\"	This program is free software; you can redistribute it and/or modify
-.\"	it under the terms of the GNU General Public License as published by
-.\"	the Free Software Foundation; either version 2 of the Licence, or
-.\"	(at your option) any later version.
-.\" 
-.\"	This program is distributed in the hope that it will be useful,
-.\"	but WITHOUT ANY WARRANTY; without even the implied warranty of
-.\"	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-.\"	GNU General Public License for more details.
-.\" 
-.\"	You should have received a copy of the GNU General Public License
-.\"	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+.\"     This program is free software; you can redistribute it and/or modify
+.\"     it under the terms of the GNU General Public License as published by
+.\"     the Free Software Foundation; either version 2 of the Licence, or
+.\"     (at your option) any later version.
+.\"
+.\"     This program is distributed in the hope that it will be useful,
+.\"     but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\"     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\"     GNU General Public License for more details.
+.\"
+.\"     You should have received a copy of the GNU General Public License
+.\"     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .\"
 .\" ---------------------------------------------------------------------------
 .\" define code-start macro
@@ -24,7 +24,6 @@
 .nf
 .RS 5
 .ft CW
-.ta .5i 1i 1.5i 2i 2.5i 3i 3.5i 4i 4.5i 5i 5.5i
 ..
 .\" define code-end macro
 .de cE
@@ -34,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\f1 1 "April 20, 2016" "PJL TOOLS"
+.TH \f3wrapc\fP 1 "April 26, 2016" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -58,35 +57,35 @@ are the union of:
 .P
 .PD 0
 .RS 5
-.IP "\f(CW#\f1" 5
+.IP "\f(CW#\fP" 5
 AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell
-.IP "\f(CW#=\f1"
+.IP "\f(CW#=\fP"
 Julia
-.IP "\f(CW#|\f1"
+.IP "\f(CW#|\fP"
 Lisp, Racket, Scheme
-.IP "\f(CW/*\f1"
+.IP "\f(CW/*\fP"
 C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift
-.IP "\f(CW/+\f1"
+.IP "\f(CW/+\fP"
 D
-.IP "\f(CW--\f1"
+.IP "\f(CW--\fP"
 Ada, AppleScript, Eiffel, Haskell, Lua
-.IP "\f(CW(:\f1"
+.IP "\f(CW(:\fP"
 XQuery
-.IP "\f(CW(*\f1"
+.IP "\f(CW(*\fP"
 AppleScript, Delphi, ML, Modula-[23], Oberon, OCaml, Pascal
-.IP "\f(CW{-\f1"
+.IP "\f(CW{-\fP"
 Haskell
-.IP "\f(CW{ }\f1"
+.IP "\f(CW{ }\fP"
 Pascal
-.IP "\f(CW!\f1"
+.IP "\f(CW!\fP"
 Fortran
-.IP "\f(CW%\f1"
+.IP "\f(CW%\fP"
 Erlang, PostScript, Prolog, TeX
-.IP "\f(CW;\f1"
+.IP "\f(CW;\fP"
 Assembly, Clojure, Lisp, Scheme
-.IP "\f(CW<#\f1"
+.IP "\f(CW<#\fP"
 PowerShell
-.IP "\f(CW>\f1"
+.IP "\f(CW>\fP"
 Quoted e-mail
 .RE
 .PD
@@ -158,6 +157,17 @@ is
 a comment character,
 then whatever leading whitespace alone, if any,
 is used as the prototype for all lines.
+.SS Markdown Text
+If the
+.B \-u
+option is specified,
+exceptions are made
+in order to pretty-print Markdown text
+within comments
+(see
+.B MARKDOWN FORMATTING
+in
+.BR wrap (1)).
 .SH OPTIONS
 An option argument
 .I f
@@ -274,6 +284,9 @@ characters
 Treats the first line of every paragraph as a title
 and puts it on a line by itself.
 .TP
+.B \-u
+Format Markdown text.
+.TP
 .B \-v
 Prints the version number to
 .I stderr
@@ -336,18 +349,23 @@ wrap the comment from the current line to the end of the paragraph:
 .cS
 !}wrapc -F'%'
 .cE
-The \f(CW%\f1 argument to the
+The \f(CW%\fP argument to the
 .B \-F
 option is expaned by
 .B vi
 to be the file's path name.
+This enables
+.B wrapc
+to use any applicable alias
+from a configuration file, if any.
+.P
 To lessen typing,
 the above can be mapped to a key sequence in
 .BR vi 's
-\f(CW.exrc\f1
+\f(CW.exrc\fP
 file:
 .cS
-map `c !}wrap -F'%'\f3^M\f1
+map `c !}wrap -F'%'\f3^M\fP
 .cE 0
 .SH AUTHOR
 Paul J. Lucas
@@ -357,3 +375,4 @@ Paul J. Lucas
 .BR wrap (1),
 .BR sysexits (3),
 .BR wraprc (5)
+.\" vim:set et sw=2 ts=2:

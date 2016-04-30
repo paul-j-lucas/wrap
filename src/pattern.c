@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      pattern.c
 **
-**      Copyright (C) 2013-2015  Paul J. Lucas
+**      Copyright (C) 2013-2016  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -30,10 +30,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+///////////////////////////////////////////////////////////////////////////////
+
+// local constant definitions
 static size_t const PATTERN_ALLOC_DEFAULT   = 10;
 static size_t const PATTERN_ALLOC_INCREMENT = 10;
 
-extern char const  *me;
+// local variable definitions
 static size_t       n_patterns = 0;     // number of patterns
 static pattern_t   *patterns = NULL;    // global list of patterns
 
@@ -102,7 +105,7 @@ void pattern_parse( char const *line, char const *conf_file,
   line += span;
 
   // part 2: whitespace
-  line += strspn( line, " \t" );
+  SKIP_WS( line );
   if ( !*line )
     PMESSAGE_EXIT( EX_CONFIG, "%s:%u: '=' expected\n", conf_file, line_no );
 
@@ -115,7 +118,7 @@ void pattern_parse( char const *line, char const *conf_file,
   ++line;                               // skip '='
 
   // part 4: whitespace
-  line += strspn( line, " \t" );
+  SKIP_WS( line );
   if ( !*line )
     PMESSAGE_EXIT( EX_CONFIG,
       "%s:%u: alias name expected after '='\n",

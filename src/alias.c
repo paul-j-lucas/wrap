@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      alias.c
 **
-**      Copyright (C) 2013-2015  Paul J. Lucas
+**      Copyright (C) 2013-2016  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -29,6 +29,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+///////////////////////////////////////////////////////////////////////////////
+
+// local constant definitions
 static size_t const ALIAS_ALLOC_DEFAULT         = 10;
 static size_t const ALIAS_ALLOC_INCREMENT       = 10;
 static size_t const ALIAS_ARGV_ALLOC_DEFAULT    = 10;
@@ -37,8 +40,8 @@ static char const   ALIAS_NAME_CHARS[]          = "abcdefghijklmnopqrstuvwxyz"
                                                   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                                   "0123456789_";
 
+// local variable definitions
 static alias_t     *aliases = NULL;     // global list of aliases
-extern char const  *me;
 static size_t       n_aliases = 0;      // number of aliases
 
 ////////// local functions ////////////////////////////////////////////////////
@@ -138,7 +141,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
   line += span;
 
   // part 2: whitespace
-  line += strspn( line, " \t" );
+  SKIP_WS( line );
   if ( !*line )
     PMESSAGE_EXIT( EX_CONFIG, "%s:%u: '=' expected\n", conf_file, line_no );
 
@@ -152,7 +155,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
 
   // parts 4 & 5: whitespace, options
   for ( ;; ) {
-    line += strspn( line, " \t" );
+    SKIP_WS( line );
     if ( !*line ) {
       if ( alias->argc == 1 )
         PMESSAGE_EXIT( EX_CONFIG,

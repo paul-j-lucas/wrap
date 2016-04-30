@@ -19,14 +19,15 @@
 */
 
 // local
+#include "alias.h"
 #include "common.h"
+#include "markdown.h"
 #include "options.h"
+#include "pattern.h"
 #include "util.h"
 
 // standard
 #include <assert.h>
-#include <errno.h>
-#include <getopt.h>
 #include <limits.h>                     /* for PATH_MAX */
 #include <signal.h>                     /* for kill() */
 #include <stdio.h>
@@ -34,6 +35,8 @@
 #include <string.h>                     /* for str...() */
 #include <sys/wait.h>                   /* for wait() */
 #include <unistd.h>                     /* for close(), fork(), ... */
+
+///////////////////////////////////////////////////////////////////////////////
 
 /**
  * Uncomment the line below to debug read_source_write_wrap() (RSWW) by not
@@ -54,53 +57,28 @@
 #define REDIRECT(FD,P) \
   BLOCK( close( FD ); DUP( pipes[P][FD] ); CLOSE_PIPES( P ); )
 
+/**
+ * Contains the current and next lines of input so the next line can be peeked
+ * at to determine how to proceed.
+ */
+struct dual_line {
+  line_buf_t  line[2];
+  char       *curr;                     // pointer to current line
+  char       *next;                     // pointer to next line
+};
+typedef struct dual_line dual_line_t;
+
 // extern variable definitions
 char const         *me;                 // executable name
 
 // local constant definitions
 static size_t const ARG_BUF_SIZE = 25;  // max wrap command-line arg size
-static char const   COMMENT_CHARS_DEFAULT[] =
-  "#"   //    AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell
-  "/*"  //    C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift
-  "+"   // /+ D
-  "-"   // -- Ada, AppleScript
-  "(:"  //    XQuery
-// (*   //    AppleScript, Delphi, ML, Modula-[23], Oberon, OCaml, Pascal
-  "{"   // {- Haskell
-  "}"   //    Pascal
-  "!"   //    Fortran
-  "%"   //    Erlang, PostScript, Prolog, TeX
-  ";"   //    Assembly, Clojure, Lisp, Scheme
-  "<"   // <# PowerShell
-  "="   // #= Julia
-  ">"   //    Quoted e-mail
-  "|";  // |# Lisp, Racket, Scheme
 static char const   WS_CHARS[] = " \t"; // whitespace characters
 
-// option local variable definitions
-static char const  *opt_alias;
-static char const  *opt_conf_file;      // full path to conf file
-static char const  *opt_comment_chars = COMMENT_CHARS_DEFAULT;
-static eol_t        opt_eol = EOL_INPUT;
-static bool         opt_eos_delimit;    // end-of-sentence delimits para's?
-static char const  *opt_fin_name;       // file in name
-static char const  *opt_lead_para_delims;
-static size_t       opt_line_width = LINE_WIDTH_DEFAULT;
-static bool         opt_no_conf;        // do not read conf file
-static char const  *opt_para_delims;    // additional para delimiter chars
-static size_t       opt_tab_spaces = TAB_SPACES_DEFAULT;
-static bool         opt_title_line;     // 1st para line is title?
-
-// other local variable definitions
-static FILE        *fin;                // file in
-static FILE        *fout;               // file out
-static bool         is_crlf;            // true if end-of-line is CR+LF
-static char         line_buf[ LINE_BUF_SIZE ];
-static char         line_buf2[ LINE_BUF_SIZE ];
-static char        *cur_buf = line_buf;
-static char        *next_buf = line_buf2;
-static char         proto_buf[ LINE_BUF_SIZE ]; // characters stripped/prepended
-static size_t       proto_len;
+// local variable definitions
+static dual_line_t  input_buf;
+static line_buf_t   proto_buf;          // characters stripped/prepended
+static size_t       proto_len0;         // length of initial proto_buf
 //
 // Two pipes:
 // + pipes[0][0] -> wrap(1)                   [child 2]
@@ -110,37 +88,28 @@ static size_t       proto_len;
 //
 static int          pipes[2][2];
 
+#define CURR        input_buf.curr      /* current line */
+#define NEXT        input_buf.next      /* next line */
+
 #define TO_WRAP     0                   /* to refer to pipes[0] */
 #define FROM_WRAP   1                   /* to refer to pipes[1] */
 
 // local functions
 static void         fork_exec_wrap( pid_t );
+static void         init( int, char const*[] );
 static bool         is_block_comment( char const* );
 static char const*  is_line_comment( char const* );
-static void         parse_options( int, char const*[] );
 static size_t       proto_span( char const* );
 static size_t       proto_width( char const* );
 static void         read_prototype( void );
 static pid_t        read_source_write_wrap( void );
 static void         read_wrap( void );
+static char const*  skip_n( char const*, size_t );
 static char const*  str_status( int );
 static void         usage( void );
 static void         wait_for_child_processes( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
-
-/**
- * Checks whether \a s is a blank like, that is a line consisting only of an
- * end-of-line.
- *
- * @param s The string to check.
- * @return Returns \c true only if \a s is a blank line.
- */
-static inline bool is_blank_line( char const *s ) {
-  if ( is_crlf && s[0] == '\r' )
-    ++s;
-  return s[0] == '\n' && !s[1];
-}
 
 /**
  * Gets whether \a c is a comment character.
@@ -153,18 +122,6 @@ static inline bool is_comment_char( char c ) {
 }
 
 /**
- * Gets a pointer to the first non-whitespace character in \a s.
- *
- * @param s The string to use.
- * @return Returns a pointer to the first non-whitespace character (that may be
- * a pointer to the terminating NULL if there are no other non-whitespace
- * characters).
- */
-static inline char const* first_nws( char const *s ) {
-  return s + strspn( s, WS_CHARS );
-}
-
-/**
  * Gets whether the first non-whitespace character in \a s is a comment
  * character.
  *
@@ -173,25 +130,23 @@ static inline char const* first_nws( char const *s ) {
  * if it's a comment character; NULL otherwise.
  */
 static inline char const* is_line_comment( char const *s ) {
-  s = first_nws( s );
+  SKIP_WS( s );
   return is_comment_char( s[0] ) ? s : NULL;
 }
 
 /**
- * Swaps the line buffers.
+ * Swaps the two line buffers.
  */
-static inline void swap_bufs() {
-  char *const temp = cur_buf;
-  cur_buf = next_buf, next_buf = temp;
+static inline void swap_line_bufs( void ) {
+  char *const temp = CURR;
+  CURR = NEXT;
+  NEXT = temp;
 }
 
 ////////// main ///////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
-  parse_options( argc, argv );
-  read_prototype();
-  PIPE( pipes[ TO_WRAP ] );
-  PIPE( pipes[ FROM_WRAP ] );
+  init( argc, argv );
   fork_exec_wrap( read_source_write_wrap() );
   read_wrap();
   wait_for_child_processes();
@@ -216,22 +171,23 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   if ( pid != 0 )                       // parent process
     return;
 
-  typedef char arg_buf[ ARG_BUF_SIZE ];
+  typedef char arg_buf_t[ ARG_BUF_SIZE ];
 
-  arg_buf arg_opt_alias;
-  arg_buf arg_opt_conf_file;
-  arg_buf arg_opt_eol;
-  char    arg_opt_fin_name[ PATH_MAX ];
-  arg_buf arg_opt_lead_para_delims;
-  arg_buf arg_opt_line_width;
-  arg_buf arg_opt_para_delims;
-  arg_buf arg_opt_tab_spaces;
+  arg_buf_t arg_opt_alias;
+  arg_buf_t arg_opt_conf_file;
+  arg_buf_t arg_opt_eol;
+  char      arg_opt_fin_name[ PATH_MAX ];
+  arg_buf_t arg_opt_lead_para_delims;
+  arg_buf_t arg_opt_line_width;
+  arg_buf_t arg_opt_para_delims;
+  arg_buf_t arg_opt_tab_spaces;
 
   int argc = 0;
   char *argv[14];                       // must be +1 of greatest arg below
 
 #define ARG_SET(ARG)          argv[ argc++ ] = (ARG)
-#define ARG_DUP(FMT)          ARG_SET( strdup( FMT ) )
+#define ARG_DUP(FMT)          ARG_SET( check_strdup( FMT ) )
+#define ARG_END               argv[ argc ] = NULL
 
 #define ARG_SPRINTF(ARG,FMT) \
   snprintf( arg_##ARG, sizeof arg_##ARG, (FMT), (ARG) )
@@ -248,15 +204,16 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   /*  2 */ IF_ARG_FMT( opt_lead_para_delims, "-b%s"  );
   /*  3 */ IF_ARG_FMT( opt_conf_file       , "-c%s"  );
   /*  4 */ IF_ARG_DUP( opt_no_conf         , "-C"    );
-  /*  5 */    ARG_DUP(                       "-D"    );
-  /*  6 */ IF_ARG_DUP( opt_eos_delimit     , "-e"    );
+  /*  5 */ IF_ARG_DUP( opt_eos_delimit     , "-e"    );
+  /*  6 */    ARG_DUP(                       "-E"    );
   /*  7 */ IF_ARG_FMT( opt_fin_name        , "-F%s"  );
   /*  8 */    ARG_FMT( opt_eol             , "-l%c"  );
   /*  9 */ IF_ARG_FMT( opt_para_delims     , "-p%s"  );
-  /* 10 */    ARG_FMT( opt_tab_spaces      , "-s%zu" );
+  /* 10 */ IF_ARG_DUP( opt_markdown        , "-u"    );
+         else ARG_FMT( opt_tab_spaces      , "-s%zu" );
   /* 11 */ IF_ARG_DUP( opt_title_line      , "-T"    );
   /* 12 */    ARG_FMT( opt_line_width      , "-w%zu" );
-  /* 13 */ argv[ argc ] = NULL;
+  /* 13 */    ARG_END;
 
   //
   // Read from pipes[TO_WRAP] (read_source_write_wrap() in child 1) and write
@@ -279,7 +236,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 static bool is_block_comment( char const *s ) {
   if ( (s = is_line_comment( s )) ) {
     for ( ++s; *s && *s != '\n' && !isalpha( *s ); ++s )
-      ;
+      /* empty */;
     return *s == '\n';
   }
   return false;
@@ -291,21 +248,18 @@ static bool is_block_comment( char const *s ) {
  * case.
  */
 static void read_prototype( void ) {
-  size_t size = LINE_BUF_SIZE;
-  if ( !fgetsz( cur_buf, &size, fin ) ) {
-    FERROR( fin );
+  size_t const size = buf_read( CURR, fin );
+  if ( !size )
     exit( EX_OK );
-  }
 
-  if ( opt_eol == EOL_INPUT && size >= 2 && cur_buf[ size - 2 ] == '\r' ) {
+  if ( opt_eol == EOL_INPUT && size >= 2 && CURR[ size - 2 ] == '\r' ) {
     //
     // Retroactively set opt_eol because we pass it to wrap(1).
     //
     opt_eol = EOL_WINDOWS;
   }
-  is_crlf = opt_eol == EOL_WINDOWS;
 
-  char const *const cc = is_line_comment( cur_buf );
+  char const *const cc = is_line_comment( CURR );
   if ( cc ) {
     static char comment_chars_buf[4];   // 1-3 chars + NULL
     char *s = comment_chars_buf;
@@ -313,8 +267,8 @@ static void read_prototype( void ) {
     // From now on, recognize only the comment character found as a comment
     // delimiter.  This handles cases like:
     //
-    //    // This is a comment
-    //    #define MACRO
+    //      // This is a comment
+    //      #define MACRO
     //
     // where a comment is followed by a line that is not part of the comment
     // even though it starts with the comment delimiter '#'.
@@ -332,9 +286,9 @@ static void read_prototype( void ) {
         // among languages since it uses a single-character delimiter for block
         // comments), this handles the case like:
         //
-        //    {
-        //      This is a block comment.
-        //    }
+        //      {
+        //        This is a block comment.
+        //      }
         //
         if ( is_comment_char( '}' ) )
           *s++ = '}';
@@ -349,27 +303,26 @@ static void read_prototype( void ) {
     opt_comment_chars = comment_chars_buf;
   }
 
-  char const *proto = cur_buf;
-  if ( is_block_comment( cur_buf ) ) {
+  char const *proto = CURR;
+  if ( is_block_comment( CURR ) ) {
     //
     // This handles cases like:
     //
-    //    /*
-    //     * This is a comment.
-    //     */
+    //      /*
+    //       * This is a comment.
+    //       */
     //
     // where the first line is the start of a block comment so:
     // + The first line should not be altered.
     // + The second line becomes the prototype.
     //
-    if ( !fgets( next_buf, LINE_BUF_SIZE, fin ) )
-      FERROR( fin );
-    proto = next_buf;
+    (void)buf_read( NEXT, fin );
+    proto = NEXT;
   }
 
-  proto_len = proto_span( proto );
-  strncpy( proto_buf, proto, proto_len );
-  proto_buf[ proto_len ] = '\0';
+  proto_len0 = proto_span( proto );
+  strncpy( proto_buf, proto, proto_len0 );
+  proto_buf[ proto_len0 ] = '\0';
 
   opt_line_width -= proto_width( proto_buf );
   if ( opt_line_width < LINE_WIDTH_MINIMUM )
@@ -409,13 +362,13 @@ static pid_t read_source_write_wrap( void ) {
   FILE *const fwrap = stdout;
 #endif /* DEBUG_RSWW */
 
-  if ( next_buf[0] ) {
+  if ( NEXT[0] ) {
     //
     // For block comments, write the first line verbatim directly to the
     // output.
     //
-    FPUTS( cur_buf, fout );
-    swap_bufs();
+    FPUTS( CURR, fout );
+    swap_line_bufs();
   }
 
   //
@@ -424,52 +377,53 @@ static pid_t read_source_write_wrap( void ) {
   // all subsequent lines, i.e., do NOT ever tell wrap(1) to pass text through
   // verbatim (below).
   //
-  bool const proto_is_comment = is_line_comment( cur_buf );
+  bool const proto_is_comment = is_line_comment( CURR );
 
-  while ( cur_buf[0] ) {
+  while ( CURR[0] ) {
     //
     // In order to know when a comment ends, we have to peek at the next line.
     //
-    if ( !fgets( next_buf, LINE_BUF_SIZE, fin ) ) {
-      FERROR( fin );
-      next_buf[0] = '\0';
-    }
+    (void)buf_read( NEXT, fin );
 
-    if ( proto_is_comment && !is_line_comment( cur_buf ) ) {
+    if ( proto_is_comment && !is_line_comment( CURR ) ) {
       //
       // This handles cases like:
       //
-      //    proto_buf ->  # This is a comment.
-      //    cur_buf   ->  not_a_comment();
+      //      proto_buf ->  # This is a comment.
+      //      cur_buf   ->  not_a_comment();
       //
       goto verbatim;
     }
 
-    if ( !(proto_is_comment && is_line_comment( next_buf )) &&
-         is_block_comment( cur_buf ) ) {
+    if ( !(proto_is_comment && is_line_comment( NEXT )) &&
+         is_block_comment( CURR ) ) {
       //
       // This handles cases like:
       //
-      //                  /*
-      //    proto_buf ->  This is a comment.
-      //    cur_buf   ->  */
+      //                    /*
+      //      proto_buf ->  This is a comment.
+      //      cur_buf   ->  */
       //
       // or:
-      //                  /*
-      //                   * This is a comment.
-      //    cur_buf   ->   */
-      //    next_buf  ->  [empty]
+      //                    /*
+      //                     * This is a comment.
+      //      cur_buf   ->   */
+      //      next_buf  ->  [empty]
       //
       goto verbatim;
     }
 
-    proto_len = proto_span( cur_buf );
-    if ( !cur_buf[ proto_len ] )        // no non-leading characters
-      FPUTS( (char const*)"\r\n" + !is_crlf, fwrap );
-    else
-      FPUTS( cur_buf + proto_len, fwrap );
+    //
+    // When wrapping Markdown, we can't strip all whitespace after the comment
+    // characters because Markdown relies on indentation; hence we strip only
+    // the length of the initial prototype -- but only if its less.
+    //
+    size_t proto_len = proto_span( CURR );
+    if ( opt_markdown && proto_len > proto_len0 )
+      proto_len = proto_len0;
 
-    swap_bufs();
+    FPUTS( skip_n( CURR, proto_len ), fwrap );
+    swap_line_bufs();
   } // while
   exit( EX_OK );
 
@@ -478,8 +432,7 @@ verbatim:
   // We've reached the end of the comment: signal wrap(1) that we're now
   // passing text through verbatim and do so.
   //
-  FPRINTF( fwrap, "%c%c%s", ASCII_DLE, ASCII_ETB, cur_buf );
-  FPUTS( next_buf, fwrap );
+  FPRINTF( fwrap, "%c%c%s%s", ASCII_DLE, ASCII_ETB, CURR, NEXT );
   fcopy( fin, fwrap );
   exit( EX_OK );
 }
@@ -509,21 +462,23 @@ static void read_wrap( void ) {
   // we read a comment that's empty except for the prototype, we won't emit
   // trailing whitespace. For example, given:
   //
-  //    # foo
-  //    #
-  //    # bar
+  //      # foo
+  //      #
+  //      # bar
   //
   // the prototype initially is "# " (because that's what's before "foo").  If
   // we didn't split off trailing non-whitespace, then when we wrapped the
   // comment above, the second line would become "# " containing a trailing
   // whitespace.
   //
-  size_t const tnws_len = proto_len - strrspn( proto_buf, WS_CHARS );
-  char proto_tws[ LINE_BUF_SIZE ];      // prototype trailing whitespace, if any
+  size_t const tnws_len = proto_len0 - strrspn( proto_buf, WS_CHARS );
+  line_buf_t proto_tws;                 // prototype trailing whitespace, if any
   strcpy( proto_tws, proto_buf + tnws_len );
   proto_buf[ tnws_len ] = '\0';
 
-  while ( fgets( line_buf, LINE_BUF_SIZE, fwrap ) ) {
+  line_buf_t line_buf;
+
+  while ( fgets( line_buf, sizeof line_buf, fwrap ) ) {
     char const *line = line_buf;
     if ( line[0] == ASCII_DLE ) {
       switch ( line[1] ) {
@@ -557,57 +512,22 @@ break_loop:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static void parse_options( int argc, char const *argv[] ) {
-  char const *opt_fin = NULL;           // file in name
-  char const *opt_fout = NULL;          // file out name
-  char const  opts[] = "a:b:c:CD:ef:F:l:o:p:s:Tvw:";
-  bool        print_version = false;
+/**
+ * Parses command-line options, sets-up I/O, sets-up the input buffers, reads
+ * the line prototype, and sets-up the pipes.
+ *
+ * @param argc The number of command-line arguments from main().
+ * @param argv The command-line arguments from main().
+ */
+static void init( int argc, char const *argv[] ) {
+  atexit( clean_up );
+  init_options( argc, argv, usage );
 
-  me = base_name( argv[0] );
-
-  opterr = 1;
-  for ( int opt; (opt = getopt( argc, (char**)argv, opts )) != EOF; ) {
-    SET_OPTION( opt );
-    switch ( opt ) {
-      case 'a': opt_alias             = optarg;               break;
-      case 'b': opt_lead_para_delims  = optarg;               break;
-      case 'c': opt_conf_file         = optarg;               break;
-      case 'C': opt_no_conf           = true;                 break;
-      case 'D': opt_comment_chars     = optarg;               break;
-      case 'e': opt_eos_delimit       = true;                 break;
-      case 'f': opt_fin               = optarg;         // no break;
-      case 'F': opt_fin_name          = base_name( optarg );  break;
-      case 'l': opt_eol               = parse_eol( optarg );  break;
-      case 'o': opt_fout              = optarg;               break;
-      case 'p': opt_para_delims       = optarg;               break;
-      case 's': opt_tab_spaces        = check_atou( optarg ); break;
-      case 'T': opt_title_line        = true;                 break;
-      case 'v': print_version         = true;                 break;
-      case 'w': opt_line_width        = check_atou( optarg ); break;
-      default : usage();
-    } // switch
-  } // for
-  argc -= optind, argv += optind;
-  if ( argc )
-    usage();
-
-  check_mutually_exclusive( "f", "F" );
-  check_mutually_exclusive( "v", "acCefFlopsTw" );
-
-  if ( print_version ) {
-    PRINT_ERR( "%s\n", PACKAGE_STRING );
-    exit( EX_OK );
-  }
-
-  if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
-    PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", opt_fin, ERROR_STR );
-  if ( opt_fout && !(fout = fopen( opt_fout, "w" )) )
-    PMESSAGE_EXIT( EX_CANTCREAT, "\"%s\": %s\n", opt_fout, ERROR_STR );
-
-  if ( !fin )
-    fin = stdin;
-  if ( !fout )
-    fout = stdout;
+  CURR = input_buf.line[0];
+  NEXT = input_buf.line[1];
+  read_prototype();
+  PIPE( pipes[ TO_WRAP ] );
+  PIPE( pipes[ FROM_WRAP ] );
 }
 
 /**
@@ -651,6 +571,19 @@ static size_t proto_width( char const *prototype ) {
   return width;
 }
 
+/**
+ * Skips \a n characters or to an end-of-line character, whichever is first.
+ *
+ * @param s The null-terminated string to use.
+ * @param n The maximum number of characters to skip.
+ * @return Returns either \a s+n or a pointer to and end-of-line character.
+ */
+static char const* skip_n( char const *s, size_t n ) {
+  for ( ; *s && !is_eol( *s ) && n > 0; ++s, --n )
+    /* empty */;
+  return s;
+}
+
 static char const* str_status( int status ) {
   switch ( status ) {
     case EX_OK        : return "success";
@@ -683,6 +616,7 @@ static void usage( void ) {
 "  -p chars   Specify additional paragraph delimiter characters.\n"
 "  -s number  Specify tab-spaces equivalence [default: %d].\n"
 "  -T         Treat paragraph first line as title.\n"
+"  -u         Format Markdown.\n"
 "  -w number  Specify line width [default: %d]\n"
 "  -v         Print version an exit.\n"
     , me, me, CONF_FILE_NAME, COMMENT_CHARS_DEFAULT, TAB_SPACES_DEFAULT,

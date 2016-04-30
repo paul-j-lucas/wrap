@@ -24,6 +24,10 @@
 // local
 #include "config.h"
 
+// standard
+#include <stddef.h>                     /* for size_t */
+#include <stdio.h>                      /* for FILE */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 #define CONF_FILE_NAME            "." PACKAGE "rc"
@@ -53,6 +57,36 @@
  * of text to be wrapped.  Any additional text is passed through verbatim.
  */
 #define ASCII_ETB                 '\x03'
+
+/**
+ * Uncomment the line below to debug Markdown handling by printing state
+ * information to stderr.
+ */
+//#define DEBUG_MARKDOWN
+
+#ifdef DEBUG_MARKDOWN
+# define MD_DEBUG(...)      PRINT_ERR( __VA_ARGS__ )
+#else
+# define MD_DEBUG(...)      (void)0     /* need something to eat the ';' */
+#endif /* DEBUG_MARKDOWN */
+
+typedef char line_buf_t[ LINE_BUF_SIZE ];
+
+////////// extern functions ///////////////////////////////////////////////////
+
+/**
+ * Cleans up all data and closes files.
+ */
+void clean_up( void );
+
+/**
+ * Reads a newline-terminated line from \a ffrom.
+ *
+ * @param line The line buffer to read into.
+ * @param ffrom The \c FILE to read from.
+ * @return Returns the number of characters read.
+ */
+size_t buf_read( line_buf_t line, FILE *ffrom );
 
 ///////////////////////////////////////////////////////////////////////////////
 

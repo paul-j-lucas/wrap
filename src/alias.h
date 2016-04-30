@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      alias.h
 **
-**      Copyright (C) 2013-2015  Paul J. Lucas
+**      Copyright (C) 2013-2016  Paul J. Lucas
 **
 **      This program is free software; you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ struct alias_s {
   char const** argv;                    // argv[0] = alias name
 };
 typedef struct alias_s alias_t;
+
+////////// extern functions ///////////////////////////////////////////////////
 
 /**
  * Cleans-up all alias data.
