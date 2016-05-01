@@ -1,3 +1,127 @@
+2016-05-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.1, markdown.c, wrap.c, test/Makefile.am, md-code-fence-01a.md,
+     md-code-fence-01b.md, md-code-fence-01c.md, md-code-fence-02a.md,
+     md-code-fence-02b.md, md-code-fence-02c.md, md-code-fence-03a.md,
+     md-code-fence-03b.md, wrap--Markdown-fence-01a.txt,
+     wrap--Markdown-fence-01b.txt, wrap--Markdown-fence-01c.txt,
+     wrap--Markdown-fence-02a.txt, wrap--Markdown-fence-02b.txt,
+     wrap--Markdown-fence-02c.txt, wrap--Markdown-fence-03a.txt,
+     wrap--Markdown-fence-03b.txt, wrap--Markdown-fence-01a.test,
+     wrap--Markdown-fence-01b.test, wrap--Markdown-fence-01c.test,
+     wrap--Markdown-fence-02a.test, wrap--Markdown-fence-02b.test,
+     wrap--Markdown-fence-02c.test, wrap--Markdown-fence-03a.test,
+     wrap--Markdown-fence-03b.test: Added Markdown code fence support.
+   * markdown.c: s/unsigned/size_t/
+
+2016-04-30  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, wrap.1, options.c, options.h, util.c, util.h, wrap.c, wrapc.c,
+     test/Makefile.am, wrap-L.wraprc, wrap-L-01.txt, wrap-L-01.test: Added wrap
+     -L option.
+   * alias.c, read_conf.c, test/Makefile.am, alias-unclosed_quote.wraprc,
+     wrap-alias-unclosed_quote.test: Wraprc files now support quoted arguments
+     with spaces.
+   * markdown.c, util.c, util.h, wrap.c: Wrap prototype code now taking
+     advantage of reading an initial line.
+   * NEWS, configure.ac, wrap.1, wrapc.1, wraprc.5, src/Makefile.am, alias.c,
+     alias.h, common.c, common.h, markdown.c, markdown.h, options.c, options.h,
+     pattern.c, pattern.h, read_conf.c, read_conf.h, util.c, util.h, wrap.c,
+     wrapc.c, test/Makefile.am, md-Setext-01.md, md-Setext-02.md,
+     md-Setext-03.md, md-Setext-04.md, md-atx-01.md, md-atx-02.md,
+     md-atx-03.md, md-code-01.md, md-code-02.md, md-code-02c.md,
+     md-code-03c.md, md-hr-01a.md, md-hr-01b.md, md-hr-01c.md, md-hr-02a.md,
+     md-hr-02b.md, md-hr-02c.md, md-hr-03a.md, md-hr-03b.md, md-hr-03c.md,
+     md-html-01.md, md-html-01a.md, md-html-02.md, md-html-02a.md,
+     md-html-03.md, md-html-03a.md, md-html-04.md, md-html-04a.md,
+     md-html-05.md, md-link-01a.md, md-link-01b.md, md-link-01c.md,
+     md-link-01d.md, md-link-02a.md, md-link-02b.md, md-link-02c.md,
+     md-link-02d.md, md-link-03a.md, md-link-03b.md, md-link-03c.md,
+     md-link-03d.md, md-link-04a.md, md-link-04b.md, md-link-04c.md,
+     md-link-04d.md, md-link-05a.md, md-link-05b.md, md-link-05c.md,
+     md-link-05d.md, md-nested-01s.md, md-nested-02s.md, md-ol-01s.md,
+     md-ol-02s.md, md-ol-03s.md, md-ol-04s.md, md-ol-11s.md, md-ul-01.c,
+     md-ul-01sa.md, md-ul-01sb.md, md-ul-01sc.md, md-ul-02.c, md-ul-02sa.md,
+     md-ul-02sb.md, md-ul-02sc.md, md-ul-03sa.md, md-ul-03sb.md, md-ul-03sc.md,
+     md-ul-04sa.md, wrap--Markdown-Setext-01.txt, wrap--Markdown-Setext-02.txt,
+     wrap--Markdown-Setext-03.txt, wrap--Markdown-Setext-04.txt,
+     wrap--Markdown-atx-01.txt, wrap--Markdown-atx-02.txt,
+     wrap--Markdown-atx-03.txt, wrap--Markdown-code-01.txt,
+     wrap--Markdown-code-02.txt, wrap--Markdown-hr-01a.txt,
+     wrap--Markdown-hr-01b.txt, wrap--Markdown-hr-01c.txt,
+     wrap--Markdown-hr-02a.txt, wrap--Markdown-hr-02b.txt,
+     wrap--Markdown-hr-02c.txt, wrap--Markdown-hr-03a.txt,
+     wrap--Markdown-hr-03b.txt, wrap--Markdown-hr-03c.txt,
+     wrap--Markdown-html-01.txt, wrap--Markdown-html-01a.txt,
+     wrap--Markdown-html-02.txt, wrap--Markdown-html-02a.txt,
+     wrap--Markdown-html-03.txt, wrap--Markdown-html-03a.txt,
+     wrap--Markdown-html-04.txt, wrap--Markdown-html-04a.txt,
+     wrap--Markdown-html-05.txt, wrap--Markdown-link-01a.txt,
+     wrap--Markdown-link-01b.txt, wrap--Markdown-link-01c.txt,
+     wrap--Markdown-link-01d.txt, wrap--Markdown-link-02a.txt,
+     wrap--Markdown-link-02b.txt, wrap--Markdown-link-02c.txt,
+     wrap--Markdown-link-02d.txt, wrap--Markdown-link-03a.txt,
+     wrap--Markdown-link-03b.txt, wrap--Markdown-link-03c.txt,
+     wrap--Markdown-link-03d.txt, wrap--Markdown-link-04a.txt,
+     wrap--Markdown-link-04b.txt, wrap--Markdown-link-04c.txt,
+     wrap--Markdown-link-04d.txt, wrap--Markdown-link-05a.txt,
+     wrap--Markdown-link-05b.txt, wrap--Markdown-link-05c.txt,
+     wrap--Markdown-link-05d.txt, wrap--Markdown-nested-01s.txt,
+     wrap--Markdown-nested-02s.txt, wrap--Markdown-ol-01s.txt,
+     wrap--Markdown-ol-02s.txt, wrap--Markdown-ol-03s.txt,
+     wrap--Markdown-ol-04s.txt, wrap--Markdown-ol-11s.txt,
+     wrap--Markdown-ul-01sa.txt, wrap--Markdown-ul-01sb.txt,
+     wrap--Markdown-ul-01sc.txt, wrap--Markdown-ul-02sa.txt,
+     wrap--Markdown-ul-02sb.txt, wrap--Markdown-ul-02sc.txt,
+     wrap--Markdown-ul-03sa.txt, wrap--Markdown-ul-03sb.txt,
+     wrap--Markdown-ul-03sc.txt, wrap--Markdown-ul-04sa.txt,
+     wrapc--Markdown-code-02c.txt, wrapc--Markdown-code-03c.txt,
+     wrapc--Markdown-ul-01.txt, wrapc--Markdown-ul-02.txt,
+     wrap--Markdown-Setext-01.test, wrap--Markdown-Setext-02.test,
+     wrap--Markdown-Setext-03.test, wrap--Markdown-Setext-04.test,
+     wrap--Markdown-atx-01.test, wrap--Markdown-atx-02.test,
+     wrap--Markdown-atx-03.test, wrap--Markdown-code-01.test,
+     wrap--Markdown-code-02.test, wrap--Markdown-hr-01a.test,
+     wrap--Markdown-hr-01b.test, wrap--Markdown-hr-01c.test,
+     wrap--Markdown-hr-02a.test, wrap--Markdown-hr-02b.test,
+     wrap--Markdown-hr-02c.test, wrap--Markdown-hr-03a.test,
+     wrap--Markdown-hr-03b.test, wrap--Markdown-hr-03c.test,
+     wrap--Markdown-html-01.test, wrap--Markdown-html-01a.test,
+     wrap--Markdown-html-02.test, wrap--Markdown-html-02a.test,
+     wrap--Markdown-html-03.test, wrap--Markdown-html-03a.test,
+     wrap--Markdown-html-04.test, wrap--Markdown-html-04a.test,
+     wrap--Markdown-html-05.test, wrap--Markdown-link-01a.test,
+     wrap--Markdown-link-01b.test, wrap--Markdown-link-01c.test,
+     wrap--Markdown-link-01d.test, wrap--Markdown-link-02a.test,
+     wrap--Markdown-link-02b.test, wrap--Markdown-link-02c.test,
+     wrap--Markdown-link-02d.test, wrap--Markdown-link-03a.test,
+     wrap--Markdown-link-03b.test, wrap--Markdown-link-03c.test,
+     wrap--Markdown-link-03d.test, wrap--Markdown-link-04a.test,
+     wrap--Markdown-link-04b.test, wrap--Markdown-link-04c.test,
+     wrap--Markdown-link-04d.test, wrap--Markdown-link-05a.test,
+     wrap--Markdown-link-05b.test, wrap--Markdown-link-05c.test,
+     wrap--Markdown-link-05d.test, wrap--Markdown-nested-01s.test,
+     wrap--Markdown-nested-02s.test, wrap--Markdown-ol-01s.test,
+     wrap--Markdown-ol-02s.test, wrap--Markdown-ol-03s.test,
+     wrap--Markdown-ol-04s.test, wrap--Markdown-ol-11s.test,
+     wrap--Markdown-ul-01sa.test, wrap--Markdown-ul-01sb.test,
+     wrap--Markdown-ul-01sc.test, wrap--Markdown-ul-02sa.test,
+     wrap--Markdown-ul-02sb.test, wrap--Markdown-ul-02sc.test,
+     wrap--Markdown-ul-03sa.test, wrap--Markdown-ul-03sb.test,
+     wrap--Markdown-ul-03sc.test, wrap--Markdown-ul-04sa.test,
+     wrapc--Markdown-code-02c.test, wrapc--Markdown-code-03c.test,
+     wrapc--Markdown-ul-01.test, wrapc--Markdown-ul-02.test: Added Markdown
+     support.
+
+2016-04-20  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.1, wrapc.1, options.c, util.c, util.h, wrap.c: Added more variants
+     for -l option.
+
+2016-04-11  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Now using enum for indentation.
+
 2016-04-09  Paul J. Lucas <paul@lucasmail.org>
 
    * wrapc.1, wrapc.c: Add mention of Scala.
