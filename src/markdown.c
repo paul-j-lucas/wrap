@@ -47,17 +47,17 @@
 typedef ssize_t stack_pos_t;
 
 // local constant definitions
-static size_t const   HTML_ELEMENT_MAX   = 10;  // "blockquote"
-static unsigned const MD_ATX_CHAR_MAX    =  6;  // max num of # in atx header
-static unsigned const MD_CODE_INDENT_MIN =  4;  // min indent for code
-static unsigned const MD_HR_CHAR_MIN     =  3;  // min num of ***, ---, or ___
-static unsigned const MD_LINK_INDENT_MAX =  3;  // max indent for [id]: URI
-static unsigned const MD_LIST_INDENT_MAX =  4;  // max indent for all lists
-static unsigned const MD_OL_INDENT_MIN   =  3;  // ordered list min indent
-static unsigned const MD_UL_INDENT_MIN   =  2;  // unordered list min indent
+static size_t const HTML_ELEMENT_MAX   = 10;  // "blockquote"
+static size_t const MD_ATX_CHAR_MAX    =  6;  // max num of # in atx header
+static size_t const MD_CODE_INDENT_MIN =  4;  // min indent for code
+static size_t const MD_HR_CHAR_MIN     =  3;  // min num of ***, ---, or ___
+static size_t const MD_LINK_INDENT_MAX =  3;  // max indent for [id]: URI
+static size_t const MD_LIST_INDENT_MAX =  4;  // max indent for all lists
+static size_t const MD_OL_INDENT_MIN   =  3;  // ordered list min indent
+static size_t const MD_UL_INDENT_MIN   =  2;  // unordered list min indent
 
-static size_t const   STATE_ALLOC_DEFAULT   = 5;
-static size_t const   STATE_ALLOC_INCREMENT = 5;
+static size_t const STATE_ALLOC_DEFAULT   = 5;
+static size_t const STATE_ALLOC_INCREMENT = 5;
 
 // local variable definitions
 static unsigned     html_depth;         // how many nested outer elements
