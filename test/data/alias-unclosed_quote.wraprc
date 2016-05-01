@@ -1,0 +1,5 @@
+[ALIASES]
+txt = -L'  #
+
+[PATTERNS]
+*.txt = txt

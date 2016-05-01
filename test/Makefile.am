@@ -28,6 +28,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap-alias-dup.test \
 	tests/wrap-alias-no_equal.test \
 	tests/wrap-alias-options_exp.test \
+	tests/wrap-alias-unclosed_quote.test \
 	tests/wrap-alias-unexp_char.test \
 	tests/wrap-conf-not_found.test \
 	tests/wrap-conf-no_section.test \

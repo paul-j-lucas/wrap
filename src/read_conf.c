@@ -78,17 +78,37 @@ static void path_append( char *path, char const *component ) {
 }
 
 /**
- * Strips a \c # comment from a line.
+ * Strips a \c # comment from a line minding quotes and backslashes.
  *
- * @param line The line to strip the comment from.
- * @return Returns \a line for convenience.
+ * @param s The null-terminated line to strip the comment from.
+ * @return Returns \a s on success or NULL for an unclosed quote.
  */
-static char* strip_comment( char *line ) {
-  assert( line );
-  char *const comment = strchr( line, '#' );
-  if ( comment )
-    *comment = '\0';
-  return line;
+static char* strip_comment( char *s ) {
+  assert( s );
+  char *const s0 = s;
+  char quote = '\0';
+
+  for ( ; *s; ++s ) {
+    switch ( *s ) {
+      case '#':
+        if ( quote )
+          break;
+        *s = '\0';
+        return s0;
+      case '"':
+      case '\'':
+        if ( !quote )
+          quote = *s;
+        else if ( *s == quote )
+          quote = '\0';
+        break;
+      case '\\':
+        ++s;
+        break;
+    } // switch
+  } // for
+
+  return quote ? NULL : s0;
 }
 
 /**
@@ -136,8 +156,14 @@ char const* read_conf( char const *conf_file ) {
   char line_buf[ LINE_BUF_SIZE ];
   unsigned line_no = 0;
   while ( fgets( line_buf, sizeof line_buf, fconf ) ) {
-    char const *const line = trim_ws( strip_comment( line_buf ) );
     ++line_no;
+    char *line = strip_comment( line_buf );
+    if ( !line )
+      PMESSAGE_EXIT( EX_CONFIG,
+        "%s:%u: \"%s\": unclosed quote\n",
+        conf_file, line_no, trim_ws( line_buf )
+      );
+    line = trim_ws( line );
     if ( !*line )
       continue;
 

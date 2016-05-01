@@ -104,6 +104,53 @@ static void alias_free( alias_t *alias ) {
   free( alias->argv );
 }
 
+/**
+ * Duplicates the next command-line argument stripping quotes and backslashes
+ * similar to what a shell would do.
+ *
+ * @param ps A pointer to the argument; updated to just past the argument.
+ * @return Returns a pointer to the next argument.
+ */
+static char* arg_dup( char const **ps ) {
+  assert( ps );
+
+  char const *s = *ps;
+  char *const arg_buf = MALLOC( char, strlen( s ) + 1 );
+  char *arg = arg_buf;
+  char quote = '\0';
+
+  for ( ; *s; ++s ) {
+    switch ( *s ) {
+      case ' ':
+      case '\t':
+        if ( !quote )
+          goto done;
+        break;
+      case '"':
+      case '\'':
+        if ( quote ) {
+          if ( *s == quote ) {
+            quote = '\0';
+            continue;
+          }
+        } else {
+          quote = *s;
+          continue;
+        }
+        break;
+      case '\\':
+        ++s;
+        break;
+    } // switch
+    *arg++ = *s;
+  } // for
+
+done:
+  *arg = '\0';
+  *ps = s;
+  return arg_buf;
+}
+
 ////////// extern functions ///////////////////////////////////////////////////
 
 void alias_cleanup( void ) {
@@ -168,9 +215,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
       n_argv_alloc += ALIAS_ARGV_ALLOC_INCREMENT;
       REALLOC( alias->argv, char const*, n_argv_alloc );
     }
-    span = strcspn( line, " \t" );
-    alias->argv[ alias->argc++ ] = strndup( line, span );
-    line += span;
+    alias->argv[ alias->argc++ ] = arg_dup( &line );
   } // for
 
   if ( n_argv_alloc > alias->argc + 1 )
