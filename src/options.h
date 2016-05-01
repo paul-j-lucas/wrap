@@ -71,8 +71,9 @@ extern size_t       opt_indt_spaces;    // indent spaces
 extern size_t       opt_indt_tabs;      // indent tabs
 extern bool         opt_lead_dot_ignore;// ignore lines starting with '.'?
 extern char const  *opt_lead_para_delims;
-extern size_t       opt_lead_spaces;    // leading spaces
-extern size_t       opt_lead_tabs;      // leading tabs
+extern size_t       opt_lead_spaces;
+extern char const  *opt_lead_string;
+extern size_t       opt_lead_tabs;
 extern bool         opt_lead_ws_delimit;// leading whitespace delimit para's?
 extern size_t       opt_line_width;
 extern bool         opt_markdown;

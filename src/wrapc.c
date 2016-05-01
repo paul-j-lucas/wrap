@@ -458,8 +458,8 @@ static void read_wrap( void ) {
     );
 
   //
-  // Split off the trailing non-whitespace (tnws) from the prototype so that if
-  // we read a comment that's empty except for the prototype, we won't emit
+  // Split off the trailing whitespace (tws) from the prototype so that if we
+  // read a comment line that's empty except for the prototype, we won't emit
   // trailing whitespace. For example, given:
   //
   //      # foo
@@ -467,14 +467,11 @@ static void read_wrap( void ) {
   //      # bar
   //
   // the prototype initially is "# " (because that's what's before "foo").  If
-  // we didn't split off trailing non-whitespace, then when we wrapped the
-  // comment above, the second line would become "# " containing a trailing
-  // whitespace.
+  // we didn't split off trailing whitespace, then when we wrapped the comment
+  // above, the second line would become "# " containing a trailing whitespace.
   //
-  size_t const tnws_len = proto_len0 - strrspn( proto_buf, WS_CHARS );
   line_buf_t proto_tws;                 // prototype trailing whitespace, if any
-  strcpy( proto_tws, proto_buf + tnws_len );
-  proto_buf[ tnws_len ] = '\0';
+  split_tws( proto_buf, proto_len0, proto_tws );
 
   line_buf_t line_buf;
 

@@ -8,6 +8,10 @@ See the end of the file for license conditions.
 ** Added Markdown support.
 Wrap and wrapc now have a -u option that enables wrapping of Markdown text.
 
+** Added leading string option.
+Wrap now has a -L option that allows a leading string to be prepended to every
+line.
+
 * Changes in Wrap 3.3
 
 ** Added whitespace prototype option.

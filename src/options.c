@@ -60,6 +60,7 @@ size_t              opt_indt_tabs;
 bool                opt_lead_dot_ignore;
 char const         *opt_lead_para_delims;
 size_t              opt_lead_spaces;
+char const         *opt_lead_string;
 size_t              opt_lead_tabs;
 bool                opt_lead_ws_delimit;
 size_t              opt_line_width = LINE_WIDTH_DEFAULT;
@@ -214,6 +215,7 @@ static void parse_options( int argc, char const *argv[], char const *opts,
       case 'i': opt_indt_tabs         = check_atou( optarg ); break;
       case 'I': opt_indt_spaces       = check_atou( optarg ); break;
       case 'l': opt_eol               = parse_eol( optarg );  break;
+      case 'L': opt_lead_string       = optarg;               break;
       case 'm': opt_mirror_tabs       = check_atou( optarg ); break;
       case 'M': opt_mirror_spaces     = check_atou( optarg ); break;
       case 'n': opt_newlines_delimit  = SIZE_T_MAX;           break;
@@ -235,7 +237,7 @@ static void parse_options( int argc, char const *argv[], char const *opts,
 
   check_mutually_exclusive( "f", "F" );
   check_mutually_exclusive( "n", "N" );
-  check_mutually_exclusive( "Pu", "dhHiImMStW" );
+  check_mutually_exclusive( "Pu", "dhHiILmMStW" );
   check_mutually_exclusive( "u", "sT" );
   check_mutually_exclusive( "v", "abcCdeEfFhHiIlmMnNopsStTuwW" );
 
@@ -250,7 +252,7 @@ static void parse_options( int argc, char const *argv[], char const *opts,
 #define COMMON_OPTS         "a:b:c:Cef:F:l:o:p:s:Tuvw:"
 
 void init_options( int argc, char const *argv[], void (*usage)(void) ) {
-  static char const wrap_opts [] = COMMON_OPTS "dEh:H:i:I:m:M:nNPS:t:W";
+  static char const wrap_opts [] = COMMON_OPTS "dEh:H:i:I:L:m:M:nNPS:t:W";
   static char const wrapc_opts[] = COMMON_OPTS "D:";
 
   assert( usage );

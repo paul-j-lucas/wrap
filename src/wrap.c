@@ -81,6 +81,7 @@ static line_buf_t   out_buf;
 static size_t       out_len;            // number of characters in buffer
 static size_t       out_width;          // actual width of buffer
 static line_buf_t   proto_buf;
+static line_buf_t   proto_tws;          // prototype trailing whitespace, if any
 static size_t       proto_len;
 static size_t       proto_width;
 
@@ -484,6 +485,7 @@ delimit_paragraph:
     else {
       if ( consec_newlines == 2 ||
           (consec_newlines > 2 && opt_newlines_delimit == 1) ) {
+        print_lead_chars();
         print_eol();
       }
       indent = opt_markdown ? INDENT_NONE : INDENT_LINE;
@@ -555,18 +557,37 @@ static void init( int argc, char const *argv[] ) {
   if ( !bytes_read )
     exit( EX_OK );
 
-  if ( opt_prototype ) {
-    //
-    // Copy the prototype and calculate its width.
-    //
+  //
+  // Copy the prototype and calculate its width.
+  //
+  if ( opt_lead_string || opt_prototype ) {
     size_t pos = 0;
-    for ( char const *s = in_buf; *s && is_space( *s ); ++s, ++pos ) {
+    for ( char const *s = opt_lead_string ? opt_lead_string : in_buf; *s;
+          ++s, ++pos ) {
+      if ( opt_prototype && !is_space( *s ) )
+        break;
       if ( proto_len == sizeof proto_buf - 1 )
         break;
       proto_buf[ proto_len++ ] = *s;
       proto_width += *s == '\t' ? (opt_tab_spaces - pos % opt_tab_spaces) : 1;
     } // for
     line_width = opt_line_width - proto_width;
+    if ( opt_lead_string ) {
+      //
+      // Split off the trailing whitespace (tws) from the prototype so that if
+      // we read a line that's empty, we won't emit trailing whitespace when we
+      // prepend the prototype. For example, given:
+      //
+      //      # foo
+      //      #
+      //      # bar
+      //
+      // and a prototype of "# ", if we didn't split off trailing whitespace,
+      // then when we wrapped the text above, the second line would become "# "
+      // containing a trailing whitespace.
+      //
+      split_tws( proto_buf, proto_len, proto_tws );
+    }
   }
 
   if ( opt_eol == EOL_INPUT ) {
@@ -666,15 +687,13 @@ static bool markdown_adjust( line_buf_t line ) {
 }
 
 static void print_lead_chars( void ) {
-  if ( out_len ) {
-    if ( proto_buf[0] ) {
-      FPUTS( proto_buf, fout );
-    } else {
-      for ( size_t i = 0; i < opt_lead_tabs; ++i )
-        FPUTC( '\t', fout );
-      for ( size_t i = 0; i < opt_lead_spaces; ++i )
-        FPUTC( ' ', fout );
-    }
+  if ( proto_buf[0] ) {
+    FPRINTF( fout, "%s%s", proto_buf, out_len ? proto_tws : "" );
+  } else if ( out_len ) {
+    for ( size_t i = 0; i < opt_lead_tabs; ++i )
+      FPUTC( '\t', fout );
+    for ( size_t i = 0; i < opt_lead_spaces; ++i )
+      FPUTC( ' ', fout );
   }
 }
 
@@ -733,6 +752,7 @@ static void usage( void ) {
 "  -i number  Indent tabs for first line of each paragraph.\n"
 "  -I number  Indent spaces for first line of each paragraph.\n"
 "  -l char    Specify end-of-lines as input/Unix/Windows [default: input].\n"
+"  -L string  Specify string to prepend to every line.\n"
 "  -m number  Mirror tabs.\n"
 "  -M number  Mirror spaces.\n"
 "  -n         Does not treat newlines as paragraph delimeters.\n"

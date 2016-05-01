@@ -1,0 +1,11 @@
+[ALIASES]
+##
+# A command-line option with an argument that contains spaces of course
+# requires quotes around the argument.  This is most easily tested via a wraprc
+# file because getting such an option and argument handled correctly via the
+# run_test.sh script is difficult.
+##
+txt = -L'  # '
+
+[PATTERNS]
+*.txt = txt

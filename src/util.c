@@ -47,7 +47,7 @@ static free_node_t *free_head;          // linked list of stuff to free
 // inline functions
 extern bool         is_blank_line( char const* );
 extern bool         is_eol( char );
-inline bool         is_space( char );
+extern bool         is_space( char );
 
 ////////// extern functions ///////////////////////////////////////////////////
 
@@ -138,6 +138,12 @@ void free_now() {
     p = next;
   } // for
   free_head = NULL;
+}
+
+void split_tws( char buf[], size_t buf_len, char tws[] ) {
+  size_t const tnws_len = buf_len - strrspn( buf, " \t" );
+  strcpy( tws, buf + tnws_len );
+  buf[ tnws_len ] = '\0';
 }
 
 size_t strrspn( char const *s, char const *set ) {

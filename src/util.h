@@ -191,6 +191,19 @@ inline bool is_space( char c ) {
 }
 
 /**
+ * Splits off the trailing whitespace (tws) from \a buf into \a tws.  For
+ * example, if \a buf is initially <code>"# "</code>, it will become \c "#" and
+ * \a tws will become <code>" "</code>.
+ *
+ * @param buf The null-terminated buffer to split off the trailing whitespace
+ * from.
+ * @param buf_len The length of \a buf.
+ * @param tws The buffer to receive the trailing whitespace from \a buf, if
+ * any.
+ */
+void split_tws( char buf[], size_t buf_len, char tws[] );
+
+/**
  * Reverse strspn(3): spans the trailing part of \a s as long as characters
  * from \a s occur in \a set.
  *
