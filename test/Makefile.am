@@ -148,8 +148,6 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc-block-01.test \
 	tests/wrapc-block-02.test \
 	tests/wrapc-block-03.test \
-	tests/wrapc-bullet-01.test \
-	tests/wrapc-bullet-02.test \
 	tests/wrapc-crlf-01.test \
 	tests/wrapc-noncomment-01.test \
 	tests/wrapc-noncomment-02.test \
@@ -183,6 +181,8 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--Markdown-code-03c.test \
 	tests/wrapc--Markdown-ul-01.test \
 	tests/wrapc--Markdown-ul-02.test \
+	tests/wrapc--Markdown-ul-03.test \
+	tests/wrapc--Markdown-ul-04.test \
 	tests/wrapc--Pascal-00.test \
 	tests/wrapc--Pascal-01.test \
 	tests/wrapc--Pascal-02.test \
