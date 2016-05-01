@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\fP 1 "April 30, 2016" "PJL TOOLS"
+.TH \f3wrap\fP 1 "May 1, 2016" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -494,6 +494,23 @@ Code blocks nested inside lists
 be indented
 .I twice
 \(em 8 spaces or 2 tabs.
+.SS Fenced Code Blocks
+Alternatively,
+code blocks may be ``fenced,''
+that is a sequence of lines
+starting with 3 or more
+non-indented tildes or backticks
+and ending with the same number of the same character:
+.cS
+~~~
+#include <stdio.h>
+
+int main() {
+  printf( "hello, world\\n" );
+}
+~~~
+.cE
+Fenced code blocks are passed through unaltered.
 .SS Horizontal Rules
 Horitontal rules
 (lines separating sections of a document)
@@ -535,7 +552,8 @@ need not be separated from surrounding text
 by blank lines
 and the tags may be indented
 by up to 3 spaces.
-However, the tags must be on lines by themselves.
+However,
+the beginning and ending tags must be on lines by themselves.
 .SS Links
 Neither inline nor reference links need any special treatment;
 however,
@@ -545,11 +563,14 @@ reference link label lines such as:
 .cE
 are passed through unaltered.
 Link labels may be indented by up to 3 spaces.
-The URL may optionally be followed by title:
+The URL may optionally be followed by title
+enclosed in one of
+double quotes,
+single quotes,
+or parentheses:
 .cS
 [1]: https://github.com/paul-j-lucas/wrap "Wrap"
 .cE
-enclosed in one of double quotes, single quotes, or parentheses.
 The title attribute may instead be put on the following line,
 optionally indented by any number of spaces or tabs:
 .cS
@@ -623,6 +644,9 @@ Paul J. Lucas
 .nf
 .IR "Markdown" ", John Gruber,"
 .RI < https://daringfireball.net/projects/markdown/ >
+.P
+.IR "PHP Markdown Extra" ,
+.RI < https://michelf.ca/projects/php-markdown/extra/ >
 .P
 .IR "UTF-8, a transformation format of ISO 10646" ,
 RFC 3629, Francois Yergeau, November 2003.

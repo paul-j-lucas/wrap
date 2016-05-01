@@ -624,23 +624,26 @@ static bool markdown_adjust( line_buf_t line ) {
     md->indent_left, md->indent_hang, line
   );
 
-  switch ( prev_line_type ) {
-    case MD_HEADER_ATX:
-    case MD_HR:
-    case MD_HTML:
-    case MD_LINK_LABEL:
-      consec_newlines = 0;
-      if ( is_blank_line( line ) ) {
-        //
-        // Prevent blank lines immediately after these Markdown line types from
-        // being swallowed by wrap by just printing them directly.
-        //
-        FPUTS( line, fout );
-      }
-    default:
-      /* suppress warning */;
-  } // switch
-  prev_line_type = md->line_type;
+  if ( prev_line_type != md->line_type ) {
+    switch ( prev_line_type ) {
+      case MD_CODE:
+      case MD_HEADER_ATX:
+      case MD_HR:
+      case MD_HTML:
+      case MD_LINK_LABEL:
+        consec_newlines = 0;
+        if ( is_blank_line( line ) ) {
+          //
+          // Prevent blank lines immediately after these Markdown line types
+          // from being swallowed by wrap by just printing them directly.
+          //
+          FPUTS( line, fout );
+        }
+      default:
+        /* suppress warning */;
+    } // switch
+    prev_line_type = md->line_type;
+  }
 
   switch ( md->line_type ) {
     case MD_CODE:

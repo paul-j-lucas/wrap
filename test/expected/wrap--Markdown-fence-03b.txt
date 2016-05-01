@@ -1,0 +1,11 @@
+This is a line of text.  This is another line of text.
+~~~
+int main( void ) {
+  printf( "hello, world\n" );
+}
+~~~~
+This is a third line of text
+but it should be treated as code
+because the closing fence
+doesn't have the same number of characters
+as the opening fence.

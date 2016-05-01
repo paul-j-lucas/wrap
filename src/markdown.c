@@ -44,20 +44,30 @@
 #define STACK(N)            (stack[ stack_top - (N) ])
 #define TOP                 STACK(0)
 
+/**
+ * PHP Markdown Extra code fence info.
+ */
+struct md_code_fence {
+  char    ch;                           // character of the fence: ~ or `
+  size_t  len;                          // length of the fence
+};
+typedef struct md_code_fence md_code_fence_t;
+
 typedef ssize_t stack_pos_t;
 
 // local constant definitions
-static size_t const HTML_ELEMENT_MAX   = 10;  // "blockquote"
-static size_t const MD_ATX_CHAR_MAX    =  6;  // max num of # in atx header
-static size_t const MD_CODE_INDENT_MIN =  4;  // min indent for code
-static size_t const MD_HR_CHAR_MIN     =  3;  // min num of ***, ---, or ___
-static size_t const MD_LINK_INDENT_MAX =  3;  // max indent for [id]: URI
-static size_t const MD_LIST_INDENT_MAX =  4;  // max indent for all lists
-static size_t const MD_OL_INDENT_MIN   =  3;  // ordered list min indent
-static size_t const MD_UL_INDENT_MIN   =  2;  // unordered list min indent
+static size_t const HTML_ELEMENT_MAX       = 10;  // "blockquote"
+static size_t const MD_ATX_CHAR_MAX        =  6;  // max num of # in atx header
+static size_t const MD_CODE_FENCE_CHAR_MIN =  3;  // min num of ~~~ or ```
+static size_t const MD_CODE_INDENT_MIN     =  4;  // min indent for code
+static size_t const MD_HR_CHAR_MIN         =  3;  // min num of ***, ---, or ___
+static size_t const MD_LINK_INDENT_MAX     =  3;  // max indent for [id]: URI
+static size_t const MD_LIST_INDENT_MAX     =  4;  // max indent for all lists
+static size_t const MD_OL_INDENT_MIN       =  3;  // ordered list min indent
+static size_t const MD_UL_INDENT_MIN       =  2;  // unordered list min indent
 
-static size_t const STATE_ALLOC_DEFAULT   = 5;
-static size_t const STATE_ALLOC_INCREMENT = 5;
+static size_t const STATE_ALLOC_DEFAULT    = 5;
+static size_t const STATE_ALLOC_INCREMENT  = 5;
 
 // local variable definitions
 static unsigned     html_depth;         // how many nested outer elements
@@ -67,6 +77,7 @@ static md_state_t  *stack;              // global stack of states
 static stack_pos_t  stack_top = -1;     // index of the top of the stack
 
 // local functions
+static bool         md_is_code_fence( char const*, md_code_fence_t* );
 static bool         md_nested_within( md_line_t );
 
 ////////// inline functions ///////////////////////////////////////////////////
@@ -79,6 +90,28 @@ static bool         md_nested_within( md_line_t );
  */
 static inline bool is_html_char( char c ) {
   return isalpha( c ) || c == '-';
+}
+
+/**
+ * Initialized an md_code_fence_t.
+ *
+ * @param fence A pointer to the md_code_fence_t to initialize.
+ */
+static inline void md_code_fence_init( md_code_fence_t *fence ) {
+  fence->ch  = '\0';
+  fence->len = 0;
+}
+
+/**
+ * Checks whether the line is the end of a PHP Markdown Extra code fence.
+ *
+ * @param s The null-terminated line to check.
+ * @param fence A pointer to the \c struct containing the fence info.
+ * @return Returns \c true only if it is.
+ */
+static inline bool md_is_code_fence_end( char const *s,
+                                         md_code_fence_t *fence ) {
+  return (s[0] == '~' || s[0] == '`') && md_is_code_fence( s, fence );
 }
 
 /**
@@ -237,7 +270,7 @@ static md_indent_t md_indent_divisor( md_indent_t indent_left ) {
 
 /**
  * Checks whether the line is a Markdown atx header line, a sequence of one to
- * six \c # characters starting in colume 1.
+ * six \c # characters starting in column 1.
  *
  * @param s The null-terminated line to check.
  * @return Returns \c true only if it is.
@@ -246,14 +279,47 @@ static bool md_is_atx_header( char const *s ) {
   assert( s );
   assert( s[0] == '#' );
 
-  unsigned n_atx = 0;
-  for ( ; *s; ++s ) {
-    if ( *s != '#' )
-      break;
+  size_t n_atx = 0;
+  for ( ; *s && *s == '#'; ++s ) {
     if ( ++n_atx > MD_ATX_CHAR_MAX )
       return false;
   } // for
   return n_atx > 0;
+}
+
+/**
+ * Checks whether the line is a PHP Markdown Extra code fence, a series of 3 or
+ * more \c ~ or \c ` characters.
+ *
+ * @param s The null-terminated line to check.
+ * @param fence A pointer to the \c struct containing the fence info: if 0,
+ * return new fence info; otherwise checks to see if \a s matches the existing
+ * fence info.
+ * @return Returns \c true only if it is.
+ */
+static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
+  assert( s );
+  assert( fence );
+  assert( s[0] == '~' || s[0] == '`' );
+  assert(
+    (!fence->ch && !fence->len) ||
+    ( fence->ch &&  fence->len >= MD_CODE_FENCE_CHAR_MIN)
+  );
+
+  char const c = fence->ch ? fence->ch : s[0];
+  size_t len = 0;
+
+  for ( ; *s && *s == c; ++s, ++len )
+    /* empty */;
+
+  if ( fence->len )
+    return len == fence->len;
+  if ( len >= MD_CODE_FENCE_CHAR_MIN ) {
+    fence->ch  = c;
+    fence->len = len;
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -269,7 +335,7 @@ static bool md_is_hr( char const *s ) {
   assert( s );
   assert( s[0] == '*' || s[0] == '-' || s[0] == '_' );
 
-  unsigned n_hr = 0;
+  size_t n_hr = 0;
   for ( char const hr = *s; *s && !is_eol( *s ); ++s ) {
     if ( !is_space( *s ) ) {
       if ( *s != hr )
@@ -431,9 +497,7 @@ static bool md_is_Setext_header( char const *s ) {
   assert( s );
   assert( s[0] == '=' || s[0] == '-' );
 
-  for ( char const c = *s; *s; ++s ) {
-    if ( is_eol( *s ) )
-      break;
+  for ( char const c = *s; *s && !is_eol( *s ); ++s ) {
     if ( *s != c )
       return false;
   } // for
@@ -542,9 +606,33 @@ md_state_t const* markdown_parse( char *s ) {
   md_indent_t indent_left;
   char *const nws = first_nws( s, &indent_left );
 
+  static md_code_fence_t code_fence;
+  PREV_BOOL( code_fence_end, false );
   PREV_BOOL( link_label_has_title, false );
 
   switch ( TOP.line_type ) {
+    case MD_CODE:
+      //
+      // Check to see whether we've hit the end of a PHP Markdown Extra code
+      // fence.
+      //
+      if ( code_fence_end )
+        stack_pop();
+      else if ( code_fence.ch ) {
+        //
+        // If code_fence.ch is set, that distinguishes a code fence from
+        // indented code.
+        //
+        if ( md_is_code_fence_end( s, &code_fence ) )
+          prev_code_fence_end = true;
+        //
+        // As long as we're in the MD_CODE state, we can just return without
+        // further checks.
+        //
+        return &TOP;
+      }
+      break;
+
     case MD_HEADER_ATX:
     case MD_HEADER_LINE:
     case MD_HR:
@@ -614,7 +702,7 @@ md_state_t const* markdown_parse( char *s ) {
   }
 
   //
-  // Markdown that must occur in column 1: header lines.
+  // Markdown that must occur without indentation.
   //
   switch ( s[0] ) {
     case '#':                           // atx header
@@ -626,8 +714,17 @@ md_state_t const* markdown_parse( char *s ) {
       if ( !blank_line && md_is_Setext_header( s ) )
         CLEAR_RETURN( MD_HEADER_LINE );
       break;
+    case '~':                           // PHP Markdown Extra code fence
+    case '`':
+      md_code_fence_init( &code_fence );
+      if ( md_is_code_fence( s, &code_fence ) )
+        CLEAR_RETURN( MD_CODE );
+      break;
   } // switch
 
+  //
+  // Markdown that may occur with indentation.
+  //
   switch ( nws[0] ) {
     case '*':
     case '-':

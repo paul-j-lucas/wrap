@@ -71,6 +71,14 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap--Markdown-atx-03.test \
 	tests/wrap--Markdown-code-01.test \
 	tests/wrap--Markdown-code-02.test \
+	tests/wrap--Markdown-fence-01a.test \
+	tests/wrap--Markdown-fence-01b.test \
+	tests/wrap--Markdown-fence-01c.test \
+	tests/wrap--Markdown-fence-02a.test \
+	tests/wrap--Markdown-fence-02b.test \
+	tests/wrap--Markdown-fence-02c.test \
+	tests/wrap--Markdown-fence-03a.test \
+	tests/wrap--Markdown-fence-03b.test \
 	tests/wrap--Markdown-hr-01a.test \
 	tests/wrap--Markdown-hr-01b.test \
 	tests/wrap--Markdown-hr-01c.test \
