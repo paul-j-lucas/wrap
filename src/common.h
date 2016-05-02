@@ -56,7 +56,7 @@
  * Wrap and Wrapc use it immediately after DLE to indicate the end of the block
  * of text to be wrapped.  Any additional text is passed through verbatim.
  */
-#define ASCII_ETB                 '\x03'
+#define ASCII_ETB                 '\x17'
 
 /**
  * Uncomment the line below to debug Markdown handling by printing state
