@@ -270,29 +270,6 @@ int main( int argc, char const *argv[] ) {
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    //  HANDLE WRAP/WRAPC INTERPROCESS MESSAGE
-    ///////////////////////////////////////////////////////////////////////////
-
-    if ( opt_data_link_esc && c == ASCII_DLE ) {
-      switch ( c = buf_getc( &pc ) ) {
-        case ASCII_ETB:
-          //
-          // We've been told by wrapc (child 1) that we've reached the end of
-          // the comment: dump any remaining buffer, propagate the interprocess
-          // message to the other wrapc process (parent), and pass text through
-          // verbatim.
-          //
-          print_lead_chars();
-          print_line( out_len, true );
-          FPRINTF( fout, "%c%c%s", ASCII_DLE, ASCII_ETB, pc );
-          fcopy( fin, fout );
-          exit( EX_OK );
-        case EOF:
-          goto done;
-      } // switch
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
     //  DISCARD CONTROL CHARACTERS
     ///////////////////////////////////////////////////////////////////////////
 
@@ -522,7 +499,32 @@ static int buf_getc( char **ps ) {
     if ( !opt_markdown || *SKIP_WS( *ps ) )
       break;
   } // while
-  return *(*ps)++;
+
+  int c = *(*ps)++;
+
+  if ( opt_data_link_esc && c == ASCII_DLE ) {
+    //
+    // A DLE character signals a wrap/wrapc interprocess message.
+    //
+    switch ( c = *(*ps)++ ) {
+      case ASCII_ETB:
+        //
+        // We've been told by wrapc (child 1) that we've reached the end of
+        // the comment: dump any remaining buffer, propagate the interprocess
+        // message to the other wrapc process (parent), and pass text through
+        // verbatim.
+        //
+        print_lead_chars();
+        print_line( out_len, true );
+        FPRINTF( fout, "%c%c%s", ASCII_DLE, ASCII_ETB, *ps );
+        fcopy( fin, fout );
+        exit( EX_OK );
+      case '\0':
+        return EOF;
+    } // switch
+  }
+
+  return c;
 }
 
 /**
