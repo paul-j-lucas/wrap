@@ -86,7 +86,7 @@ static size_t       proto_len;
 static size_t       proto_width;
 
 // local functions
-static int          buf_getc( char** );
+static int          buf_getc( char const** );
 static void         init( int, char const*[] );
 static void         print_lead_chars( void );
 static void         print_line( size_t, bool );
@@ -170,8 +170,8 @@ int main( int argc, char const *argv[] ) {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  char   *pc = in_buf;                  // pointer to current character
-  size_t  wrap_pos;                     // position at which we can wrap
+  char const *pc = in_buf;              // pointer to current character
+  size_t wrap_pos;                      // position at which we can wrap
 
   for ( int c, prev_c = '\0'; (c = buf_getc( &pc )) != EOF; prev_c = c ) {
 
@@ -487,7 +487,7 @@ done:
  * @param ps A pointer to the pointer to character to advance.
  * @return Returns said character or EOF.
  */
-static int buf_getc( char **ps ) {
+static int buf_getc( char const **ps ) {
   while ( !**ps ) {
     if ( !read_line( in_buf ) )
       return EOF;
