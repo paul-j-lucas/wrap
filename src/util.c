@@ -29,6 +29,11 @@
 #include <stdlib.h>                     /* for malloc(), ... */
 #include <string.h>
 
+#ifndef NDEBUG
+# include <signal.h>                    /* for raise(3) */
+# include <unistd.h>                    /* for getpid(3) */
+#endif /* NDEBUG */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -162,6 +167,33 @@ char* tolower_s( char *s ) {
     *t = tolower( *t );
   return s;
 }
+
+#ifndef NDEBUG
+void wait_for_debugger_attach( char const *env_var ) {
+  static char const *const affirmatives[] = {
+    "1",
+    "t",
+    "true",
+    "y",
+    "yes",
+    NULL
+  };
+
+  assert( env_var );
+  char *value = getenv( env_var );
+  if ( value ) {
+    value = tolower_s( value );
+    for ( char const *const *a = affirmatives; *a; ++a ) {
+      if ( strcmp( value, *a ) == 0 ) {
+        PRINT_ERR( "pid=%u: waiting for debugger to attach...\n", getpid() );
+        if ( raise( SIGSTOP ) == -1 )
+          PERROR_EXIT( EX_OSERR );
+        break;
+      }
+    } // for
+  }
+}
+#endif /* NDEBUG */
 
 ///////////////////////////////////////////////////////////////////////////////
 /* vim:set et sw=2 ts=2: */

@@ -105,6 +105,7 @@ static void         read_prototype( void );
 static pid_t        read_source_write_wrap( void );
 static void         read_wrap( void );
 static char const*  skip_n( char const*, size_t );
+static size_t       strcpy_no_eol( char*, char const* );
 static char const*  str_status( int );
 static void         usage( void );
 static void         wait_for_child_processes( void );
@@ -146,6 +147,7 @@ static inline void swap_line_bufs( void ) {
 ////////// main ///////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
+  wait_for_debugger_attach( "WRAPC_DEBUG" );
   init( argc, argv );
   fork_exec_wrap( read_source_write_wrap() );
   read_wrap();
@@ -358,6 +360,7 @@ static pid_t read_source_write_wrap( void ) {
     PMESSAGE_EXIT( EX_OSERR,
       "child can't open pipe for writing: %s\n", ERROR_STR
     );
+  wait_for_debugger_attach( "WRAPC_DEBUG_RSRW" );
 #else
   FILE *const fwrap = stdout;
 #endif /* DEBUG_RSWW */
@@ -413,14 +416,36 @@ static pid_t read_source_write_wrap( void ) {
       goto verbatim;
     }
 
-    //
-    // When wrapping Markdown, we can't strip all whitespace after the comment
-    // characters because Markdown relies on indentation; hence we strip only
-    // the length of the initial prototype -- but only if its less.
-    //
     size_t proto_len = proto_span( CURR );
-    if ( opt_markdown && proto_len > proto_len0 )
-      proto_len = proto_len0;
+    if ( opt_markdown ) {
+      if ( proto_len > proto_len0 ) {
+        //
+        // When wrapping Markdown, we can't strip all whitespace after the
+        // comment characters because Markdown relies on indentation; hence we
+        // strip only the length of the initial prototype -- but only if its
+        // less.
+        //
+        proto_len = proto_len0;
+      }
+      else if ( proto_len < proto_len0 && !is_eol( CURR[ proto_len ] ) ) {
+        //
+        // The leading comment characters and/or whitespace length has
+        // decreased.  This can happen in a case like:
+        //
+        //      *  + This is a list item.
+        //      *
+        //      * Not part of the list item.
+        //
+        // where the list item was indented 2 spaces after the * but the
+        // regular text was indented only 1 space.  If this check were not
+        // done, then the "Not" text would end up also being indented 2 spaces.
+        //
+        proto_len0 = proto_len;
+        strncpy( proto_buf, CURR, proto_len );
+        proto_buf[ proto_len ] = '\0';
+        FPRINTF( fwrap, "%c%c%s\n", ASCII_DLE, ASCII_SOH, proto_buf );
+      }
+    }
 
     FPUTS( skip_n( CURR, proto_len ), fwrap );
     swap_line_bufs();
@@ -475,6 +500,8 @@ static void read_wrap( void ) {
 
   line_buf_t line_buf;
 
+  wait_for_debugger_attach( "WRAPC_DEBUG_RW" );
+
   while ( fgets( line_buf, sizeof line_buf, fwrap ) ) {
     char const *line = line_buf;
     if ( line[0] == ASCII_DLE ) {
@@ -488,10 +515,21 @@ static void read_wrap( void ) {
           FPUTS( line + 2, fout );
           fcopy( fwrap, fout );
           goto break_loop;
+
+        case ASCII_SOH:
+          //
+          // We've been told by child 1 (read_source_write_wrap(), via child 2,
+          // wrap) that the leading comment characters and/or whitespace has
+          // changed: adjust proto_buf.
+          //
+          proto_len0 = strcpy_no_eol( proto_buf, line + 2 );
+          split_tws( proto_buf, proto_len0, proto_tws );
+          continue;
+
         default:
           //
-          // We got an ETB followed by an unexpected character: skip over the
-          // ETB and format the remaining buffer.
+          // We got a DLE followed by an unexpected character: skip over the
+          // DLE and format the remaining buffer.
           //
           ++line;
       } // switch
@@ -579,6 +617,22 @@ static char const* skip_n( char const *s, size_t n ) {
   for ( ; *s && !is_eol( *s ) && n > 0; ++s, --n )
     /* empty */;
   return s;
+}
+
+/**
+ * A special variant of strcpy(3) that copies up to but not including an
+ * end-of-line character.
+ *
+ * @param dst A pointer to receive the copy of \a src.
+ * @param src The null-terminated string to copy.
+ * @return Returns the number of characters copied.
+ */
+static size_t strcpy_no_eol( char *dst, char const *src ) {
+  char const *const dst0 = dst;
+  for ( ; !is_eol( *dst = *src ); ++dst, ++src )
+    /* empty */;
+  *dst = '\0';
+  return dst - dst0;
 }
 
 static char const* str_status( int status ) {

@@ -76,6 +76,7 @@ static char const   UTF8_LEN_TABLE[] = {
 // local variable definitions
 static unsigned     consec_newlines;    // number of consecutive newlines
 static line_buf_t   in_buf;
+static line_buf_t   ipc_buf;            // deferred IPC message
 static size_t       line_width;         // max width of line
 static line_buf_t   out_buf;
 static size_t       out_len;            // number of characters in buffer
@@ -88,6 +89,7 @@ static size_t       proto_width;
 // local functions
 static int          buf_getc( char const** );
 static void         init( int, char const*[] );
+static void         ipc_send_buf( char ipc );
 static void         print_lead_chars( void );
 static void         print_line( size_t, bool );
 static void         put_tabs_spaces( size_t, size_t );
@@ -97,10 +99,21 @@ static void         usage( void );
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
+ * Sends an IPC (interprocess communication) message to wrapc.
+ *
+ * @param ipc The IPC code to send.
+ * @param s The null-terminated message to send.
+ */
+static inline void ipc_send( char ipc, char const *s ) {
+  FPRINTF( fout, "%c%c%s", ASCII_DLE, ipc, s );
+}
+
+/**
  * Prints an end-of-line.
  */
 static inline void print_eol( void ) {
   FPUTS( (char const*)"\r\n" + (opt_eol != EOL_WINDOWS), fout );
+  ipc_send_buf( ASCII_SOH );
 }
 
 /**
@@ -117,6 +130,7 @@ static inline size_t utf8_len( char c ) {
 ////////// main ///////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
+  wait_for_debugger_attach( "WRAP_DEBUG" );
   init( argc, argv );
 
   //
@@ -489,6 +503,7 @@ done:
  */
 static int buf_getc( char const **ps ) {
   while ( !**ps ) {
+read_line:
     if ( !read_line( in_buf ) )
       return EOF;
     *ps = in_buf;
@@ -516,9 +531,26 @@ static int buf_getc( char const **ps ) {
         //
         print_lead_chars();
         print_line( out_len, true );
-        FPRINTF( fout, "%c%c%s", ASCII_DLE, ASCII_ETB, *ps );
+        ipc_send( ASCII_ETB, *ps );
         fcopy( fin, fout );
         exit( EX_OK );
+
+      case ASCII_SOH:
+        //
+        // We've been told by wrapc (child 1) that the comment characters
+        // and/or leading whitespace has changed: we have to echo it back to
+        // the other wrapc process (parent).
+        //
+        // If an output line has already been started, we have to defer the IPC
+        // until just after the line is sent; otherwise, we must send it
+        // immediately.
+        //
+        if ( out_len )
+          strcpy( ipc_buf, *ps );
+        else
+          ipc_send( ASCII_SOH, *ps );
+        goto read_line;
+
       case '\0':
         return EOF;
     } // switch
@@ -605,6 +637,19 @@ static void init( int argc, char const *argv[] ) {
     //
     opt_eol = bytes_read >= 2 && in_buf[ bytes_read - 2 ] == '\r' ?
       EOL_WINDOWS : EOL_UNIX;
+  }
+}
+
+/**
+ * Sends a previously deferred IPC (interprocess communication) message, if
+ * any, to wrapc.
+ *
+ * @param ipc The IPC code to send.
+ */
+static void ipc_send_buf( char ipc ) {
+  if ( ipc_buf[0] ) {
+    ipc_send( ipc, ipc_buf );
+    ipc_buf[0] = '\0';
   }
 }
 

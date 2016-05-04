@@ -221,6 +221,18 @@ size_t strrspn( char const *s, char const *set );
  */
 char* tolower_s( char *s );
 
+#ifndef NDEBUG
+/**
+ * Suspends process execution until a debugger attaches if \a env_var is set
+ * and has a case-insensitive value of one of: 1, t, true, y, or yes.
+ *
+ * @param env_var The environment variable to check for.
+ */
+void wait_for_debugger_attach( char const *env_var );
+#else
+# define wait_for_debugger_attach( env_var )
+#endif /* NDEBUG */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 #endif /* wrap_util_H */

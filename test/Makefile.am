@@ -177,12 +177,26 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--Julia-01.test \
 	tests/wrapc--Julia-02.test \
 	tests/wrapc--Julia-03.test \
-	tests/wrapc--Markdown-code-02c.test \
-	tests/wrapc--Markdown-code-03c.test \
+	tests/wrapc--Markdown-atx-01.test \
+	tests/wrapc--Markdown-atx-02.test \
+	tests/wrapc--Markdown-atx-03.test \
+	tests/wrapc--Markdown-code-01.test \
+	tests/wrapc--Markdown-code-02.test \
+	tests/wrapc--Markdown-code-03.test \
+	tests/wrapc--Markdown-fence-01a.test \
+	tests/wrapc--Markdown-fence-01b.test \
+	tests/wrapc--Markdown-fence-01c.test \
+	tests/wrapc--Markdown-hr-01a.test \
+	tests/wrapc--Markdown-hr-01b.test \
+	tests/wrapc--Markdown-Setext-01.test \
+	tests/wrapc--Markdown-Setext-02.test \
+	tests/wrapc--Markdown-Setext-03.test \
+	tests/wrapc--Markdown-Setext-04.test \
 	tests/wrapc--Markdown-ul-01.test \
 	tests/wrapc--Markdown-ul-02.test \
 	tests/wrapc--Markdown-ul-03.test \
 	tests/wrapc--Markdown-ul-04.test \
+	tests/wrapc--Markdown-ul-05.test \
 	tests/wrapc--Pascal-00.test \
 	tests/wrapc--Pascal-01.test \
 	tests/wrapc--Pascal-02.test \

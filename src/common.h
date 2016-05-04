@@ -59,6 +59,16 @@
 #define ASCII_ETB                 '\x17'
 
 /**
+ * From Wikipedia: The start of heading (SOH) character was to mark a non-data
+ * section of a data stream—the part of a stream containing addresses and other
+ * housekeeping data.
+ *
+ * Wrap and Wrapc us it to signal a change in the leading comment characters
+ * and/or whitespace.
+ */
+#define ASCII_SOH                 '\x01'
+
+/**
  * Uncomment the line below to debug Markdown handling by printing state
  * information to stderr.
  */
