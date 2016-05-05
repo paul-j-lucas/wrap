@@ -56,7 +56,7 @@ typedef struct md_code_fence md_code_fence_t;
 typedef ssize_t stack_pos_t;
 
 // local constant definitions
-static size_t const HTML_ELEMENT_MAX       = 10;  // "blockquote"
+#define             HTML_ELEMENT_MAX         10   /* "blockquote" */
 static size_t const MD_ATX_CHAR_MAX        =  6;  // max num of # in atx header
 static size_t const MD_CODE_FENCE_CHAR_MIN =  3;  // min num of ~~~ or ```
 static size_t const MD_CODE_INDENT_MIN     =  4;  // min indent for code
@@ -784,8 +784,8 @@ md_state_t const* markdown_parse( char *s ) {
   /////////////////////////////////////////////////////////////////////////////
 
   md_line_t   curr_line_type = MD_TEXT;
-  md_indent_t indent_hang;
-  md_ol_t     ol_num;
+  md_indent_t indent_hang = 0;
+  md_ol_t     ol_num = 0;
 
   //
   // We first have to determine the type of the current line because it affects

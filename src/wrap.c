@@ -178,7 +178,7 @@ int main( int argc, char const *argv[] ) {
   /////////////////////////////////////////////////////////////////////////////
 
   char const *pc = in_buf;              // pointer to current character
-  size_t wrap_pos;                      // position at which we can wrap
+  size_t wrap_pos = 0;                  // position at which we can wrap
 
   for ( int c, prev_c = '\0'; (c = buf_getc( &pc )) != EOF; prev_c = c ) {
 

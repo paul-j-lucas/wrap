@@ -33,6 +33,11 @@
 #include <string.h>                     /* for strspn(3) */
 #include <sysexits.h>
 
+_GL_INLINE_HEADER_BEGIN
+#ifndef WRAP_UTIL_INLINE
+# define WRAP_UTIL_INLINE _GL_INLINE
+#endif /* WRAP_UTIL_INLINE */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 #define BLOCK(...)          do { __VA_ARGS__ } while (0)
@@ -164,7 +169,7 @@ void free_now( void );
  * @param s The null-terminated string to check.
  * @return Returns \c true only if \a s is a blank line.
  */
-inline bool is_blank_line( char const *s ) {
+WRAP_UTIL_INLINE bool is_blank_line( char const *s ) {
   SKIP_WS( s );
   return s[0] == '\n' && !s[1];
 }
@@ -175,7 +180,7 @@ inline bool is_blank_line( char const *s ) {
  * @param c The character to check.
  * @return Returns \c true only if it is.
  */
-inline bool is_eol( char c ) {
+WRAP_UTIL_INLINE bool is_eol( char c ) {
   return c == '\n' || c == '\r';
 }
 
@@ -186,7 +191,7 @@ inline bool is_eol( char c ) {
  * @param c The character to check.
  * @return Returns \c true only if \a c is a space or a tab.
  */
-inline bool is_space( char c ) {
+WRAP_UTIL_INLINE bool is_space( char c ) {
   return c == ' ' || c == '\t';
 }
 
@@ -234,6 +239,8 @@ void wait_for_debugger_attach( char const *env_var );
 #endif /* NDEBUG */
 
 ///////////////////////////////////////////////////////////////////////////////
+
+_GL_INLINE_HEADER_END
 
 #endif /* wrap_util_H */
 /* vim:set et sw=2 ts=2: */

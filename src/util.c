@@ -19,6 +19,8 @@
 */
 
 // local
+#include "config.h"
+#define WRAP_UTIL_INLINE _GL_EXTERN_INLINE
 #include "common.h"
 #include "util.h"
 
@@ -48,11 +50,6 @@ typedef struct free_node free_node_t;
 
 // local variable definitions
 static free_node_t *free_head;          // linked list of stuff to free
-
-// inline functions
-extern bool         is_blank_line( char const* );
-extern bool         is_eol( char );
-extern bool         is_space( char );
 
 ////////// extern functions ///////////////////////////////////////////////////
 
@@ -112,7 +109,7 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
   //    2nd ed., section 7.7 "Line Input and Output," Prentice Hall, 1988, p.
   //    134.
   //
-  int c;
+  int c = 0;
   char *s = buf;
 
   for ( size_t n = *size; n > 0 && (c = getc( ffrom )) != EOF; --n ) {
