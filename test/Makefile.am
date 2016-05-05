@@ -188,15 +188,27 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--Markdown-fence-01c.test \
 	tests/wrapc--Markdown-hr-01a.test \
 	tests/wrapc--Markdown-hr-01b.test \
-	tests/wrapc--Markdown-Setext-01.test \
-	tests/wrapc--Markdown-Setext-02.test \
-	tests/wrapc--Markdown-Setext-03.test \
-	tests/wrapc--Markdown-Setext-04.test \
+	tests/wrapc--Markdown-html-01.test \
+	tests/wrapc--Markdown-html-02.test \
+	tests/wrapc--Markdown-html-03.test \
+	tests/wrapc--Markdown-html-04.test \
+	tests/wrapc--Markdown-html-05.test \
+	tests/wrapc--Markdown-ol-01s.test \
+	tests/wrapc--Markdown-ol-02s.test \
+	tests/wrapc--Markdown-ol-03s.test \
+	tests/wrapc--Markdown-ol-04s.test \
+	tests/wrapc--Markdown-ol-11s.test \
 	tests/wrapc--Markdown-ul-01.test \
 	tests/wrapc--Markdown-ul-02.test \
 	tests/wrapc--Markdown-ul-03.test \
 	tests/wrapc--Markdown-ul-04.test \
 	tests/wrapc--Markdown-ul-05.test \
+	tests/wrapc--Markdown-nested-01s.test \
+	tests/wrapc--Markdown-nested-02s.test \
+	tests/wrapc--Markdown-Setext-01.test \
+	tests/wrapc--Markdown-Setext-02.test \
+	tests/wrapc--Markdown-Setext-03.test \
+	tests/wrapc--Markdown-Setext-04.test \
 	tests/wrapc--Pascal-00.test \
 	tests/wrapc--Pascal-01.test \
 	tests/wrapc--Pascal-02.test \
