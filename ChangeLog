@@ -1,5 +1,12 @@
+2016-05-05  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, gnulib-cache.m4, markdown.c, util.c, util.h, wrap.c:
+     Changes for older C compilers.
+   * wraprc.5: Removed .ta; fixed date.
+
 2016-05-04  Paul J. Lucas <paul@lucasmail.org>
 
+   * markdown.c: Slight simplification in md_code_indent_min().
    * test/Makefile.am, md-html-01.c, md-html-02.c, md-html-03.c, md-html-04.c,
      md-html-05.c, md-nested-01s.c, md-nested-02s.c, md-ol-01s.c, md-ol-02s.c,
      md-ol-03s.c, md-ol-04s.c, md-ol-11s.c, wrapc--Markdown-html-01.txt,
