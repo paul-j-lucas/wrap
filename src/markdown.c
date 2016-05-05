@@ -175,7 +175,7 @@ static inline bool top_is( md_line_t line_type ) {
  * @return Returns said indent.
  */
 static md_indent_t md_code_indent_min( void ) {
-  return (stack_size() - (top_is( MD_CODE ) ? 1 : 0)) * MD_CODE_INDENT_MIN;
+  return (stack_size() - top_is( MD_CODE )) * MD_CODE_INDENT_MIN;
 }
 
 /**
