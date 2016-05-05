@@ -1,5 +1,58 @@
+2016-05-04  Paul J. Lucas <paul@lucasmail.org>
+
+   * test/Makefile.am, md-html-01.c, md-html-02.c, md-html-03.c, md-html-04.c,
+     md-html-05.c, md-nested-01s.c, md-nested-02s.c, md-ol-01s.c, md-ol-02s.c,
+     md-ol-03s.c, md-ol-04s.c, md-ol-11s.c, wrapc--Markdown-html-01.txt,
+     wrapc--Markdown-html-02.txt, wrapc--Markdown-html-03.txt,
+     wrapc--Markdown-html-04.txt, wrapc--Markdown-html-05.txt,
+     wrapc--Markdown-nested-01s.txt, wrapc--Markdown-nested-02s.txt,
+     wrapc--Markdown-ol-01s.txt, wrapc--Markdown-ol-02s.txt,
+     wrapc--Markdown-ol-03s.txt, wrapc--Markdown-ol-04s.txt,
+     wrapc--Markdown-ol-11s.txt, wrapc--Markdown-html-01.test,
+     wrapc--Markdown-html-02.test, wrapc--Markdown-html-03.test,
+     wrapc--Markdown-html-04.test, wrapc--Markdown-html-05.test,
+     wrapc--Markdown-nested-01s.test, wrapc--Markdown-nested-02s.test,
+     wrapc--Markdown-ol-01s.test, wrapc--Markdown-ol-02s.test,
+     wrapc--Markdown-ol-03s.test, wrapc--Markdown-ol-04s.test,
+     wrapc--Markdown-ol-11s.test: Many more wrapc Markdown tests.
+   * common.h, wrap.c, wrapc.c: Reworked IPC.
+
+2016-05-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * common.h, util.c, util.h, wrap.c, wrapc.c, test/Makefile.am,
+     md-Setext-01.c, md-Setext-02.c, md-Setext-03.c, md-Setext-04.c,
+     md-atx-01.c, md-atx-02.c, md-atx-03.c, md-code-01.c, md-code-02.c,
+     md-code-03.c, md-code-fence-01a.c, md-code-fence-01b.c,
+     md-code-fence-01c.c, md-hr-01a.c, md-hr-01b.c, md-hr-02a.c, md-ul-05.c,
+     wrapc--Markdown-Setext-01.txt, wrapc--Markdown-Setext-02.txt,
+     wrapc--Markdown-Setext-03.txt, wrapc--Markdown-Setext-04.txt,
+     wrapc--Markdown-atx-01.txt, wrapc--Markdown-atx-02.txt,
+     wrapc--Markdown-atx-03.txt, wrapc--Markdown-code-01.txt,
+     wrapc--Markdown-code-02.txt, wrapc--Markdown-code-03.txt,
+     wrapc--Markdown-fence-01a.txt, wrapc--Markdown-fence-01b.txt,
+     wrapc--Markdown-fence-01c.txt, wrapc--Markdown-hr-01a.txt,
+     wrapc--Markdown-hr-01b.txt, wrapc--Markdown-ul-05.txt,
+     wrapc--Markdown-Setext-01.test, wrapc--Markdown-Setext-02.test,
+     wrapc--Markdown-Setext-03.test, wrapc--Markdown-Setext-04.test,
+     wrapc--Markdown-atx-01.test, wrapc--Markdown-atx-02.test,
+     wrapc--Markdown-atx-03.test, wrapc--Markdown-code-01.test,
+     wrapc--Markdown-code-02.test, wrapc--Markdown-code-03.test,
+     wrapc--Markdown-fence-01a.test, wrapc--Markdown-fence-01b.test,
+     wrapc--Markdown-fence-01c.test, wrapc--Markdown-hr-01a.test,
+     wrapc--Markdown-hr-01b.test, wrapc--Markdown-ul-05.test: Fixed several
+     bugs; lots more tests.
+
+2016-05-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: pc is now pointer-to-const.
+   * wrap.c: Moved interprocess messages into buf_getc().
+   * common.h: Now using the right code for ETB.
+
 2016-05-01  Paul J. Lucas <paul@lucasmail.org>
 
+   * test/Makefile.am, md-ul-03.c, md-ul-04.c, wrapc--Markdown-ul-03.txt,
+     wrapc--Markdown-ul-04.txt, wrapc--Markdown-ul-03.test,
+     wrapc--Markdown-ul-04.test: Some test renaming.
    * wrap.1, markdown.c, wrap.c, test/Makefile.am, md-code-fence-01a.md,
      md-code-fence-01b.md, md-code-fence-01c.md, md-code-fence-02a.md,
      md-code-fence-02b.md, md-code-fence-02c.md, md-code-fence-03a.md,
