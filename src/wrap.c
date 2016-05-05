@@ -37,6 +37,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+#define WIPC_DEFERF(BUF,SIZE,CODE,FORMAT,...) \
+  snprintf( (BUF), (SIZE), ("%c" FORMAT), (CODE), __VA_ARGS__ )
+
 /**
  * Line indentation type.
  */
@@ -89,31 +92,21 @@ static size_t       proto_width;
 // local functions
 static int          buf_getc( char const** );
 static void         init( int, char const*[] );
-static void         ipc_send_buf( char ipc );
 static void         print_lead_chars( void );
 static void         print_line( size_t, bool );
 static void         put_tabs_spaces( size_t, size_t );
 static size_t       read_line( line_buf_t );
 static void         usage( void );
+static void         wipc_send( FILE*, char* );
 
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
- * Sends an IPC (interprocess communication) message to wrapc.
- *
- * @param ipc The IPC code to send.
- * @param s The null-terminated message to send.
- */
-static inline void ipc_send( char ipc, char const *s ) {
-  FPRINTF( fout, "%c%c%s", ASCII_DLE, ipc, s );
-}
-
-/**
- * Prints an end-of-line.
+ * Prints an end-of-line and sends any pending IPC message to wrapc.
  */
 static inline void print_eol( void ) {
   FPUTS( (char const*)"\r\n" + (opt_eol != EOL_WINDOWS), fout );
-  ipc_send_buf( ASCII_SOH );
+  wipc_send( fout, ipc_buf );
 }
 
 /**
@@ -517,12 +510,12 @@ read_line:
 
   int c = *(*ps)++;
 
-  if ( opt_data_link_esc && c == ASCII_DLE ) {
+  if ( opt_data_link_esc && c == WIPC_HELLO ) {
     //
     // A DLE character signals a wrap/wrapc interprocess message.
     //
     switch ( c = *(*ps)++ ) {
-      case ASCII_ETB:
+      case WIPC_END_WRAP:
         //
         // We've been told by wrapc (child 1) that we've reached the end of
         // the comment: dump any remaining buffer, propagate the interprocess
@@ -531,11 +524,11 @@ read_line:
         //
         print_lead_chars();
         print_line( out_len, true );
-        ipc_send( ASCII_ETB, *ps );
+        WIPC_SENDF( fout, WIPC_END_WRAP, "%s", *ps );
         fcopy( fin, fout );
         exit( EX_OK );
 
-      case ASCII_SOH:
+      case WIPC_NEW_LEADER:
         //
         // We've been told by wrapc (child 1) that the comment characters
         // and/or leading whitespace has changed: we have to echo it back to
@@ -546,9 +539,9 @@ read_line:
         // immediately.
         //
         if ( out_len )
-          strcpy( ipc_buf, *ps );
+          WIPC_DEFERF( ipc_buf, sizeof ipc_buf, WIPC_NEW_LEADER, "%s", *ps );
         else
-          ipc_send( ASCII_SOH, *ps );
+          WIPC_SENDF( fout, WIPC_NEW_LEADER, "%s", *ps );
         goto read_line;
 
       case '\0':
@@ -637,19 +630,6 @@ static void init( int argc, char const *argv[] ) {
     //
     opt_eol = bytes_read >= 2 && in_buf[ bytes_read - 2 ] == '\r' ?
       EOL_WINDOWS : EOL_UNIX;
-  }
-}
-
-/**
- * Sends a previously deferred IPC (interprocess communication) message, if
- * any, to wrapc.
- *
- * @param ipc The IPC code to send.
- */
-static void ipc_send_buf( char ipc ) {
-  if ( ipc_buf[0] ) {
-    ipc_send( ipc, ipc_buf );
-    ipc_buf[0] = '\0';
   }
 }
 
@@ -821,6 +801,20 @@ static void usage( void ) {
     , me, me, CONF_FILE_NAME, TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
   );
   exit( EX_USAGE );
+}
+
+/**
+ * Sends an already formatted IPC (interprocess communication) message (if not
+ * empty) to wrapc.
+ *
+ * @param fout The FILE to send to.
+ * @param msg The message to send.  If sent, the buffer is truncated.
+ */
+static void wipc_send( FILE *fout, char *msg ) {
+  if ( msg[0] ) {
+    WIPC_SENDF( fout, /*IPC_code=*/msg[0], "%s", msg + 1 );
+    msg[0] = '\0';
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

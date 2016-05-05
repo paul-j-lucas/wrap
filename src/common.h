@@ -28,6 +28,11 @@
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>                      /* for FILE */
 
+/**
+ * @file
+ * Contains constants, macros, and functions common to both wrap and wrapc.
+ */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 #define CONF_FILE_NAME            "." PACKAGE "rc"
@@ -37,14 +42,13 @@
 #define NEWLINES_DELIMIT_DEFAULT  2     /* # newlines that delimit a para */
 #define TAB_SPACES_DEFAULT        8     /* number of spaces a tab equals */
 
+////////// Interprocess Communication (IPC) ///////////////////////////////////
+
 /**
  * From Wikipedia: The data link escape character (DLE) was intended to be a
  * signal to the other end of a data link that the following character is a
  * control character such as STX or ETX. For example a packet may be structured
  * in the following way (DLE)(STX)(PAYLOAD)(DLE)(ETX).
- *
- * Wrap and Wrapc use it to signal the start of an interprocess message between
- * them.
  */
 #define ASCII_DLE                 '\x10'
 
@@ -52,9 +56,6 @@
  * From Wikipedia: The end of transmission block character (ETB) was used to
  * indicate the end of a block of data, where data was divided into such blocks
  * for transmission purposes.
- *
- * Wrap and Wrapc use it immediately after DLE to indicate the end of the block
- * of text to be wrapped.  Any additional text is passed through verbatim.
  */
 #define ASCII_ETB                 '\x17'
 
@@ -62,23 +63,35 @@
  * From Wikipedia: The start of heading (SOH) character was to mark a non-data
  * section of a data stream—the part of a stream containing addresses and other
  * housekeeping data.
- *
- * Wrap and Wrapc us it to signal a change in the leading comment characters
- * and/or whitespace.
  */
 #define ASCII_SOH                 '\x01'
 
 /**
- * Uncomment the line below to debug Markdown handling by printing state
- * information to stderr.
+ * IPC code to in-band signal the start of an IPC message.  It \e must be
+ * immediately followed by another IPC code that indicates the type of message.
  */
-//#define DEBUG_MARKDOWN
+#define WIPC_HELLO                ASCII_DLE
 
-#ifdef DEBUG_MARKDOWN
-# define MD_DEBUG(...)      PRINT_ERR( __VA_ARGS__ )
-#else
-# define MD_DEBUG(...)      (void)0     /* need something to eat the ';' */
-#endif /* DEBUG_MARKDOWN */
+/**
+ * IPC code to indicate the end of the block of text to be wrapped.  Any text
+ * sent after this is passed through verbatim.
+ */
+#define WIPC_END_WRAP             ASCII_ETB
+
+/**
+ * IPC code us it to signal a change in the leading comment characters
+ * and/or whitespace.  It \e must be terminated by a newline.
+ */
+#define WIPC_NEW_LEADER           ASCII_SOH
+
+/**
+ * Formats and sends an Interprocess Communication (IPC) message.
+ * @hideinitializer
+ */
+#define WIPC_SENDF(STREAM,CODE,FORMAT,...) \
+  FPRINTF( (STREAM), ("%c%c" FORMAT), WIPC_HELLO, (CODE), __VA_ARGS__ )
+
+///////////////////////////////////////////////////////////////////////////////
 
 typedef char line_buf_t[ LINE_BUF_SIZE ];
 
@@ -97,6 +110,20 @@ void clean_up( void );
  * @return Returns the number of characters read.
  */
 size_t buf_read( line_buf_t line, FILE *ffrom );
+
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Uncomment the line below to debug Markdown handling by printing state
+ * information to stderr.
+ */
+//#define DEBUG_MARKDOWN
+
+#ifdef DEBUG_MARKDOWN
+# define MD_DEBUG(...)      PRINT_ERR( __VA_ARGS__ )
+#else
+# define MD_DEBUG(...)      (void)0     /* need something to eat the ';' */
+#endif /* DEBUG_MARKDOWN */
 
 ///////////////////////////////////////////////////////////////////////////////
 

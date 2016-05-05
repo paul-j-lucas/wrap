@@ -443,7 +443,7 @@ static pid_t read_source_write_wrap( void ) {
         proto_len0 = proto_len;
         strncpy( proto_buf, CURR, proto_len );
         proto_buf[ proto_len ] = '\0';
-        FPRINTF( fwrap, "%c%c%s\n", ASCII_DLE, ASCII_SOH, proto_buf );
+        WIPC_SENDF( fwrap, WIPC_NEW_LEADER, "%s\n", proto_buf );
       }
     }
 
@@ -457,7 +457,7 @@ verbatim:
   // We've reached the end of the comment: signal wrap(1) that we're now
   // passing text through verbatim and do so.
   //
-  FPRINTF( fwrap, "%c%c%s%s", ASCII_DLE, ASCII_ETB, CURR, NEXT );
+  WIPC_SENDF( fwrap, WIPC_END_WRAP, "%s%s", CURR, NEXT );
   fcopy( fin, fwrap );
   exit( EX_OK );
 }
@@ -504,9 +504,9 @@ static void read_wrap( void ) {
 
   while ( fgets( line_buf, sizeof line_buf, fwrap ) ) {
     char const *line = line_buf;
-    if ( line[0] == ASCII_DLE ) {
+    if ( line[0] == WIPC_HELLO ) {
       switch ( line[1] ) {
-        case ASCII_ETB:
+        case WIPC_END_WRAP:
           //
           // We've been told by child 1 (read_source_write_wrap(), via child 2,
           // wrap) that we've reached the end of the comment: dump any
@@ -516,7 +516,7 @@ static void read_wrap( void ) {
           fcopy( fwrap, fout );
           goto break_loop;
 
-        case ASCII_SOH:
+        case WIPC_NEW_LEADER:
           //
           // We've been told by child 1 (read_source_write_wrap(), via child 2,
           // wrap) that the leading comment characters and/or whitespace has
