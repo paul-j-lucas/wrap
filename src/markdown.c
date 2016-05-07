@@ -828,12 +828,12 @@ md_state_t const* markdown_parse( char *s ) {
     stack_pop();
   } // while
 
-  md_indent_t const nested_list_indent = TOP.depth * MD_LIST_INDENT_MAX;
+  md_indent_t const nested_indent_min = TOP.depth * MD_LIST_INDENT_MAX;
 
   switch ( curr_line_type ) {
 
     case MD_OL:
-      if ( !top_is( MD_OL ) || indent_left >= nested_list_indent ) {
+      if ( !top_is( MD_OL ) || indent_left >= nested_indent_min ) {
         stack_push( MD_OL, indent_left, indent_hang );
         TOP.ol_num = ol_num;
       } else {
@@ -845,7 +845,7 @@ md_state_t const* markdown_parse( char *s ) {
       break;
 
     case MD_UL:
-      if ( !top_is( MD_UL ) || indent_left >= nested_list_indent )
+      if ( !top_is( MD_UL ) || indent_left >= nested_indent_min )
         stack_push( MD_UL, indent_left, indent_hang );
       else
         TOP.seq_num = ++next_seq_num;
