@@ -224,8 +224,7 @@ done:
 }
 
 /**
- * Checks whether the given string is a URI (begins with a URI scheme followed
- * by a ':').
+ * Checks whether the given string is a URI scheme followed by a ':'.
  *
  * See also:
  *  + RFC 3986: "Uniform Resource Identifier (URI): Generic Syntax," Section
@@ -233,7 +232,8 @@ done:
  *    Force, January 2005.
  *
  * @param s The null-terminated string to check.
- * @return Returns \c true only if \a s is a URI scheme.
+ * @return Returns a pointer within \a s just after the ':' if \a s is a URI
+ * scheme or null otherwise.
  */
 static char const* is_uri_scheme( char const *s ) {
   assert( s );
