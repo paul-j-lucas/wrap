@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\fP 1 "May 1, 2016" "PJL TOOLS"
+.TH \f3wrap\fP 1 "May 7, 2016" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -298,7 +298,10 @@ Treats the first line of every paragraph as a title
 and puts it on a line by itself.
 .TP
 .B \-u
-Format Markdown text.
+Format Markdown text
+(see
+.B MARKDOWN FORMATTING
+below).
 .TP
 .B \-v
 Prints the version number to
@@ -328,9 +331,15 @@ reformats Markdown to Markdown
 and not to some other format,
 e.g., HTML.
 As such,
-only block elements of Markdown are supported
-because span elements play no role in reformatting
-and need no treatment different from the surrounding text.
+only block elements of Markdown need be supported
+since span elements play no role in reformatting
+and need to be treaded no differently from the surrounding text.
+.P
+The Markdown elements that are currently supported
+are those offered by the original Markdown
+(except blockquotes)
+plus code fences from PHP Markdown Extra
+plus nested lists from GitHub Flavored Markdown.
 .SS Paragraphs
 Paragraphs,
 one or more consecutive lines of text
@@ -443,13 +452,7 @@ Ordered lists use numbers followed by a period and a space:
 When reformatted,
 out-of-sequence numbers will automatically be renumbered
 starting at the first number.
-(This differs from the Markdown specification
-that always starts numbering at 1.
-This difference is necessary
-since one common use
-is to reformat only a selection of text of a document
-from within a text editor
-rather than the entire document.)
+(This follows PHP Markdown Extra.)
 .P
 Aside from using numbers as list item markers,
 everything else about unordered lists
@@ -577,8 +580,6 @@ optionally indented by any number of spaces or tabs:
 [md]: https://daringfireball.net/projects/markdown/
     "Markdown"
 .cE 0
-.SS Blockquotes
-Blockquotes are currently not supported.
 .SH EXIT STATUS
 .PD 0
 .IP 0
@@ -643,10 +644,16 @@ Paul J. Lucas
 .P
 .nf
 .IR "Markdown" ", John Gruber,"
-.RI < https://daringfireball.net/projects/markdown/ >
+.br
+<\f(CWhttps://daringfireball.net/projects/markdown/\fP>
 .P
 .IR "PHP Markdown Extra" ,
-.RI < https://michelf.ca/projects/php-markdown/extra/ >
+.br
+<\f(CWhttps://michelf.ca/projects/php-markdown/extra/\fP>
+.P
+.IR "Writing on GitHub" ,
+.br
+<\f(CWhttps://help.github.com/categories/writing-on-github/\fP>
 .P
 .IR "UTF-8, a transformation format of ISO 10646" ,
 RFC 3629, Francois Yergeau, November 2003.
