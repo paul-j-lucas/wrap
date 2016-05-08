@@ -1,3 +1,27 @@
+2016-05-07  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrap.1, markdown.c, markdown.h, wrap.c,
+     test/Makefile.am, md-table-01.c, md-table-01.md, md-table-02.c,
+     md-table-02.md, md-table-03.c, md-table-03.md, md-table-04.c,
+     md-table-04.md, md-table-05.c, md-table-05.md, md-table-06.c,
+     md-table-06.md, wrap--Markdown-table-01.txt, wrap--Markdown-table-02.txt,
+     wrap--Markdown-table-03.txt, wrap--Markdown-table-04.txt,
+     wrap--Markdown-table-05.txt, wrap--Markdown-table-06.txt,
+     wrapc--Markdown-table-01.txt, wrapc--Markdown-table-02.txt,
+     wrapc--Markdown-table-03.txt, wrapc--Markdown-table-04.txt,
+     wrapc--Markdown-table-05.txt, wrapc--Markdown-table-06.txt,
+     wrap--Markdown-table-01.test, wrap--Markdown-table-02.test,
+     wrap--Markdown-table-03.test, wrap--Markdown-table-04.test,
+     wrap--Markdown-table-05.test, wrap--Markdown-table-06.test,
+     wrapc--Markdown-table-01.test, wrapc--Markdown-table-02.test,
+     wrapc--Markdown-table-03.test, wrapc--Markdown-table-04.test,
+     wrapc--Markdown-table-05.test, wrapc--Markdown-table-06.test: Added PHP
+     Markdown Extra table support.
+   * markdown.c: s/nested_list_indent/nested_indent_min/
+   * markdown.c: Fixed comment.
+   * wrap.1: More explicit about what Markdown is and is not currently
+     supported.
+
 2016-05-05  Paul J. Lucas <paul@lucasmail.org>
 
    * lib/Makefile.am, gnulib-cache.m4, markdown.c, util.c, util.h, wrap.c:
