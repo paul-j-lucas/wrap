@@ -658,6 +658,7 @@ static bool markdown_adjust( line_buf_t line ) {
       case MD_HR:
       case MD_HTML:
       case MD_LINK_LABEL:
+      case MD_TABLE:
         consec_newlines = 0;
         if ( is_blank_line( line ) ) {
           //
@@ -679,6 +680,7 @@ static bool markdown_adjust( line_buf_t line ) {
     case MD_HR:
     case MD_HTML:
     case MD_LINK_LABEL:
+    case MD_TABLE:
       //
       // Flush out_buf and print the Markdown line as-is "behind wrap's back"
       // because these line types are never wrapped.
@@ -697,7 +699,7 @@ static bool markdown_adjust( line_buf_t line ) {
         print_lead_chars();
         print_line( out_len, true );
         prev_seq_num = md->seq_num;
-      } else if ( !out_len ) {
+      } else if ( !out_len && !is_blank_line( line ) ) {
         //
         // Same line type, but new line: hang indent.
         //

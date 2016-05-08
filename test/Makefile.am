@@ -138,6 +138,12 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap--Markdown-Setext-02.test \
 	tests/wrap--Markdown-Setext-03.test \
 	tests/wrap--Markdown-Setext-04.test \
+	tests/wrap--Markdown-table-01.test \
+	tests/wrap--Markdown-table-02.test \
+	tests/wrap--Markdown-table-03.test \
+	tests/wrap--Markdown-table-04.test \
+	tests/wrap--Markdown-table-05.test \
+	tests/wrap--Markdown-table-06.test \
 	tests/crlf-01.test \
 	tests/crlf-ld-01.test \
 	tests/crlf-li-01.test \
@@ -209,6 +215,12 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--Markdown-Setext-02.test \
 	tests/wrapc--Markdown-Setext-03.test \
 	tests/wrapc--Markdown-Setext-04.test \
+	tests/wrapc--Markdown-table-01.test \
+	tests/wrapc--Markdown-table-02.test \
+	tests/wrapc--Markdown-table-03.test \
+	tests/wrapc--Markdown-table-04.test \
+	tests/wrapc--Markdown-table-05.test \
+	tests/wrapc--Markdown-table-06.test \
 	tests/wrapc--Pascal-00.test \
 	tests/wrapc--Pascal-01.test \
 	tests/wrapc--Pascal-02.test \

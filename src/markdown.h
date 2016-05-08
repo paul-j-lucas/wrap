@@ -41,6 +41,7 @@ enum md_line {
   MD_LINK_LABEL  = '[',                 // [id]: <URI>
   MD_OL          = '1',                 // ordered list: 1., 2., ....
   MD_UL          = '*',                 // unordered list: *, +, or -
+  MD_TABLE       = '|',
   MD_TEXT        = 'T',                 // plain text
 };
 typedef enum md_line md_line_t;

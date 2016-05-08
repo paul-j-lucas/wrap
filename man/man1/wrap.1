@@ -336,10 +336,7 @@ since span elements play no role in reformatting
 and need to be treaded no differently from the surrounding text.
 .P
 The Markdown elements that are currently supported
-are those offered by the original Markdown
-(except blockquotes)
-plus code fences from PHP Markdown Extra
-plus nested lists from GitHub Flavored Markdown.
+are only those that are explicitly listed in this section.
 .SS Paragraphs
 Paragraphs,
 one or more consecutive lines of text
@@ -537,6 +534,25 @@ would be ambiguous with a Setext 2nd-level header,
 the latter
 .I must
 have a non-blank line preceding it.
+.SS Tables
+Tables are lines that contain at least one pipe (\f(CW|\fP)
+and one non-whitespace character:
+.cS
+Column 1 Header | Column 2 Header
+----------------|----------------
+Data C1R1       | Data C2R1
+Data C1R2       | Data C2R2
+.cE
+While it looks best if the columns are all the same width,
+they need not be.
+Tables may optionally also have pipes at either end of the table:
+.cS
+|Column 1 Header | Column 2 Header|
+|----------------|----------------|
+|Data C1R1       | Data C2R1      |
+|Data C1R2       | Data C2R2      |
+.cE
+Tables are passed through unaltered.
 .SS Block-Level HTML
 Block-level HTML are lines
 that are bracketed by a beginning and ending tag

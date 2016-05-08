@@ -456,6 +456,38 @@ static bool md_is_ol( char const *s, md_ol_t *ol_num,
 }
 
 /**
+ * Checks whether the line is a PHP Markdown Extra table line.
+ *
+ * @param s The null-terminated line to check.
+ * @return Returns \c true only if \a s is a PHP Markdown Extra table line.
+ */
+static bool md_is_table( char const *s ) {
+  assert( s );
+  bool nws = false;                     // encountered non-whitespace?
+
+  for ( ; *s && !is_eol( *s ); ++s ) {
+    switch ( *s ) {
+      case '\\':
+        ++s;
+        break;
+      case '|':
+        if ( nws ) {
+          //
+          // Insist on encountering at least one non-whitespace character on
+          // the line before returning that it's a table.
+          //
+          return true;
+        }
+        break;
+      default:
+        if ( !isspace( *s ) )
+          nws = true;
+    } // switch
+  } // for
+  return false;
+}
+
+/**
  * Checks whether the line is a Markdown unordered list element: a *, -, or +
  * followed by whitespace.
  *
@@ -662,6 +694,20 @@ md_state_t const* markdown_parse( char *s ) {
       stack_pop();
       break;
 
+    case MD_TABLE:
+      //
+      // PHP Markdown Extra table.
+      //
+      if ( md_is_table( s ) ) {
+        //
+        // As long as we're in the MD_TABLE state and lines continue to be
+        // table lines, we can just return without further checks.
+        //
+        return &TOP;
+      }
+      stack_pop();
+      break;
+
     default:
       /* suppress warning */;
   } // switch
@@ -783,7 +829,7 @@ md_state_t const* markdown_parse( char *s ) {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  md_line_t   curr_line_type = MD_TEXT;
+  md_line_t   curr_line_type = MD_NONE;
   md_indent_t indent_hang = 0;
   md_ol_t     ol_num = 0;
 
@@ -831,6 +877,14 @@ md_state_t const* markdown_parse( char *s ) {
   md_indent_t const nested_indent_min = TOP.depth * MD_LIST_INDENT_MAX;
 
   switch ( curr_line_type ) {
+
+    case MD_NONE:
+      if ( blank_line && md_is_table( s ) ) {
+        assert( !top_is( MD_TABLE ) );
+        if ( indent_left >= nested_indent_min )
+          stack_push( MD_TABLE, indent_left, 0 );
+      }
+      break;
 
     case MD_OL:
       if ( !top_is( MD_OL ) || indent_left >= nested_indent_min ) {
