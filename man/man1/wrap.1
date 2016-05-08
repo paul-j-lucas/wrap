@@ -536,7 +536,10 @@ the latter
 have a non-blank line preceding it.
 .SS Tables
 Tables are lines that contain at least one pipe (\f(CW|\fP)
-and one non-whitespace character:
+and one non-whitespace character.
+Tables
+.I must
+be separated from surrounding text by blank lines:
 .cS
 Column 1 Header | Column 2 Header
 ----------------|----------------
@@ -552,6 +555,7 @@ Tables may optionally also have pipes at either end of the table:
 |Data C1R1       | Data C2R1      |
 |Data C1R2       | Data C2R2      |
 .cE
+Tables may be nested inside lists.
 Tables are passed through unaltered.
 .SS Block-Level HTML
 Block-level HTML are lines
