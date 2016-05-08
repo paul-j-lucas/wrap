@@ -519,7 +519,7 @@ static bool md_is_ul( char const *s, md_indent_t *indent_hang ) {
 
 /**
  * Checks whether the line is a Markdown Setext header line, a sequence of one
- * or more \c = or \c - characters starting in colume 1.
+ * or more \c = or \c - characters starting in column 1.
  *
  * @param s The null-terminated line to check where \a s[0] is used as the
  * header character to match.
