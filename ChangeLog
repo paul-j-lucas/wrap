@@ -1,5 +1,6 @@
 2016-05-07  Paul J. Lucas <paul@lucasmail.org>
 
+   * options.c: s/SIZE_T_MAX/SIZE_MAX/
    * NEWS, configure.ac, wrap.1, markdown.c, markdown.h, wrap.c,
      test/Makefile.am, md-table-01.c, md-table-01.md, md-table-02.c,
      md-table-02.md, md-table-03.c, md-table-03.md, md-table-04.c,
