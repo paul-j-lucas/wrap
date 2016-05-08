@@ -30,8 +30,8 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
-#include <limits.h>
 #include <getopt.h>
+#include <stdint.h>
 #include <string.h>                     /* for memset(3) */
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -218,7 +218,7 @@ static void parse_options( int argc, char const *argv[], char const *opts,
       case 'L': opt_lead_string       = optarg;               break;
       case 'm': opt_mirror_tabs       = check_atou( optarg ); break;
       case 'M': opt_mirror_spaces     = check_atou( optarg ); break;
-      case 'n': opt_newlines_delimit  = SIZE_T_MAX;           break;
+      case 'n': opt_newlines_delimit  = SIZE_MAX;             break;
       case 'N': opt_newlines_delimit  = 1;                    break;
       case 'o': opt_fout              = optarg;               break;
       case 'p': opt_para_delims       = optarg;               break;
