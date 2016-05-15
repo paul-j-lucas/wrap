@@ -453,7 +453,35 @@ starting at the first number.
 .P
 Aside from using numbers as list item markers,
 everything else about unordered lists
-applies to ordered lists.
+also applies to ordered lists.
+.SS Definition Lists
+Definition lists are term lines
+preceded by a blank line
+followed by definition lines that start with a colon:
+.cS
+Apple
+: A deciduous tree (Malus domestica) in the rose family best known
+  for its sweet, pomaceous fruit.
+
+Pear
+: Any of several tree and shrub species of genus Pyrus in the
+  family Rosaceae.  It is also the name of the pomaceous fruit of
+  these trees.
+.cE
+Term lines may be followed by a blank line.
+Terms may have multiple definitions
+that may be separated by a blank line:
+.cS
+Apple
+: A deciduous tree (Malus domestica) in the rose family best known
+  for its sweet, pomaceous fruit.
+: An American multinational technology company headquartered in
+  Cupertino, California, that designs, develops, and sells
+  consumer electronics, computer software, and online services.
+.cE
+Aside from using a colon as the list item marker,
+everything else about unordered lists
+also applies to definition lists.
 .SS Nested Lists
 The original Markdown specification
 does not support nested lists;
@@ -464,7 +492,11 @@ do.
 Nested lists
 .I must
 be indented 4 spaces per nesting level
-and may be any mixture or unordered and ordered lists:
+and may be any mixture of
+unordered,
+ordered,
+and definition
+lists:
 .cS
 1. First outermost list item.
     * First nested list item.
@@ -627,6 +659,11 @@ the home directory is obtained from the password database entry
 for the effective user.
 If that fails,
 no default configuration file is read.
+.SH BUGS
+PHP Markdown Extra allows multiple terms to share the same a definition;
+however,
+.B wrap
+does not support this.
 .SH FILES
 .TP
 .B ~/.wraprc

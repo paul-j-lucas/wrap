@@ -690,6 +690,7 @@ static bool markdown_adjust( line_buf_t line ) {
       FPUTS( line, fout );
       return false;
 
+    case MD_DL:
     case MD_OL:
     case MD_UL:
       if ( md->seq_num > prev_seq_num ) {

@@ -34,6 +34,7 @@
 enum md_line {
   MD_NONE        = '0',
   MD_CODE        = 'C',
+  MD_DL          = ':',                 // definition list
   MD_HEADER_ATX  = '#',                 // # to ######
   MD_HEADER_LINE = '=',                 // ===== or -----
   MD_HR          = '_',                 // ***, ---, or ___

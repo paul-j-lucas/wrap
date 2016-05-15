@@ -1,0 +1,6 @@
+Term 1
+
+: First sentence of first item.
+  Second sentence of first item.
+  Third sentence of first item.
+  Fourth sentence of first item.

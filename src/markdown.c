@@ -78,7 +78,8 @@ static stack_pos_t  stack_top = -1;     // index of the top of the stack
 
 // local functions
 static bool         md_is_code_fence( char const*, md_code_fence_t* );
-static bool         md_nested_within( md_line_t );
+static bool         md_is_dl_ul_helper( char const*, md_indent_t* );
+static md_line_t    md_nested_within( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
 
@@ -185,7 +186,7 @@ static md_indent_t md_code_indent_min( void ) {
  * @return Returns \c true only if \a line_type can nest.
  */
 static inline bool md_is_nestable( md_line_t line_type ) {
-  return line_type == MD_OL || line_type == MD_UL;
+  return line_type == MD_DL || line_type == MD_OL || line_type == MD_UL;
 }
 
 ////////// local functions ////////////////////////////////////////////////////
@@ -253,16 +254,18 @@ static char const* is_uri_scheme( char const *s ) {
  * its preferred divisor.  For example, for \a indent values of 3, 6, 7, or 9
  * spaces, returns 3; for value of 4, 5, 8, or 12, returns 4.
  *
- * As a special case, we also allow 2 spaces per indent for unordered lists.
+ * As a special case, we also allow 2 spaces per indent for definition and
+ * unordered lists.
  *
  * @param indent_left The raw indent (in spaces).
  * @return Returns the preferred divisor.
  */
 static md_indent_t md_indent_divisor( md_indent_t indent_left ) {
-  bool const within_ul = md_nested_within( MD_UL );
-  md_indent_t const mod_a =             indent_left % MD_LIST_INDENT_MAX;
-  md_indent_t const mod_b =             indent_left % MD_OL_INDENT_MIN  ;
-  md_indent_t const mod_c = within_ul ? indent_left % MD_UL_INDENT_MIN  : 9;
+  md_line_t const line_type = md_nested_within();
+  bool const dl_or_ul = line_type == MD_DL || line_type == MD_UL;
+  md_indent_t const mod_a =            indent_left % MD_LIST_INDENT_MAX;
+  md_indent_t const mod_b =            indent_left % MD_OL_INDENT_MIN  ;
+  md_indent_t const mod_c = dl_or_ul ? indent_left % MD_UL_INDENT_MIN  : 9;
   return mod_a <= mod_b ?
     (mod_a <= mod_c ? MD_LIST_INDENT_MAX : MD_UL_INDENT_MIN) :
     (mod_b <= mod_c ? MD_OL_INDENT_MIN   : MD_UL_INDENT_MIN);
@@ -317,6 +320,50 @@ static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
   if ( len >= MD_CODE_FENCE_CHAR_MIN ) {
     fence->ch  = c;
     fence->len = len;
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Checks whether the line is a PHP Markdown Extra definition list item: a :
+ * followed by whitespace.
+ *
+ * @param s The null-terminated line to check.
+ * @param indent_hang A pointer to the variable to receive the relative hang
+ * indent (in spaces).
+ * @return Returns \c true only if \a s is a PHP Markdown Extra definition list
+ * item.
+ */
+static bool md_is_dl( char const *s, md_indent_t *indent_hang ) {
+  assert( s );
+  assert( s[0] == ':' );
+  return md_is_dl_ul_helper( s, indent_hang );
+}
+
+/**
+ * Checks whether the line is either a Markdown unordered list item or a PHP
+ * Markdown Extra definition list item.
+ *
+ * @param s The null-terminated line to check.
+ * @param indent_hang A pointer to the variable to receive the relative hang
+ * indent (in spaces).
+ * @return Returns \c true only if \a s is a PHP Markdown Extra definition list
+ * item.
+ */
+static bool md_is_dl_ul_helper( char const *s, md_indent_t *indent_hang ) {
+  assert( indent_hang );
+  if ( is_space( s[1] ) ) {
+    if ( s[1] == '\t' )
+      *indent_hang = MD_LIST_INDENT_MAX;
+    else {
+      *indent_hang = MD_UL_INDENT_MIN;
+      if ( is_space( s[2] ) ) {
+        ++*indent_hang;
+        if ( is_space( s[3] ) )
+          ++*indent_hang;
+      }
+    }
     return true;
   }
   return false;
@@ -426,7 +473,7 @@ static bool md_is_link_label( char const *s, bool *has_title ) {
 }
 
 /**
- * Checks whether the line is a Markdown ordered list element: a sequence of
+ * Checks whether the line is a Markdown ordered list item: a sequence of
  * digits followed by a period and whitespace.
  *
  * @param s The null-terminated line to check.
@@ -488,7 +535,7 @@ static bool md_is_table( char const *s ) {
 }
 
 /**
- * Checks whether the line is a Markdown unordered list element: a *, -, or +
+ * Checks whether the line is a Markdown unordered list item: a *, -, or +
  * followed by whitespace.
  *
  * @param s The null-terminated line to check.
@@ -499,22 +546,7 @@ static bool md_is_table( char const *s ) {
 static bool md_is_ul( char const *s, md_indent_t *indent_hang ) {
   assert( s );
   assert( s[0] == '*' || s[0] == '-' || s[0] == '+' );
-  assert( indent_hang );
-
-  if ( is_space( s[1] ) ) {
-    if ( s[1] == '\t' )
-      *indent_hang = MD_LIST_INDENT_MAX;
-    else {
-      *indent_hang = MD_UL_INDENT_MIN;
-      if ( is_space( s[2] ) ) {
-        ++*indent_hang;
-        if ( is_space( s[3] ) )
-          ++*indent_hang;
-      }
-    }
-    return true;
-  }
-  return false;
+  return md_is_dl_ul_helper( s, indent_hang );
 }
 
 /**
@@ -537,19 +569,17 @@ static bool md_is_Setext_header( char const *s ) {
 }
 
 /**
- * Checks whether we're currently nested within \a line_type.
+ * Checks the innermost enclosing nestable line type, if any.
  *
- * @param line_type The line type to check for.
- * @return Returns \c true only if the nearest enclosing nestable type is
- * \a line_type.
+ * @return Returns said line true or MD_NONE if none.
  */
-static bool md_nested_within( md_line_t line_type ) {
+static md_line_t md_nested_within( void ) {
   for ( stack_pos_t pos = stack_top; pos >= 0; --pos ) {
-    md_line_t const pos_line_type = STACK(pos).line_type;
-    if ( md_is_nestable( pos_line_type ) )
-      return pos_line_type == line_type;
+    md_line_t const line_type = STACK(pos).line_type;
+    if ( md_is_nestable( line_type ) )
+      return line_type;
   } // for
-  return false;
+  return MD_NONE;
 }
 
 /**
@@ -853,6 +883,11 @@ md_state_t const* markdown_parse( char *s ) {
       if ( md_is_ul( nws, &indent_hang ) )
         curr_line_type = MD_UL;
       break;
+
+    // Definition lists.
+    case ':':
+      if ( md_is_dl( nws, &indent_hang ) )
+        curr_line_type = MD_DL;
   } // switch
 
   //
@@ -898,9 +933,10 @@ md_state_t const* markdown_parse( char *s ) {
       }
       break;
 
+    case MD_DL:
     case MD_UL:
-      if ( !top_is( MD_UL ) || indent_left >= nested_indent_min )
-        stack_push( MD_UL, indent_left, indent_hang );
+      if ( !top_is( curr_line_type ) || indent_left >= nested_indent_min )
+        stack_push( curr_line_type, indent_left, indent_hang );
       else
         TOP.seq_num = ++next_seq_num;
       break;
