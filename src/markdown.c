@@ -63,8 +63,8 @@ static size_t const MD_CODE_INDENT_MIN     =  4;  // min indent for code
 static size_t const MD_HR_CHAR_MIN         =  3;  // min num of ***, ---, or ___
 static size_t const MD_LINK_INDENT_MAX     =  3;  // max indent for [id]: URI
 static size_t const MD_LIST_INDENT_MAX     =  4;  // max indent for all lists
+static size_t const MD_DL_UL_INDENT_MIN    =  2;  // unordered list min indent
 static size_t const MD_OL_INDENT_MIN       =  3;  // ordered list min indent
-static size_t const MD_UL_INDENT_MIN       =  2;  // unordered list min indent
 
 static size_t const STATE_ALLOC_DEFAULT    = 5;
 static size_t const STATE_ALLOC_INCREMENT  = 5;
@@ -263,12 +263,12 @@ static char const* is_uri_scheme( char const *s ) {
 static md_indent_t md_indent_divisor( md_indent_t indent_left ) {
   md_line_t const line_type = md_nested_within();
   bool const dl_or_ul = line_type == MD_DL || line_type == MD_UL;
-  md_indent_t const mod_a =            indent_left % MD_LIST_INDENT_MAX;
-  md_indent_t const mod_b =            indent_left % MD_OL_INDENT_MIN  ;
-  md_indent_t const mod_c = dl_or_ul ? indent_left % MD_UL_INDENT_MIN  : 9;
+  md_indent_t const mod_a =            indent_left % MD_LIST_INDENT_MAX     ;
+  md_indent_t const mod_b =            indent_left % MD_OL_INDENT_MIN       ;
+  md_indent_t const mod_c = dl_or_ul ? indent_left % MD_DL_UL_INDENT_MIN : 9;
   return mod_a <= mod_b ?
-    (mod_a <= mod_c ? MD_LIST_INDENT_MAX : MD_UL_INDENT_MIN) :
-    (mod_b <= mod_c ? MD_OL_INDENT_MIN   : MD_UL_INDENT_MIN);
+    (mod_a <= mod_c ? MD_LIST_INDENT_MAX : MD_DL_UL_INDENT_MIN) :
+    (mod_b <= mod_c ? MD_OL_INDENT_MIN   : MD_DL_UL_INDENT_MIN);
 }
 
 /**
@@ -357,7 +357,7 @@ static bool md_is_dl_ul_helper( char const *s, md_indent_t *indent_hang ) {
     if ( s[1] == '\t' )
       *indent_hang = MD_LIST_INDENT_MAX;
     else {
-      *indent_hang = MD_UL_INDENT_MIN;
+      *indent_hang = MD_DL_UL_INDENT_MIN;
       if ( is_space( s[2] ) ) {
         ++*indent_hang;
         if ( is_space( s[3] ) )
