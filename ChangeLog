@@ -1,5 +1,26 @@
+2016-05-14  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrap.1, markdown.c, markdown.h, wrap.c,
+     test/Makefile.am, md-dl-01s.md, md-dl-01s.xq, md-dl-02s.md, md-dl-02s.xq,
+     md-dl-03s.md, md-dl-03s.xq, md-dl-04s.md, wrap--Markdown-dl-01s.txt,
+     wrap--Markdown-dl-02s.txt, wrap--Markdown-dl-03s.txt,
+     wrap--Markdown-dl-04s.txt, wrapc--Markdown-dl-01s.txt,
+     wrapc--Markdown-dl-02s.txt, wrapc--Markdown-dl-03s.txt,
+     wrap--Markdown-dl-01s.test, wrap--Markdown-dl-02s.test,
+     wrap--Markdown-dl-03s.test, wrapc--Markdown-dl-01s.test,
+     wrapc--Markdown-dl-02s.test, wrapc--Markdown-dl-03s.test: Added PHP
+     Markdown Extra definition list support.
+   * wrap.1: Moved Tables.
+
+2016-05-11  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.1: s/Format/Formats/
+
 2016-05-07  Paul J. Lucas <paul@lucasmail.org>
 
+   * wrap.1: Added note about blank lines around tables; and nesting.
+   * wrap.1: Man page tweak.
+   * markdown.c: Fixed typo in comment.
    * options.c: s/SIZE_T_MAX/SIZE_MAX/
    * NEWS, configure.ac, wrap.1, markdown.c, markdown.h, wrap.c,
      test/Makefile.am, md-table-01.c, md-table-01.md, md-table-02.c,
