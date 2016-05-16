@@ -1,3 +1,17 @@
+2016-05-16  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, wrap.1, markdown.c, markdown.h, wrap.c, test/Makefile.am,
+     md-footnote-01.c, md-footnote-01.md, md-footnote-02.c, md-footnote-02.md,
+     wrap--Markdown-footnote-01.txt, wrap--Markdown-footnote-02.txt,
+     wrapc--Markdown-footnote-01.txt, wrapc--Markdown-footnote-02.txt,
+     wrap--Markdown-footnote-01.test, wrap--Markdown-footnote-02.test,
+     wrapc--Markdown-footnote-01.test, wrapc--Markdown-footnote-02.test: Added
+     PHP Markdown Extra footnote support.
+
+2016-05-15  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c: s/MD_UL_INDENT_MIN/MD_DL_UL_INDENT_MIN/
+
 2016-05-14  Paul J. Lucas <paul@lucasmail.org>
 
    * NEWS, configure.ac, wrap.1, markdown.c, markdown.h, wrap.c,
