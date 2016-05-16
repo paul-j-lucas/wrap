@@ -671,9 +671,19 @@ static bool markdown_adjust( line_buf_t line ) {
       default:
         /* suppress warning */;
     } // switch
+
     switch ( md->line_type ) {
       case MD_FOOTNOTE_DEF:
         if ( !md->fn_def_text ) {
+          //
+          // For a footnote definition line that does not have text on the same
+          // line:
+          //
+          //      [^1]:
+          //          Like this.
+          //
+          // output the marker line directly so it won't be wrapped.
+          //
           FPUTS( line, fout );
           line[0] = '\0';
         }
