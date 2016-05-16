@@ -1,6 +1,22 @@
 2016-05-16  Paul J. Lucas <paul@lucasmail.org>
 
    * NEWS, wrap.1, markdown.c, markdown.h, wrap.c, test/Makefile.am,
+     md-abbr-01.c, md-abbr-01.md, md-abbr-02.c, md-abbr-02.md, md-abbr-03.c,
+     md-abbr-03.md, md-abbr-04.c, md-abbr-04.md, md-abbr-05.c, md-abbr-05.md,
+     wrap--Markdown-abbr-01.txt, wrap--Markdown-abbr-02.txt,
+     wrap--Markdown-abbr-03.txt, wrap--Markdown-abbr-04.txt,
+     wrap--Markdown-abbr-05.txt, wrapc--Markdown-abbr-01.txt,
+     wrapc--Markdown-abbr-02.txt, wrapc--Markdown-abbr-03.txt,
+     wrapc--Markdown-abbr-04.txt, wrapc--Markdown-abbr-05.txt,
+     wrap--Markdown-abbr-01.test, wrap--Markdown-abbr-02.test,
+     wrap--Markdown-abbr-03.test, wrap--Markdown-abbr-04.test,
+     wrap--Markdown-abbr-05.test, wrapc--Markdown-abbr-01.test,
+     wrapc--Markdown-abbr-02.test, wrapc--Markdown-abbr-03.test,
+     wrapc--Markdown-abbr-04.test, wrapc--Markdown-abbr-05.test: Added PHP
+     Markdown Extra abbreviation support.
+   * wrap.c: Tweaked comment.
+   * wrap.c: Added comment.
+   * NEWS, wrap.1, markdown.c, markdown.h, wrap.c, test/Makefile.am,
      md-footnote-01.c, md-footnote-01.md, md-footnote-02.c, md-footnote-02.md,
      wrap--Markdown-footnote-01.txt, wrap--Markdown-footnote-02.txt,
      wrapc--Markdown-footnote-01.txt, wrapc--Markdown-footnote-02.txt,
