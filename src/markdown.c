@@ -127,6 +127,24 @@ static inline bool md_is_link_title( char const *s ) {
 }
 
 /**
+ * Checks whether \a line_type can nest.
+ *
+ * @param line_type The line type to check.
+ * @return Returns \c true only if \a line_type can nest.
+ */
+static inline bool md_is_nestable( md_line_t line_type ) {
+  switch ( line_type ) {
+    case MD_DL:
+    case MD_FOOTNOTE_DEF:
+    case MD_OL:
+    case MD_UL:
+      return true;
+    default:
+      return false;
+  } // switch
+}
+
+/**
  * Clears the Markdown stack down to the initial element.
  */
 static inline void stack_clear( void ) {
@@ -178,24 +196,6 @@ static inline bool top_is( md_line_t line_type ) {
  */
 static md_indent_t md_code_indent_min( void ) {
   return (stack_size() - top_is( MD_CODE )) * MD_CODE_INDENT_MIN;
-}
-
-/**
- * Checks whether \a line_type can nest.
- *
- * @param line_type The line type to check.
- * @return Returns \c true only if \a line_type can nest.
- */
-static inline bool md_is_nestable( md_line_t line_type ) {
-  switch ( line_type ) {
-    case MD_DL:
-    case MD_FOOTNOTE_DEF:
-    case MD_OL:
-    case MD_UL:
-      return true;
-    default:
-      return false;
-  } // switch
 }
 
 ////////// local functions ////////////////////////////////////////////////////
