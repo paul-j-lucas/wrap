@@ -42,7 +42,8 @@ enum md_line {
   MD_HEADER_ATX   = '#',                // # to ######
   MD_HEADER_LINE  = '=',                // ===== or -----
   MD_HR           = '_',                // ***, ---, or ___
-  MD_HTML         = '<',
+  MD_HTML_ABBR    = 'A',                // *[abbr]: abbreviation
+  MD_HTML_BLOCK   = '<',
   MD_LINK_LABEL   = '[',                // [id]: <URI>
   MD_OL           = '1',                // ordered list: 1., 2., ....
   MD_TABLE        = '|',

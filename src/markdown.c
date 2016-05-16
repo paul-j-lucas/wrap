@@ -432,6 +432,31 @@ static bool md_is_hr( char const *s ) {
 }
 
 /**
+ * Checks whether the line is a PHP Markdown Extra HTML abbreviation.
+ *
+ * @param s The null-terminated line to check.
+ * @return Returns \c true only if the line is a PHP Markdown Extra HTML
+ * abbreviation.
+ */
+static bool md_is_html_abbr( char const *s ) {
+  assert( s );
+  assert( s[0] == '*' );
+
+  if ( *++s == '[' ) {
+    while ( *++s ) {
+      switch ( *s ) {
+        case '\\':
+          ++s;
+          break;
+        case ']':
+          return *++s == ':';
+      } // switch
+    } // while
+  }
+  return false;
+}
+
+/**
  * Checks whether the line is a block-level HTML element.
  *
  * @param s The null-terminated line to check.
@@ -439,7 +464,7 @@ static bool md_is_hr( char const *s ) {
  * is an end tag.
  * @return Returns \c true only if the line is a block-level HTML element.
  */
-static char const* md_is_html( char const *s, bool *is_end_tag ) {
+static char const* md_is_html_block( char const *s, bool *is_end_tag ) {
   assert( s );
   assert( s[0] == '<' );
 
@@ -735,6 +760,7 @@ md_state_t const* markdown_parse( char *s ) {
     case MD_HEADER_ATX:
     case MD_HEADER_LINE:
     case MD_HR:
+    case MD_HTML_ABBR:
       //
       // These tokens are "one-shot," i.e., they never span multipe lines, so
       // pop them off the stack.
@@ -742,11 +768,11 @@ md_state_t const* markdown_parse( char *s ) {
       stack_pop();
       break;
 
-    case MD_HTML:
+    case MD_HTML_BLOCK:
       //
-      // If html_depth is zero, pop the MD_HTML off the stack.  The reason we
-      // don't pop the stack as soon as it goes to zero (below) is because we
-      // still want to return the last HTML line as MD_HTML.
+      // If html_depth is zero, pop the MD_HTML_BLOCK off the stack.  The
+      // reason we don't pop the stack as soon as it goes to zero (below) is
+      // because we still want to return the last HTML line as MD_HTML_BLOCK.
       //
       if ( !html_depth )
         stack_pop();
@@ -798,7 +824,7 @@ md_state_t const* markdown_parse( char *s ) {
     return &TOP;
   }
 
-  if ( !top_is( MD_HTML ) ) {
+  if ( !top_is( MD_HTML_BLOCK ) ) {
     //
     // Markdown code blocks.
     //
@@ -845,8 +871,13 @@ md_state_t const* markdown_parse( char *s ) {
   //
   switch ( nws[0] ) {
 
-    // Markdown horizontal rules.
+    // PHP Markdown Extra abbreviations.
     case '*':
+      if ( md_is_html_abbr( nws ) )
+        CLEAR_RETURN( MD_HTML_ABBR );
+      // no break;
+
+    // Markdown horizontal rules.
     case '-':
     case '_':
       if ( md_is_hr( nws ) )
@@ -856,14 +887,14 @@ md_state_t const* markdown_parse( char *s ) {
     // Block-level HTML.
     case '<': {
       bool is_end_tag;
-      char const *const html_element = md_is_html( nws, &is_end_tag );
+      char const *const html_element = md_is_html_block( nws, &is_end_tag );
       if ( html_element ) {
-        if ( top_is( MD_HTML ) ) {
+        if ( top_is( MD_HTML_BLOCK ) ) {
           assert( html_depth > 0 );
           if ( strcmp( html_element, outer_html_element ) == 0 )
             html_depth += is_end_tag ? -1 : 1;
         } else {
-          stack_push( MD_HTML, indent_left, 0 );
+          stack_push( MD_HTML_BLOCK, indent_left, 0 );
           if ( !is_end_tag ) {
             //
             // We have to count and balance only nested elements that are the
@@ -895,9 +926,9 @@ md_state_t const* markdown_parse( char *s ) {
 
   } // switch
 
-  if ( top_is( MD_HTML ) ) {
+  if ( top_is( MD_HTML_BLOCK ) ) {
     //
-    // As long as we're in the MD_HTML state, we can just return without
+    // As long as we're in the MD_HTML_BLOCK state, we can just return without
     // further checks.
     //
     return &TOP;

@@ -656,7 +656,8 @@ static bool markdown_adjust( line_buf_t line ) {
       case MD_CODE:
       case MD_HEADER_ATX:
       case MD_HR:
-      case MD_HTML:
+      case MD_HTML_ABBR:
+      case MD_HTML_BLOCK:
       case MD_LINK_LABEL:
       case MD_TABLE:
         consec_newlines = 0;
@@ -700,7 +701,8 @@ static bool markdown_adjust( line_buf_t line ) {
     case MD_HEADER_ATX:
     case MD_HEADER_LINE:
     case MD_HR:
-    case MD_HTML:
+    case MD_HTML_ABBR:
+    case MD_HTML_BLOCK:
     case MD_LINK_LABEL:
     case MD_TABLE:
       //
