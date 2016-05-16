@@ -909,21 +909,19 @@ md_state_t const* markdown_parse( char *s ) {
     }
 
     // Markdown link labels or PHP Markdown Extra footnote definitions.
-    case '[': {
-      bool fn_def_text;
+    case '[':
       if ( indent_left <= MD_LINK_INDENT_MAX ) {
-        if ( md_is_link_label( nws, &prev_link_label_has_title ) )
-          CLEAR_RETURN( MD_LINK_LABEL );
-        else if ( md_is_footnote_def( nws, &fn_def_text ) ) {
+        bool fn_def_text;
+        if ( md_is_footnote_def( nws, &fn_def_text ) ) {
           stack_clear();
           stack_push( MD_FOOTNOTE_DEF, 0, MD_FOOTNOTE_INDENT );
           TOP.fn_def_text = fn_def_text;
           return &TOP;
         }
+        if ( md_is_link_label( nws, &prev_link_label_has_title ) )
+          CLEAR_RETURN( MD_LINK_LABEL );
       }
       break;
-    }
-
   } // switch
 
   if ( top_is( MD_HTML_BLOCK ) ) {
