@@ -682,7 +682,8 @@ static bool markdown_adjust( line_buf_t line ) {
           //      [^1]:
           //          Like this.
           //
-          // output the marker line directly so it won't be wrapped.
+          // print the marker line as-is "behind wrap's back" so it won't be
+          // wrapped.
           //
           FPUTS( line, fout );
           line[0] = '\0';
