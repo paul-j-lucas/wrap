@@ -60,6 +60,7 @@ typedef ssize_t stack_pos_t;
 static size_t const MD_ATX_CHAR_MAX        =  6;  // max num of # in atx header
 static size_t const MD_CODE_FENCE_CHAR_MIN =  3;  // min num of ~~~ or ```
 static size_t const MD_CODE_INDENT_MIN     =  4;  // min indent for code
+static size_t const MD_FOOTNOTE_INDENT     =  4;
 static size_t const MD_HR_CHAR_MIN         =  3;  // min num of ***, ---, or ___
 static size_t const MD_LINK_INDENT_MAX     =  3;  // max indent for [id]: URI
 static size_t const MD_LIST_INDENT_MAX     =  4;  // max indent for all lists
@@ -186,7 +187,15 @@ static md_indent_t md_code_indent_min( void ) {
  * @return Returns \c true only if \a line_type can nest.
  */
 static inline bool md_is_nestable( md_line_t line_type ) {
-  return line_type == MD_DL || line_type == MD_OL || line_type == MD_UL;
+  switch ( line_type ) {
+    case MD_DL:
+    case MD_FOOTNOTE_DEF:
+    case MD_OL:
+    case MD_UL:
+      return true;
+    default:
+      return false;
+  } // switch
 }
 
 ////////// local functions ////////////////////////////////////////////////////
@@ -365,6 +374,34 @@ static bool md_is_dl_ul_helper( char const *s, md_indent_t *indent_hang ) {
       }
     }
     return true;
+  }
+  return false;
+}
+
+/**
+ * Checks whether the line is a PHP Markdown Extra footnote definition.
+ *
+ * @param s The null-terminated line to check.
+ * @param def_text A pointer to the variable to receive whether the footnote
+ * definition line contains any text other than the marker.
+ * @return Returns \c true onlf if \a s is a PHP Markdown Extra footnote
+ * definition.
+ */
+static bool md_is_footnote_def( char const *s, bool *def_text ) {
+  assert( s );
+  assert( s[0] == '[' );
+  assert( def_text );
+
+  if ( *++s == '^' ) {
+    while ( *++s && !is_eol( *s ) ) {
+      if ( *s == ']' ) {
+        if ( !(*++s == ':' && isspace( *++s )) )
+          break;
+        SKIP_WS( s );
+        *def_text = *s && !isspace( *s );
+        return true;
+      }
+    } // while
   }
   return false;
 }
@@ -778,19 +815,24 @@ md_state_t const* markdown_parse( char *s ) {
   }
 
   //
-  // Markdown that must occur without indentation.
+  // Markdown that must not occur with indentation.
   //
   switch ( s[0] ) {
-    case '#':                           // atx header
+    // atx headers.
+    case '#':
       if ( md_is_atx_header( s ) )
         CLEAR_RETURN( MD_HEADER_ATX );
       break;
-    case '=':                           // Setext 1st-level header
-    case '-':                           // Setext 2nd-level header
+
+    // Setext headers.
+    case '=':
+    case '-':
       if ( !blank_line && md_is_Setext_header( s ) )
         CLEAR_RETURN( MD_HEADER_LINE );
       break;
-    case '~':                           // PHP Markdown Extra code fence
+
+    // PHP Markdown Extra code fences.
+    case '~':
     case '`':
       md_code_fence_init( &code_fence );
       if ( md_is_code_fence( s, &code_fence ) )
@@ -802,20 +844,17 @@ md_state_t const* markdown_parse( char *s ) {
   // Markdown that may occur with indentation.
   //
   switch ( nws[0] ) {
+
+    // Markdown horizontal rules.
     case '*':
     case '-':
     case '_':
-      //
-      // Markdown horizontal rules.
-      //
       if ( md_is_hr( nws ) )
         CLEAR_RETURN( MD_HR );
       break;
 
+    // Block-level HTML.
     case '<': {
-      //
-      // Block-level HTML.
-      //
       bool is_end_tag;
       char const *const html_element = md_is_html( nws, &is_end_tag );
       if ( html_element ) {
@@ -838,15 +877,22 @@ md_state_t const* markdown_parse( char *s ) {
       break;
     }
 
-    case '[':
-      //
-      // Markdown link labels.
-      //
-      if ( indent_left <= MD_LINK_INDENT_MAX &&
-           md_is_link_label( nws, &prev_link_label_has_title ) ) {
-        CLEAR_RETURN( MD_LINK_LABEL );
+    // Markdown link labels or PHP Markdown Extra footnote definitions.
+    case '[': {
+      bool fn_def_text;
+      if ( indent_left <= MD_LINK_INDENT_MAX ) {
+        if ( md_is_link_label( nws, &prev_link_label_has_title ) )
+          CLEAR_RETURN( MD_LINK_LABEL );
+        else if ( md_is_footnote_def( nws, &fn_def_text ) ) {
+          stack_clear();
+          stack_push( MD_FOOTNOTE_DEF, 0, MD_FOOTNOTE_INDENT );
+          TOP.fn_def_text = fn_def_text;
+          return &TOP;
+        }
       }
       break;
+    }
+
   } // switch
 
   if ( top_is( MD_HTML ) ) {

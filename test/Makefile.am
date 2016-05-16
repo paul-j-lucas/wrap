@@ -82,6 +82,8 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap--Markdown-fence-02c.test \
 	tests/wrap--Markdown-fence-03a.test \
 	tests/wrap--Markdown-fence-03b.test \
+	tests/wrap--Markdown-footnote-01.test \
+	tests/wrap--Markdown-footnote-02.test \
 	tests/wrap--Markdown-hr-01a.test \
 	tests/wrap--Markdown-hr-01b.test \
 	tests/wrap--Markdown-hr-01c.test \
@@ -198,6 +200,8 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--Markdown-fence-01a.test \
 	tests/wrapc--Markdown-fence-01b.test \
 	tests/wrapc--Markdown-fence-01c.test \
+	tests/wrapc--Markdown-footnote-01.test \
+	tests/wrapc--Markdown-footnote-02.test \
 	tests/wrapc--Markdown-hr-01a.test \
 	tests/wrapc--Markdown-hr-01b.test \
 	tests/wrapc--Markdown-html-01.test \

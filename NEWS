@@ -8,6 +8,9 @@ See the end of the file for license conditions.
 ** Added PHP Markdown Extra definition list support.
 Wrap and wrapc now support PHP Markdown Extra definition lists.
 
+** Added PHP Markdown Extra footnote support.
+Wrap and wrapc now support PHP Markdown Extra footnotes.
+
 * Changes in Wrap 4.1
 
 ** Added PHP Markdown Extra table support.

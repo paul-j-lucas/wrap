@@ -667,6 +667,17 @@ static bool markdown_adjust( line_buf_t line ) {
           //
           FPUTS( line, fout );
         }
+        break;
+      default:
+        /* suppress warning */;
+    } // switch
+    switch ( md->line_type ) {
+      case MD_FOOTNOTE_DEF:
+        if ( !md->fn_def_text ) {
+          FPUTS( line, fout );
+          line[0] = '\0';
+        }
+        break;
       default:
         /* suppress warning */;
     } // switch
@@ -691,6 +702,7 @@ static bool markdown_adjust( line_buf_t line ) {
       return false;
 
     case MD_DL:
+    case MD_FOOTNOTE_DEF:
     case MD_OL:
     case MD_UL:
       if ( md->seq_num > prev_seq_num ) {

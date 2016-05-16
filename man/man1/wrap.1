@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\fP 1 "May 14, 2016" "PJL TOOLS"
+.TH \f3wrap\fP 1 "May 16, 2016" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -632,6 +632,25 @@ Tables may optionally also have pipes at either end of the table:
 .cE
 Tables may be nested inside lists.
 Tables are passed through unaltered.
+.SS Footnotes
+Footnote markers need no special treatment;
+however footnote definitions such as:
+.cS
+[^1]: This is a footnote.
+.cE
+are formatted as other text.
+Footnotes may contain other block-level elements
+when indented by 4 spaces.
+As a special case when there are multiple sentences or paragraphs,
+the first line may be left empty to make the text align better:
+.cS
+[^lorem]:
+    Lorem ipsum dolor sit amet, ligula suspendisse nulla pretium,
+    rhoncus tempor fermentum, enim integer ad vestibulum volutpat.
+
+    Nisl rhoncus turpis est, vel elit, congue wisi enim nunc
+    ultricies sit, magna tincidunt.
+.cE 0
 .SH EXIT STATUS
 .PD 0
 .IP 0

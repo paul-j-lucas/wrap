@@ -21,6 +21,9 @@
 #ifndef wrap_markdown_H
 #define wrap_markdown_H
 
+// standard
+#include <stdbool.h>
+
 ///////////////////////////////////////////////////////////////////////////////
 
 #define MD_SEQ_NUM_INIT           1     /* first Markdown state seq number */
@@ -32,18 +35,19 @@
  * and printed for debugging).
  */
 enum md_line {
-  MD_NONE        = '0',
-  MD_CODE        = 'C',
-  MD_DL          = ':',                 // definition list
-  MD_HEADER_ATX  = '#',                 // # to ######
-  MD_HEADER_LINE = '=',                 // ===== or -----
-  MD_HR          = '_',                 // ***, ---, or ___
-  MD_HTML        = '<',
-  MD_LINK_LABEL  = '[',                 // [id]: <URI>
-  MD_OL          = '1',                 // ordered list: 1., 2., ....
-  MD_UL          = '*',                 // unordered list: *, +, or -
-  MD_TABLE       = '|',
-  MD_TEXT        = 'T',                 // plain text
+  MD_NONE         = '0',
+  MD_CODE         = 'C',
+  MD_DL           = ':',                // definition list
+  MD_FOOTNOTE_DEF = '^',                // [^id]: footnote definition
+  MD_HEADER_ATX   = '#',                // # to ######
+  MD_HEADER_LINE  = '=',                // ===== or -----
+  MD_HR           = '_',                // ***, ---, or ___
+  MD_HTML         = '<',
+  MD_LINK_LABEL   = '[',                // [id]: <URI>
+  MD_OL           = '1',                // ordered list: 1., 2., ....
+  MD_TABLE        = '|',
+  MD_TEXT         = 'T',                // plain text
+  MD_UL           = '*',                // unordered list: *, +, or -
 };
 typedef enum md_line md_line_t;
 
@@ -58,6 +62,7 @@ struct md_state {
   md_line_t   line_type;
   md_seq_t    seq_num;
   unsigned    depth;                    // how nested we are
+  bool        fn_def_text;              // true if footnote def has text on line
   md_indent_t indent_left;
   md_indent_t indent_hang;              // hang-indent for lists
   md_ol_t     ol_num;                   // current ordered list number
