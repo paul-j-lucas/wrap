@@ -239,6 +239,7 @@ static char get_close( char c ) {
   switch ( c ) {
     case '(': return ')';
     case '<': return '>';
+    case '[': return ']';
     case '{': return '}';
     default : return  c ;
   } // switch
