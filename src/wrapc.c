@@ -308,8 +308,8 @@ static void read_prototype( void ) {
           *s++ = cc[1];
     } // switch
     //
-    // We also have to recognize the closing character delimter, if any, and
-    // only if it's different from the opening character and among the set of
+    // We also have to recognize the closing delimiter character, if any, only
+    // if it's different from the opening character and among the set of
     // specified comment characters.
     //
     char const close = get_close( cc[0] );
