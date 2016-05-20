@@ -229,6 +229,22 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 }
 
 /**
+ * Gets the closing comment character corresponding to \a c, if any.
+ *
+ * @param c The character to get the closing comment character for.
+ * @return Returns said character or \a c if \a c either has no closing
+ * character or its closing character is the same character.
+ */
+static char get_close( char c ) {
+  switch ( c ) {
+    case '(': return ')';
+    case '<': return '>';
+    case '{': return '}';
+    default : return  c ;
+  } // switch
+}
+
+/**
  * Checks whether the given string is the beginning of a block comment: starts
  * with a comment character and contains only non-alpha characters thereafter.
  *
@@ -282,26 +298,22 @@ static void read_prototype( void ) {
     // character and among the set of specified comment characters.
     //
     switch ( cc[0] ) {
-      case '{':     // {- Haskell
-        //
-        // As even a more special-case for Pascal (which is perhaps unique
-        // among languages since it uses a single-character delimiter for block
-        // comments), this handles the case like:
-        //
-        //      {
-        //        This is a block comment.
-        //      }
-        //
-        if ( is_comment_char( '}' ) )
-          *s++ = '}';
-        // no break;
-      case '#':     // #| Lisp, Racket, Scheme
-      case '(':     // (* AppleScript, Delphi, ML, OCaml, Pascal; (: XQuery
-      case '/':     // /* C, Objective C, C++, C#, D, Go, Java, Rust, Swift
-      case '<':     // <# PowerShell
+      case '#': // #| Lisp, Racket, Scheme
+      case '(': // (* AppleScript, Delphi, ML, OCaml, Pascal; (: XQuery
+      case '/': // /* C, Objective C, C++, C#, D, Go, Java, Rust, Swift
+      case '<': // <# PowerShell
+      case '{': // Pascal; {- Haskell
         if ( cc[1] != cc[0] && is_comment_char( cc[1] ) )
           *s++ = cc[1];
     } // switch
+    //
+    // We also have to recognize the closing character delimter, if any, and
+    // only if it's different from the opening character and among the set of
+    // specified comment characters.
+    //
+    char const close = get_close( cc[0] );
+    if ( close != cc[0] && is_comment_char( close ) )
+      *s++ = close;
     opt_comment_chars = comment_chars_buf;
   }
 
