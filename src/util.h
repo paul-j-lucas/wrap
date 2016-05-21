@@ -235,7 +235,7 @@ char* tolower_s( char *s );
  */
 void wait_for_debugger_attach( char const *env_var );
 #else
-# define wait_for_debugger_attach( env_var )
+# define wait_for_debugger_attach( env_var ) (void)0
 #endif /* NDEBUG */
 
 ///////////////////////////////////////////////////////////////////////////////
