@@ -79,8 +79,8 @@
 #define WIPC_END_WRAP             ASCII_ETB
 
 /**
- * IPC code us it to signal a change in the leading comment characters
- * and/or whitespace.  It \e must be terminated by a newline.
+ * IPC code us it to signal a change in the leading comment characters and/or
+ * whitespace.  It \e must be terminated by a newline.
  */
 #define WIPC_NEW_LEADER           ASCII_SOH
 
