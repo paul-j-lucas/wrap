@@ -105,7 +105,7 @@ static void         wipc_send( FILE*, char* );
  * Prints an end-of-line and sends any pending IPC message to wrapc.
  */
 static inline void print_eol( void ) {
-  FPUTS( (char const*)"\r\n" + (opt_eol != EOL_WINDOWS), fout );
+  FPUTS( eol(), fout );
   wipc_send( fout, ipc_buf );
 }
 

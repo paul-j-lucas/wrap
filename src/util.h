@@ -23,6 +23,7 @@
 
 // local
 #include "config.h"
+#include "options.h"
 
 // standard
 #include <errno.h>
@@ -193,6 +194,24 @@ WRAP_UTIL_INLINE bool is_eol( char c ) {
  */
 WRAP_UTIL_INLINE bool is_space( char c ) {
   return c == ' ' || c == '\t';
+}
+
+/**
+ * Gets whether the end-of-lines are Windows' end-of-lines, i.e., \c {CR}{LF}.
+ *
+ * @return Returns \c true only if end-of-lines are Windows' end-of-lines.
+ */
+WRAP_UTIL_INLINE bool is_windows() {
+  return opt_eol == EOL_WINDOWS;
+}
+
+/**
+ * Gets the end-of-line string to use.
+ *
+ * @return Returns said end-of-line string.
+ */
+WRAP_UTIL_INLINE char const* eol() {
+  return (char const*)"\r\n" + !is_windows();
 }
 
 /**
