@@ -155,7 +155,7 @@ int main( int argc, char const *argv[] ) {
   exit( EX_OK );
 }
 
-////////// local functions ////////////////////////////////////////////////////
+////////// IPC functions //////////////////////////////////////////////////////
 
 /**
  * Forks and execs into wrap(1).
@@ -226,125 +226,6 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   execvp( PACKAGE, argv );
   PERROR_EXIT( EX_OSERR );
 #endif /* DEBUG_RSWW */
-}
-
-/**
- * Gets the closing comment character corresponding to \a c, if any.
- *
- * @param c The character to get the closing comment character for.
- * @return Returns said character or \a c if \a c either has no closing
- * character or its closing character is the same character.
- */
-static char get_close( char c ) {
-  switch ( c ) {
-    case '(': return ')';
-    case '<': return '>';
-    case '[': return ']';
-    case '{': return '}';
-    default : return  c ;
-  } // switch
-}
-
-/**
- * Checks whether the given string is the beginning of a block comment: starts
- * with a comment character and contains only non-alpha characters thereafter.
- *
- * @param s The string to check.
- * @return Returns \c true only if \a s is the beginning of a block comment.
- */
-static bool is_block_comment( char const *s ) {
-  if ( (s = is_line_comment( s )) ) {
-    for ( ++s; *s && *s != '\n' && !isalpha( *s ); ++s )
-      /* empty */;
-    return *s == '\n';
-  }
-  return false;
-}
-
-/**
- * Reads the first line of input to obtain a sequence of leading characters to
- * be the prototype for all lines.  Handles C-style block comments as a special
- * case.
- */
-static void read_prototype( void ) {
-  size_t const size = buf_read( CURR, fin );
-  if ( !size )
-    exit( EX_OK );
-
-  if ( opt_eol == EOL_INPUT && size >= 2 && CURR[ size - 2 ] == '\r' ) {
-    //
-    // Retroactively set opt_eol because we pass it to wrap(1).
-    //
-    opt_eol = EOL_WINDOWS;
-  }
-
-  char const *const cc = is_line_comment( CURR );
-  if ( cc ) {
-    static char comment_chars_buf[4];   // 1-3 chars + NULL
-    char *s = comment_chars_buf;
-    //
-    // From now on, recognize only the comment character found as a comment
-    // delimiter.  This handles cases like:
-    //
-    //      // This is a comment
-    //      #define MACRO
-    //
-    // where a comment is followed by a line that is not part of the comment
-    // even though it starts with the comment delimiter '#'.
-    //
-    *s++ = cc[0];
-    //
-    // As special-cases, we also have to recognize the second character of
-    // two-character delimiters, but only if it's not the same as the first
-    // character and among the set of specified comment characters.
-    //
-    switch ( cc[0] ) {
-      case '#': // #| Lisp, Racket, Scheme
-      case '(': // (* AppleScript, Delphi, ML, OCaml, Pascal; (: XQuery
-      case '/': // /* C, Objective C, C++, C#, D, Go, Java, Rust, Swift
-      case '<': // <# PowerShell
-      case '{': // Pascal; {- Haskell
-        if ( cc[1] != cc[0] && is_comment_char( cc[1] ) )
-          *s++ = cc[1];
-    } // switch
-    //
-    // We also have to recognize the closing delimiter character, if any, only
-    // if it's different from the opening character and among the set of
-    // specified comment characters.
-    //
-    char const close = get_close( cc[0] );
-    if ( close != cc[0] && is_comment_char( close ) )
-      *s++ = close;
-    opt_comment_chars = comment_chars_buf;
-  }
-
-  char const *proto = CURR;
-  if ( is_block_comment( CURR ) ) {
-    //
-    // This handles cases like:
-    //
-    //      /*
-    //       * This is a comment.
-    //       */
-    //
-    // where the first line is the start of a block comment so:
-    // + The first line should not be altered.
-    // + The second line becomes the prototype.
-    //
-    (void)buf_read( NEXT, fin );
-    proto = NEXT;
-  }
-
-  proto_len0 = proto_span( proto );
-  strncpy( proto_buf, proto, proto_len0 );
-  proto_buf[ proto_len0 ] = '\0';
-
-  opt_line_width -= proto_width( proto_buf );
-  if ( opt_line_width < LINE_WIDTH_MINIMUM )
-    PMESSAGE_EXIT( EX_USAGE,
-      "line-width (%zu) is too small (<%d)\n",
-      opt_line_width, LINE_WIDTH_MINIMUM
-    );
 }
 
 /**
@@ -558,7 +439,24 @@ break_loop:
 #endif /* DEBUG_RSWW */
 }
 
-///////////////////////////////////////////////////////////////////////////////
+////////// local functions ////////////////////////////////////////////////////
+
+/**
+ * Gets the closing comment character corresponding to \a c, if any.
+ *
+ * @param c The character to get the closing comment character for.
+ * @return Returns said character or \a c if \a c either has no closing
+ * character or its closing character is the same character.
+ */
+static char get_close( char c ) {
+  switch ( c ) {
+    case '(': return ')';
+    case '<': return '>';
+    case '[': return ']';
+    case '{': return '}';
+    default : return  c ;
+  } // switch
+}
 
 /**
  * Parses command-line options, sets-up I/O, sets-up the input buffers, reads
@@ -576,6 +474,22 @@ static void init( int argc, char const *argv[] ) {
   read_prototype();
   PIPE( pipes[ TO_WRAP ] );
   PIPE( pipes[ FROM_WRAP ] );
+}
+
+/**
+ * Checks whether the given string is the beginning of a block comment: starts
+ * with a comment character and contains only non-alpha characters thereafter.
+ *
+ * @param s The string to check.
+ * @return Returns \c true only if \a s is the beginning of a block comment.
+ */
+static bool is_block_comment( char const *s ) {
+  if ( (s = is_line_comment( s )) ) {
+    for ( ++s; *s && *s != '\n' && !isalpha( *s ); ++s )
+      /* empty */;
+    return *s == '\n';
+  }
+  return false;
 }
 
 /**
@@ -617,6 +531,92 @@ static size_t proto_width( char const *prototype ) {
     }
   } // for
   return width;
+}
+
+/**
+ * Reads the first line of input to obtain a sequence of leading characters to
+ * be the prototype for all lines.  Handles C-style block comments as a special
+ * case.
+ */
+static void read_prototype( void ) {
+  size_t const size = buf_read( CURR, fin );
+  if ( !size )
+    exit( EX_OK );
+
+  if ( opt_eol == EOL_INPUT && size >= 2 && CURR[ size - 2 ] == '\r' ) {
+    //
+    // Retroactively set opt_eol because we pass it to wrap(1).
+    //
+    opt_eol = EOL_WINDOWS;
+  }
+
+  char const *const cc = is_line_comment( CURR );
+  if ( cc ) {
+    static char comment_chars_buf[4];   // 1-3 chars + NULL
+    char *s = comment_chars_buf;
+    //
+    // From now on, recognize only the comment character found as a comment
+    // delimiter.  This handles cases like:
+    //
+    //      // This is a comment
+    //      #define MACRO
+    //
+    // where a comment is followed by a line that is not part of the comment
+    // even though it starts with the comment delimiter '#'.
+    //
+    *s++ = cc[0];
+    //
+    // As special-cases, we also have to recognize the second character of
+    // two-character delimiters, but only if it's not the same as the first
+    // character and among the set of specified comment characters.
+    //
+    switch ( cc[0] ) {
+      case '#': // #| Lisp, Racket, Scheme
+      case '(': // (* AppleScript, Delphi, ML, OCaml, Pascal; (: XQuery
+      case '/': // /* C, Objective C, C++, C#, D, Go, Java, Rust, Swift
+      case '<': // <# PowerShell
+      case '{': // Pascal; {- Haskell
+        if ( cc[1] != cc[0] && is_comment_char( cc[1] ) )
+          *s++ = cc[1];
+    } // switch
+    //
+    // We also have to recognize the closing delimiter character, if any, only
+    // if it's different from the opening character and among the set of
+    // specified comment characters.
+    //
+    char const close = get_close( cc[0] );
+    if ( close != cc[0] && is_comment_char( close ) )
+      *s++ = close;
+    opt_comment_chars = comment_chars_buf;
+  }
+
+  char const *proto = CURR;
+  if ( is_block_comment( CURR ) ) {
+    //
+    // This handles cases like:
+    //
+    //      /*
+    //       * This is a comment.
+    //       */
+    //
+    // where the first line is the start of a block comment so:
+    // + The first line should not be altered.
+    // + The second line becomes the prototype.
+    //
+    (void)buf_read( NEXT, fin );
+    proto = NEXT;
+  }
+
+  proto_len0 = proto_span( proto );
+  strncpy( proto_buf, proto, proto_len0 );
+  proto_buf[ proto_len0 ] = '\0';
+
+  opt_line_width -= proto_width( proto_buf );
+  if ( opt_line_width < LINE_WIDTH_MINIMUM )
+    PMESSAGE_EXIT( EX_USAGE,
+      "line-width (%zu) is too small (<%d)\n",
+      opt_line_width, LINE_WIDTH_MINIMUM
+    );
 }
 
 /**
