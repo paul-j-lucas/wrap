@@ -131,8 +131,7 @@ static inline bool is_comment_char( char c ) {
  * if it's a comment character; NULL otherwise.
  */
 static inline char const* is_line_comment( char const *s ) {
-  SKIP_WS( s );
-  return is_comment_char( s[0] ) ? s : NULL;
+  return is_comment_char( *SKIP_WS( s ) ) ? s : NULL;
 }
 
 /**
