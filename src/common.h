@@ -23,6 +23,7 @@
 
 // local
 #include "config.h"
+#include "util.h"
 
 // standard
 #include <stddef.h>                     /* for size_t */
@@ -122,7 +123,7 @@ size_t buf_read( line_buf_t line, FILE *ffrom );
 #ifdef DEBUG_MARKDOWN
 # define MD_DEBUG(...)      PRINT_ERR( __VA_ARGS__ )
 #else
-# define MD_DEBUG(...)      (void)0     /* need something to eat the ';' */
+# define MD_DEBUG(...)      NO_OP
 #endif /* DEBUG_MARKDOWN */
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -57,7 +57,7 @@ typedef enum delim delim_t;
 
 #ifdef DEBUG_RSWW
 # undef PIPE
-# define PIPE(P) (void)0                /* need something to eat the ';' */
+# define PIPE(P) NO_OP
 #endif /* DEBUG_RSWW */
 
 // Closes both ends of pipe P.
