@@ -121,6 +121,7 @@ static size_t       prefix_span( char const* );
 static void         read_prototype( void );
 static pid_t        read_source_write_wrap( void );
 static void         read_wrap( void );
+static void         set_prefix( char const*, size_t );
 static char*        skip_c( char*, char );
 static char*        skip_n( char*, size_t );
 static size_t       strcpy_len( char*, char const* );
@@ -355,9 +356,7 @@ static pid_t read_source_write_wrap( void ) {
         // regular text was indented only 1 space.  If this check were not
         // done, then the "Not" text would end up also being indented 2 spaces.
         //
-        prefix_len0 = prefix_len;
-        strncpy( prefix_buf, CURR, prefix_len );
-        prefix_buf[ prefix_len ] = '\0';
+        set_prefix( CURR, prefix_len );
         WIPC_SENDF( fwrap, WIPC_NEW_LEADER, "%s\n", prefix_buf );
       }
     }
@@ -911,9 +910,7 @@ static void read_prototype( void ) {
   //
   // Initialize the prefix and adjust the line width accordingly.
   //
-  prefix_len0 = prefix_span( proto );
-  strncpy( prefix_buf, proto, prefix_len0 );
-  prefix_buf[ prefix_len0 ] = '\0';
+  set_prefix( proto, prefix_span( proto ) );
   line_width -= str_width( prefix_buf );
   //
   // Initialize the suffix, if any, and adjust the line width accordingly.
@@ -930,6 +927,18 @@ static void read_prototype( void ) {
       line_width, LINE_WIDTH_MINIMUM
     );
   opt_line_width = line_width;
+}
+
+/**
+ * Sets the prefix string.
+ *
+ * @param prefix The new prefix string.
+ * @param len The number of characters of \a prefix to use.
+ */
+static void set_prefix( char const *prefix, size_t len ) {
+  strncpy( prefix_buf, prefix, len );
+  prefix_buf[ len ] = '\0';
+  prefix_len0 = len;
 }
 
 /**
