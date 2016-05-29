@@ -511,9 +511,6 @@ read_line:
   int c = *(*ps)++;
 
   if ( opt_data_link_esc && c == WIPC_HELLO ) {
-    //
-    // A DLE character signals a wrap/wrapc interprocess message.
-    //
     switch ( c = *(*ps)++ ) {
       case WIPC_END_WRAP:
         //
