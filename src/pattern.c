@@ -105,7 +105,7 @@ void pattern_parse( char const *line, char const *conf_file,
   line += span;
 
   // part 2: whitespace
-  SKIP_WS( line );
+  SKIP_CHARS( line, WS_STR );
   if ( !*line )
     PMESSAGE_EXIT( EX_CONFIG, "%s:%u: '=' expected\n", conf_file, line_no );
 
@@ -118,7 +118,7 @@ void pattern_parse( char const *line, char const *conf_file,
   ++line;                               // skip '='
 
   // part 4: whitespace
-  SKIP_WS( line );
+  SKIP_CHARS( line, WS_STR );
   if ( !*line )
     PMESSAGE_EXIT( EX_CONFIG,
       "%s:%u: alias name expected after '='\n",

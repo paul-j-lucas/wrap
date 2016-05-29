@@ -45,6 +45,9 @@ _GL_INLINE_HEADER_BEGIN
 #define ERROR_STR           strerror( errno )
 #define PERROR_EXIT(STATUS) BLOCK( perror( me ); exit( STATUS ); )
 #define PRINT_ERR(...)      fprintf( stderr, __VA_ARGS__ )
+#define WS_ST               " \t"       /* Space Tab */
+#define WS_STR              WS_ST "\r"  /* Space Tab Return */
+#define WS_STRN             WS_STR "\n" /* Space Tab Return Newline */
 
 #define PMESSAGE_EXIT(STATUS,FORMAT,...) \
   BLOCK( PRINT_ERR( "%s: " FORMAT, me, __VA_ARGS__ ); exit( STATUS ); )
@@ -76,7 +79,7 @@ _GL_INLINE_HEADER_BEGIN
 #define REALLOC(PTR,TYPE,N) \
   (PTR) = (TYPE*)check_realloc( (PTR), sizeof(TYPE) * (N) )
 
-#define SKIP_WS(EXPR)       ((EXPR) += strspn( (EXPR), " \t\r" ))
+#define SKIP_CHARS(S,CHARS) ((S) += strspn( (S), (CHARS) ))
 
 #define UNGETC(C,STREAM) \
   BLOCK( if ( ungetc( (C), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
@@ -171,8 +174,8 @@ void free_now( void );
  * @return Returns \c true only if \a s is a blank line.
  */
 WRAP_UTIL_INLINE bool is_blank_line( char const *s ) {
-  SKIP_WS( s );
-  return s[0] == '\n' && !s[1];
+  SKIP_CHARS( s, WS_STRN );
+  return !*s;
 }
 
 /**

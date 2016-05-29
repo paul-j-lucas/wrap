@@ -463,7 +463,7 @@ delimit_paragraph:
       // read/write the line as-is.
       //
       FPUTS( in_buf, fout );
-      read_line( in_buf );
+      (void)read_line( in_buf );
       pc = in_buf;
     }
     else {
@@ -504,7 +504,7 @@ read_line:
     // When wrapping Markdown, we have to strip leading whitespace from lines
     // since it interferes with indenting.
     //
-    if ( !opt_markdown || *SKIP_WS( *ps ) )
+    if ( !opt_markdown || *SKIP_CHARS( *ps, WS_STR ) )
       break;
   } // while
 

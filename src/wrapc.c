@@ -39,6 +39,17 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
+ * Types of comment delimiters.
+ */
+enum delim {
+  DELIM_NONE,
+  DELIM_EOL,                            // e.g., "#" or "//" (to end-of-line)
+  DELIM_SINGLE,                         // e.g., "{" (Pascal)
+  DELIM_DOUBLE,                         // e.g., "/*" (but not "//")
+};
+typedef enum delim delim_t;
+
+/**
  * Uncomment the line below to debug read_source_write_wrap() (RSWW) by not
  * forking or exec'ing and just writing to stdout directly.
  */
@@ -72,13 +83,16 @@ typedef struct dual_line dual_line_t;
 char const         *me;                 // executable name
 
 // local constant definitions
-static size_t const ARG_BUF_SIZE = 25;  // max wrap command-line arg size
-static char const   WS_CHARS[] = " \t"; // whitespace characters
+static size_t const ARG_BUF_SIZE = 25;  // max wrap(1) command-line arg size
 
 // local variable definitions
+static char         close_cc[2];        // closing comment delimiter char(s)
+static delim_t      delim;              // comment delimiter type
 static dual_line_t  input_buf;
-static line_buf_t   proto_buf;          // characters stripped/prepended
-static size_t       proto_len0;         // length of initial proto_buf
+static line_buf_t   prefix_buf;         // characters stripped/prepended
+static size_t       prefix_len0;        // length of prefix_buf
+static line_buf_t   suffix_buf;         // characters stripped/appended
+static size_t       suffix_len;         // length of suffix_buf
 //
 // Two pipes:
 // + pipes[0][0] -> wrap(1)                   [child 2]
@@ -95,25 +109,31 @@ static int          pipes[2][2];
 #define FROM_WRAP   1                   /* to refer to pipes[1] */
 
 // local functions
+static void         adjust_comment_width( char* );
+static size_t       chop_eol( char*, size_t );
+static void         chop_suffix( char* );
 static void         fork_exec_wrap( pid_t );
 static void         init( int, char const*[] );
 static bool         is_block_comment( char const* );
-static char const*  is_line_comment( char const* );
-static size_t       proto_span( char const* );
-static size_t       proto_width( char const* );
+static char*        is_line_comment( char const* );
+static char const*  is_terminated_comment( char* );
+static size_t       prefix_span( char const* );
 static void         read_prototype( void );
 static pid_t        read_source_write_wrap( void );
 static void         read_wrap( void );
-static char const*  skip_n( char const*, size_t );
-static size_t       strcpy_no_eol( char*, char const* );
+static char*        skip_c( char*, char );
+static char*        skip_n( char*, size_t );
+static size_t       strcpy_len( char*, char const* );
+static size_t       strlen_no_eol( char const* );
 static char const*  str_status( int );
+static size_t       str_width( char const* );
 static void         usage( void );
 static void         wait_for_child_processes( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
- * Gets whether \a c is a comment character.
+ * Gets whether \a c is a comment delimiter character.
  *
  * @param c The character to check.
  * @return Returns \c true only if it is.
@@ -128,10 +148,10 @@ static inline bool is_comment_char( char c ) {
  *
  * @param s The string to check.
  * @return Returns a pointer to the first non-whitespace character in \a s only
- * if it's a comment character; NULL otherwise.
+ * if it's a comment delimiter character; NULL otherwise.
  */
-static inline char const* is_line_comment( char const *s ) {
-  return is_comment_char( *SKIP_WS( s ) ) ? s : NULL;
+static inline char* is_line_comment( char const *s ) {
+  return is_comment_char( *SKIP_CHARS( s, WS_ST ) ) ? (char*)s : NULL;
 }
 
 /**
@@ -229,7 +249,8 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 
 /**
  * Reads the source text to be wrapped and writes it, with the leading
- * whitespace and comment characters stripped from each line, to wrap(1).
+ * whitespace and comment delimiter characters stripped from each line, to
+ * wrap(1).
  *
  * @return Returns the child's process ID.
  */
@@ -260,9 +281,9 @@ static pid_t read_source_write_wrap( void ) {
 
   if ( NEXT[0] ) {
     //
-    // For block comments, write the first line verbatim directly to the
-    // output.
+    // For block comments, write the first line directly to the output.
     //
+    adjust_comment_width( CURR );
     FPUTS( CURR, fout );
     swap_line_bufs();
   }
@@ -285,8 +306,8 @@ static pid_t read_source_write_wrap( void ) {
       //
       // This handles cases like:
       //
-      //      proto_buf ->  # This is a comment.
-      //      cur_buf   ->  not_a_comment();
+      //      proto   ->  # This is a comment.
+      //      cur_buf ->  not_a_comment();
       //
       goto verbatim;
     }
@@ -296,9 +317,9 @@ static pid_t read_source_write_wrap( void ) {
       //
       // This handles cases like:
       //
-      //                    /*
-      //      proto_buf ->  This is a comment.
-      //      cur_buf   ->  */
+      //                  /*
+      //      proto   ->  This is a comment.
+      //      cur_buf ->  */
       //
       // or:
       //                    /*
@@ -306,24 +327,25 @@ static pid_t read_source_write_wrap( void ) {
       //      cur_buf   ->   */
       //      next_buf  ->  [empty]
       //
+      adjust_comment_width( CURR );
       goto verbatim;
     }
 
-    size_t proto_len = proto_span( CURR );
+    size_t prefix_len = prefix_span( CURR );
     if ( opt_markdown ) {
-      if ( proto_len > proto_len0 ) {
+      if ( prefix_len > prefix_len0 ) {
         //
         // When wrapping Markdown, we can't strip all whitespace after the
-        // comment characters because Markdown relies on indentation; hence we
-        // strip only the length of the initial prototype -- but only if its
-        // less.
+        // comment delimiter characters because Markdown relies on indentation;
+        // hence we strip only the length of the initial prototype -- but only
+        // if its less.
         //
-        proto_len = proto_len0;
+        prefix_len = prefix_len0;
       }
-      else if ( proto_len < proto_len0 && !is_eol( CURR[ proto_len ] ) ) {
+      else if ( prefix_len < prefix_len0 && !is_eol( CURR[ prefix_len ] ) ) {
         //
-        // The leading comment characters and/or whitespace length has
-        // decreased.  This can happen in a case like:
+        // The leading comment delimiter characters and/or whitespace length
+        // has decreased.  This can happen in a case like:
         //
         //      *  + This is a list item.
         //      *
@@ -333,14 +355,19 @@ static pid_t read_source_write_wrap( void ) {
         // regular text was indented only 1 space.  If this check were not
         // done, then the "Not" text would end up also being indented 2 spaces.
         //
-        proto_len0 = proto_len;
-        strncpy( proto_buf, CURR, proto_len );
-        proto_buf[ proto_len ] = '\0';
-        WIPC_SENDF( fwrap, WIPC_NEW_LEADER, "%s\n", proto_buf );
+        prefix_len0 = prefix_len;
+        strncpy( prefix_buf, CURR, prefix_len );
+        prefix_buf[ prefix_len ] = '\0';
+        WIPC_SENDF( fwrap, WIPC_NEW_LEADER, "%s\n", prefix_buf );
       }
     }
 
-    FPUTS( skip_n( CURR, proto_len ), fwrap );
+    // Skip over the prefix and chop off the suffix.
+    char *const line = skip_n( CURR, prefix_len );
+    if ( suffix_buf[0] )
+      chop_suffix( line );
+
+    FPUTS( line, fwrap );
     swap_line_bufs();
   } // while
   exit( EX_OK );
@@ -375,6 +402,8 @@ static void read_wrap( void ) {
       "parent can't open pipe for reading: %s\n", ERROR_STR
     );
 
+  wait_for_debugger_attach( "WRAPC_DEBUG_RW" );
+
   //
   // Split off the trailing whitespace (tws) from the prototype so that if we
   // read a comment line that's empty except for the prototype, we won't emit
@@ -389,14 +418,16 @@ static void read_wrap( void ) {
   // above, the second line would become "# " containing a trailing whitespace.
   //
   line_buf_t proto_tws;                 // prototype trailing whitespace, if any
-  split_tws( proto_buf, proto_len0, proto_tws );
+  split_tws( prefix_buf, prefix_len0, proto_tws );
 
   line_buf_t line_buf;
 
-  wait_for_debugger_attach( "WRAPC_DEBUG_RW" );
-
-  while ( fgets( line_buf, sizeof line_buf, fwrap ) ) {
-    char const *line = line_buf;
+  for ( ;; ) {
+    size_t line_size = sizeof line_buf;
+    if ( !fgetsz( line_buf, &line_size, fwrap ) )
+      break;
+    line_size = chop_eol( line_buf, line_size );
+    char *line = line_buf;
     if ( line[0] == WIPC_HELLO ) {
       switch ( line[1] ) {
         case WIPC_END_WRAP:
@@ -405,18 +436,18 @@ static void read_wrap( void ) {
           // wrap) that we've reached the end of the comment: dump any
           // remaining buffer and pass text through verbatim.
           //
-          FPUTS( line + 2, fout );
+          FPRINTF( fout, "%s%s", line + 2, eol() );
           fcopy( fwrap, fout );
           goto break_loop;
 
         case WIPC_NEW_LEADER:
           //
           // We've been told by child 1 (read_source_write_wrap(), via child 2,
-          // wrap) that the leading comment characters and/or whitespace has
-          // changed: adjust proto_buf.
+          // wrap) that the leading comment delimiter characters and/or
+          // whitespace has changed: adjust prefix_buf.
           //
-          proto_len0 = strcpy_no_eol( proto_buf, line + 2 );
-          split_tws( proto_buf, proto_len0, proto_tws );
+          prefix_len0 = strcpy_len( prefix_buf, line + 2 );
+          split_tws( prefix_buf, prefix_len0, proto_tws );
           continue;
 
         default:
@@ -427,11 +458,24 @@ static void read_wrap( void ) {
           ++line;
       } // switch
     }
+
+    if ( suffix_buf[0] ) {
+      //
+      // Pad the width with spaces in order to append the terminating comment
+      // character(s) back.
+      //
+      while ( line_size < opt_line_width )
+        line[ line_size++ ] = ' ';
+      line[ line_size ] = '\0';
+    }
+
     // don't emit proto_tws for blank lines
     FPRINTF(
-      fout, "%s%s%s", proto_buf, is_blank_line( line ) ? "" : proto_tws, line
+      fout, "%s%s%s%s%s",
+      prefix_buf, is_blank_line( line ) ? "" : proto_tws, line, suffix_buf,
+      eol()
     );
-  } // while
+  } // for
 break_loop:
 
   FERROR( fwrap );
@@ -441,20 +485,235 @@ break_loop:
 ////////// local functions ////////////////////////////////////////////////////
 
 /**
- * Gets the closing comment character corresponding to \a c, if any.
+ * Adjusts the width of a comment line so that it either does not exceed or is
+ * lengthened to meet the line width.
  *
- * @param c The character to get the closing comment character for.
- * @return Returns said character or \a c if \a c either has no closing
- * character or its closing character is the same character.
+ * @param s The newline- and null-terminated string to adjust.
  */
-static char get_close( char c ) {
-  switch ( c ) {
-    case '(': return ')';
-    case '<': return '>';
-    case '[': return ']';
-    case '{': return '}';
-    default : return  c ;
-  } // switch
+static void adjust_comment_width( char *s ) {
+  assert( s );
+  size_t const delim_len = suffix_buf[0] ? suffix_len : 1 + !!close_cc[1];
+  size_t const width = opt_line_width + prefix_len0 + suffix_len;
+  size_t s_len = strlen_no_eol( s );
+
+  if ( s_len > width ) {
+    //
+    // Shorten the comment line by sliding the closing comment delimiter
+    // character(s) to the left.
+    //
+    memmove(
+      s + width - delim_len,
+      suffix_buf[0] ? suffix_buf : s + s_len - delim_len,
+      delim_len
+    );
+    strcpy( s + width, eol() );
+  }
+  else if ( suffix_buf[0] && s_len < width ) {
+    //
+    // If we're doing terminated comments, lengthen the comment line by
+    // "inserting" a multiple of the first comment delimiter character.
+    //
+    switch ( delim ) {
+      case DELIM_NONE:
+        break;
+      case DELIM_EOL:
+        for ( ; s_len < width; ++s_len )
+          s[ s_len ] = close_cc[0];
+        break;
+      case DELIM_SINGLE:
+        for ( --s_len; s_len < width; ++s_len )
+          s[ s_len ] = ' ';
+        s[ s_len - 1 ] = close_cc[0];
+        break;
+      case DELIM_DOUBLE:
+        for ( --s_len; s_len < width; ++s_len )
+          s[ s_len ] = close_cc[0];
+        s[ s_len - 1 ] = close_cc[1];
+        break;
+    } // switch
+    strcpy( s + width, eol() );
+  }
+}
+
+/**
+ * Chops off the end-of-line character(s), if any.
+ *
+ * @param s The null-terminated string to chop.
+ * @param s_len The length of \a s.
+ * @return Returns the new length of \a s.
+ */
+static size_t chop_eol( char *s, size_t s_len ) {
+  assert( s );
+  if ( s_len && s[ s_len-1 ] == '\n' ) {
+    if ( --s_len && s[ s_len-1 ] == '\r' )
+      --s_len;
+    s[ s_len ] = '\0';
+  }
+  return s_len;
+}
+
+/**
+ * Chops off the termininating comment delimiter character(s), if any.
+ *
+ * @param s The newline- and null-terminated string to chop.
+ */
+static void chop_suffix( char *s ) {
+  assert( s );
+  assert( suffix_buf[0] );
+  char *cc = s;
+
+  for ( ; (cc = strchr( cc, suffix_buf[0] )); ++cc ) {
+    switch ( delim ) {
+      case DELIM_NONE:
+        break;
+      case DELIM_EOL: {
+        //
+        // We've found the terminator character, but it may be the first in a
+        // sequence of them, e.g.:
+        //
+        //      ### This is a comment. ###
+        //                             ^
+        // We therefore first have to skip over all of them.  Second, we have
+        // to check that the terminator character isn't in the middle of a
+        // line, e.g.:
+        //
+        //      # This is a comment that has a '#' in it. #
+        //
+        // We always want to chop off the very last terminator character(s) so
+        // we then check to see that the remaining characters on the line, if
+        // any, are only whitespace.  If not, then it's not the last terminator
+        // character on the line.
+        //
+        char *const after_cc = skip_c( cc, suffix_buf[0] );
+        if ( !after_cc[ strspn( after_cc, WS_STRN ) ] )
+          goto done;
+        cc = after_cc - 1;
+        break;
+      }
+      case DELIM_SINGLE:
+        goto done;
+      case DELIM_DOUBLE:
+        if ( strncmp( cc, suffix_buf, suffix_len ) == 0 )
+          goto done;
+        break;
+    } // switch
+  } // for
+
+done:
+  if ( cc )
+    *cc = '\0';
+}
+
+/**
+ * Checks whether the given string is a terminated comment, that is a string
+ * that both begins and ends with comment delimiters, e.g.:
+ *
+ *      (* This is a terminated comment. *)
+ *      # This is another terminated comment. #
+ *
+ * Note that the second example is merely "visually" terminated and not
+ * lexically terminated since languages that use a single \c '#' for comments
+ * use them to mean from the \c '#' until the end of the line.
+ *
+ * @param s The newline- and null-terminated string to check.
+ * @return Returns a pointer to the start of the terminating comment delimiter
+ * or null if it's not a terminated comment.
+ */
+static char const* is_terminated_comment( char *s ) {
+  assert( s );
+  char const *cc = NULL;
+  char *tws = NULL;                     // trailing whitespace
+
+  if ( (s = is_line_comment( s )) ) {
+    switch ( delim ) {
+      case DELIM_NONE:
+        break;
+
+      case DELIM_EOL:
+        while ( *++s && *s == close_cc[0] )
+          /* empty */;
+
+        for ( ; *s; ++s ) {
+          if ( isspace( *s ) ) {
+            if ( !tws )
+              tws = s;
+            continue;
+          }
+          tws = NULL;
+
+          if ( *s == close_cc[0] ) {
+            //
+            // We've found the comment delimiter character: if it's the first
+            // time we've found it, mark its position to return.
+            //
+            // As a special case, we also remark its position if it's the first
+            // after whitespace, e.g.:
+            //
+            //      # This is a comment. # #
+            //
+            if ( !cc || is_space( s[-1] ) )
+              cc = s;
+          } else {
+            //
+            // Ignore a mid-comment delimiter character, that is a delimiter
+            // character followed by a non-whitespace character, e.g.:
+            //
+            //      # This is a comment ith a '#' in it.
+            //
+            cc = NULL;
+          }
+        } // for
+        break;
+
+      case DELIM_SINGLE:
+        while ( *++s ) {
+          if ( !cc ) {
+            if ( *s == close_cc[0] ) {
+              //
+              // We've found the first occurrence of the comment delimiter
+              // character: mark its position to return.
+              //
+              cc = s;
+              tws = s + 1;
+            }
+          } else if ( !isspace( *s ) ) {
+            //
+            // We've found something other than whitespace after the comment
+            // delimiter character: don't consider the comment a terminated
+            // comment.
+            //
+            return NULL;
+          }
+        } // while
+        break;
+
+      case DELIM_DOUBLE:
+        while ( *++s ) {
+          if ( !cc ) {
+            if ( *s == close_cc[0] ) {
+              //
+              // We've found the first occurrence of the comment delimiter
+              // character: mark its position to return.
+              //
+              cc = s;
+            }
+          } else if ( *s != close_cc[0] ) {
+            if ( *s == close_cc[1] && s[-1] == close_cc[0] ) {
+              tws = s + 1;
+            } else if ( !isspace( *s ) ) {
+              if ( tws )
+                return NULL;
+              cc = NULL;
+            }
+          }
+        } // while
+        break;
+    } // switch
+  }
+
+  if ( tws && cc )
+    strcpy( tws, eol() );
+  return cc;
 }
 
 /**
@@ -477,12 +736,14 @@ static void init( int argc, char const *argv[] ) {
 
 /**
  * Checks whether the given string is the beginning of a block comment: starts
- * with a comment character and contains only non-alpha characters thereafter.
+ * with a comment delimiter character and contains only non-alpha characters
+ * thereafter.
  *
  * @param s The string to check.
  * @return Returns \c true only if \a s is the beginning of a block comment.
  */
 static bool is_block_comment( char const *s ) {
+  assert( s );
   if ( (s = is_line_comment( s )) ) {
     for ( ++s; *s && *s != '\n' && !isalpha( *s ); ++s )
       /* empty */;
@@ -492,44 +753,20 @@ static bool is_block_comment( char const *s ) {
 }
 
 /**
- * Spans the initial part of \a s for the "prototype."  The prototype is
+ * Spans the initial part of \a s for the prefix "prototype."  The prefix is
  * defined as \c ^{WS}*{CC}*{WS}* where \c WS is whitespace and \c CC are
- * comment characters.
+ * comment delimiter characters.
  *
  * @param s The string to span.
  * @return Returns the length of the prototype.
  */
-static size_t proto_span( char const *s ) {
+static size_t prefix_span( char const *s ) {
   assert( s );
-  size_t ws_len = strspn( s, WS_CHARS );
+  size_t ws_len = strspn( s, WS_ST );
   size_t const cc_len = strspn( s += ws_len, opt_comment_chars );
   if ( cc_len )
-    ws_len += strspn( s + cc_len, WS_CHARS );
+    ws_len += strspn( s + cc_len, WS_ST );
   return ws_len + cc_len;
-}
-
-/**
- * Compute the actual width of the prototype: tabs are equal to <opt_tab_spaces>
- * spaces minus the number of spaces we're into a tab-stop; all others are
- * equal to 1.
- *
- * @param prototype The prototype string to calculate the width of.
- * @return Returns said width.
- */
-static size_t proto_width( char const *prototype ) {
-  assert( prototype );
-
-  size_t spaces = 0, width = 0;
-  for ( char const *c = prototype; *c; ++c ) {
-    if ( *c == '\t' ) {
-      width += opt_tab_spaces - spaces;
-      spaces = 0;
-    } else {
-      ++width;
-      spaces = (spaces + 1) % opt_tab_spaces;
-    }
-  } // for
-  return width;
 }
 
 /**
@@ -551,11 +788,9 @@ static void read_prototype( void ) {
 
   char const *const cc = is_line_comment( CURR );
   if ( cc ) {
-    static char comment_chars_buf[4];   // 1-3 chars + NULL
-    char *s = comment_chars_buf;
     //
-    // From now on, recognize only the comment character found as a comment
-    // delimiter.  This handles cases like:
+    // From now on, recognize only the comment delimiter character(s) found as
+    // comment delimiters.  This handles cases like:
     //
     //      // This is a comment
     //      #define MACRO
@@ -563,33 +798,99 @@ static void read_prototype( void ) {
     // where a comment is followed by a line that is not part of the comment
     // even though it starts with the comment delimiter '#'.
     //
-    *s++ = cc[0];
+    // The variable cc_buf holds the final set of recognized comment delimiter
+    // character(s).  There are three cases where it contains:
     //
-    // As special-cases, we also have to recognize the second character of
-    // two-character delimiters, but only if it's not the same as the first
-    // character and among the set of specified comment characters.
+    //  1. A single character, e.g., '#', that is a to-end-of-line comment.
+    //     This is the DELIM_EOL delimiter type.
+    //
+    //  2. Two characters:
+    //      * E.g., "/*", the characters comprising both the opening and
+    //        closing comment delimiters where the closing delimiter shares a
+    //        character with the opening delimiter (hence the final '/' in "*/"
+    //        isn't repeated).  This is the DELIM_DOUBLE delimiter type.
+    //      * E.g., "{}" (Pascal), two single-character open/close comment
+    //        delimiter characters.  This is the DELIM_SINGLE delimiter type.
+    //
+    //  3. Three characters, e.g., "(*)", the characters comprising both the
+    //     opening and closing comment delimiters where the closing delimiter
+    //     is different from the opening delimiter (hence, the opening
+    //     delimiter is "(*" and the closing is "*)").  This is also the
+    //     DELIM_DOUBLE delimiter type.
+    //
+    // While this is useful (and efficient) for checking whether a character is
+    // a comment delimiter character, it's difficult to use for other purposes.
+    // Therefore, the global close_cc[] and delim variables help out.
+    //
+    static char cc_buf[ 3 + 1/*null*/ ];
+    char *s = cc_buf;
+    *s++ = cc[0];
+    delim = DELIM_EOL;                  // assume this to start
+
+    //
+    // Get the closing comment delimiter character corresponding to the first,
+    // if any, and only if among the set of specified comment delimiter
+    // characters.
+    //
+    char closing;
+    switch ( cc[0] ) {
+      case '(': closing = ')' ; break;
+      case '<': closing = '>' ; break;
+      case '[': closing = ']' ; break;  // no language uses '['; completeness
+      case '{': closing = '}' ; break;
+      default : closing = '\0';
+    } // switch
+    if ( closing && !is_comment_char( closing ) )
+      closing = '\0';
+
+    //
+    // We also have to recognize the second character of two-character comment
+    // delimiters, but only if it's not the same as the first character (to
+    // exclude delimiters like "//") and among the originally specified set of
+    // delimiter characters.
     //
     switch ( cc[0] ) {
-      case '#': // #| Lisp, Racket, Scheme
-      case '(': // (* AppleScript, Delphi, ML, OCaml, Pascal; (: XQuery
-      case '/': // /* C, Objective C, C++, C#, D, Go, Java, Rust, Swift
-      case '<': // <# PowerShell
-      case '{': // Pascal; {- Haskell
-        if ( cc[1] != cc[0] && is_comment_char( cc[1] ) )
+      case '#': // "#|": Lisp, Racket, Scheme
+      case '(': // "(*": AppleScript, Delphi, ML, OCaml, Pascal; "(:": XQuery
+      case '/': // "/*": C, Objective C, C++, C#, D, Go, Java, Rust, Swift
+      case '<': // "<#": PowerShell
+      case '{': // "{-": Haskell
+        if ( cc[1] != cc[0] && is_comment_char( cc[1] ) && cc[1] != closing ) {
           *s++ = cc[1];
+          delim = DELIM_DOUBLE;         // e.g., "/*"
+        }
     } // switch
     //
     // We also have to recognize the closing delimiter character, if any, only
-    // if it's different from the opening character and among the set of
-    // specified comment characters.
+    // if it's different from the opening character.
     //
-    char const close = get_close( cc[0] );
-    if ( close != cc[0] && is_comment_char( close ) )
-      *s++ = close;
-    opt_comment_chars = comment_chars_buf;
+    if ( closing && closing != cc[0] ) {
+      *s++ = closing;
+      if ( delim == DELIM_EOL )
+        delim = DELIM_SINGLE;           // e.g., "}" (Pascal)
+    }
+    //
+    // For later convenience, pluck out the terminating comment delimiter
+    // character(s) in order.
+    //
+    switch ( delim ) {
+      case DELIM_NONE:
+        break;
+      case DELIM_EOL:
+        close_cc[0] = cc_buf[0];        // e.g., "#"
+        break;
+      case DELIM_SINGLE:
+        close_cc[0] = cc_buf[1];        // e.g., "}" (Pascal)
+        break;
+      case DELIM_DOUBLE:
+        close_cc[0] = cc_buf[1];
+        close_cc[1] = cc_buf[2] ? cc_buf[2] : cc_buf[0];
+    } // switch
+
+    opt_comment_chars = cc_buf;         // restrict recognized to those found
   }
 
-  char const *proto = CURR;
+  char *proto = CURR;
   if ( is_block_comment( CURR ) ) {
     //
     // This handles cases like:
@@ -606,16 +907,44 @@ static void read_prototype( void ) {
     proto = NEXT;
   }
 
-  proto_len0 = proto_span( proto );
-  strncpy( proto_buf, proto, proto_len0 );
-  proto_buf[ proto_len0 ] = '\0';
+  int line_width = (int)opt_line_width;
+  //
+  // Initialize the prefix and adjust the line width accordingly.
+  //
+  prefix_len0 = prefix_span( proto );
+  strncpy( prefix_buf, proto, prefix_len0 );
+  prefix_buf[ prefix_len0 ] = '\0';
+  line_width -= str_width( prefix_buf );
+  //
+  // Initialize the suffix, if any, and adjust the line width accordingly.
+  //
+  char const *const tc = is_terminated_comment( proto );
+  if ( tc ) {
+    suffix_len = chop_eol( suffix_buf, strcpy_len( suffix_buf, tc ) );
+    line_width -= 1/*space*/ + suffix_len;
+  }
 
-  opt_line_width -= proto_width( proto_buf );
-  if ( opt_line_width < LINE_WIDTH_MINIMUM )
+  if ( line_width < LINE_WIDTH_MINIMUM )
     PMESSAGE_EXIT( EX_USAGE,
-      "line-width (%zu) is too small (<%d)\n",
-      opt_line_width, LINE_WIDTH_MINIMUM
+      "line-width (%d) is too small (<%d)\n",
+      line_width, LINE_WIDTH_MINIMUM
     );
+  opt_line_width = line_width;
+}
+
+/**
+ * Skips all consecutive occorrences of \a c in \a s.
+ *
+ * @param s The null-terminated string to use.
+ * @param c The character to skip.
+ * @return Returns a pointer within \a s just past the last consecutive
+ * occurrence of \a c.
+ */
+static char* skip_c( char *s, char c ) {
+  assert( s );
+  for ( ; *s && *s == c; ++s )
+    /* empty */;
+  return s;
 }
 
 /**
@@ -623,28 +952,45 @@ static void read_prototype( void ) {
  *
  * @param s The null-terminated string to use.
  * @param n The maximum number of characters to skip.
- * @return Returns either \a s+n or a pointer to and end-of-line character.
+ * @return Returns either \a s+n or a pointer to an end-of-line character.
  */
-static char const* skip_n( char const *s, size_t n ) {
+static char* skip_n( char *s, size_t n ) {
+  assert( s );
   for ( ; *s && !is_eol( *s ) && n > 0; ++s, --n )
     /* empty */;
   return s;
 }
 
 /**
- * A special variant of strcpy(3) that copies up to but not including an
- * end-of-line character.
+ * A variant of strcpy(3) that returns the number of characters copied.
  *
  * @param dst A pointer to receive the copy of \a src.
  * @param src The null-terminated string to copy.
  * @return Returns the number of characters copied.
  */
-static size_t strcpy_no_eol( char *dst, char const *src ) {
+static size_t strcpy_len( char *dst, char const *src ) {
+  assert( dst );
+  assert( src );
   char const *const dst0 = dst;
-  for ( ; !is_eol( *dst = *src ); ++dst, ++src )
+  while ( (*dst++ = *src++) )
     /* empty */;
-  *dst = '\0';
-  return dst - dst0;
+  return dst - dst0 - 1;
+}
+
+/**
+ * A special variant of strlen(3) that gets the length not including trailing
+ * end-of-line characters, if any.
+ *
+ * @param s The null-terminated string to get the length of.
+ * @return Returns said length.
+ */
+static size_t strlen_no_eol( char const *s ) {
+  assert( s );
+  size_t n = strlen( s );
+  (void)(n && s[ n - 1 ] == '\n' &&
+       --n && s[ n - 1 ] == '\r' &&
+       --n);
+  return n;
 }
 
 static char const* str_status( int status ) {
@@ -658,6 +1004,30 @@ static char const* str_status( int status ) {
     case EX_CONFIG    : return "configuration file error";
     default           : return "unknown status";
   } // switch
+}
+
+/**
+ * Computes the width of a string where tabs have a width of \c opt_tab_spaces
+ * spaces minus the number of spaces we're into a tab-stop; all others
+ * characters have a width of 1.
+ *
+ * @param s The null-terminated string to calculate the width of.
+ * @return Returns said width.
+ */
+static size_t str_width( char const *s ) {
+  assert( s );
+
+  size_t pos = 0, width = 0;
+  for ( ; *s; ++s ) {
+    if ( *s == '\t' ) {
+      width += opt_tab_spaces - pos;
+      pos = 0;
+    } else {
+      ++width;
+      pos = (pos + 1) % opt_tab_spaces;
+    }
+  } // for
+  return width;
 }
 
 static void usage( void ) {

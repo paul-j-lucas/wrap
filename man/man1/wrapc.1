@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\fP 1 "April 26, 2016" "PJL TOOLS"
+.TH \f3wrapc\fP 1 "May 29, 2016" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -93,14 +93,19 @@ Quoted e-mail
 Comments are formatted subject to the following:
 .IP \[bu] 2
 Comment characters are treated as such
-only when they are the first non-whitespace characters on a line.
+only when they are the first
+or last
+non-whitespace characters on a line.
 .IP \[bu]
-Leading whitespace and comment characters
+Leading whitespace and comment delimiter characters
+as well as trailing comment delimiter characters
 of the first line
 are used as the ``prototype'' for all lines.
 .IP \[bu]
 For each line,
-all leading whitespace and comment characters are stripped
+all leading whitespace and comment delimiter characters
+as well as all trailing comment delimiter characters
+are stripped
 before being passed to
 .BR wrap (1)
 for reformatting.
@@ -108,12 +113,14 @@ for reformatting.
 After reformatting,
 the prototype characters
 of the first comment line
-are prepended to the start of each line.
+are prepended to the start
+and appended to the end
+of each line.
 .SS Trailing Source Code Passthrough
 If the first non-whitespace character of a subsequent line
 is
 .I not
-a comment character,
+a comment delimiter character,
 it signals the end of the comment
 and all remaining lines
 are passed through unaltered.
@@ -142,19 +149,42 @@ are treated specially in that:
 The first line is not altered
 if it only contains any number of non-alphabetic characters.
 .IP \[bu]
-Leading whitespace and comment characters of the
+Leading whitespace and comment delimiter characters of the
 .I second
 line are used as the ``prototype'' for all remaining comment lines.
 .IP \[bu]
 The last comment line,
 the one only containing any number of non-alphabetic characters,
 and any subsequent lines are also not altered.
+.SS Boxed Comments
+Boxed comments, for example:
+.cS
+/********************************************************/
+/* Lorem ipsum dolor sit amet, ligula suspendisse nulla */
+/* pretium, rhoncus tempor fermentum, enim integer ad   */
+/* vestibulum volutpat.                                 */
+/********************************************************/
+.cE
+where every line is ended by a comment delimiter
+and the delimiters are aligned to form a ``box,''
+are treated specially in that:
+.IP \[bu] 2
+If comprised of only comment delimiter characters,
+the first and last lines are either lengthened or shortened to
+.I line-width
+(see the
+.B \-w
+option).
+.IP \[bu]
+The trailing comment delimiter characters on every line
+are all vertically aligned at
+.IR line-width .
 .SS Non-Comments
 If the first non-whitespace character
 of the first line
 is
 .I not
-a comment character,
+a comment delimiter character,
 then whatever leading whitespace alone, if any,
 is used as the prototype for all lines.
 .SS Markdown Text
@@ -371,6 +401,7 @@ map `c !}wrap -F'%'\f3^M\fP
 Paul J. Lucas
 .RI < paul@lucasmail.org >
 .SH SEE ALSO
+.BR par (1),
 .BR vi (1),
 .BR wrap (1),
 .BR sysexits (3),

@@ -119,7 +119,7 @@ static char* strip_comment( char *s ) {
  */
 static char* trim_ws( char *s ) {
   assert( s );
-  SKIP_WS( s );
+  SKIP_CHARS( s, WS_STR );
   for ( size_t len = strlen( s ); len > 0 && isspace( s[ --len ] ); )
     s[ len ] = '\0';
   return s;

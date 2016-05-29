@@ -164,6 +164,24 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc-block-01.test \
 	tests/wrapc-block-02.test \
 	tests/wrapc-block-03.test \
+	tests/wrapc--box-double-01.test \
+	tests/wrapc--box-double-02.test \
+	tests/wrapc--box-double-03.test \
+	tests/wrapc--box-double-04.test \
+	tests/wrapc--box-double-05.test \
+	tests/wrapc--box-double-07.test \
+	tests/wrapc--box-eol-01.test \
+	tests/wrapc--box-eol-02.test \
+	tests/wrapc--box-eol-03.test \
+	tests/wrapc--box-eol-04.test \
+	tests/wrapc--box-eol-05.test \
+	tests/wrapc--box-eol-06.test \
+	tests/wrapc--box-eol-07.test \
+	tests/wrapc--box-single-01.test \
+	tests/wrapc--box-single-02.test \
+	tests/wrapc--box-single-03.test \
+	tests/wrapc--box-single-04.test \
+	tests/wrapc--box-single-05.test \
 	tests/wrapc-crlf-01.test \
 	tests/wrapc-noncomment-01.test \
 	tests/wrapc-noncomment-02.test \

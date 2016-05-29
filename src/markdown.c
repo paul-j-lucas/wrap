@@ -397,7 +397,7 @@ static bool md_is_footnote_def( char const *s, bool *def_text ) {
       if ( *s == ']' ) {
         if ( !(*++s == ':' && isspace( *++s )) )
           break;
-        SKIP_WS( s );
+        SKIP_CHARS( s, WS_STR );
         *def_text = *s && !isspace( *s );
         return true;
       }
@@ -510,7 +510,7 @@ static bool md_is_link_label( char const *s, bool *has_title ) {
     if ( *s == ']' ) {
       if ( !(*++s == ':' && is_space( *++s )) )
         break;
-      SKIP_WS( s );
+      SKIP_CHARS( s, WS_STR );
       if ( *s == '<' )
         ++s;
       //
@@ -522,7 +522,7 @@ static bool md_is_link_label( char const *s, bool *has_title ) {
       s += strcspn( s, " \t\r\n" );
       *has_title = false;
       if ( !is_blank_line( s ) ) {
-        SKIP_WS( s );
+        SKIP_CHARS( s, WS_STR );
         if ( !md_is_link_title( s ) )
           break;
         *has_title = true;
