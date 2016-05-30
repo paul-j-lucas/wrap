@@ -1,5 +1,67 @@
+2016-05-29  Paul J. Lucas <paul@lucasmail.org>
+
+   * common.h, wrap.c, wrapc.c, test/Makefile.am, md-ol-05s.c,
+     wrapc--Markdown-ol-05s.txt, wrapc--Markdown-ol-05s.test: Fixed line_width
+     when leader changes.
+   * wrap--Markdown-fence-01a.test, wrap--Markdown-fence-01b.test,
+     wrap--Markdown-fence-01c.test: s/wrapc/wrap/
+   * wrapc.c: Added set_prefix().
+   * wrap.c: Removed unnecessary comment.
+   * common.h, util.h, wrapc.c: Added NO_OP.
+   * NEWS, configure.ac, wrap.1, wrapc.1, alias.c, markdown.c, pattern.c,
+     read_conf.c, util.h, wrap.c, wrapc.c, test/Makefile.am, wrapc-box-01.c,
+     wrapc-box-01.pas, wrapc-box-01.sh, wrapc-box-02.c, wrapc-box-02.pas,
+     wrapc-box-02.sh, wrapc-box-03.c, wrapc-box-03.pas, wrapc-box-03.sh,
+     wrapc-box-04.c, wrapc-box-04.pas, wrapc-box-04.sh, wrapc-box-05.c,
+     wrapc-box-05.pas, wrapc-box-05.sh, wrapc-box-06.sh, wrapc-box-07.c,
+     wrapc-box-07.sh, wrapc--box-double-01.txt, wrapc--box-double-02.txt,
+     wrapc--box-double-03.txt, wrapc--box-double-04.txt,
+     wrapc--box-double-05.txt, wrapc--box-double-07.txt, wrapc--box-eol-01.txt,
+     wrapc--box-eol-02.txt, wrapc--box-eol-03.txt, wrapc--box-eol-04.txt,
+     wrapc--box-eol-05.txt, wrapc--box-eol-06.txt, wrapc--box-eol-07.txt,
+     wrapc--box-single-01.txt, wrapc--box-single-02.txt,
+     wrapc--box-single-03.txt, wrapc--box-single-04.txt,
+     wrapc--box-single-05.txt, wrapc--box-double-01.test,
+     wrapc--box-double-02.test, wrapc--box-double-03.test,
+     wrapc--box-double-04.test, wrapc--box-double-05.test,
+     wrapc--box-double-07.test, wrapc--box-eol-01.test, wrapc--box-eol-02.test,
+     wrapc--box-eol-03.test, wrapc--box-eol-04.test, wrapc--box-eol-05.test,
+     wrapc--box-eol-06.test, wrapc--box-eol-07.test, wrapc--box-single-01.test,
+     wrapc--box-single-02.test, wrapc--box-single-03.test,
+     wrapc--box-single-04.test, wrapc--box-single-05.test: Added support for
+     boxed comments.
+
+2016-05-26  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: More consice use of SKIP_WS().
+
+2016-05-25  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Code reorganization.
+   * util.h, wrap.c: Added eol() and is_windows().
+
+2016-05-24  Paul J. Lucas <paul@lucasmail.org>
+
+   * common.h: Comment tweak.
+
+2016-05-21  Paul J. Lucas <paul@lucasmail.org>
+
+   * util.h: Added (void)0 to eat semicolon.
+
+2016-05-20  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Comment fix.
+   * wrapc.c: Added '[' ']' to get_close().
+
+2016-05-19  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Added get_close() that makes Pascal no longer be a special case.
+
 2016-05-16  Paul J. Lucas <paul@lucasmail.org>
 
+   * markdown.c: Reversed check of md_is_footnote_def() and md_is_link_label()
+     since the former is more specific.
+   * markdown.c: Sorted function.
    * NEWS, wrap.1, markdown.c, markdown.h, wrap.c, test/Makefile.am,
      md-abbr-01.c, md-abbr-01.md, md-abbr-02.c, md-abbr-02.md, md-abbr-03.c,
      md-abbr-03.md, md-abbr-04.c, md-abbr-04.md, md-abbr-05.c, md-abbr-05.md,
