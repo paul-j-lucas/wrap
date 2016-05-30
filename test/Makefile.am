@@ -241,6 +241,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--Markdown-ol-02s.test \
 	tests/wrapc--Markdown-ol-03s.test \
 	tests/wrapc--Markdown-ol-04s.test \
+	tests/wrapc--Markdown-ol-05s.test \
 	tests/wrapc--Markdown-ol-11s.test \
 	tests/wrapc--Markdown-ul-01.test \
 	tests/wrapc--Markdown-ul-02.test \

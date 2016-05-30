@@ -80,6 +80,7 @@ static char const   UTF8_LEN_TABLE[] = {
 static unsigned     consec_newlines;    // number of consecutive newlines
 static line_buf_t   in_buf;
 static line_buf_t   ipc_buf;            // deferred IPC message
+static size_t       ipc_line_width;     // deferred IPC line width
 static size_t       line_width;         // max width of line
 static line_buf_t   out_buf;
 static size_t       out_len;            // number of characters in buffer
@@ -525,7 +526,7 @@ read_line:
         fcopy( fin, fout );
         exit( EX_OK );
 
-      case WIPC_NEW_LEADER:
+      case WIPC_NEW_LEADER: {
         //
         // We've been told by wrapc (child 1) that the comment characters
         // and/or leading whitespace has changed: we have to echo it back to
@@ -535,11 +536,23 @@ read_line:
         // until just after the line is sent; otherwise, we must send it
         // immediately.
         //
-        if ( out_len )
-          WIPC_DEFERF( ipc_buf, sizeof ipc_buf, WIPC_NEW_LEADER, "%s", *ps );
-        else
-          WIPC_SENDF( fout, WIPC_NEW_LEADER, "%s", *ps );
+        char *sep;
+        size_t const new_line_width = strtoul( *ps, &sep, 10 );
+        if ( out_len ) {
+          WIPC_DEFERF(
+            ipc_buf, sizeof ipc_buf, WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
+            new_line_width, sep + 1
+          );
+          ipc_line_width = new_line_width;
+        } else {
+          WIPC_SENDF(
+            fout, WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
+            new_line_width, sep + 1
+          );
+          line_width = opt_line_width = new_line_width;
+        }
         goto read_line;
+      }
 
       case '\0':
         return EOF;
@@ -779,9 +792,11 @@ static void put_tabs_spaces( size_t tabs, size_t spaces ) {
 static size_t read_line( line_buf_t line ) {
   size_t bytes_read;
 
-  while ( (bytes_read = buf_read( line, fin )) &&
-          (opt_markdown && !markdown_adjust( line )) )
-    /* empty */;
+  while ( (bytes_read = buf_read( line, fin )) ) {
+    // Don't pass IPC lines through the Markdown parser.
+    if ( !opt_markdown || line[0] == WIPC_HELLO || markdown_adjust( line ) )
+      break;
+  } // while
 
   if ( !bytes_read )
     MD_DEBUG( "====================\n" );
@@ -839,6 +854,10 @@ static void wipc_send( FILE *fout, char *msg ) {
   if ( msg[0] ) {
     WIPC_SENDF( fout, /*IPC_code=*/msg[0], "%s", msg + 1 );
     msg[0] = '\0';
+    if ( ipc_line_width ) {
+      line_width = opt_line_width = ipc_line_width;
+      ipc_line_width = 0;
+    }
   }
 }
 

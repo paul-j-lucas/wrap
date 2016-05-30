@@ -356,8 +356,15 @@ static pid_t read_source_write_wrap( void ) {
         // regular text was indented only 1 space.  If this check were not
         // done, then the "Not" text would end up also being indented 2 spaces.
         //
+        // We therefore have to increase opt_line_width by the delta and also
+        // notify both wrap(1) and the other wrapc(1) processes of the changes.
+        //
+        opt_line_width += prefix_len0 - prefix_len;
         set_prefix( CURR, prefix_len );
-        WIPC_SENDF( fwrap, WIPC_NEW_LEADER, "%s\n", prefix_buf );
+        WIPC_SENDF(
+          fwrap, WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s\n",
+          opt_line_width, prefix_buf
+        );
       }
     }
 
@@ -439,15 +446,18 @@ static void read_wrap( void ) {
           fcopy( fwrap, fout );
           goto break_loop;
 
-        case WIPC_NEW_LEADER:
+        case WIPC_NEW_LEADER: {
           //
           // We've been told by child 1 (read_source_write_wrap(), via child 2,
           // wrap) that the leading comment delimiter characters and/or
-          // whitespace has changed: adjust prefix_buf.
+          // whitespace has changed: adjust opt_line_width and prefix_buf.
           //
-          prefix_len0 = strcpy_len( prefix_buf, line + 2 );
+          char *sep;
+          opt_line_width = strtoul( line + 2, &sep, 10 );
+          prefix_len0 = strcpy_len( prefix_buf, sep + 1 );
           split_tws( prefix_buf, prefix_len0, proto_tws );
           continue;
+        }
 
         default:
           //
