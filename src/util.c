@@ -93,6 +93,9 @@ char* check_strdup( char const *s ) {
 }
 
 void fcopy( FILE *ffrom, FILE *fto ) {
+  assert( ffrom );
+  assert( fto );
+
   char buf[ LINE_BUF_SIZE ];
   for ( size_t size; (size = fread( buf, 1, sizeof buf, ffrom )) > 0; )
     FWRITE( buf, 1, size, fto );
@@ -102,6 +105,7 @@ void fcopy( FILE *ffrom, FILE *fto ) {
 char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
   assert( buf );
   assert( size );
+  assert( ffrom );
   //
   // Based on the implementation given in:
   //
@@ -143,7 +147,7 @@ void free_now() {
 }
 
 void split_tws( char buf[], size_t buf_len, char tws[] ) {
-  size_t const tnws_len = buf_len - strrspn( buf, " \t" );
+  size_t const tnws_len = buf_len - strrspn( buf, WS_ST );
   strcpy( tws, buf + tnws_len );
   buf[ tnws_len ] = '\0';
 }

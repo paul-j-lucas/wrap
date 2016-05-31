@@ -26,6 +26,9 @@
 #include "pattern.h"
 #include "util.h"
 
+// standard
+#include <assert.h>
+
 ////////// extern functions ///////////////////////////////////////////////////
 
 void clean_up( void ) {
@@ -40,6 +43,7 @@ void clean_up( void ) {
 }
 
 size_t buf_read( line_buf_t line, FILE *ffrom ) {
+  assert( ffrom );
   size_t size = sizeof( line_buf_t );
   if ( !fgetsz( line, &size, ffrom ) )
     FERROR( ffrom );
