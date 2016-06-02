@@ -4,6 +4,7 @@
 by wrapping and filling lines
 to a given line-width.
 It is like **fmt**(1)
+or **fold**(1)
 but has many more options
 including, but not limited to, those for
 indenting (with either tabs, spaces, or both),
