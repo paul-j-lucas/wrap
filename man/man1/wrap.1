@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\fP 1 "May 26, 2016" "PJL TOOLS"
+.TH \f3wrap\fP 1 "June 2, 2016" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -238,6 +238,10 @@ all case-insensitive.
 Specifies a string
 .I s
 that is to be prepended to every line.
+The width of
+.I s
+is subtracted from
+.IR line-width .
 .TP
 .BI \-m " n"
 Mirrors tabs; equivalent to:
