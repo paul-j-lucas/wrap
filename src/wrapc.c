@@ -614,6 +614,42 @@ done:
 }
 
 /**
+ * Parses command-line options, sets-up I/O, sets-up the input buffers, reads
+ * the line prototype, and sets-up the pipes.
+ *
+ * @param argc The number of command-line arguments from main().
+ * @param argv The command-line arguments from main().
+ */
+static void init( int argc, char const *argv[] ) {
+  atexit( clean_up );
+  init_options( argc, argv, usage );
+
+  CURR = input_buf.line[0];
+  NEXT = input_buf.line[1];
+  read_prototype();
+  PIPE( pipes[ TO_WRAP ] );
+  PIPE( pipes[ FROM_WRAP ] );
+}
+
+/**
+ * Checks whether the given string is the beginning of a block comment: starts
+ * with a comment delimiter character and contains only non-alpha characters
+ * thereafter.
+ *
+ * @param s The string to check.
+ * @return Returns \c true only if \a s is the beginning of a block comment.
+ */
+static bool is_block_comment( char const *s ) {
+  assert( s );
+  if ( (s = is_line_comment( s )) ) {
+    for ( ++s; *s && *s != '\n' && !isalpha( *s ); ++s )
+      /* empty */;
+    return *s == '\n';
+  }
+  return false;
+}
+
+/**
  * Checks whether the given string is a terminated comment, that is a string
  * that both begins and ends with comment delimiters, e.g.:
  *
@@ -723,42 +759,6 @@ static char const* is_terminated_comment( char *s ) {
   if ( tws && cc )
     strcpy( tws, eol() );
   return cc;
-}
-
-/**
- * Parses command-line options, sets-up I/O, sets-up the input buffers, reads
- * the line prototype, and sets-up the pipes.
- *
- * @param argc The number of command-line arguments from main().
- * @param argv The command-line arguments from main().
- */
-static void init( int argc, char const *argv[] ) {
-  atexit( clean_up );
-  init_options( argc, argv, usage );
-
-  CURR = input_buf.line[0];
-  NEXT = input_buf.line[1];
-  read_prototype();
-  PIPE( pipes[ TO_WRAP ] );
-  PIPE( pipes[ FROM_WRAP ] );
-}
-
-/**
- * Checks whether the given string is the beginning of a block comment: starts
- * with a comment delimiter character and contains only non-alpha characters
- * thereafter.
- *
- * @param s The string to check.
- * @return Returns \c true only if \a s is the beginning of a block comment.
- */
-static bool is_block_comment( char const *s ) {
-  assert( s );
-  if ( (s = is_line_comment( s )) ) {
-    for ( ++s; *s && *s != '\n' && !isalpha( *s ); ++s )
-      /* empty */;
-    return *s == '\n';
-  }
-  return false;
 }
 
 /**
