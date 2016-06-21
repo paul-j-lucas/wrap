@@ -172,6 +172,11 @@ int main( int argc, char const *argv[] ) {
   bool was_eos_char = false;
 
   //
+  // True only if the previous character was a newline.
+  //
+  bool was_newline = false;
+
+  //
   // True only if the previous character was a paragraph-delimiter character.
   //
   bool was_para_delim_char = false;
@@ -181,7 +186,7 @@ int main( int argc, char const *argv[] ) {
   char const *pc = in_buf;              // pointer to current character
   size_t wrap_pos = 0;                  // position at which we can wrap
 
-  for ( int c, prev_c = '\0'; (c = buf_getc( &pc )) != EOF; prev_c = c ) {
+  for ( int c; (c = buf_getc( &pc )) != EOF; was_newline = (c == '\n') ) {
 
     ///////////////////////////////////////////////////////////////////////////
     //  HANDLE NEWLINE(s)
@@ -245,7 +250,7 @@ int main( int argc, char const *argv[] ) {
         //
         goto delimit_paragraph;
       }
-      if ( opt_lead_ws_delimit && prev_c == '\n' ) {
+      if ( opt_lead_ws_delimit && was_newline ) {
         //
         // Leading whitespace characters delimit paragraphs and the previous
         // character was a newline which means this whitespace character is at
@@ -289,7 +294,7 @@ int main( int argc, char const *argv[] ) {
     //  PARAGRAPH-DELIMITERS
     ///////////////////////////////////////////////////////////////////////////
 
-    if ( prev_c == '\n' ) {
+    if ( was_newline ) {
       if ( opt_lead_para_delims && strchr( opt_lead_para_delims, c ) ) {
         do_lead_para_delim = true;
         goto delimit_paragraph;
