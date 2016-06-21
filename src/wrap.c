@@ -43,12 +43,12 @@
 /**
  * Line indentation type.
  */
-enum indentation {
+enum indent {
   INDENT_NONE,
   INDENT_LINE,
   INDENT_HANG
 };
-typedef enum indentation indent_t;
+typedef enum indent indent_t;
 
 // extern variable definitions
 char const         *me;                 // executable name
