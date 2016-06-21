@@ -301,7 +301,7 @@ static pid_t read_source_write_wrap( void ) {
     //
     // In order to know when a comment ends, we have to peek at the next line.
     //
-    (void)buf_read( NEXT, fin );
+    (void)check_readline( NEXT, fin );
 
     if ( proto_is_comment && !is_line_comment( CURR ) ) {
       //
@@ -784,7 +784,7 @@ static size_t prefix_span( char const *s ) {
  * case.
  */
 static void read_prototype( void ) {
-  size_t const size = buf_read( CURR, fin );
+  size_t const size = check_readline( CURR, fin );
   if ( !size )
     exit( EX_OK );
 
@@ -893,7 +893,9 @@ static void read_prototype( void ) {
         break;
       case DELIM_DOUBLE:
         close_cc[0] = cc_buf[1];
-        close_cc[1] = cc_buf[2] ? cc_buf[2] : cc_buf[0];
+        close_cc[1] = cc_buf[2] ?
+          cc_buf[2]                     // e.g., "(*)" (Pascal)
+        : cc_buf[0];                    // e.g., "/*"  (C)
     } // switch
 
     opt_comment_chars = cc_buf;         // restrict recognized to those found
@@ -912,7 +914,7 @@ static void read_prototype( void ) {
     // + The first line should not be altered.
     // + The second line becomes the prototype.
     //
-    (void)buf_read( NEXT, fin );
+    (void)check_readline( NEXT, fin );
     proto = NEXT;
   }
 

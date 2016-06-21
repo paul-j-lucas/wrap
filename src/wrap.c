@@ -797,7 +797,7 @@ static void put_tabs_spaces( size_t tabs, size_t spaces ) {
 static size_t read_line( line_buf_t line ) {
   size_t bytes_read;
 
-  while ( (bytes_read = buf_read( line, fin )) ) {
+  while ( (bytes_read = check_readline( line, fin )) ) {
     // Don't pass IPC lines through the Markdown parser.
     if ( !opt_markdown || line[0] == WIPC_HELLO || markdown_adjust( line ) )
       break;

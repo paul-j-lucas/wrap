@@ -31,6 +31,14 @@
 
 ////////// extern functions ///////////////////////////////////////////////////
 
+size_t check_readline( line_buf_t line, FILE *ffrom ) {
+  assert( ffrom );
+  size_t size = sizeof( line_buf_t );
+  if ( !fgetsz( line, &size, ffrom ) )
+    FERROR( ffrom );
+  return size;
+}
+
 void clean_up( void ) {
   alias_cleanup();
   free_now();
@@ -40,14 +48,6 @@ void clean_up( void ) {
     fclose( fin );
   if ( fout )
     fclose( fout );
-}
-
-size_t buf_read( line_buf_t line, FILE *ffrom ) {
-  assert( ffrom );
-  size_t size = sizeof( line_buf_t );
-  if ( !fgetsz( line, &size, ffrom ) )
-    FERROR( ffrom );
-  return size;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
