@@ -116,10 +116,9 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
   int c = 0;
   char *s = buf;
 
-  for ( size_t n = *size; n > 0 && (c = getc( ffrom )) != EOF; --n ) {
+  for ( size_t n = *size; n > 0 && (c = getc( ffrom )) != EOF; --n )
     if ( (*s++ = c) == '\n' )
-        break;
-  } // for
+      break;
 
   *s = '\0';
   *size = s - buf;
