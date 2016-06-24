@@ -53,8 +53,8 @@ _GL_INLINE_HEADER_BEGIN
 #define PMESSAGE_EXIT(STATUS,FORMAT,...) \
   BLOCK( PRINT_ERR( "%s: " FORMAT, me, __VA_ARGS__ ); exit( STATUS ); )
 
-#define DUP(P) \
-  BLOCK( if ( dup( P ) == -1 ) PERROR_EXIT( EX_OSERR ); )
+#define DUP(FD) \
+  BLOCK( if ( dup( FD ) == -1 ) PERROR_EXIT( EX_OSERR ); )
 
 #define FERROR(STREAM) \
   BLOCK( if ( ferror( STREAM ) ) PERROR_EXIT( EX_IOERR ); )
@@ -74,8 +74,8 @@ _GL_INLINE_HEADER_BEGIN
 #define MALLOC(TYPE,N) \
   (TYPE*)check_realloc( NULL, sizeof(TYPE) * (N) )
 
-#define PIPE(P) \
-  BLOCK( if ( pipe( P ) == -1 ) PERROR_EXIT( EX_OSERR ); )
+#define PIPE(FDS) \
+  BLOCK( if ( pipe( FDS ) == -1 ) PERROR_EXIT( EX_OSERR ); )
 
 #define REALLOC(PTR,TYPE,N) \
   (PTR) = (TYPE*)check_realloc( (PTR), sizeof(TYPE) * (N) )
@@ -268,7 +268,7 @@ WRAP_UTIL_INLINE bool true_reset( bool *flag ) {
  */
 void wait_for_debugger_attach( char const *env_var );
 #else
-# define wait_for_debugger_attach( env_var ) (void)0
+# define wait_for_debugger_attach( env_var ) NO_OP
 #endif /* NDEBUG */
 
 ///////////////////////////////////////////////////////////////////////////////
