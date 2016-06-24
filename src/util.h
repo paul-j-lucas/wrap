@@ -249,6 +249,16 @@ size_t strrspn( char const *s, char const *set );
  */
 char* tolower_s( char *s );
 
+/**
+ * Checks the flag: if \c true, resets the flag to \c false.
+ *
+ * @param flag A pointer to the Boolean flag to be tested and, if true, reset.
+ * @return Returns \c true only if \c *flag is \c true.
+ */
+WRAP_UTIL_INLINE bool true_reset( bool *flag ) {
+  return *flag && !(*flag = false);
+}
+
 #ifndef NDEBUG
 /**
  * Suspends process execution until a debugger attaches if \a env_var is set

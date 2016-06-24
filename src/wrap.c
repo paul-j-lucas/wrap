@@ -216,7 +216,7 @@ int main( int argc, char const *argv[] ) {
         //
         goto delimit_paragraph;
       }
-      if ( next_line_is_title && out_len ) {
+      if ( out_len && true_reset( &next_line_is_title ) ) {
         //
         // The first line of the next paragraph is title line and the buffer
         // isn't empty (there is a title): print the title.
@@ -224,7 +224,6 @@ int main( int argc, char const *argv[] ) {
         print_lead_chars();
         print_line( out_len, true );
         indent = INDENT_HANG;
-        next_line_is_title = false;
         continue;
       }
       if ( was_eos_char ) {
@@ -442,9 +441,7 @@ delimit_paragraph:
       // been handling a "long line," it's now finally ended; otherwise, print
       // the leading characters.
       //
-      if ( is_long_line )
-        is_long_line = false;
-      else
+      if ( !true_reset( &is_long_line ) )
         print_lead_chars();
       print_line( out_len, true );
     } else if ( is_long_line )
@@ -453,8 +450,7 @@ delimit_paragraph:
     put_spaces = 0;
     was_eos_char = was_para_delim_char = false;
 
-    if ( do_lead_para_delim ) {
-      do_lead_para_delim = false;
+    if ( true_reset( &do_lead_para_delim ) ) {
       //
       // The line starts with a leading paragraph delimiter and
       // opt_lead_dot_ignore is true: write the delimiter now that we've
@@ -462,8 +458,7 @@ delimit_paragraph:
       //
       goto insert;
     }
-    else if ( do_ignore_lead_dot ) {
-      do_ignore_lead_dot = false;
+    else if ( true_reset( &do_ignore_lead_dot ) ) {
       //
       // The line starts with a leading dot and opt_lead_dot_ignore is true:
       // read/write the line as-is.
