@@ -573,6 +573,9 @@ static void init( int argc, char const *argv[] ) {
   atexit( clean_up );
   init_options( argc, argv, usage );
 
+  if ( opt_markdown )
+    opt_tab_spaces =  TAB_SPACES_MARKDOWN;
+
   int const out_width = (int)opt_line_width -
     (int)(2 * (opt_mirror_tabs * opt_tab_spaces + opt_mirror_spaces) +
           opt_lead_tabs * opt_tab_spaces + opt_lead_spaces);
@@ -587,12 +590,24 @@ static void init( int argc, char const *argv[] ) {
   opt_lead_tabs   += opt_mirror_tabs;
   opt_lead_spaces += opt_mirror_spaces;
 
-  if ( opt_markdown )
-    opt_tab_spaces =  TAB_SPACES_MARKDOWN;
-
   size_t const bytes_read = read_line( in_buf );
   if ( !bytes_read )
     exit( EX_OK );
+
+  if ( opt_eol == EOL_INPUT ) {
+    //
+    // We're supposed to use the same end-of-lines as the input, but we can't
+    // just wait until we read a \r as part of the normal character-at-a-time
+    // input stream to know it's using Windows end-of-lines because if the
+    // first line is a long line, we'll need to wrap it (by emitting a newline)
+    // before we get to the end of the line and read the \r.
+    //
+    // Therefore, we have to read only the first line in its entirety and peek
+    // ahead to see if it ends with \r\n.
+    //
+    opt_eol = bytes_read >= 2 && in_buf[ bytes_read - 2 ] == '\r' ?
+      EOL_WINDOWS : EOL_UNIX;
+  }
 
   //
   // Copy the prototype and calculate its width.
@@ -625,21 +640,6 @@ static void init( int argc, char const *argv[] ) {
       //
       split_tws( proto_buf, proto_len, proto_tws );
     }
-  }
-
-  if ( opt_eol == EOL_INPUT ) {
-    //
-    // We're supposed to use the same end-of-lines as the input, but we can't
-    // just wait until we read a \r as part of the normal character-at-a-time
-    // input stream to know it's using Windows end-of-lines because if the
-    // first line is a long line, we'll need to wrap it (by emitting a newline)
-    // before we get to the end of the line and read the \r.
-    //
-    // Therefore, we have to read only the first line in its entirety and peek
-    // ahead to see if it ends with \r\n.
-    //
-    opt_eol = bytes_read >= 2 && in_buf[ bytes_read - 2 ] == '\r' ?
-      EOL_WINDOWS : EOL_UNIX;
   }
 }
 
