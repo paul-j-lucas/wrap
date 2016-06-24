@@ -453,7 +453,7 @@ delimit_paragraph:
     if ( true_reset( &do_lead_para_delim ) ) {
       //
       // The line starts with a leading paragraph delimiter and
-      // opt_lead_dot_ignore is true: write the delimiter now that we've
+      // opt_lead_para_delims is true: write the delimiter now that we've
       // delimited the paragraph.
       //
       goto insert;
