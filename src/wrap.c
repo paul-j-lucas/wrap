@@ -77,10 +77,9 @@ static char const   UTF8_LEN_TABLE[] = {
 };
 
 // local variable definitions
-static unsigned     consec_newlines;    // number of consecutive newlines
 static line_buf_t   in_buf;
 static line_buf_t   ipc_buf;            // deferred IPC message
-static size_t       ipc_line_width;     // deferred IPC line width
+static size_t       ipc_width;          // deferred IPC line width
 static size_t       line_width;         // max width of line
 static line_buf_t   out_buf;
 static size_t       out_len;            // number of characters in buffer
@@ -90,8 +89,19 @@ static line_buf_t   proto_tws;          // prototype trailing whitespace, if any
 static size_t       proto_len;
 static size_t       proto_width;
 
+// local variable definitions specific to wrap state
+static unsigned     consec_newlines;    // number of consecutive newlines
+static bool         ignore_lead_dot;    // ignore leading '.' line?
+static indent_t     indent = INDENT_LINE;
+static bool         is_long_line;       // line longer than line_width?
+static char const  *pc = in_buf;        // pointer to current character
+static unsigned     put_spaces;         // number of spaces to put between words
+static bool         was_eos_char;       // prev char an end-of-sentence char?
+static bool         was_para_delim_char;// prev char a paragraph delimiter?
+
 // local functions
 static int          buf_getc( char const** );
+static void         delimit_paragraph( void );
 static void         init( int, char const*[] );
 static void         print_lead_chars( void );
 static void         print_line( size_t, bool );
@@ -127,64 +137,11 @@ int main( int argc, char const *argv[] ) {
   wait_for_debugger_attach( "WRAP_DEBUG" );
   init( argc, argv );
 
-  //
-  // True only when opt_lead_dot_ignore = true, the current character is a '.',
-  // and the previous character was a '\n' (i.e., the line starts with a '.').
-  //
-  bool do_ignore_lead_dot = false;
-
-  //
-  // True only when opt_lead_para_delims was set, the current character is
-  // among them, and the previous character was a '\n' (i.e., the line starts
-  // with a one of opt_lead_para_delims).
-  //
-  bool do_lead_para_delim = false;
-
-  //
-  // The type of indent to do, if any.  Set initially to INDENT_LINE to
-  // indent the first line of the first paragraph.
-  //
-  indent_t indent = INDENT_LINE;
-
-  //
-  // True only when we're handling a "long line" (a sequence of non-whitespace
-  // characters longer than line_width) that can't be wrapped.
-  //
-  bool is_long_line = false;
-
-  //
-  // True when the next line to be read will be a title line.  The first
-  // non-all-whitespace line of the first paragraph is a title line only if
-  // opt_title_line (-T) is true.
-  //
-  bool next_line_is_title = opt_title_line;
-
-  //
-  // Number of spaces to output before the next non-whitespace character: set
-  // to 1 when we encounter a whitespace character and 2 when was_eos_char is
-  // true so as to put 2 characters after the end of a sentence.
-  //
-  unsigned put_spaces = 0;
-
-  //
-  // True only if the previous character was an end-of-sentence character.
-  //
-  bool was_eos_char = false;
-
-  //
-  // True only if the previous character was a newline.
-  //
-  bool was_newline = false;
-
-  //
-  // True only if the previous character was a paragraph-delimiter character.
-  //
-  bool was_para_delim_char = false;
+  bool    next_line_is_title = opt_title_line;
+  bool    was_newline = false;          // prev char a '\n'?
+  size_t  wrap_pos = 0;                 // position at which we can wrap
 
   /////////////////////////////////////////////////////////////////////////////
-
-  char const *pc = in_buf;              // pointer to current character
-  size_t wrap_pos = 0;                  // position at which we can wrap
 
   for ( int c; (c = buf_getc( &pc )) != EOF; was_newline = (c == '\n') ) {
 
@@ -207,14 +164,16 @@ int main( int argc, char const *argv[] ) {
         // next line is a title line and delimit the paragraph.
         //
         next_line_is_title = opt_title_line;
-        goto delimit_paragraph;
+        delimit_paragraph();
+        continue;
       }
       if ( opt_eos_delimit && was_eos_char ) {
         //
         // End-of-sentence characters delimit paragraphs and the previous
         // character was an end-of-sentence character: delimit the paragraph.
         //
-        goto delimit_paragraph;
+        delimit_paragraph();
+        continue;
       }
       if ( out_len && true_reset( &next_line_is_title ) ) {
         //
@@ -242,36 +201,31 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( isspace( c ) ) {
-      if ( is_long_line ) {
-        //
-        // We've been handling a "long line" and finally got a whitespace
-        // character at which we can finally wrap: delimit the paragraph.
-        //
-        goto delimit_paragraph;
+      if (  //
+            // We've been handling a "long line" and finally got a whitespace
+            // character at which we can finally wrap: delimit the paragraph.
+            //
+            is_long_line ||
+            //
+            // Leading whitespace characters delimit paragraphs and the
+            // previous character was a newline which means this whitespace
+            // character is at the beginning of a line: delimit the paragraph.
+            //
+            (opt_lead_ws_delimit && was_newline) ||
+            //
+            // End-of-sentence characters delimit paragraphs and the previous
+            // character was an end-of-sentence character: delimit the
+            // paragraph.
+            //
+            (opt_eos_delimit && was_eos_char) ||
+            //
+            // The previous character was a paragraph-delimiter character (set
+            // only if opt_para_delims was set): delimit the paragraph.
+            //
+            was_para_delim_char ) {
+        delimit_paragraph();
       }
-      if ( opt_lead_ws_delimit && was_newline ) {
-        //
-        // Leading whitespace characters delimit paragraphs and the previous
-        // character was a newline which means this whitespace character is at
-        // the beginning of a line: delimit the paragraph.
-        //
-        goto delimit_paragraph;
-      }
-      if ( opt_eos_delimit && was_eos_char ) {
-        //
-        // End-of-sentence characters delimit paragraphs and the previous
-        // character was an end-of-sentence character: delimit the paragraph.
-        //
-        goto delimit_paragraph;
-      }
-      if ( was_para_delim_char ) {
-        //
-        // The previous character was a paragraph-delimiter character (set only
-        // if opt_para_delims was set): delimit the paragraph.
-        //
-        goto delimit_paragraph;
-      }
-      if ( out_len && put_spaces < 1u + was_eos_char ) {
+      else if ( out_len && put_spaces < 1u + was_eos_char ) {
         //
         // We are not at the beginning of a line: remember to insert 1 space
         // later and allow 2 after the end of a sentence.
@@ -294,13 +248,14 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( was_newline ) {
-      if ( opt_lead_para_delims && strchr( opt_lead_para_delims, c ) ) {
-        do_lead_para_delim = true;
-        goto delimit_paragraph;
-      }
       if ( opt_lead_dot_ignore && c == '.' ) {
-        do_ignore_lead_dot = true;
-        goto delimit_paragraph;
+        ignore_lead_dot = true;
+        delimit_paragraph();
+        continue;
+      }
+      if ( opt_lead_para_delims && strchr( opt_lead_para_delims, c ) ) {
+        delimit_paragraph();
+        goto insert;
       }
     }
 
@@ -374,7 +329,7 @@ insert:
         goto done;                      // premature end of UTF-8 character
       out_buf[ tmp_out_len++ ] = c;
       if ( utf8_len( c ) )              // unexpected UTF-8 start byte
-        goto continue_outer_loop;       // skip entire UTF-8 character
+        goto next_char;                 // skip entire UTF-8 character
     } // for
     out_len = tmp_out_len;              // UTF-8 is valid
 
@@ -429,53 +384,12 @@ insert:
 
     wrap_pos = 0;
 
-continue_outer_loop:
-    continue;
+next_char:
+    NO_OP;
 
-    ///////////////////////////////////////////////////////////////////////////
-
-delimit_paragraph:
-    if ( out_len ) {
-      //
-      // Print what's in the buffer before delimiting the paragraph.  If we've
-      // been handling a "long line," it's now finally ended; otherwise, print
-      // the leading characters.
-      //
-      if ( !true_reset( &is_long_line ) )
-        print_lead_chars();
-      print_line( out_len, true );
-    } else if ( is_long_line )
-      print_eol();                      // delimit the "long line"
-
-    put_spaces = 0;
-    was_eos_char = was_para_delim_char = false;
-
-    if ( true_reset( &do_lead_para_delim ) ) {
-      //
-      // The line starts with a leading paragraph delimiter and
-      // opt_lead_para_delims is true: write the delimiter now that we've
-      // delimited the paragraph.
-      //
-      goto insert;
-    }
-    else if ( true_reset( &do_ignore_lead_dot ) ) {
-      //
-      // The line starts with a leading dot and opt_lead_dot_ignore is true:
-      // read/write the line as-is.
-      //
-      FPUTS( in_buf, fout );
-      (void)read_line( in_buf );
-      pc = in_buf;
-    }
-    else {
-      if ( consec_newlines == 2 ||
-          (consec_newlines > 2 && opt_newlines_delimit == 1) ) {
-        print_lead_chars();
-        print_eol();
-      }
-      indent = opt_markdown ? INDENT_NONE : INDENT_LINE;
-    }
   } // for
+
+  /////////////////////////////////////////////////////////////////////////////
 
 done:
   FERROR( fin );
@@ -543,7 +457,7 @@ read_line:
             ipc_buf, sizeof ipc_buf, WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
             new_line_width, sep + 1
           );
-          ipc_line_width = new_line_width;
+          ipc_width = new_line_width;
         } else {
           WIPC_SENDF(
             fout, WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
@@ -560,6 +474,44 @@ read_line:
   }
 
   return c;
+}
+
+/**
+ * Delimits a paragraph.
+ */
+static void delimit_paragraph( void ) {
+  if ( out_len ) {
+    //
+    // Print what's in the buffer before delimiting the paragraph.  If we've
+    // been handling a "long line," it's now finally ended; otherwise, print
+    // the leading characters.
+    //
+    if ( !true_reset( &is_long_line ) )
+      print_lead_chars();
+    print_line( out_len, true );
+  } else if ( is_long_line )
+    print_eol();                      // delimit the "long line"
+
+  put_spaces = 0;
+  was_eos_char = was_para_delim_char = false;
+
+  if ( true_reset( &ignore_lead_dot ) ) {
+    //
+    // The line starts with a leading dot and opt_lead_dot_ignore is true:
+    // read/write the line as-is.
+    //
+    FPUTS( in_buf, fout );
+    (void)read_line( in_buf );
+    pc = in_buf;
+  }
+  else {
+    if ( consec_newlines == 2 ||
+        (consec_newlines > 2 && opt_newlines_delimit == 1) ) {
+      print_lead_chars();
+      print_eol();
+    }
+    indent = opt_markdown ? INDENT_NONE : INDENT_LINE;
+  }
 }
 
 /**
@@ -854,9 +806,9 @@ static void wipc_send( FILE *fout, char *msg ) {
   if ( msg[0] ) {
     WIPC_SENDF( fout, /*IPC_code=*/msg[0], "%s", msg + 1 );
     msg[0] = '\0';
-    if ( ipc_line_width ) {
-      line_width = opt_line_width = ipc_line_width;
-      ipc_line_width = 0;
+    if ( ipc_width ) {
+      line_width = opt_line_width = ipc_width;
+      ipc_width = 0;
     }
   }
 }
