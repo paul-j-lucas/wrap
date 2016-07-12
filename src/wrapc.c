@@ -28,6 +28,7 @@
 
 // standard
 #include <assert.h>
+#include <ctype.h>
 #include <limits.h>                     /* for PATH_MAX */
 #include <signal.h>                     /* for kill() */
 #include <stdio.h>
