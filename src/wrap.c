@@ -339,12 +339,8 @@ insert:
         continue;                       // discard UTF-8 BOM
     }
 
-    if ( ++out_width < line_width ) {
-      //
-      // We haven't exceeded the line width yet.
-      //
-      continue;
-    }
+    if ( ++out_width < line_width )
+      continue;                         // haven't exceeded line width yet
 
     ///////////////////////////////////////////////////////////////////////////
     //  EXCEEDED LINE WIDTH; PRINT LINE OUT
