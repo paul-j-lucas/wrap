@@ -862,6 +862,7 @@ static void read_prototype( void ) {
     switch ( cc[0] ) {
       case '#': // "#|": Lisp, Racket, Scheme
       case '(': // "(*": AppleScript, Delphi, ML, OCaml, Pascal; "(:": XQuery
+      case '*': // "*>": COBOL 2002
       case '/': // "/*": C, Objective C, C++, C#, D, Go, Java, Rust, Swift
       case '<': // "<#": PowerShell
       case '{': // "{-": Haskell

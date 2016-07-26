@@ -203,6 +203,13 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--C-07.test \
 	tests/wrapc--C++-00.test \
 	tests/wrapc--C++-01.test \
+	tests/wrapc--COBOL-01.test \
+	tests/wrapc--COBOL-02.test \
+	tests/wrapc--COBOL-03.test \
+	tests/wrapc--COBOL-04.test \
+	tests/wrapc--COBOL-05.test \
+	tests/wrapc--COBOL-06.test \
+	tests/wrapc--COBOL-07.test \
 	tests/wrapc--D-01.test \
 	tests/wrapc--Haskell-00.test \
 	tests/wrapc--Haskell-01.test \

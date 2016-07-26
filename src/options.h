@@ -43,6 +43,7 @@
   "<"   /* <# PowerShell                                                  */ \
   "="   /* #= Julia                                                       */ \
   ">"   /*    Quoted e-mail                                               */ \
+/* *>"  |*    COBOL 2002                                                  */ \
   "|"   /* |# Lisp, Racket, Scheme                                        */
 
 /**
