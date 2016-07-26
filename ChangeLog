@@ -1,3 +1,65 @@
+2016-07-26  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrapc.1, options.h, wrapc.c, test/Makefile.am,
+     hello_01.cbl, hello_02.cbl, hello_03.cbl, hello_04.cbl, hello_05.cbl,
+     hello_06.cbl, hello_07.cbl, wrapc--COBOL-01.txt, wrapc--COBOL-02.txt,
+     wrapc--COBOL-03.txt, wrapc--COBOL-04.txt, wrapc--COBOL-05.txt,
+     wrapc--COBOL-06.txt, wrapc--COBOL-07.txt, wrapc--COBOL-01.test,
+     wrapc--COBOL-02.test, wrapc--COBOL-03.test, wrapc--COBOL-04.test,
+     wrapc--COBOL-05.test, wrapc--COBOL-06.test, wrapc--COBOL-07.test: Added
+     COBOL comment support.
+
+2016-07-13  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Simplified.
+
+2016-07-12  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac: Removed -Winline.
+   * wrapc.c: Added missing #include <ctype.h>.
+
+2016-06-25  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Split out delimit_paragraph().
+
+2016-06-24  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Reordering in init().
+   * wrap.c: Comment fix.
+   * util.h: Clean-up.
+   * util.h, wrap.c: Added true_reset().
+
+2016-06-23  Paul J. Lucas <paul@lucasmail.org>
+
+   * util.c: Fixed indent.
+
+2016-06-21  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: s/indentation/indent/
+   * common.c, common.h, wrap.c, wrapc.c: Clean-up.
+   * wrap.c: s/prev_c/was_newline/
+
+2016-06-20  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Sorted functions.
+
+2016-06-16  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac: -Wc++-compat is implied by -Wall.
+
+2016-06-05  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.c: Fixed fin/fout error messages.
+
+2016-06-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.1: Mentioned that the width of the string for -L is subtracted from
+     line-width.
+
+2016-05-31  Paul J. Lucas <paul@lucasmail.org>
+
+   * common.c, util.c: Added asserts.
+
 2016-05-29  Paul J. Lucas <paul@lucasmail.org>
 
    * common.h, wrap.c, wrapc.c, test/Makefile.am, md-ol-05s.c,
@@ -166,26 +228,24 @@
 
    * common.h, util.c, util.h, wrap.c, wrapc.c, test/Makefile.am,
      md-Setext-01.c, md-Setext-02.c, md-Setext-03.c, md-Setext-04.c,
-     md-atx-01.c, md-atx-02.c, md-atx-03.c, md-code-01.c, md-code-02.c,
-     md-code-03.c, md-code-fence-01a.c, md-code-fence-01b.c,
-     md-code-fence-01c.c, md-hr-01a.c, md-hr-01b.c, md-hr-02a.c, md-ul-05.c,
-     wrapc--Markdown-Setext-01.txt, wrapc--Markdown-Setext-02.txt,
-     wrapc--Markdown-Setext-03.txt, wrapc--Markdown-Setext-04.txt,
-     wrapc--Markdown-atx-01.txt, wrapc--Markdown-atx-02.txt,
-     wrapc--Markdown-atx-03.txt, wrapc--Markdown-code-01.txt,
-     wrapc--Markdown-code-02.txt, wrapc--Markdown-code-03.txt,
-     wrapc--Markdown-fence-01a.txt, wrapc--Markdown-fence-01b.txt,
-     wrapc--Markdown-fence-01c.txt, wrapc--Markdown-hr-01a.txt,
-     wrapc--Markdown-hr-01b.txt, wrapc--Markdown-ul-05.txt,
-     wrapc--Markdown-Setext-01.test, wrapc--Markdown-Setext-02.test,
-     wrapc--Markdown-Setext-03.test, wrapc--Markdown-Setext-04.test,
-     wrapc--Markdown-atx-01.test, wrapc--Markdown-atx-02.test,
-     wrapc--Markdown-atx-03.test, wrapc--Markdown-code-01.test,
-     wrapc--Markdown-code-02.test, wrapc--Markdown-code-03.test,
-     wrapc--Markdown-fence-01a.test, wrapc--Markdown-fence-01b.test,
-     wrapc--Markdown-fence-01c.test, wrapc--Markdown-hr-01a.test,
-     wrapc--Markdown-hr-01b.test, wrapc--Markdown-ul-05.test: Fixed several
-     bugs; lots more tests.
+     md-atx-01.c, md-atx-02.c, md-atx-03.c, md-code-01.c, md-code-fence-01a.c,
+     md-code-fence-01b.c, md-code-fence-01c.c, md-hr-01a.c, md-hr-01b.c,
+     md-hr-02a.c, md-ul-05.c, wrapc--Markdown-Setext-01.txt,
+     wrapc--Markdown-Setext-02.txt, wrapc--Markdown-Setext-03.txt,
+     wrapc--Markdown-Setext-04.txt, wrapc--Markdown-atx-01.txt,
+     wrapc--Markdown-atx-02.txt, wrapc--Markdown-atx-03.txt,
+     wrapc--Markdown-code-01.txt, wrapc--Markdown-fence-01a.txt,
+     wrapc--Markdown-fence-01b.txt, wrapc--Markdown-fence-01c.txt,
+     wrapc--Markdown-hr-01a.txt, wrapc--Markdown-hr-01b.txt,
+     wrapc--Markdown-ul-05.txt, wrapc--Markdown-Setext-01.test,
+     wrapc--Markdown-Setext-02.test, wrapc--Markdown-Setext-03.test,
+     wrapc--Markdown-Setext-04.test, wrapc--Markdown-atx-01.test,
+     wrapc--Markdown-atx-02.test, wrapc--Markdown-atx-03.test,
+     wrapc--Markdown-code-01.test, wrapc--Markdown-code-02.test,
+     wrapc--Markdown-code-03.test, wrapc--Markdown-fence-01a.test,
+     wrapc--Markdown-fence-01b.test, wrapc--Markdown-fence-01c.test,
+     wrapc--Markdown-hr-01a.test, wrapc--Markdown-hr-01b.test,
+     wrapc--Markdown-ul-05.test: Fixed several bugs; lots more tests.
 
 2016-05-02  Paul J. Lucas <paul@lucasmail.org>
 
@@ -195,9 +255,8 @@
 
 2016-05-01  Paul J. Lucas <paul@lucasmail.org>
 
-   * test/Makefile.am, md-ul-03.c, md-ul-04.c, wrapc--Markdown-ul-03.txt,
-     wrapc--Markdown-ul-04.txt, wrapc--Markdown-ul-03.test,
-     wrapc--Markdown-ul-04.test: Some test renaming.
+   * test/Makefile.am, wrapc--Markdown-ul-03.test, wrapc--Markdown-ul-04.test:
+     Some test renaming.
    * wrap.1, markdown.c, wrap.c, test/Makefile.am, md-code-fence-01a.md,
      md-code-fence-01b.md, md-code-fence-01c.md, md-code-fence-02a.md,
      md-code-fence-02b.md, md-code-fence-02c.md, md-code-fence-03a.md,
@@ -357,17 +416,10 @@
      single-line test.
    * test/Makefile.am, wrapc-bullet-02.txt, wrapc-bullet-02.txt,
      wrapc-bullet-02.test: Another bullet test.
-   * test/Makefile.am, wrapc-bullet-01.txt, wrapc-noncomment-01.txt,
-     wrapc-noncomment-02.txt, wrapc-trailing-ws-01.txt, wrapc-bullet-01.txt,
-     wrapc-noncomment-01.txt, wrapc-noncomment-02.txt,
-     wrapc-trailing-ws-01.txt, wrapc-bullet-01.test, wrapc-noncomment-01.test,
-     wrapc-noncomment-02.test, wrapc-trailing-ws-01.test: More test renaming;
-     another noncomment test.
-   * test/Makefile.am, wrapc--C-00.txt, wrapc--C-01.txt, wrapc--C-02.txt,
-     wrapc--C-03.txt, wrapc--C-04.txt, wrapc--C-05.txt, wrapc--C-06.txt,
-     wrapc--C-07.txt, wrapc--C-00.test, wrapc--C-01.test, wrapc--C-02.test,
-     wrapc--C-03.test, wrapc--C-04.test, wrapc--C-05.test, wrapc--C-06.test,
-     wrapc--C-07.test: Renamed C tests.
+   * test/Makefile.am, wrapc-noncomment-02.txt, wrapc-noncomment-02.txt,
+     wrapc-bullet-01.test, wrapc-noncomment-01.test, wrapc-noncomment-02.test,
+     wrapc-trailing-ws-01.test: More test renaming; another noncomment test.
+   * test/Makefile.am: Renamed C tests.
    * test/Makefile.am, hello_00.c, hello_01.c, hello_02.c, hello_03.c,
      hello_04.c, hello_05.c, hello_06.c, hello_07.c, wrapc--C-hello-00.txt,
      wrapc--C-hello-01.txt, wrapc--C-hello-02.txt, wrapc--C-hello-03.txt,
@@ -390,29 +442,27 @@
    * wrapc.c: Added DEBUG_RSWW.
    * test/Makefile.am, hello_02.pas, hello_03.pas, wrapc--Pascal-02.txt,
      wrapc--Pascal-03.txt, wrapc--Pascal-03.test: Another Pascal test.
-   * test/Makefile.am, xquery_01.xq, xquery_02.xq, xquery_03.xq, xquery_04.xq,
-     xquery_05.xq, xquery_06.xq, xquery_07.xq, wrapc--XQuery-03.txt,
-     wrapc--XQuery-04.txt, wrapc--XQuery-05.txt, wrapc--XQuery-06.txt,
-     wrapc--XQuery-07.txt, wrapc--XQuery-01.test, wrapc--XQuery-02.test,
-     wrapc--XQuery-03.test, wrapc--XQuery-04.test, wrapc--XQuery-05.test,
-     wrapc--XQuery-06.test, wrapc--XQuery-07.test: More XQuery tests.
-   * test/Makefile.am, hello_00.pas, hello_01.pas, hello_02.pas,
-     wrapc--Pascal-00.txt, wrapc--Pascal-00.test, wrapc--Pascal-01.test,
-     wrapc--Pascal-02.test: Added Pascal test.
+   * test/Makefile.am, xquery_03.xq, xquery_04.xq, xquery_05.xq, xquery_06.xq,
+     xquery_07.xq, wrapc--XQuery-03.txt, wrapc--XQuery-04.txt,
+     wrapc--XQuery-05.txt, wrapc--XQuery-06.txt, wrapc--XQuery-07.txt,
+     wrapc--XQuery-01.test, wrapc--XQuery-02.test, wrapc--XQuery-03.test,
+     wrapc--XQuery-04.test, wrapc--XQuery-05.test, wrapc--XQuery-06.test,
+     wrapc--XQuery-07.test: More XQuery tests.
+   * test/Makefile.am, hello_00.pas, wrapc--Pascal-00.txt,
+     wrapc--Pascal-00.test, wrapc--Pascal-01.test, wrapc--Pascal-02.test: Added
+     Pascal test.
    * wrapc.c: Updated comment.
    * test/Makefile.am, hello_00.hs, wrapc--Haskell-00.txt,
      wrapc--Haskell-00.test: Added another Haskell test.
-   * hello_01.hs, hello_02.hs, wrapc--Haskell-01.test, wrapc--Haskell-02.test:
-     Renamed Haskell data.
-   * test/Makefile.am, define.h, hello_00.c, hello_01.c, hello_02.c,
-     hello_03.c, hello_04.c, hello_05.c, hello_06.c, hello_07.c,
-     wrapc--C-define.txt, wrapc--C-hello-00.txt, wrapc--C-hello-01.txt,
-     wrapc--C-hello-02.txt, wrapc--C-hello-03.txt, wrapc--C-hello-04.txt,
-     wrapc--C-hello-05.txt, wrapc--C-hello-06.txt, wrapc--C-hello-07.txt,
-     wrapc--C-define.test, wrapc--C-hello-00.test, wrapc--C-hello-01.test,
-     wrapc--C-hello-02.test, wrapc--C-hello-03.test, wrapc--C-hello-04.test,
-     wrapc--C-hello-05.test, wrapc--C-hello-06.test, wrapc--C-hello-07.test:
-     Test rename.
+   * wrapc--Haskell-01.test, wrapc--Haskell-02.test: Renamed Haskell data.
+   * test/Makefile.am, hello_00.c, hello_01.c, hello_02.c, hello_03.c,
+     hello_04.c, hello_05.c, hello_06.c, hello_07.c, wrapc--C-hello-00.txt,
+     wrapc--C-hello-01.txt, wrapc--C-hello-02.txt, wrapc--C-hello-03.txt,
+     wrapc--C-hello-04.txt, wrapc--C-hello-05.txt, wrapc--C-hello-06.txt,
+     wrapc--C-hello-07.txt, wrapc--C-define.test, wrapc--C-hello-00.test,
+     wrapc--C-hello-01.test, wrapc--C-hello-02.test, wrapc--C-hello-03.test,
+     wrapc--C-hello-04.test, wrapc--C-hello-05.test, wrapc--C-hello-06.test,
+     wrapc--C-hello-07.test: Test rename.
 
 2016-04-01  Paul J. Lucas <paul@lucasmail.org>
 
@@ -464,30 +514,22 @@
      in a block comment delimiter.
    * wrapc.c: Variable rename.
    * wrapc.c: Cosmetic change.
-   * hello.pas, wrapc--Pascal-01.test: Renamed Pascal test data.
+   * wrapc--Pascal-01.test: Renamed Pascal test data.
    * test/Makefile.am, hello.hs, wrapc--Haskell-01.txt, wrapc--Haskell-01.test:
      Added Haskell test.
    * test/Makefile.am, wrapc-01.pas, wrapc--Pascal-01.txt,
      wrapc--Pascal-01.test: Added Pascal test.
-   * wrapc-04.cpp, wrapc-04.test: More test renaming.
-   * wrapc-05.cpp, wrapc-05.test: More test renaming.
-   * test/Makefile.am, wrapc-01.cpp, wrapc-02.cpp, wrapc-03.cpp, wrapc-04.cpp,
-     wrapc-01.txt, wrapc-02.txt, wrapc-03.txt, wrapc-04.txt, wrapc-05.txt,
-     wrapc-01.test, wrapc-02.test, wrapc-03.test, wrapc-04.test, wrapc-05.test:
-     More test renaming.
+   * wrapc-04.test: More test renaming.
+   * wrapc-05.test: More test renaming.
+   * test/Makefile.am, wrapc-03.cpp, wrapc-03.txt, wrapc-01.test,
+     wrapc-02.test, wrapc-03.test, wrapc-05.test: More test renaming.
 
 2016-03-26  Paul J. Lucas <paul@lucasmail.org>
 
-   * test/Makefile.am, wrapc-01.d, wrapc-01.xq, wrapc-02.xq, wrapc-03.xq,
-     wrapc-04.xq, wrapc--C-01.txt, wrapc--C-02.txt, wrapc--C-03.txt,
-     wrapc--C-04.txt, wrapc--C-05.txt, wrapc--C-06.txt, wrapc--D-01.txt,
-     wrapc--XQuery-01.txt, wrapc--XQuery-02.txt, wrapc--XQuery-03.txt,
-     wrapc--XQuery-04.txt, wrapc--C-01.test, wrapc--C-02.test,
-     wrapc--C-03.test, wrapc--C-04.test, wrapc--C-05.test, wrapc--C-06.test,
-     wrapc--D-01.test, wrapc--XQuery-01.test, wrapc--XQuery-02.test,
-     wrapc--XQuery-03.test, wrapc--XQuery-04.test: Test renaming.
-   * wrapc-01.c, wrapc-02.c, wrapc-03.c, wrapc-04.c, wrapc-05.c, wrapc-06.c,
-     wrapc-C_style-01.test, wrapc-C_style-02.test, wrapc-C_style-03.test,
+   * test/Makefile.am, wrapc--D-01.test, wrapc--XQuery-01.test,
+     wrapc--XQuery-02.test, wrapc--XQuery-03.test, wrapc--XQuery-04.test: Test
+     renaming.
+   * wrapc-C_style-01.test, wrapc-C_style-02.test, wrapc-C_style-03.test,
      wrapc-C_style-04.test, wrapc-C_style-05.test, wrapc-C_style-06.test: C
      data file renaming.
    * wrapc.c: Added Fortran.
@@ -564,8 +606,7 @@
      wrapc-C_style-02.test, wrapc-C_style-03.test, wrapc-C_style-04.test,
      wrapc-C_style-05.test: Better support for C-style comments.
    * wrapc.1: Added mention of Objective C and Swift.
-   * test/Makefile.am, wrapc-C_style-01.txt, wrapc-C_style-01.txt,
-     wrapc-C_style-01.test: Renamed test.
+   * test/Makefile.am, wrapc-C_style-01.test: Renamed test.
 
 2016-03-18  Paul J. Lucas <paul@lucasmail.org>
 
@@ -769,8 +810,8 @@
 2015-09-03  Paul J. Lucas <paul@lucasmail.org>
 
    * src/Makefile.am, alias.c, alias.h, common.h, getopt.c, getopt.h,
-     pattern.c, pattern.h, read_conf.c, read_conf.h, util.c, util.h, wrap.c,
-     wrapc.c: Splunk common/util.
+     pattern.c, pattern.h, read_conf.c, read_conf.h, util.h, wrap.c, wrapc.c:
+     Splunk common/util.
 
 2015-09-02  Paul J. Lucas <paul@lucasmail.org>
 
@@ -866,10 +907,8 @@
 
 2015-02-15  Paul J. Lucas <paul@lucasmail.org>
 
-   * INSTALL: Undid rename.
    * INSTALL.md: Fixed typos.
    * INSTALL.md: New file.
-   * INSTALL.fsf: Renamed file.
 
 2014-11-21  Paul J. Lucas <paul@lucasmail.org>
 
@@ -979,7 +1018,7 @@
      2014.
    * Makefile.in, aclocal.m4, man/Makefile.in, man/man1/Makefile.in, wrap.1,
      man/man5/Makefile.in, src/Makefile.in, wrap.c, test/Makefile.am,
-     test/Makefile.in, wrap-I2-W.txt, wrap-I2-W.test: Changed -b to -W.
+     test/Makefile.in, wrap-I2-W.test: Changed -b to -W.
 
 2013-11-18  Paul J. Lucas <paul@lucasmail.org>
 
@@ -1012,7 +1051,6 @@
      are now distributed.
    * run_test.sh: Removed unnecessary quoting.
    * Makefile.in: COPYING is now in dist.
-   * COPYING: Renamed Copying to COPYING.
 
 2013-11-16  Paul J. Lucas <paul@lucasmail.org>
 
@@ -1093,10 +1131,7 @@
    * run_test.sh: Added comment.
    * run_test.sh: Now using diff output as log.
    * Makefile.am, Makefile.in: Added test to SUBDIRS.
-   * test/Makefile.am, test/Makefile.in, run_test.sh, utf8-w77.test,
-     utf8-w78.test, utf8-w79.test, utf8-w80.test, wrap-H3.test,
-     wrap-I2-m1.test, wrap-I2-w72.test, wrap-bI2.test, wrap-d.test,
-     wrap-dep.test, wrap-no_options.test, wrap-t1.test: Moved tests into "test"
+   * test/Makefile.am, test/Makefile.in, run_test.sh: Moved tests into "test"
      subdirectory.
    * configure.ac, test/Makefile.am, test/Makefile.in, run_test.sh,
      utf8-w77.test, utf8-w78.test, utf8-w79.test, utf8-w80.test, wrap-H3.test,
@@ -1115,18 +1150,13 @@
      ax_cflags_warn_all.m4, ax_check_compile_flag.m4, man/Makefile.in,
      man/man1/Makefile.in, man/man5/Makefile.in, src/Makefile.am,
      src/Makefile.in: Added checking of extra C compiler warning flags.
-   * NEWS, wrap.1, wrapc.1, common.h, wrap.c, wrapc.c, utf8-w77.txt,
-     utf8-w78.txt, utf8-w79.txt, utf8-w80.txt, wrap-I2-w72.txt, utf8-w77.test,
+   * NEWS, wrap.1, wrapc.1, common.h, wrap.c, wrapc.c, utf8-w77.test,
      utf8-w78.test, utf8-w79.test, utf8-w80.test, wrap-I2-w72.test,
      wrap-bI2.test: Changed "length" to "width" and -l to -w.
    * NEWS, wrap.1, wrap.c, utf8-01.txt, utf8-l77.txt, utf8-l78.txt,
      utf8-l79.txt, utf8-l80.txt, utf8-l77.test, utf8-l78.test, utf8-l79.test,
      utf8-l80.test: Added UTF-8 support.
-   * wrap-H3.txt, wrap-I2-l72.txt, wrap-I2-m1.txt, wrap-bI2.txt, wrap-d.txt,
-     wrap-dep.txt, wrap-no_options.txt, wrap-t1.txt, run_tests.sh,
-     wrap-H3.test, wrap-I2-l72.test, wrap-I2-m1.test, wrap-bI2.test,
-     wrap-d.test, wrap-dep.test, wrap-no_options.test, wrap-t1.test: Reworked
-     test filename format.
+   * run_tests.sh: Reworked test filename format.
    * run_tests.sh: Now doing PASS/FAIL.
    * Makefile: Added automake-required targets.
 
@@ -1140,13 +1170,12 @@
    * wrap.1: Explained what white-space is.
    * wrap.1: Added "Lines are wrapped at white-space characters.
    * test-t1.txt, test-t1: Another test.
-   * test-bI2.txt, test-bI2: Renamed test.
    * test-dep.txt, test-dep: Another test.
    * data-01a.txt, test-b-I2.txt, test-b-I2: Another test.
 
 2013-11-05  Paul J. Lucas <paul@lucasmail.org>
 
-   * Makefile, data-02.txt, run_tests.sh: Another test; s/test.sh/run_tests.sh/
+   * Makefile, data-02.txt: Another test; s/test.sh/run_tests.sh/
    * test-H3.txt, test-H3: Another test.
    * test-d.txt, test-d: Another test.
    * wrap.c: Fixed ignore_lead_dot.
@@ -1188,15 +1217,11 @@
 
    * wrapc.1: Tweaks.
    * alias.c, common.c, pattern.c, wrap.c: Fixed clean_up().
-   * Makefile, alias.c, alias.h, common.h, pattern.c, pattern.h, read_conf.c,
-     read_conf.h, wrap.c, wrapc.c: s/config/conf/
+   * Makefile, alias.c, alias.h, common.h, pattern.c, pattern.h, wrap.c,
+     wrapc.c: s/config/conf/
 
 2013-10-29  Paul J. Lucas <paul@lucasmail.org>
 
-   * Makefile, alias.c, alias.h, common.c, common.h, config.c, config.h,
-     getopt.c, getopt.h, pattern.c, pattern.h, wrap.c, wrapc.c: Moved source to
-     src.
-   * wrap.1, wrapc.1, wraprc.5: Put man pages in subdirectory.
    * Makefile, alias.c, alias.h, common.c, common.h, config.c, config.h,
      getopt.c, getopt.h, pattern.c, pattern.h, wrap.1, wrap.c, wrapc.1,
      wrapc.c, wraprc.5: Aliases & patterns.
@@ -1261,8 +1286,8 @@
    * wrap.c, wrapc.c: Cosmetic changes.
    * common.h: s/PJL_common_H/wrap_common_H/
    * README: Removed K&R C.
-   * Makefile, common.h, wrap.c, wrapc.c: 1. Now using ANSI C. 2.
-     s/c_compat.h/common.h/ 3. Folded version.h into common.h.
+   * Makefile, wrap.c, wrapc.c: 1. Now using ANSI C. 2. s/c_compat.h/common.h/
+     3. Folded version.h into common.h.
    * wrapc.c: Tweak exit status.
    * wrapc.1: 1. Added tab-spaces option. 2. Added EXIT STATUS section.
    * wrap.1: Added "with".
