@@ -1,3 +1,13 @@
+2016-07-27  Paul J. Lucas <paul@lucasmail.org>
+
+   * test/Makefile.am, hello_01.f90, hello_02.f90, hello_03.f90, hello_04.f90,
+     wrapc--Fortran-01.txt, wrapc--Fortran-02.txt, wrapc--Fortran-03.txt,
+     wrapc--Fortran-04.txt, wrapc--Fortran-01.test, wrapc--Fortran-02.test,
+     wrapc--Fortran-03.test, wrapc--Fortran-04.test: Added Fortran 90 tests.
+   * hello_00.adb, hello_01.adb, hello_02.adb, wrapc--Ada-00.txt,
+     wrapc--Ada-01.txt, wrapc--Ada-02.txt: Tweaked Ada examples to conform to
+     classic C "hello, world" phrase.
+
 2016-07-26  Paul J. Lucas <paul@lucasmail.org>
 
    * NEWS, configure.ac, wrapc.1, options.h, wrapc.c, test/Makefile.am,
