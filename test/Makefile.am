@@ -211,6 +211,10 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--COBOL-06.test \
 	tests/wrapc--COBOL-07.test \
 	tests/wrapc--D-01.test \
+	tests/wrapc--Fortran-01.test \
+	tests/wrapc--Fortran-02.test \
+	tests/wrapc--Fortran-03.test \
+	tests/wrapc--Fortran-04.test \
 	tests/wrapc--Haskell-00.test \
 	tests/wrapc--Haskell-01.test \
 	tests/wrapc--Haskell-02.test \
