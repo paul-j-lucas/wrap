@@ -862,7 +862,6 @@ static void read_prototype( void ) {
     switch ( cc[0] ) {
       case '#': // "#|": Lisp, Racket, Scheme
       case '(': // "(*": AppleScript, Delphi, ML, OCaml, Pascal; "(:": XQuery
-      case '*': // "*>": COBOL 2002
       case '/': // "/*": C, Objective C, C++, C#, D, Go, Java, Rust, Swift
       case '<': // "<#": PowerShell
       case '{': // "{-": Haskell
@@ -870,6 +869,13 @@ static void read_prototype( void ) {
           *s++ = cc[1];
           delim = DELIM_DOUBLE;         // e.g., "/*"
         }
+        break;
+      case '*': // "*>": COBOL 2002
+        if ( cc[1] == '>' && is_comment_char( cc[1] ) ) {
+          *s++ = cc[1];
+          delim = DELIM_EOL;
+        }
+        break;
     } // switch
     //
     // We also have to recognize the closing delimiter character, if any, only

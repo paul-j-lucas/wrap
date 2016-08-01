@@ -210,6 +210,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--COBOL-05.test \
 	tests/wrapc--COBOL-06.test \
 	tests/wrapc--COBOL-07.test \
+	tests/wrapc--COBOL-08.test \
 	tests/wrapc--D-01.test \
 	tests/wrapc--Fortran-01.test \
 	tests/wrapc--Fortran-02.test \
