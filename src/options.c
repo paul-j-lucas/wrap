@@ -181,6 +181,7 @@ static eol_t parse_eol( char const *s ) {
  * @param argc The argument count from \c main().
  * @param argv The argument values from \c main().
  * @param opts The set of options as required by \c getopt(3).
+ * @param usage A pointer to a function that prints a usage message and exits.
  * @param line_no When parsing options from a configuration file, the
  * originating line number; zero otherwise.
  */
