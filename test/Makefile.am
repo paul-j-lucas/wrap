@@ -74,6 +74,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap--Markdown-atx-01.test \
 	tests/wrap--Markdown-atx-02.test \
 	tests/wrap--Markdown-atx-03.test \
+	tests/wrap--Markdown-atx-04.test \
 	tests/wrap--Markdown-code-01.test \
 	tests/wrap--Markdown-code-02.test \
 	tests/wrap--Markdown-dl-01s.test \
@@ -231,6 +232,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--Markdown-atx-01.test \
 	tests/wrapc--Markdown-atx-02.test \
 	tests/wrapc--Markdown-atx-03.test \
+	tests/wrapc--Markdown-atx-04.test \
 	tests/wrapc--Markdown-code-01.test \
 	tests/wrapc--Markdown-code-02.test \
 	tests/wrapc--Markdown-code-03.test \

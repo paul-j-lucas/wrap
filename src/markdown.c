@@ -282,7 +282,8 @@ static md_indent_t md_indent_divisor( md_indent_t indent_left ) {
 
 /**
  * Checks whether the line is a Markdown atx header line, a sequence of one to
- * six \c # characters starting in column 1.
+ * six \c # characters starting in column 1 and followed by a whitespace
+ * character.
  *
  * @param s The null-terminated line to check.
  * @return Returns \c true only if it is.
@@ -296,7 +297,7 @@ static bool md_is_atx_header( char const *s ) {
     if ( ++n_atx > MD_ATX_CHAR_MAX )
       return false;
   } // for
-  return n_atx > 0;
+  return n_atx > 0 && isspace( *s );
 }
 
 /**
