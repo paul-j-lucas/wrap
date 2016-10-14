@@ -394,7 +394,7 @@ static bool md_is_footnote_def( char const *s, bool *def_text ) {
   assert( def_text );
 
   if ( *++s == '^' ) {
-    while ( *++s && !is_eol( *s ) ) {
+    while ( *++s ) {
       if ( *s == ']' ) {
         if ( !(*++s == ':' && isspace( *++s )) )
           break;
@@ -421,8 +421,8 @@ static bool md_is_hr( char const *s ) {
   assert( s[0] == '*' || s[0] == '-' || s[0] == '_' );
 
   size_t n_hr = 0;
-  for ( char const hr = *s; *s && !is_eol( *s ); ++s ) {
-    if ( !is_space( *s ) ) {
+  for ( char const hr = *s; *s; ++s ) {
+    if ( !isspace( *s ) ) {
       if ( *s != hr )
         return false;
       ++n_hr;
@@ -507,7 +507,7 @@ static bool md_is_link_label( char const *s, bool *has_title ) {
   assert( s[0] == '[' );
   assert( has_title );
 
-  while ( *++s && !is_eol( *s ) ) {
+  while ( *++s ) {
     if ( *s == ']' ) {
       if ( !(*++s == ':' && is_space( *++s )) )
         break;
@@ -575,7 +575,7 @@ static bool md_is_table( char const *s ) {
   assert( s );
   bool nws = false;                     // encountered non-whitespace?
 
-  for ( ; *s && !is_eol( *s ); ++s ) {
+  for ( ; *s; ++s ) {
     switch ( *s ) {
       case '\\':
         ++s;
