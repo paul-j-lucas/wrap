@@ -326,7 +326,7 @@ static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
     /* empty */;
 
   if ( fence->len )
-    return len == fence->len;
+    return len >= fence->len;
   if ( len >= MD_CODE_FENCE_CHAR_MIN ) {
     fence->ch  = c;
     fence->len = len;

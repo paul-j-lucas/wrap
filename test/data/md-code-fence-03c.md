@@ -4,9 +4,9 @@ This is another line of text.
 int main( void ) {
   printf( "hello, world\n" );
 }
-~~~
+~~~~~
 This is a third line of text
-but it should be treated as code
+and should not be treated as code
 because the closing fence
-doesn't have at least as many of the same characters
+has at least as many of the same characters
 as the opening fence.
