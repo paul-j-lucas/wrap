@@ -149,6 +149,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap--Markdown-Setext-02.test \
 	tests/wrap--Markdown-Setext-03.test \
 	tests/wrap--Markdown-Setext-04.test \
+	tests/wrap--Markdown-Setext-05.test \
 	tests/wrap--Markdown-table-01.test \
 	tests/wrap--Markdown-table-02.test \
 	tests/wrap--Markdown-table-03.test \
@@ -268,6 +269,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--Markdown-Setext-02.test \
 	tests/wrapc--Markdown-Setext-03.test \
 	tests/wrapc--Markdown-Setext-04.test \
+	tests/wrapc--Markdown-Setext-05.test \
 	tests/wrapc--Markdown-table-01.test \
 	tests/wrapc--Markdown-table-02.test \
 	tests/wrapc--Markdown-table-03.test \

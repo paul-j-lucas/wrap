@@ -626,7 +626,7 @@ static bool md_is_Setext_header( char const *s ) {
 
   for ( char const c = *s; *s && !is_eol( *s ); ++s ) {
     if ( *s != c )
-      return false;
+      return is_blank_line( s );
   } // for
   return true;
 }
