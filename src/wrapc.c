@@ -73,12 +73,12 @@ typedef enum delim delim_t;
  * Contains the current and next lines of input so the next line can be peeked
  * at to determine how to proceed.
  */
-struct dual_line {
-  line_buf_t  line[2];
-  char       *curr;                     // pointer to current line
-  char       *next;                     // pointer to next line
+struct dual_line_s {
+  line_buf_t  dl_line[2];
+  char       *dl_curr;                  // pointer to current line
+  char       *dl_next;                  // pointer to next line
 };
-typedef struct dual_line dual_line_t;
+typedef struct dual_line_s dual_line_t;
 
 // extern variable definitions
 char const         *me;                 // executable name
@@ -103,8 +103,8 @@ static size_t       suffix_len;         // length of suffix_buf
 //
 static int          pipes[2][2];
 
-#define CURR        input_buf.curr      /* current line */
-#define NEXT        input_buf.next      /* next line */
+#define CURR        input_buf.dl_curr   /* current line */
+#define NEXT        input_buf.dl_next   /* next line */
 
 #define TO_WRAP     0                   /* to refer to pipes[0] */
 #define FROM_WRAP   1                   /* to refer to pipes[1] */
@@ -625,8 +625,8 @@ static void init( int argc, char const *argv[] ) {
   atexit( clean_up );
   init_options( argc, argv, usage );
 
-  CURR = input_buf.line[0];
-  NEXT = input_buf.line[1];
+  CURR = input_buf.dl_line[0];
+  NEXT = input_buf.dl_line[1];
   read_prototype();
   PIPE( pipes[ TO_WRAP ] );
   PIPE( pipes[ FROM_WRAP ] );

@@ -48,8 +48,8 @@
  * PHP Markdown Extra code fence info.
  */
 struct md_code_fence {
-  char    ch;                           // character of the fence: ~ or `
-  size_t  len;                          // length of the fence
+  char    cf_c;                         // character of the fence: ~ or `
+  size_t  cf_len;                       // length of the fence
 };
 typedef struct md_code_fence md_code_fence_t;
 
@@ -71,7 +71,7 @@ static size_t const STATE_ALLOC_DEFAULT    = 5;
 static size_t const STATE_ALLOC_INCREMENT  = 5;
 
 // local variable definitions
-static unsigned     html_depth;         // how many nested outer elements
+static md_depth_t   html_depth;         // how many nested outer elements
 static md_seq_t     next_seq_num;
 static char         outer_html_element[ HTML_ELEMENT_MAX + 1 ];
 static md_state_t  *stack;              // global stack of states
@@ -100,8 +100,8 @@ static inline bool is_html_char( char c ) {
  * @param fence A pointer to the md_code_fence_t to initialize.
  */
 static inline void md_code_fence_init( md_code_fence_t *fence ) {
-  fence->ch  = '\0';
-  fence->len = 0;
+  fence->cf_c  = '\0';
+  fence->cf_len = 0;
 }
 
 /**
@@ -315,21 +315,21 @@ static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
   assert( fence );
   assert( s[0] == '~' || s[0] == '`' );
   assert(
-    (!fence->ch && !fence->len) ||
-    ( fence->ch &&  fence->len >= MD_CODE_FENCE_CHAR_MIN)
+    (!fence->cf_c && !fence->cf_len) ||
+    ( fence->cf_c &&  fence->cf_len >= MD_CODE_FENCE_CHAR_MIN)
   );
 
-  char const c = fence->ch ? fence->ch : s[0];
+  char const c = fence->cf_c ? fence->cf_c : s[0];
   size_t len = 0;
 
   for ( ; *s && *s == c; ++s, ++len )
     /* empty */;
 
-  if ( fence->len )
-    return len >= fence->len;
+  if ( fence->cf_len )
+    return len >= fence->cf_len;
   if ( len >= MD_CODE_FENCE_CHAR_MIN ) {
-    fence->ch  = c;
-    fence->len = len;
+    fence->cf_c   = c;
+    fence->cf_len = len;
     return true;
   }
   return false;
@@ -743,9 +743,9 @@ md_state_t const* markdown_parse( char *s ) {
       //
       if ( code_fence_end )
         stack_pop();
-      else if ( code_fence.ch ) {
+      else if ( code_fence.cf_c ) {
         //
-        // If code_fence.ch is set, that distinguishes a code fence from
+        // If code_fence.cf_c is set, that distinguishes a code fence from
         // indented code.
         //
         if ( md_is_code_fence_end( s, &code_fence ) )
@@ -970,7 +970,7 @@ md_state_t const* markdown_parse( char *s ) {
   // Based on the indent, previous, and current line types, calculate the depth
   // of the current line.
   //
-  unsigned depth = indent_left / md_indent_divisor( indent_left );
+  md_depth_t depth = indent_left / md_indent_divisor( indent_left );
   if ( (!blank_line && md_is_nestable( TOP.line_type )) ||
        md_is_nestable( curr_line_type ) ) {
     ++depth;

@@ -28,8 +28,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 struct pattern_s {
-  char const* pattern;
-  alias_t const* alias;
+  char const     *pattern;
+  alias_t const  *alias;
 };
 typedef struct pattern_s pattern_t;
 

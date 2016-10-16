@@ -127,8 +127,8 @@ static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
  */
 static eol_t parse_eol( char const *s ) {
   struct eol_map {
-    char const *map_name;
-    eol_t       map_eol;
+    char const *em_name;
+    eol_t       em_eol;
   };
   typedef struct eol_map eol_map_t;
 
@@ -151,23 +151,23 @@ static eol_t parse_eol( char const *s ) {
   char const *const s_lc = tolower_s( (char*)free_later( check_strdup( s ) ) );
   size_t names_buf_size = 1;            // for trailing null
 
-  for ( eol_map_t const *m = eol_map; m->map_name; ++m ) {
-    if ( strcmp( s_lc, m->map_name ) == 0 )
-      return m->map_eol;
+  for ( eol_map_t const *m = eol_map; m->em_name; ++m ) {
+    if ( strcmp( s_lc, m->em_name ) == 0 )
+      return m->em_eol;
     // sum sizes of names in case we need to construct an error message
-    names_buf_size += strlen( m->map_name ) + 2 /* ", " */;
+    names_buf_size += strlen( m->em_name ) + 2 /* ", " */;
   } // for
 
   // name not found: construct valid name list for an error message
   char *const names_buf = (char*)free_later( MALLOC( char, names_buf_size ) );
   char *pnames = names_buf;
-  for ( eol_map_t const *m = eol_map; m->map_name; ++m ) {
+  for ( eol_map_t const *m = eol_map; m->em_name; ++m ) {
     if ( pnames > names_buf ) {
       strcpy( pnames, ", " );
       pnames += 2;
     }
-    strcpy( pnames, m->map_name );
-    pnames += strlen( m->map_name );
+    strcpy( pnames, m->em_name );
+    pnames += strlen( m->em_name );
   } // for
   PMESSAGE_EXIT( EX_USAGE,
     "\"%s\": invalid value for -%c; must be one of:\n\t%s\n",

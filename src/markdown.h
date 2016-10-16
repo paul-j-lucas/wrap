@@ -52,6 +52,7 @@ enum md_line {
 };
 typedef enum md_line md_line_t;
 
+typedef unsigned md_depth_t;            // how nested we are
 typedef unsigned md_seq_t;              // parser state sequence number
 typedef unsigned md_indent_t;           // indentation amount (in spaces)
 typedef unsigned md_ol_t;               // ordered list number
@@ -62,7 +63,7 @@ typedef unsigned md_ol_t;               // ordered list number
 struct md_state {
   md_line_t   line_type;
   md_seq_t    seq_num;
-  unsigned    depth;                    // how nested we are
+  md_depth_t  depth;
   bool        fn_def_text;              // true if footnote def has text on line
   md_indent_t indent_left;
   md_indent_t indent_hang;              // hang-indent for lists

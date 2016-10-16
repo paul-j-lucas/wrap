@@ -42,11 +42,11 @@
  * A node for a singly linked list of pointers to memory to be freed via
  * \c atexit().
  */
-struct free_node {
-  void *ptr;
-  struct free_node *next;
+struct free_node_s {
+  void               *fn_ptr;
+  struct free_node_s *fn_next;
 };
-typedef struct free_node free_node_t;
+typedef struct free_node_s free_node_t;
 
 // local variable definitions
 static free_node_t *free_head;          // linked list of stuff to free
@@ -129,16 +129,16 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
 void* free_later( void *p ) {
   assert( p );
   free_node_t *const new_node = MALLOC( free_node_t, 1 );
-  new_node->ptr = p;
-  new_node->next = free_head;
+  new_node->fn_ptr = p;
+  new_node->fn_next = free_head;
   free_head = new_node;
   return p;
 }
 
 void free_now() {
   for ( free_node_t *p = free_head; p; ) {
-    free_node_t *const next = p->next;
-    free( p->ptr );
+    free_node_t *const next = p->fn_next;
+    free( p->fn_ptr );
     free( p );
     p = next;
   } // for
