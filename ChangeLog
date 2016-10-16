@@ -1,3 +1,49 @@
+2016-10-15  Paul J. Lucas <paul@lucasmail.org>
+
+   * md-ol-01s.c, md-ol-01s.md, md-ol-02s.c, md-ol-02s.md, md-ol-03s.c,
+     md-ol-03s.md, md-ol-04s.c, md-ol-04s.md, wrap--Markdown-ol-01s.txt,
+     wrap--Markdown-ol-02s.txt, wrap--Markdown-ol-03s.txt,
+     wrap--Markdown-ol-04s.txt, wrapc--Markdown-ol-01s.txt,
+     wrapc--Markdown-ol-02s.txt, wrapc--Markdown-ol-03s.txt,
+     wrapc--Markdown-ol-04s.txt: Fixed a few test cases.
+   * markdown.c, test/Makefile.am, md-ol-06s.c, md-ol-06s.md, md-ol-07s.md,
+     wrap--Markdown-ol-06s.txt, wrap--Markdown-ol-07s.txt,
+     wrapc--Markdown-ol-06s.txt, wrap--Markdown-ol-06s.test,
+     wrap--Markdown-ol-07s.test, wrapc--Markdown-ol-06s.test: Now allowing ')'
+     for ordered-list separator character; limiting ordered lists to 9 digits.
+   * markdown.c, wrapc.c: Removed unnecessary "*s &&" checks.
+   * alias.h, markdown.c, markdown.h, options.c, pattern.h, util.c, wrapc.c:
+     struct renaming.
+
+2016-10-14  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac: Updated version to 4.5.
+   * markdown.c, test/Makefile.am, md-code-fence-03b.md, md-code-fence-03c.md,
+     wrap--Markdown-fence-03b.txt, wrap--Markdown-fence-03c.txt,
+     wrap--Markdown-fence-03c.test: Now allowing code fence terminators to be
+     longer than the opening fence.
+   * markdown.c, test/Makefile.am, md-Setext-05.c, md-Setext-05.md,
+     wrap--Markdown-Setext-05.txt, wrapc--Markdown-Setext-05.txt,
+     wrap--Markdown-Setext-05.test, wrapc--Markdown-Setext-05.test: Now
+     allowing whitespace at the end of Markdown Setetx header lines.
+   * markdown.c: Removed uncessary calls to is_eol().
+   * markdown.c, test/Makefile.am, md-atx-04.c, md-atx-04.md,
+     wrap--Markdown-atx-04.txt, wrapc--Markdown-atx-04.txt,
+     wrap--Markdown-atx-04.test, wrapc--Markdown-atx-04.test: Now requiring
+     whitespace after # for Markdown ATX headers.
+
+2016-08-18  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.1: Fixed typo: -q -> -w.
+
+2016-08-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.c: Added missing @param usage.
+
+2016-08-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1: s/Format/Formats/
+
 2016-07-31  Paul J. Lucas <paul@lucasmail.org>
 
    * wrapc.c, test/Makefile.am, hello_08.cbl, wrapc--COBOL-08.txt,
