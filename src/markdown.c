@@ -474,7 +474,8 @@ static bool md_is_html_abbr( char const *s ) {
  * @param s The null-terminated line to check.
  * @param is_end_tag A pointer to the variable to receive whether the HTML tag
  * is an end tag.
- * @return Returns \c true only if the line is a block-level HTML element.
+ * @return Returns the HTML element only if the line is a block-level HTML
+ * element or NULL if not.
  */
 static char const* md_is_html_block( char const *s, bool *is_end_tag ) {
   assert( s );
