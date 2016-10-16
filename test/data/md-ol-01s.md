@@ -3,5 +3,5 @@
 
 Not part of the list.
 
-7. Another list item #1.
-9. Another list item #2.
+7. Another list item #7.
+9. Another list item #8.
