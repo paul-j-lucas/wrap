@@ -65,6 +65,7 @@ static size_t const MD_HR_CHAR_MIN         =  3;  // min num of ***, ---, or ___
 static size_t const MD_LINK_INDENT_MAX     =  3;  // max indent for [id]: URI
 static size_t const MD_LIST_INDENT_MAX     =  4;  // max indent for all lists
 static size_t const MD_DL_UL_INDENT_MIN    =  2;  // unordered list min indent
+static size_t const MD_OL_CHAR_MAX         =  9;  // ordered list max digits
 static size_t const MD_OL_INDENT_MIN       =  3;  // ordered list min indent
 
 static size_t const STATE_ALLOC_DEFAULT    = 5;
@@ -142,6 +143,16 @@ static inline bool md_is_nestable( md_line_t line_type ) {
     default:
       return false;
   } // switch
+}
+
+/**
+ * Checks whether \a c is a Markdown ordered list separator character.
+ *
+ * @param c The character to check.
+ * @return Returns \c true only if \a c is an ordered list separator character.
+ */
+static inline bool md_is_ol_sep_char( char c ) {
+  return c == '.' || c == ')';
 }
 
 /**
@@ -556,7 +567,10 @@ static bool md_is_ol( char const *s, md_ol_t *ol_num,
   char const *d = s;
   for ( ; isdigit( *d ); ++d )
     *ol_num = *ol_num * 10 + (*d - '0');
-  if ( d - s && d[0] == '.' && is_space( d[1] ) ) {
+
+  size_t const len = d - s;
+  if ( len >= 1 && len <= MD_OL_CHAR_MAX && md_is_ol_sep_char( d[0] ) &&
+       is_space( d[1] ) ) {
     *indent_hang = d[1] == '\t' ?
       MD_LIST_INDENT_MAX :
       MD_OL_INDENT_MIN + is_space( d[2] );

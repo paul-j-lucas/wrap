@@ -133,6 +133,8 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap--Markdown-ol-02s.test \
 	tests/wrap--Markdown-ol-03s.test \
 	tests/wrap--Markdown-ol-04s.test \
+	tests/wrap--Markdown-ol-06s.test \
+	tests/wrap--Markdown-ol-07s.test \
 	tests/wrap--Markdown-ol-11s.test \
 	tests/wrap--Markdown-ul-01sa.test \
 	tests/wrap--Markdown-ul-01sb.test \
@@ -258,6 +260,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--Markdown-ol-03s.test \
 	tests/wrapc--Markdown-ol-04s.test \
 	tests/wrapc--Markdown-ol-05s.test \
+	tests/wrapc--Markdown-ol-06s.test \
 	tests/wrapc--Markdown-ol-11s.test \
 	tests/wrapc--Markdown-ul-01.test \
 	tests/wrapc--Markdown-ul-02.test \
