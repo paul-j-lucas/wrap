@@ -293,7 +293,7 @@ static bool md_is_atx_header( char const *s ) {
   assert( s[0] == '#' );
 
   size_t n_atx = 0;
-  for ( ; *s && *s == '#'; ++s ) {
+  for ( ; *s == '#'; ++s ) {
     if ( ++n_atx > MD_ATX_CHAR_MAX )
       return false;
   } // for
@@ -322,7 +322,7 @@ static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
   char const c = fence->cf_c ? fence->cf_c : s[0];
   size_t len = 0;
 
-  for ( ; *s && *s == c; ++s, ++len )
+  for ( ; *s == c; ++s, ++len )
     /* empty */;
 
   if ( fence->cf_len )
@@ -477,7 +477,7 @@ static char const* md_is_html_block( char const *s, bool *is_end_tag ) {
   static char element_buf[ HTML_ELEMENT_MAX + 1 ];
   size_t element_len = 0;
 
-  for ( ; *s && is_html_char( *s ) && element_len < sizeof element_buf - 1;
+  for ( ; is_html_char( *s ) && element_len < sizeof element_buf - 1;
         ++element_len, ++s ) {
     element_buf[ element_len ] = tolower( *s );
   } // for
@@ -491,7 +491,7 @@ static char const* md_is_html_block( char const *s, bool *is_end_tag ) {
   //
   while ( *s && *s++ != '>' )           // skip until after closing '>'
     /* empty */;
-  return *s && is_blank_line( s ) ? element_buf : NULL;
+  return is_blank_line( s ) ? element_buf : NULL;
 }
 
 /**

@@ -971,7 +971,7 @@ static void set_prefix( char const *prefix, size_t len ) {
  */
 static char* skip_c( char *s, char c ) {
   assert( s );
-  for ( ; *s && *s == c; ++s )
+  for ( ; *s == c; ++s )
     /* empty */;
   return s;
 }
