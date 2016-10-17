@@ -56,7 +56,7 @@ typedef struct md_code_fence md_code_fence_t;
 typedef ssize_t stack_pos_t;
 
 // local constant definitions
-#define             HTML_ELEMENT_MAX         10   /* "blockquote" */
+#define             HTML_ELEMENT_CHAR_MAX    10   /* "blockquote" */
 static size_t const MD_ATX_CHAR_MAX        =  6;  // max num of # in atx header
 static size_t const MD_CODE_FENCE_CHAR_MIN =  3;  // min num of ~~~ or ```
 static size_t const MD_CODE_INDENT_MIN     =  4;  // min indent for code
@@ -72,9 +72,7 @@ static size_t const STATE_ALLOC_DEFAULT    = 5;
 static size_t const STATE_ALLOC_INCREMENT  = 5;
 
 // local variable definitions
-static md_depth_t   html_depth;         // how many nested outer elements
 static md_seq_t     next_seq_num;
-static char         outer_html_element[ HTML_ELEMENT_MAX + 1 ];
 static md_state_t  *stack;              // global stack of states
 static stack_pos_t  stack_top = -1;     // index of the top of the stack
 
@@ -91,7 +89,7 @@ static md_line_t    md_nested_within( void );
  * @param c The character to check.
  * @return Returns \c true only if \a c is an HTML element character.
  */
-static inline bool is_html_char( char c ) {
+static inline bool is_html_element_char( char c ) {
   return isalpha( c ) || c == '-';
 }
 
@@ -486,10 +484,10 @@ static char const* md_is_html_block( char const *s, bool *is_end_tag ) {
   if ( (*is_end_tag = s[0] == '/') )
     ++s;
 
-  static char element_buf[ HTML_ELEMENT_MAX + 1 ];
+  static char element_buf[ HTML_ELEMENT_CHAR_MAX + 1 /*NULL*/ ];
   size_t element_len = 0;
 
-  for ( ; is_html_char( *s ) && element_len < sizeof element_buf - 1;
+  for ( ; is_html_element_char( *s ) && element_len < sizeof element_buf - 1;
         ++element_len, ++s ) {
     element_buf[ element_len ] = tolower( *s );
   } // for
@@ -746,7 +744,10 @@ md_state_t const* markdown_parse( char *s ) {
   md_indent_t indent_left;
   char *const nws = first_nws( s, &indent_left );
 
-  static md_code_fence_t code_fence;
+  static md_code_fence_t  code_fence;
+  static md_depth_t       html_depth;   // how many nested outer elements
+  static char             html_outer_element[ HTML_ELEMENT_CHAR_MAX + 1 ];
+
   PREV_BOOL( code_fence_end, false );
   PREV_BOOL( link_label_has_title, false );
 
@@ -907,7 +908,7 @@ md_state_t const* markdown_parse( char *s ) {
       if ( html_element ) {
         if ( top_is( MD_HTML_BLOCK ) ) {
           assert( html_depth > 0 );
-          if ( strcmp( html_element, outer_html_element ) == 0 )
+          if ( strcmp( html_element, html_outer_element ) == 0 )
             html_depth += is_end_tag ? -1 : 1;
         } else {
           stack_push( MD_HTML_BLOCK, indent_left, 0 );
@@ -916,7 +917,7 @@ md_state_t const* markdown_parse( char *s ) {
             // We have to count and balance only nested elements that are the
             // same as the outermost element.
             //
-            strcpy( outer_html_element, html_element );
+            strcpy( html_outer_element, html_element );
             ++html_depth;
           }
         }
