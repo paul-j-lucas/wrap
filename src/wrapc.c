@@ -704,7 +704,7 @@ static char const* is_terminated_comment( char *s ) {
             // Ignore a mid-comment delimiter character, that is a delimiter
             // character followed by a non-whitespace character, e.g.:
             //
-            //      # This is a comment ith a '#' in it.
+            //      # This is a comment with a '#' in it.
             //
             cc = NULL;
           }
