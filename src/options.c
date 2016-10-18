@@ -41,7 +41,7 @@
 #define OPTION_VALUE(OPT)   opts_given[ !islower(OPT) ][ toupper(OPT) - 'A' ]
 #define SET_OPTION(OPT)     OPTION_VALUE(OPT) = (OPT)
 
-typedef char opts_given_t[ 2 /* lower/upper */ ][ 26 + 1 /*NULL*/ ];
+typedef char opts_given_t[ 2 /* lower/upper */ ][ 26 + 1/*null*/ ];
 
 // extern option variables
 char const         *opt_alias;

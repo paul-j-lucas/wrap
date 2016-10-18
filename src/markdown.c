@@ -484,7 +484,7 @@ static char const* md_is_html_block( char const *s, bool *is_end_tag ) {
   if ( (*is_end_tag = s[0] == '/') )
     ++s;
 
-  static char element_buf[ HTML_ELEMENT_CHAR_MAX + 1 /*NULL*/ ];
+  static char element_buf[ HTML_ELEMENT_CHAR_MAX + 1/*null*/ ];
   size_t element_len = 0;
 
   for ( ; is_html_element_char( *s ) && element_len < sizeof element_buf - 1;
