@@ -1,5 +1,29 @@
+2016-10-17  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c, test/Makefile.am, md-html-CDATA-01a.md, md-html-CDATA-01b.md,
+     md-html-CDATA-01c.md, md-html-DOCTYPE-01a.md, md-html-DOCTYPE-01b.md,
+     md-html-DOCTYPE-01c.md, md-html-PI-01a.md, md-html-PI-01b.md,
+     md-html-PI-01c.md, md-html-comment-01a.md, md-html-comment-01b.md,
+     md-html-comment-01c.md, wrap--Markdown-html-CDATA-01a.txt,
+     wrap--Markdown-html-CDATA-01b.txt, wrap--Markdown-html-CDATA-01c.txt,
+     wrap--Markdown-html-DOCTYPE-01a.txt, wrap--Markdown-html-DOCTYPE-01b.txt,
+     wrap--Markdown-html-DOCTYPE-01c.txt, wrap--Markdown-html-PI-01a.txt,
+     wrap--Markdown-html-PI-01b.txt, wrap--Markdown-html-PI-01c.txt,
+     wrap--Markdown-html-comment-01a.txt, wrap--Markdown-html-comment-01b.txt,
+     wrap--Markdown-html-comment-01c.txt, wrap--Markdown-html-CDATA-01a.test,
+     wrap--Markdown-html-CDATA-01b.test, wrap--Markdown-html-CDATA-01c.test,
+     wrap--Markdown-html-DOCTYPE-01a.test,
+     wrap--Markdown-html-DOCTYPE-01b.test,
+     wrap--Markdown-html-DOCTYPE-01c.test, wrap--Markdown-html-PI-01a.test,
+     wrap--Markdown-html-PI-01b.test, wrap--Markdown-html-PI-01c.test,
+     wrap--Markdown-html-comment-01a.test,
+     wrap--Markdown-html-comment-01b.test,
+     wrap--Markdown-html-comment-01c.test: Added better support for block HTML.
+   * markdown.c: HTML clean-up.
+
 2016-10-15  Paul J. Lucas <paul@lucasmail.org>
 
+   * markdown.c: Fixed comment.
    * md-ol-01s.c, md-ol-01s.md, md-ol-02s.c, md-ol-02s.md, md-ol-03s.c,
      md-ol-03s.md, md-ol-04s.c, md-ol-04s.md, wrap--Markdown-ol-01s.txt,
      wrap--Markdown-ol-02s.txt, wrap--Markdown-ol-03s.txt,
