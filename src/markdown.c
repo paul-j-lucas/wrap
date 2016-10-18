@@ -110,6 +110,7 @@ static stack_pos_t  stack_top = -1;     // index of the top of the stack
 static bool         md_is_code_fence( char const*, md_code_fence_t* );
 static bool         md_is_dl_ul_helper( char const*, md_indent_t* );
 static md_line_t    md_nested_within( void );
+static char const*  skip_html_element( char const* );
 
 ////////// inline functions ///////////////////////////////////////////////////
 
@@ -529,6 +530,9 @@ static html_t md_is_html_block( char const *s, char const **element,
     return HTML_NONE;
 
   html_t special_type = HTML_NONE;
+  //
+  // Is this a "special" HTML block?
+  //
   if ( s[0] == '?' )
     special_type = HTML_PI;
   else if ( s[0] == '!' ) {
@@ -547,7 +551,7 @@ static html_t md_is_html_block( char const *s, char const **element,
 
   if ( special_type ) {
     //
-    // Does the "special" HTML end on the same line as it starts?
+    // Does the "special" HTML block end on the same line as it starts?
     //
     *is_end_tag = md_is_html_end( special_type, s );
     return special_type;
@@ -569,9 +573,7 @@ static html_t md_is_html_block( char const *s, char const **element,
   //
   //      <em>span</em>
   //
-  while ( *s && *s++ != '>' )           // skip until after closing '>'
-    /* empty */;
-
+  s = skip_html_element( s );
   if ( is_blank_line( s ) ) {
     *element = element_buf;
     return HTML_ELEMENT;
@@ -780,6 +782,38 @@ static void md_renumber_ol( char *s, md_ol_t old_n, md_ol_t new_n ) {
     // copy new_n into place
     memcpy( s, new_buf, new_digits );
   }
+}
+
+/**
+ * Skips past the end of the current HTML (or XML) element.
+ *
+ * @param s A pointer to within the text of an HTML (or XML) element.
+ * @return Returns a pointer to just past the closing '>' of the element or a
+ * pointer to an empty string if \a s is not an HTML (or XML) element.
+ */
+static char const* skip_html_element( char const *s ) {
+  assert( s );
+  char quote = '\0';
+  for ( ; *s; ++s ) {
+    switch ( *s ) {
+      case '"':
+      case '\'':
+        if ( !quote )
+          quote = *s;
+        else if ( *s == quote )
+          quote = '\0';
+        break;
+      case '/':                         // XML empty <element/>
+        if ( !quote )
+          return *++s == '>' ? ++s : "";
+        break;
+      case '>':
+        if ( !quote )
+          return ++s;
+        break;
+    } // switch
+  } // for
+  return s;
 }
 
 /**
