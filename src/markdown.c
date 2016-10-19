@@ -110,7 +110,7 @@ static stack_pos_t  stack_top = -1;     // index of the top of the stack
 static bool         md_is_code_fence( char const*, md_code_fence_t* );
 static bool         md_is_dl_ul_helper( char const*, md_indent_t* );
 static md_line_t    md_nested_within( void );
-static char const*  skip_html_element( char const* );
+static char const*  skip_html_tag( char const*, bool );
 
 ////////// inline functions ///////////////////////////////////////////////////
 
@@ -516,8 +516,8 @@ static bool md_is_html_abbr( char const *s ) {
  * name.
  * @param is_end_tag A pointer to the variable to receive whether the HTML tag
  * is an end tag.
- * @return Returns the HTML element only if the line is a block-level HTML
- * element or NULL if not.
+ * @return Returns the HTML type only if the line is a block-level HTML element
+ * or special markup or HTML_NONE if not.
  */
 static html_t md_is_html_block( char const *s, char const **element,
                                 bool *is_end_tag ) {
@@ -557,7 +557,7 @@ static html_t md_is_html_block( char const *s, char const **element,
     return html_special;
   }
 
-  if ( (*is_end_tag = s[0] == '/') )
+  if ( (*is_end_tag = s[0] == '/') )    // </tag>
     ++s;
 
   static char element_buf[ HTML_ELEMENT_CHAR_MAX + 1/*null*/ ];
@@ -573,7 +573,7 @@ static html_t md_is_html_block( char const *s, char const **element,
   //
   //      <em>span</em>
   //
-  s = skip_html_element( s );
+  s = skip_html_tag( s, is_end_tag );
   if ( is_blank_line( s ) ) {
     *element = element_buf;
     return HTML_ELEMENT;
@@ -791,7 +791,7 @@ static void md_renumber_ol( char *s, md_ol_t old_n, md_ol_t new_n ) {
  * @return Returns a pointer to just past the closing '>' of the element or a
  * pointer to an empty string if \a s is not an HTML (or XML) element.
  */
-static char const* skip_html_element( char const *s ) {
+static char const* skip_html_tag( char const *s, bool is_end_tag ) {
   assert( s );
   char quote = '\0';
   for ( ; *s; ++s ) {
@@ -799,11 +799,15 @@ static char const* skip_html_element( char const *s ) {
       if ( *s == quote )                // ... until matching quote
         quote = '\0';
     } else {
-      if ( *s == '"' || *s == '\'' )
+      if ( *s == '"' || *s == '\'' ) {
+        if ( is_end_tag )               // quotes illegal in end tag
+          return "";
         quote = *s;                     // start ignoring everything
-      else if ( *s == '/' )             // XML empty <element/>
+        continue;
+      }
+      if ( *s == '/' )                  // XML empty <element/>
         return *++s == '>' ? ++s : "";  // '>' must follow '/'
-      else if ( *s == '>' )             // found closing '>'
+      if ( *s == '>' )                  // found closing '>'
         return ++s;
     }
   } // for
