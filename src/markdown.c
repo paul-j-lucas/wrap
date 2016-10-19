@@ -110,7 +110,7 @@ static stack_pos_t  stack_top = -1;     // index of the top of the stack
 static bool         md_is_code_fence( char const*, md_code_fence_t* );
 static bool         md_is_dl_ul_helper( char const*, md_indent_t* );
 static md_line_t    md_nested_within( void );
-static char const*  skip_html_tag( char const*, bool );
+static char const*  skip_html_tag( char const*, bool* );
 
 ////////// inline functions ///////////////////////////////////////////////////
 
@@ -788,12 +788,14 @@ static void md_renumber_ol( char *s, md_ol_t old_n, md_ol_t new_n ) {
  * Skips past the end of the current HTML (or XML) tag.
  *
  * @param s A pointer to within the text of an HTML (or XML) tag.
- * @param is_end_tag \c true if we are skipping an end tag.
+ * @param is_end_tag A pointer to a \c bool: if \c true if we are skipping an
+ * end tag; if \c false, set to \c true if the tag is an XML end tag on return.
  * @return Returns a pointer to just past the closing '>' of the tag or a
  * pointer to an empty string if \a s is not an HTML (or XML) tag.
  */
-static char const* skip_html_tag( char const *s, bool is_end_tag ) {
+static char const* skip_html_tag( char const *s, bool *is_end_tag ) {
   assert( s );
+  assert( is_end_tag );
   char quote = '\0';
   for ( ; *s; ++s ) {
     if ( quote ) {                      // ignore everything ...
@@ -801,13 +803,17 @@ static char const* skip_html_tag( char const *s, bool is_end_tag ) {
         quote = '\0';
     } else {
       if ( *s == '"' || *s == '\'' ) {
-        if ( is_end_tag )               // quotes illegal in end tag
+        if ( *is_end_tag )              // quotes illegal in end tag
           return "";
         quote = *s;                     // start ignoring everything
         continue;
       }
-      if ( *s == '/' )                  // XML empty <element/>
-        return !is_end_tag && *++s == '>' ? ++s : "";
+      if ( *s == '/' ) {                // XML empty <element/>
+        if ( *is_end_tag || *++s != '>' )
+          return "";
+        *is_end_tag = true;
+        return ++s;
+      }
       if ( *s == '>' )                  // found closing '>'
         return ++s;
     }
