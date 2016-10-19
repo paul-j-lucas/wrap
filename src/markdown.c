@@ -529,32 +529,32 @@ static html_t md_is_html_block( char const *s, char const **element,
   if ( !*++s )
     return HTML_NONE;
 
-  html_t special_type = HTML_NONE;
+  html_t html_special = HTML_NONE;
   //
   // Is this a "special" HTML block?
   //
   if ( s[0] == '?' )
-    special_type = HTML_PI;
+    html_special = HTML_PI;
   else if ( s[0] == '!' ) {
     ++s;
     if ( isupper( s[0] ) )
-      special_type = HTML_DOCTYPE;
+      html_special = HTML_DOCTYPE;
     else if ( STRN_EQ_LIT( s, "--" ) )
-      special_type = HTML_COMMENT;
+      html_special = HTML_COMMENT;
     else if ( STRN_EQ_LIT( s, "[CDATA[" ) )
-      special_type = HTML_CDATA;
+      html_special = HTML_CDATA;
     else {
       *is_end_tag = false;
       return HTML_NONE;
     }
   }
 
-  if ( special_type ) {
+  if ( html_special ) {
     //
     // Does the "special" HTML block end on the same line as it starts?
     //
-    *is_end_tag = md_is_html_end( special_type, s );
-    return special_type;
+    *is_end_tag = md_is_html_end( html_special, s );
+    return html_special;
   }
 
   if ( (*is_end_tag = s[0] == '/') )
