@@ -795,23 +795,17 @@ static char const* skip_html_element( char const *s ) {
   assert( s );
   char quote = '\0';
   for ( ; *s; ++s ) {
-    switch ( *s ) {
-      case '"':
-      case '\'':
-        if ( !quote )
-          quote = *s;
-        else if ( *s == quote )
-          quote = '\0';
-        break;
-      case '/':                         // XML empty <element/>
-        if ( !quote )
-          return *++s == '>' ? ++s : "";
-        break;
-      case '>':
-        if ( !quote )
-          return ++s;
-        break;
-    } // switch
+    if ( quote ) {                      // ignore everything ...
+      if ( *s == quote )                // ... until matching quote
+        quote = '\0';
+    } else {
+      if ( *s == '"' || *s == '\'' )
+        quote = *s;                     // start ignoring everything
+      else if ( *s == '/' )             // XML empty <element/>
+        return *++s == '>' ? ++s : "";  // '>' must follow '/'
+      else if ( *s == '>' )             // found closing '>'
+        return ++s;
+    }
   } // for
   return s;
 }
