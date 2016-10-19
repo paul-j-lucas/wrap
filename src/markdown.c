@@ -785,11 +785,12 @@ static void md_renumber_ol( char *s, md_ol_t old_n, md_ol_t new_n ) {
 }
 
 /**
- * Skips past the end of the current HTML (or XML) element.
+ * Skips past the end of the current HTML (or XML) tag.
  *
- * @param s A pointer to within the text of an HTML (or XML) element.
- * @return Returns a pointer to just past the closing '>' of the element or a
- * pointer to an empty string if \a s is not an HTML (or XML) element.
+ * @param s A pointer to within the text of an HTML (or XML) tag.
+ * @param is_end_tag \c true if we are skipping an end tag.
+ * @return Returns a pointer to just past the closing '>' of the tag or a
+ * pointer to an empty string if \a s is not an HTML (or XML) tag.
  */
 static char const* skip_html_tag( char const *s, bool is_end_tag ) {
   assert( s );
@@ -806,7 +807,7 @@ static char const* skip_html_tag( char const *s, bool is_end_tag ) {
         continue;
       }
       if ( *s == '/' )                  // XML empty <element/>
-        return *++s == '>' ? ++s : "";  // '>' must follow '/'
+        return !is_end_tag && *++s == '>' ? ++s : "";
       if ( *s == '>' )                  // found closing '>'
         return ++s;
     }
