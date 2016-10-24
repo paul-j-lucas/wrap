@@ -125,7 +125,7 @@ static inline bool is_html_element_char( char c ) {
 }
 
 /**
- * Initialized an md_code_fence_t.
+ * Initializes an md_code_fence_t.
  *
  * @param fence A pointer to the md_code_fence_t to initialize.
  */
