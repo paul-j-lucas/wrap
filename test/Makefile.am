@@ -267,6 +267,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--Markdown-ul-03.test \
 	tests/wrapc--Markdown-ul-04.test \
 	tests/wrapc--Markdown-ul-05.test \
+	tests/wrapc--Markdown-ul-06.test \
 	tests/wrapc--Markdown-nested-01s.test \
 	tests/wrapc--Markdown-nested-02s.test \
 	tests/wrapc--Markdown-Setext-01.test \

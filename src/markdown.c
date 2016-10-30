@@ -36,9 +36,8 @@
 #define CLEAR_RETURN(TOKEN) \
   BLOCK( stack_clear(); stack_push( TOKEN, 0, 0 ); return &TOP; )
 
-#define PREV_BOOL(NAME,INIT)        \
-  static bool prev_##NAME = (INIT); \
-  bool const NAME = prev_##NAME;    \
+#define PREV_BOOL(NAME)           \
+  bool const NAME = prev_##NAME;  \
   prev_##NAME = false
 
 #define STACK(N)            (stack[ stack_top - (N) ])
@@ -72,9 +71,13 @@ static size_t const STATE_ALLOC_DEFAULT    = 5;
 static size_t const STATE_ALLOC_INCREMENT  = 5;
 
 // local variable definitions
+static md_depth_t   html_depth;         // how many nested outer elements
 static md_seq_t     next_seq_num;
+static bool         prev_blank_line;
+static bool         prev_code_fence_end;
+static bool         prev_link_label_has_title;
 static md_state_t  *stack;              // global stack of states
-static stack_pos_t  stack_top = -1;     // index of the top of the stack
+static stack_pos_t  stack_top;          // index of the top of the stack
 
 // local functions
 static bool         md_is_code_fence( char const*, md_code_fence_t* );
@@ -731,25 +734,29 @@ void markdown_cleanup( void ) {
   free( stack );
 }
 
+void markdown_init( void ) {
+  html_depth = 0;
+  prev_blank_line = true;
+  prev_code_fence_end = false;
+  prev_link_label_has_title = false;
+  stack_top = -1;
+  //
+  // Initialize the stack so that it always contains at least one element.
+  //
+  stack_push( MD_TEXT, 0, 0 );
+}
+
 md_state_t const* markdown_parse( char *s ) {
   assert( s );
-
-  if ( stack_empty() ) {
-    //
-    // Initialize the stack so that it always contains at least one element.
-    //
-    stack_push( MD_TEXT, 0, 0 );
-  }
 
   md_indent_t indent_left;
   char *const nws = first_nws( s, &indent_left );
 
   static md_code_fence_t  code_fence;
-  static md_depth_t       html_depth;   // how many nested outer elements
   static char             html_outer_element[ HTML_ELEMENT_CHAR_MAX + 1 ];
 
-  PREV_BOOL( code_fence_end, false );
-  PREV_BOOL( link_label_has_title, false );
+  PREV_BOOL( code_fence_end );
+  PREV_BOOL( link_label_has_title );
 
   switch ( TOP.line_type ) {
     case MD_CODE:
@@ -835,7 +842,7 @@ md_state_t const* markdown_parse( char *s ) {
   // the first line, there is no text line before it so it must be a horizontal
   // rule.
   //
-  PREV_BOOL( blank_line, true );
+  PREV_BOOL( blank_line );
   if ( !nws[0] ) {
     prev_blank_line = true;
     return &TOP;
