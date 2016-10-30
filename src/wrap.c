@@ -103,6 +103,7 @@ static bool         was_para_delim_char;// prev char a paragraph delimiter?
 static int          buf_getc( char const** );
 static void         delimit_paragraph( void );
 static void         init( int, char const*[] );
+static void         markdown_reset();
 static void         print_lead_chars( void );
 static void         print_line( size_t, bool );
 static void         put_tabs_spaces( size_t, size_t );
@@ -255,6 +256,10 @@ int main( int argc, char const *argv[] ) {
       }
       if ( opt_lead_para_delims && strchr( opt_lead_para_delims, c ) ) {
         delimit_paragraph();
+        if ( opt_markdown ) {
+          markdown_init();
+          markdown_reset();
+        }
         goto insert;
       }
     }
@@ -521,8 +526,10 @@ static void init( int argc, char const *argv[] ) {
   atexit( clean_up );
   init_options( argc, argv, usage );
 
-  if ( opt_markdown )
+  if ( opt_markdown ) {
+    markdown_init();
     opt_tab_spaces =  TAB_SPACES_MARKDOWN;
+  }
 
   int const out_width = (int)opt_line_width -
     (int)(2 * (opt_mirror_tabs * opt_tab_spaces + opt_mirror_spaces) +
@@ -695,11 +702,14 @@ static bool markdown_adjust( line_buf_t line ) {
       return true;
 
     default:
-      line_width = opt_line_width;
-      opt_lead_spaces = 0;
-      opt_hang_spaces = 0;
+      markdown_reset();
       return true;
   } // switch
+}
+
+static void markdown_reset( void ) {
+  line_width = opt_line_width;
+  opt_hang_spaces = opt_lead_spaces = 0;
 }
 
 static void print_lead_chars( void ) {

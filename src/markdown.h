@@ -74,6 +74,11 @@ typedef struct md_state md_state_t;
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
+ * Initializes the Markdown parser.
+ */
+void markdown_init( void );
+
+/**
  * Cleans-up all Markdown data.
  */
 void markdown_cleanup( void );
