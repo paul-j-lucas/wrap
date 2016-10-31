@@ -736,13 +736,18 @@ void markdown_cleanup( void ) {
 
 void markdown_init( void ) {
   html_depth = 0;
-  prev_blank_line = true;
   prev_code_fence_end = false;
   prev_link_label_has_title = false;
-  stack_top = -1;
+  //
+  // We have to start out prev_blank_line = true because if a "---" occurs as
+  // the first line, there is no text line before it so it must be a horizontal
+  // rule and not a Setext 2nd-level header.
+  //
+  prev_blank_line = true;
   //
   // Initialize the stack so that it always contains at least one element.
   //
+  stack_top = -1;
   stack_push( MD_TEXT, 0, 0 );
 }
 
@@ -838,12 +843,8 @@ md_state_t const* markdown_parse( char *s ) {
   //  + They disambiguate "---" between a Setext 2nd-level header (that has to
   //    have a text line before it) and a horizontal rule (that doesn't).
   //
-  // We have to start out prev_blank_line = true because if a "---" occurs as
-  // the first line, there is no text line before it so it must be a horizontal
-  // rule.
-  //
   PREV_BOOL( blank_line );
-  if ( !nws[0] ) {
+  if ( !nws[0] ) {                      // blank line
     prev_blank_line = true;
     return &TOP;
   }
