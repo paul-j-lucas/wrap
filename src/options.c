@@ -253,14 +253,14 @@ static void parse_options( int argc, char const *argv[], char const *opts,
 #define COMMON_OPTS         "a:b:c:Cef:F:l:o:p:s:Tuvw:"
 
 void init_options( int argc, char const *argv[], void (*usage)(void) ) {
-  static char const wrap_opts [] = COMMON_OPTS "dEh:H:i:I:L:m:M:nNPS:t:W";
-  static char const wrapc_opts[] = COMMON_OPTS "D:";
+  static char const WRAP_OPTS [] = COMMON_OPTS "dEh:H:i:I:L:m:M:nNPS:t:W";
+  static char const WRAPC_OPTS[] = COMMON_OPTS "D:";
 
   assert( usage );
   me = base_name( argv[0] );
   bool const is_wrap = strcmp( me, PACKAGE ) == 0;
 
-  parse_options( argc, argv, is_wrap ? wrap_opts : wrapc_opts, usage, 0 );
+  parse_options( argc, argv, is_wrap ? WRAP_OPTS : WRAPC_OPTS, usage, 0 );
   argc -= optind, argv += optind;
   if ( argc )
     usage();
@@ -279,7 +279,7 @@ void init_options( int argc, char const *argv[], void (*usage)(void) ) {
       alias = pattern_find( opt_fin_name );
     if ( alias )
       parse_options(
-        alias->argc, alias->argv, wrap_opts, usage, alias->line_no
+        alias->argc, alias->argv, WRAP_OPTS, usage, alias->line_no
       );
   }
 
