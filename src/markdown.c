@@ -33,6 +33,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+#define ARRAY_SIZE(A)       (sizeof(A) / sizeof(A[0]))
+
 #define CLEAR_RETURN(TOKEN) \
   BLOCK( stack_clear(); stack_push( TOKEN, 0, 0 ); return &TOP; )
 
@@ -50,28 +52,17 @@
  * HTML markup types.  Every type that is not NONE nor ELEMENT is a "special"
  * type in that it (a) has a unique terminator and (b) does not nest.
  */
-enum html {
+enum html_state {
   HTML_NONE,
   HTML_CDATA,                           // <![CDATA[ ... ]]>
   HTML_COMMENT,                         // <!-- ... -->
   HTML_DOCTYPE,                         // <!DOCTYPE ... >
-  HTML_ELEMENT,                         // <element> ... </element>
+  HTML_ELEMENT,                         // <tag> ... </tag>
   HTML_PI,                              // <? ... ?>
+  HTML_PRE,                             // <pre>, <script>, or <style>
+  HTML_END                              // ending HTML block
 };
-typedef enum html html_t;
-
-/**
- * For each HTML type, the string that ends a block of that type.  The order
- * \e must match the order in the html \c enum.
- */
-static char const *const HTML_END[] = {
-  NULL,   // HTML_NONE
-  "]]>",  // HTML_CDATA
-  "-->",  // HTML_COMMENT
-  ">",    // HTML_DOCTYPE
-  NULL,   // HTML_ELEMENT (handled differently)
-  "?>",   // HTML_PI
-};
+typedef enum html_state html_state_t;
 
 /**
  * PHP Markdown Extra code fence info.
@@ -96,12 +87,35 @@ static size_t const MD_LIST_INDENT_MAX     =  4;  // max indent for all lists
 static size_t const MD_DL_UL_INDENT_MIN    =  2;  // unordered list min indent
 static size_t const MD_OL_CHAR_MAX         =  9;  // ordered list max digits
 static size_t const MD_OL_INDENT_MIN       =  3;  // ordered list min indent
-
 static size_t const STATE_ALLOC_DEFAULT    = 5;
 static size_t const STATE_ALLOC_INCREMENT  = 5;
 
+/**
+ * Block-level HTML 5 elements.
+ */
+static char const *const HTML_BLOCK_ELEMENT[] = {
+  "article", "aside",
+  "base", "basefont", "blockquote", "body", "br", "button",
+  "canvas", "caption", "center", "col", "colgroup",
+  "dd", "details", "dialog", "dir", "div", "dl", "dt",
+  "embed",
+  "fieldset", "figcaption", "figure", "footer", "form", "frame", "frameset",
+  "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html",
+  "iframe",
+  "legend", "li", "link",
+  "main", "map", "menu", "menuitem", "meta",
+  "nav", "noframes",
+  "object", "ol", "optgroup", "option",
+  "p", "param", "progress",
+  "section", "source", "summary",
+  "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "title", "tr",
+  "track",
+  "ul",
+  "video"
+};
+
 // local variable definitions
-static md_depth_t   html_depth;         // how many nested outer elements
+static html_state_t html_state;
 static md_seq_t     next_seq_num;
 static bool         prev_blank_line;
 static bool         prev_code_fence_end;
@@ -110,20 +124,47 @@ static md_state_t  *stack;              // global stack of states
 static stack_pos_t  stack_top;          // index of the top of the stack
 
 // local functions
+static bool         bin_search( char const*, char const*const[], size_t );
 static bool         md_is_code_fence( char const*, md_code_fence_t* );
 static bool         md_is_dl_ul_helper( char const*, md_indent_t* );
+static html_state_t md_is_html_tag( char const*, bool* );
 static md_line_t    md_nested_within( void );
 static char const*  skip_html_tag( char const*, bool* );
 
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
- * Checks whether \a c is an HTML element character.
+ * Checks whether \a s is an HTML block-level tag.
+ *
+ * @param s The null-terminated string to check. It is assumed to have been
+ * converted to lower-case.
+ * @return Returns \c true only if \a s is an HTML block-level tag.
+ */
+static inline bool is_html_block_tag( char const *s ) {
+  return bin_search( s, HTML_BLOCK_ELEMENT, ARRAY_SIZE( HTML_BLOCK_ELEMENT ) );
+}
+
+/**
+ * Checks whether \a s is an HTML pre-formatted block-level tag.
+ *
+ * @param s The null-terminated string to check. It is assumed to have been
+ * converted to lower-case.
+ * @return Returns \c true only if \a s is an HTML pre-formatted block-level
+ * tag.
+ */
+static inline bool is_html_pre_tag( char const *s ) {
+  return  strcmp( s, "pre"    ) == 0 ||
+          strcmp( s, "script" ) == 0 ||
+          strcmp( s, "style"  ) == 0;
+}
+
+/**
+ * Checks whether \a c is an HTML tag character.
  *
  * @param c The character to check.
- * @return Returns \c true only if \a c is an HTML element character.
+ * @return Returns \c true only if \a c is an HTML tag character.
  */
-static inline bool is_html_element_char( char c ) {
+static inline bool is_html_tag_char( char c ) {
   return isalpha( c ) || c == '-';
 }
 
@@ -147,17 +188,6 @@ static inline void md_code_fence_init( md_code_fence_t *fence ) {
 static inline bool md_is_code_fence_end( char const *s,
                                          md_code_fence_t *fence ) {
   return (s[0] == '~' || s[0] == '`') && md_is_code_fence( s, fence );
-}
-
-/**
- * Checks whether \a s ends the special HTML type \a t.
- *
- * @param t The "special" HTML type.
- * @param s The null-terminated line to check.
- * @return Returns \c true only if \a s ends \a t.
- */
-static inline bool md_is_html_end( html_t t, char const *s ) {
-  return strstr( s, HTML_END[ t ] ) != NULL;
 }
 
 /**
@@ -253,6 +283,29 @@ static md_indent_t md_code_indent_min( void ) {
 }
 
 ////////// local functions ////////////////////////////////////////////////////
+
+/**
+ * Performs a binary search looking for \a s in \a a.
+ *
+ * @param s The null-terminated string to search for.
+ * @param a The sorted array of strings to search.
+ * @param n The number of elements in \a a.
+ * @return Returns \a true only if \s is in \a a.
+ */
+static bool bin_search( char const *s, char const *const a[], size_t n ) {
+  assert( s );
+  for ( ssize_t i = 0, j = (ssize_t)n - 1; i <= j; ) {
+    size_t const m = (i + j) / 2;
+    int const cmp = strcmp( s, a[m] );
+    if ( cmp < 0 )
+      i = m + 1;
+    else if ( cmp > 0 )
+      j = m - 1;
+    else
+      return true;
+  } // for
+  return false;
+}
 
 /**
  * Gets a pointer to the first non-whitespace character in \a s.
@@ -512,94 +565,122 @@ static bool md_is_html_abbr( char const *s ) {
 }
 
 /**
+ * Checks to see whether \a s ends the current HTML state.
+ *
+ * @param html_state The HTML state.
+ * @param s The null-terminated line to check.
+ * @return Returns \c true only if \a s ends \a html_state.
+ */
+static bool md_is_html_end( html_state_t html_state, char const *s ) {
+  //
+  // For each HTML state, the string that ends it.  NULL entries are handled
+  // differently.
+  //
+  static char const *const HTML_END_STR[] = {
+    NULL,   // HTML_NONE
+    "]]>",  // HTML_CDATA
+    "-->",  // HTML_COMMENT
+    ">",    // HTML_DOCTYPE
+    NULL,   // HTML_ELEMENT
+    "?>",   // HTML_PI
+    NULL,   // HTML_PRE
+    NULL,   // HTML_END
+  };
+
+  assert( (size_t)html_state < ARRAY_SIZE( HTML_END_STR ) );
+  assert( s );
+
+  if ( html_state == HTML_PRE ) {
+    //
+    // Does the line contain an end HTML_PRE tag?
+    //
+    if ( !(s = strchr( s, '<' )) )
+      return false;
+    bool is_end_tag;
+    return md_is_html_tag( s, &is_end_tag ) == HTML_PRE && is_end_tag;
+  }
+  //
+  // Does the line contain the end string?
+  //
+  char const *const end = HTML_END_STR[ html_state ];
+  return end ? strstr( s, end ) != NULL : is_blank_line( s );
+}
+
+/**
  * Checks whether the line is a block-level HTML element.
  *
  * @param s The null-terminated line to check.
- * @param element A pointer to the string pointer to receive the HTML element
- * name.
  * @param is_end_tag A pointer to the variable to receive whether the HTML tag
  * is an end tag.
- * @return Returns the HTML type only if the line is a block-level HTML element
- * or special markup or HTML_NONE if not.
+ * @return Returns the HTML type only if the line is a block-level HTML tag or
+ * special markup or HTML_NONE if not.
  */
-static html_t md_is_html_block( char const *s, char const **element,
-                                bool *is_end_tag ) {
+static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
   assert( s );
   assert( s[0] == '<' );
-  assert( element );
   assert( is_end_tag );
 
   if ( !*++s )
     return HTML_NONE;
 
-  html_t html_special = HTML_NONE;
+  html_state_t html_state = HTML_NONE;
   //
   // Is this a "special" HTML block?
   //
   if ( s[0] == '?' )
-    html_special = HTML_PI;
+    html_state = HTML_PI;
   else if ( s[0] == '!' ) {
     ++s;
     if ( isupper( s[0] ) )
-      html_special = HTML_DOCTYPE;
+      html_state = HTML_DOCTYPE;
     else if ( STRN_EQ_LIT( s, "--" ) )
-      html_special = HTML_COMMENT;
+      html_state = HTML_COMMENT;
     else if ( STRN_EQ_LIT( s, "[CDATA[" ) )
-      html_special = HTML_CDATA;
-    else {
-      *is_end_tag = false;
+      html_state = HTML_CDATA;
+    else
       return HTML_NONE;
-    }
   }
 
-  if ( html_special ) {
+  if ( html_state ) {
     //
-    // Does the "special" HTML block end on the same line as it starts?
+    // Does the HTML block end on the same line as it starts?
     //
-    *is_end_tag = md_is_html_end( html_special, s );
-    return html_special;
+    *is_end_tag = md_is_html_end( html_state, s );
+    return *is_end_tag ? HTML_END : html_state;
   }
 
   if ( (*is_end_tag = s[0] == '/') )    // </tag>
     ++s;
 
-  static char element_buf[ HTML_ELEMENT_CHAR_MAX + 1/*null*/ ];
-  size_t element_len = 0;
+  char tag[ HTML_ELEMENT_CHAR_MAX + 1/*null*/ ];
 
-  while ( is_html_element_char( *s ) && element_len < sizeof element_buf - 1 )
-    element_buf[ element_len++ ] = tolower( *s++ );
-  element_buf[ element_len ] = '\0';
+  for ( size_t len = 0; ; ) {
+    if ( len == sizeof tag - 1 )        // tag too long
+      return HTML_NONE;
+    if ( !is_html_tag_char( *s ) ) {
+      if ( !(isspace( *s ) || *s == '>' || *s == '/') )
+        return HTML_NONE;
+      if ( *s == '/' ) {
+        if ( *is_end_tag )              // invalid: </tag/>
+          return HTML_NONE;
+        *is_end_tag = true;
+      }
+      tag[ len ] = '\0';
+      break;
+    }
+    tag[ len++ ] = tolower( *s++ );
+  } // for
 
-  //
-  // Check to see if the begin tag (not element) is on a line by itself: if
-  // not, assume it's a span-level element at the beginning of a line, e.g.:
-  //
-  //      <em>span</em>
-  //
-  s = skip_html_tag( s, is_end_tag );
-  if ( is_blank_line( s ) ) {
-    *element = element_buf;
-    return HTML_ELEMENT;
+  if ( is_html_pre_tag( tag ) ) {
+    html_state = HTML_PRE;
+  } else {
+    if ( is_html_block_tag( tag ) )
+      return HTML_ELEMENT;
+    html_state = HTML_ELEMENT;
   }
-  return HTML_NONE;
-}
 
-/**
- * Checks whether \a t is a "special" HTML type.
- *
- * @param t The HTML type to check.
- * @return Returns \c true only if \a t is a "special" HTML type.
- */
-static bool md_is_html_special( html_t t ) {
-  switch ( t ) {
-    case HTML_CDATA:
-    case HTML_COMMENT:
-    case HTML_DOCTYPE:
-    case HTML_PI:
-      return true;
-    default:
-      return false;
-  } // switch
+  s = skip_html_tag( s, is_end_tag );
+  return s && is_blank_line( s ) ? html_state : HTML_NONE;
 }
 
 /**
@@ -791,7 +872,7 @@ static void md_renumber_ol( char *s, md_ol_t old_n, md_ol_t new_n ) {
  * Skips past the end of the current HTML (or XML) tag.
  *
  * @param s A pointer to within the text of an HTML (or XML) tag.
- * @param is_end_tag A pointer to a \c bool: if \c true if we are skipping an
+ * @param is_end_tag A pointer to a \c bool: if \c true, we are skipping an
  * end tag; if \c false, set to \c true if the tag is an XML end tag on return.
  * @return Returns a pointer to just past the closing '>' of the tag or a
  * pointer to an empty string if \a s is not an HTML (or XML) tag.
@@ -867,7 +948,7 @@ void markdown_cleanup( void ) {
 }
 
 void markdown_init( void ) {
-  html_depth = 0;
+  html_state = HTML_NONE;
   prev_code_fence_end = false;
   prev_link_label_has_title = false;
   //
@@ -886,12 +967,9 @@ void markdown_init( void ) {
 md_state_t const* markdown_parse( char *s ) {
   assert( s );
 
+  static md_code_fence_t code_fence;
   md_indent_t indent_left;
   char *const nws = first_nws( s, &indent_left );
-
-  static md_code_fence_t  code_fence;
-  static char             html_outer_element[ HTML_ELEMENT_CHAR_MAX + 1 ];
-  static html_t           html_type;    // the type of HTML block
 
   PREV_BOOL( code_fence_end );
   PREV_BOOL( link_label_has_title );
@@ -928,18 +1006,6 @@ md_state_t const* markdown_parse( char *s ) {
       // pop them off the stack.
       //
       stack_pop();
-      break;
-
-    case MD_HTML_BLOCK:
-      //
-      // If html_depth is zero, pop the MD_HTML_BLOCK off the stack.  The
-      // reason we don't pop the stack as soon as it goes to zero (below) is
-      // because we still want to return the last HTML line as MD_HTML_BLOCK.
-      //
-      if ( !html_depth ) {
-        stack_pop();
-        html_type = HTML_NONE;
-      }
       break;
 
     case MD_LINK_LABEL:
@@ -984,27 +1050,29 @@ md_state_t const* markdown_parse( char *s ) {
     return &TOP;
   }
 
-  if ( md_is_html_special( html_type ) ) {
+  if ( top_is( MD_HTML_BLOCK ) ) {
     //
-    // "Special" HTML.
+    // HTML blocks.
     //
-    if ( md_is_html_end( html_type, s ) ) {
-      assert( html_depth > 0 );
-      --html_depth;
-      //
-      // Since "special" HTML types don't nest, we can just set this to a
-      // constant.
-      //
-      html_type = HTML_ELEMENT;
-    }
-    //
-    // As long as we're in the MD_HTML_BLOCK state and the HTML type is
-    // "special," we can just return without further checks.
-    //
-    return &TOP;
+    switch ( html_state ) {
+      case HTML_ELEMENT:
+        if ( blank_line )
+          stack_pop();
+        return &TOP;
+      case HTML_END:
+        stack_pop();
+        break;
+      default:
+        if ( md_is_html_end( html_state, s ) )
+          html_state = HTML_END;
+        //
+        // As long as we're in the MD_HTML_BLOCK state, we can just return
+        // without further checks.
+        //
+        return &TOP;
+    } // switch
   }
-
-  if ( !top_is( MD_HTML_BLOCK ) ) {
+  else {
     //
     // Markdown code blocks.
     //
@@ -1065,33 +1133,15 @@ md_state_t const* markdown_parse( char *s ) {
       break;
 
     // Block-level HTML.
-    case '<':
-      if ( !md_is_html_special( html_type ) ) {
-        char const *html_element;
-        bool is_end_tag;
-        html_type = md_is_html_block( nws, &html_element, &is_end_tag );
-        if ( html_type ) {
-          if ( top_is( MD_HTML_BLOCK ) ) {
-            if ( html_type != HTML_ELEMENT ||
-                 strcmp( html_element, html_outer_element ) == 0 ) {
-              html_depth += is_end_tag ? -1 : 1;
-            }
-          } else {
-            stack_push( MD_HTML_BLOCK, indent_left, 0 );
-            if ( !is_end_tag ) {
-              if ( html_type == HTML_ELEMENT ) {
-                //
-                // We have to count and balance only nested elements that are
-                // the same as the outermost element.
-                //
-                strcpy( html_outer_element, html_element );
-              }
-              ++html_depth;
-            }
-          }
-        }
+    case '<': {
+      bool is_end_tag;
+      html_state = md_is_html_tag( nws, &is_end_tag );
+      if ( html_state ) {
+        stack_push( MD_HTML_BLOCK, indent_left, 0 );
+        return &TOP;
       }
       break;
+    }
 
     // Markdown link labels or PHP Markdown Extra footnote definitions.
     case '[':
@@ -1108,14 +1158,6 @@ md_state_t const* markdown_parse( char *s ) {
       }
       break;
   } // switch
-
-  if ( top_is( MD_HTML_BLOCK ) ) {
-    //
-    // As long as we're in the MD_HTML_BLOCK state, we can just return without
-    // further checks.
-    //
-    return &TOP;
-  }
 
   /////////////////////////////////////////////////////////////////////////////
 
