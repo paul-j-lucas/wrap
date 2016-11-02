@@ -1,0 +1,9 @@
+This is some text.
+This is some more text.
+<script type="text/javascript">
+  // Javascript
+
+  document.getElementById("demo").innerHTML = "hello, world";
+</script>
+This is some text.
+This is some more text.

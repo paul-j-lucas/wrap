@@ -121,6 +121,9 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap--Markdown-html-PI-01a.test \
 	tests/wrap--Markdown-html-PI-01b.test \
 	tests/wrap--Markdown-html-PI-01c.test \
+	tests/wrap--Markdown-html-pre-01.test \
+	tests/wrap--Markdown-html-script-01.test \
+	tests/wrap--Markdown-html-style-01.test \
 	tests/wrap--Markdown-link-01a.test \
 	tests/wrap--Markdown-link-01b.test \
 	tests/wrap--Markdown-link-01c.test \

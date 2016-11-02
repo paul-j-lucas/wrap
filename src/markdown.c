@@ -594,10 +594,15 @@ static bool md_is_html_end( html_state_t html_state, char const *s ) {
     //
     // Does the line contain an end HTML_PRE tag?
     //
-    if ( !(s = strchr( s, '<' )) )
-      return false;
-    bool is_end_tag;
-    return md_is_html_tag( s, &is_end_tag ) == HTML_PRE && is_end_tag;
+    for ( ;; ) {
+      if ( !(s = strchr( s, '<' )) )
+        return false;
+      bool is_end_tag;
+      if ( md_is_html_tag( s, &is_end_tag ) == HTML_PRE && is_end_tag )
+        return true;
+      is_end_tag = false;
+      s = skip_html_tag( s, &is_end_tag );
+    } // for
   }
   //
   // Does the line contain the end string?
@@ -671,16 +676,16 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
     tag[ len++ ] = tolower( *s++ );
   } // for
 
-  if ( is_html_pre_tag( tag ) ) {
-    html_state = HTML_PRE;
-  } else {
-    if ( is_html_block_tag( tag ) )
-      return HTML_ELEMENT;
-    html_state = HTML_ELEMENT;
-  }
-
+  if ( is_html_pre_tag( tag ) )
+    return HTML_PRE;
+  if ( is_html_block_tag( tag ) )
+    return HTML_ELEMENT;
+  //
+  // In order for inline HTML to be considered an HTML block, it has to be on
+  // a line by itself.
+  //
   s = skip_html_tag( s, is_end_tag );
-  return s && is_blank_line( s ) ? html_state : HTML_NONE;
+  return s && is_blank_line( s ) ? HTML_ELEMENT : HTML_NONE;
 }
 
 /**
@@ -893,7 +898,7 @@ static char const* skip_html_tag( char const *s, bool *is_end_tag ) {
         continue;
       }
       if ( *s == '/' ) {                // XML empty <element/>
-        if ( *is_end_tag || *++s != '>' )
+        if ( *is_end_tag && *++s != '>' )
           return "";
         *is_end_tag = true;
         return ++s;
