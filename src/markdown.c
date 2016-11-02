@@ -600,7 +600,6 @@ static bool md_is_html_end( html_state_t html_state, char const *s ) {
       bool is_end_tag;
       if ( md_is_html_tag( s, &is_end_tag ) == HTML_PRE && is_end_tag )
         return true;
-      is_end_tag = false;
       s = skip_html_tag( s, &is_end_tag );
     } // for
   }
@@ -666,7 +665,7 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
       if ( !(isspace( *s ) || *s == '>' || *s == '/') )
         return HTML_NONE;
       if ( *s == '/' ) {
-        if ( *is_end_tag )              // invalid: </tag/>
+        if ( *is_end_tag )              // invalid: more than one '/'
           return HTML_NONE;
         *is_end_tag = true;
       }
@@ -885,26 +884,36 @@ static void md_renumber_ol( char *s, md_ol_t old_n, md_ol_t new_n ) {
 static char const* skip_html_tag( char const *s, bool *is_end_tag ) {
   assert( s );
   assert( is_end_tag );
+
+  if ( *s == '<' ) {
+    //
+    // If we're starting at the very beginning of the tag, we don't yet know
+    // whether it's an end tag, so ignore whatever value we were passed in.
+    //
+    *is_end_tag = false;
+  }
+
   char quote = '\0';
   for ( ; *s; ++s ) {
     if ( quote ) {                      // ignore everything ...
       if ( *s == quote )                // ... until matching quote
         quote = '\0';
     } else {
-      if ( *s == '"' || *s == '\'' ) {
-        if ( *is_end_tag )              // quotes illegal in end tag
-          return "";
-        quote = *s;                     // start ignoring everything
-        continue;
-      }
-      if ( *s == '/' ) {                // XML empty <element/>
-        if ( *is_end_tag && *++s != '>' )
-          return "";
-        *is_end_tag = true;
-        return ++s;
-      }
-      if ( *s == '>' )                  // found closing '>'
-        return ++s;
+      switch ( *s ) {
+        case '"':
+        case '\'':
+          if ( *is_end_tag )            // quotes illegal in end tag
+            return "";
+          quote = *s;                   // start ignoring everything
+          break;
+        case '/':                       // </tag> or <tag/>
+          if ( *is_end_tag )            // invalid: more than one '/'
+            return "";
+          *is_end_tag = true;
+          // no break;
+        case '>':                       // found closing '>'
+          return ++s;
+      } // switch
     }
   } // for
   return s;
