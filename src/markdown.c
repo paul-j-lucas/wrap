@@ -650,7 +650,7 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
     // Does the HTML block end on the same line as it starts?
     //
     *is_end_tag = md_is_html_end( html_state, s );
-    return *is_end_tag ? HTML_END : html_state;
+    return html_state;
   }
 
   if ( (*is_end_tag = s[0] == '/') )    // </tag>
@@ -675,10 +675,19 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
     element[ len++ ] = tolower( *s++ );
   } // for
 
-  if ( is_html_pre_element( element ) )
+  if ( is_html_pre_element( element ) ) {
+    if ( !*is_end_tag ) {
+      //
+      // Does the HTML block end on the same line as it starts?
+      //
+      *is_end_tag = md_is_html_end( HTML_PRE, s );
+    }
     return HTML_PRE;
+  }
+
   if ( is_html_block_element( element ) )
     return HTML_ELEMENT;
+
   //
   // In order for inline HTML to be considered an HTML block, it has to be on
   // a line by itself.
@@ -1151,6 +1160,8 @@ md_state_t const* markdown_parse( char *s ) {
       bool is_end_tag;
       html_state = md_is_html_tag( nws, &is_end_tag );
       if ( html_state ) {
+        if ( is_end_tag )               // HTML ends on same line as it begins
+          html_state = HTML_END;
         stack_push( MD_HTML_BLOCK, indent_left, 0 );
         return &TOP;
       }

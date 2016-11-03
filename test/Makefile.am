@@ -109,6 +109,10 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap--Markdown-html-04.test \
 	tests/wrap--Markdown-html-04a.test \
 	tests/wrap--Markdown-html-05.test \
+	tests/wrap--Markdown-html-06.test \
+	tests/wrap--Markdown-html-07.test \
+	tests/wrap--Markdown-html-08.test \
+	tests/wrap--Markdown-html-09.test \
 	tests/wrap--Markdown-html-CDATA-01a.test \
 	tests/wrap--Markdown-html-CDATA-01b.test \
 	tests/wrap--Markdown-html-CDATA-01c.test \
@@ -124,6 +128,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap--Markdown-html-pre-01.test \
 	tests/wrap--Markdown-html-script-01.test \
 	tests/wrap--Markdown-html-style-01.test \
+	tests/wrap--Markdown-html-style-02.test \
 	tests/wrap--Markdown-link-01a.test \
 	tests/wrap--Markdown-link-01b.test \
 	tests/wrap--Markdown-link-01c.test \
