@@ -1254,8 +1254,16 @@ md_state_t const* markdown_parse( char *s ) {
         TOP.ol_num = ol_num;
       } else {
         TOP.seq_num = ++next_seq_num;
-        if ( TOP.ol_num == 9 )
+        if ( TOP.ol_num == 9       ||
+             TOP.ol_num == 99      ||
+             TOP.ol_num == 999     ||
+             TOP.ol_num == 9999    ||
+             TOP.ol_num == 99999   ||
+             TOP.ol_num == 999999  ||
+             TOP.ol_num == 9999999 ||
+             TOP.ol_num == 99999999 ) {
           ++TOP.indent_hang;
+        }
         md_renumber_ol( nws, ol_num, ++TOP.ol_num );
       }
       break;
