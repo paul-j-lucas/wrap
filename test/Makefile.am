@@ -155,6 +155,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap--Markdown-ol-04s.test \
 	tests/wrap--Markdown-ol-06s.test \
 	tests/wrap--Markdown-ol-07s.test \
+	tests/wrap--Markdown-ol-08s.test \
 	tests/wrap--Markdown-ol-11s.test \
 	tests/wrap--Markdown-ul-01sa.test \
 	tests/wrap--Markdown-ul-01sb.test \
