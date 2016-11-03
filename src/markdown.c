@@ -1254,17 +1254,18 @@ md_state_t const* markdown_parse( char *s ) {
         TOP.ol_num = ol_num;
       } else {
         TOP.seq_num = ++next_seq_num;
-        if ( TOP.ol_num == 9       ||
-             TOP.ol_num == 99      ||
-             TOP.ol_num == 999     ||
-             TOP.ol_num == 9999    ||
-             TOP.ol_num == 99999   ||
-             TOP.ol_num == 999999  ||
-             TOP.ol_num == 9999999 ||
-             TOP.ol_num == 99999999 ) {
+        md_ol_t const next_ol_num = ++TOP.ol_num;
+        if ( next_ol_num == 10       ||
+             next_ol_num == 100      ||
+             next_ol_num == 1000     ||
+             next_ol_num == 10000    ||
+             next_ol_num == 100000   ||
+             next_ol_num == 1000000  ||
+             next_ol_num == 10000000 ||
+             next_ol_num == 100000000 ) {
           ++TOP.indent_hang;
         }
-        md_renumber_ol( nws, ol_num, ++TOP.ol_num );
+        md_renumber_ol( nws, ol_num, next_ol_num );
       }
       break;
 
