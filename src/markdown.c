@@ -134,37 +134,37 @@ static char const*  skip_html_tag( char const*, bool* );
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
- * Checks whether \a s is an HTML block-level tag.
+ * Checks whether \a s is an HTML block-level element.
  *
  * @param s The null-terminated string to check. It is assumed to have been
  * converted to lower-case.
- * @return Returns \c true only if \a s is an HTML block-level tag.
+ * @return Returns \c true only if \a s is an HTML block-level element.
  */
-static inline bool is_html_block_tag( char const *s ) {
+static inline bool is_html_block_element( char const *s ) {
   return bin_search( s, HTML_BLOCK_ELEMENT, ARRAY_SIZE( HTML_BLOCK_ELEMENT ) );
 }
 
 /**
- * Checks whether \a s is an HTML pre-formatted block-level tag.
+ * Checks whether \a s is an HTML pre-formatted block-level element.
  *
  * @param s The null-terminated string to check. It is assumed to have been
  * converted to lower-case.
  * @return Returns \c true only if \a s is an HTML pre-formatted block-level
- * tag.
+ * element.
  */
-static inline bool is_html_pre_tag( char const *s ) {
+static inline bool is_html_pre_element( char const *s ) {
   return  strcmp( s, "pre"    ) == 0 ||
           strcmp( s, "script" ) == 0 ||
           strcmp( s, "style"  ) == 0;
 }
 
 /**
- * Checks whether \a c is an HTML tag character.
+ * Checks whether \a c is an HTML element character.
  *
  * @param c The character to check.
- * @return Returns \c true only if \a c is an HTML tag character.
+ * @return Returns \c true only if \a c is an HTML element character.
  */
-static inline bool is_html_tag_char( char c ) {
+static inline bool is_html_element_char( char c ) {
   return isalpha( c ) || c == '-';
 }
 
@@ -656,12 +656,12 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
   if ( (*is_end_tag = s[0] == '/') )    // </tag>
     ++s;
 
-  char tag[ HTML_ELEMENT_CHAR_MAX + 1/*null*/ ];
+  char element[ HTML_ELEMENT_CHAR_MAX + 1/*null*/ ];
 
   for ( size_t len = 0; ; ) {
-    if ( len == sizeof tag - 1 )        // tag too long
+    if ( len == sizeof element - 1 )    // element too long
       return HTML_NONE;
-    if ( !is_html_tag_char( *s ) ) {
+    if ( !is_html_element_char( *s ) ) {
       if ( !(isspace( *s ) || *s == '>' || *s == '/') )
         return HTML_NONE;
       if ( *s == '/' ) {
@@ -669,15 +669,15 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
           return HTML_NONE;
         *is_end_tag = true;
       }
-      tag[ len ] = '\0';
+      element[ len ] = '\0';
       break;
     }
-    tag[ len++ ] = tolower( *s++ );
+    element[ len++ ] = tolower( *s++ );
   } // for
 
-  if ( is_html_pre_tag( tag ) )
+  if ( is_html_pre_element( element ) )
     return HTML_PRE;
-  if ( is_html_block_tag( tag ) )
+  if ( is_html_block_element( element ) )
     return HTML_ELEMENT;
   //
   // In order for inline HTML to be considered an HTML block, it has to be on
