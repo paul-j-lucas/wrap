@@ -288,7 +288,7 @@ static md_indent_t md_code_indent_min( void ) {
  * Performs a binary search looking for \a s in \a a.
  *
  * @param s The null-terminated string to search for.
- * @param a The sorted array of strings to search.
+ * @param a The sorted array of null-terminated strings to search.
  * @param n The number of elements in \a a.
  * @return Returns \a true only if \s is in \a a.
  */
@@ -296,7 +296,7 @@ static bool bin_search( char const *s, char const *const a[], size_t n ) {
   assert( s );
   for ( ssize_t i = 0, j = (ssize_t)n - 1; i <= j; ) {
     size_t const m = (i + j) / 2;
-    int const cmp = strcmp( s, a[m] );
+    int const cmp = strcmp( a[m], s );
     if ( cmp < 0 )
       i = m + 1;
     else if ( cmp > 0 )
