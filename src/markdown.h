@@ -67,7 +67,8 @@ struct md_state {
   bool        fn_def_text;              // true if footnote def has text on line
   md_indent_t indent_left;
   md_indent_t indent_hang;              // hang-indent for lists
-  md_ol_t     ol_num;                   // current ordered list number
+  char        ol_c;                     // ordered list character: . or )
+  md_ol_t     ol_num;                   // ordered list number
 };
 typedef struct md_state md_state_t;
 

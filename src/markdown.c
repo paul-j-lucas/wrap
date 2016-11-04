@@ -219,10 +219,10 @@ static inline bool md_is_nestable( md_line_t line_type ) {
 }
 
 /**
- * Checks whether \a c is a Markdown ordered list separator character.
+ * Checks whether \a c is a Markdown ordered list delimiter character.
  *
  * @param c The character to check.
- * @return Returns \c true only if \a c is an ordered list separator character.
+ * @return Returns \c true only if \a c is an ordered list delimiter character.
  */
 static inline bool md_is_ol_sep_char( char c ) {
   return c == '.' || c == ')';
@@ -739,19 +739,21 @@ static bool md_is_link_label( char const *s, bool *has_title ) {
 
 /**
  * Checks whether the line is a Markdown ordered list item: a sequence of
- * digits followed by a period and whitespace.
+ * digits followed by either \c '.' or \c ')' and whitespace.
  *
  * @param s The null-terminated line to check.
  * @param ol_num A pointer to the variable to receive the ordered list number.
+ * @param ol_c A pointer to the variable to receive the ordered list character.
  * @param indent_hang A pointer to the variable to receive the relative hang
  * indent (in spaces).
  * @return Returns \c true only if \a s is a Markdown ordered list item.
  */
-static bool md_is_ol( char const *s, md_ol_t *ol_num,
+static bool md_is_ol( char const *s, md_ol_t *ol_num, char *ol_c,
                       md_indent_t *indent_hang ) {
   assert( s );
   assert( isdigit( s[0] ) );
   assert( ol_num );
+  assert( ol_c );
   assert( indent_hang );
 
   *ol_num = 0;
@@ -762,6 +764,7 @@ static bool md_is_ol( char const *s, md_ol_t *ol_num,
   size_t const len = d - s;
   if ( len >= 1 && len <= MD_OL_CHAR_MAX && md_is_ol_sep_char( d[0] ) &&
        is_space( d[1] ) ) {
+    *ol_c = d[0];
     *indent_hang = d[1] == '\t' ?
       MD_LIST_INDENT_MAX :
       MD_OL_INDENT_MIN + is_space( d[2] );
@@ -961,6 +964,7 @@ static void stack_push( md_line_t line_type, md_indent_t indent_left,
   top->depth       = stack_size() ? stack_size() - 1 : 0;
   top->indent_left = indent_left;
   top->indent_hang = indent_hang;
+  top->ol_c        = '\0';
   top->ol_num      = 0;
 }
 
@@ -1188,6 +1192,7 @@ md_state_t const* markdown_parse( char *s ) {
 
   md_line_t   curr_line_type = MD_NONE;
   md_indent_t indent_hang = 0;
+  char        ol_c = '\0';
   md_ol_t     ol_num = 0;
 
   //
@@ -1199,7 +1204,7 @@ md_state_t const* markdown_parse( char *s ) {
     // Ordered lists.
     case '0': case '1': case '2': case '3': case '4':
     case '5': case '6': case '7': case '8': case '9':
-      if ( md_is_ol( nws, &ol_num, &indent_hang ) )
+      if ( md_is_ol( nws, &ol_num, &ol_c, &indent_hang ) )
         curr_line_type = MD_OL;
       break;
 
@@ -1237,23 +1242,23 @@ md_state_t const* markdown_parse( char *s ) {
   } // while
 
   md_indent_t const nested_indent_min = TOP.depth * MD_LIST_INDENT_MAX;
+  bool const is_nested = indent_left >= nested_indent_min;
+  bool const is_same_type_not_nested = top_is( curr_line_type ) && !is_nested;
 
   switch ( curr_line_type ) {
 
     case MD_NONE:
       if ( blank_line && md_is_table( s ) ) {
         assert( !top_is( MD_TABLE ) );
-        if ( indent_left >= nested_indent_min )
+        if ( is_nested )
           stack_push( MD_TABLE, indent_left, 0 );
       }
       break;
 
-    case MD_OL:
-      if ( !top_is( MD_OL ) || indent_left >= nested_indent_min ) {
-        stack_push( MD_OL, indent_left, indent_hang );
-        TOP.ol_num = ol_num;
-      } else {
-        TOP.seq_num = ++next_seq_num;
+    case MD_OL: {
+      bool const ol_same_char = TOP.ol_c == ol_c;
+      if ( is_same_type_not_nested && ol_same_char ) {
+        TOP.seq_num = ++next_seq_num;   // reuse current state
         md_ol_t const next_ol_num = ++TOP.ol_num;
         if ( next_ol_num == 10       ||
              next_ol_num == 100      ||
@@ -1263,18 +1268,35 @@ md_state_t const* markdown_parse( char *s ) {
              next_ol_num == 1000000  ||
              next_ol_num == 10000000 ||
              next_ol_num == 100000000 ) {
-          ++TOP.indent_hang;
+          ++TOP.indent_hang;            // digits just got 1 wider
         }
         md_renumber_ol( nws, ol_num, next_ol_num );
+      } else {
+        if ( is_same_type_not_nested && !ol_same_char ) {
+          //
+          // This handles the case when the ordered list delimiter changes:
+          //
+          //  1. This is one list.
+          //  2) This is another list.
+          //
+          // Just get rid of the current list (effectively replacing it with
+          // the new list).
+          //
+          stack_pop();
+        }
+        stack_push( MD_OL, indent_left, indent_hang );
+        TOP.ol_c   = ol_c;
+        TOP.ol_num = ol_num;
       }
       break;
+    }
 
     case MD_DL:
     case MD_UL:
-      if ( !top_is( curr_line_type ) || indent_left >= nested_indent_min )
-        stack_push( curr_line_type, indent_left, indent_hang );
+      if ( is_same_type_not_nested )
+        TOP.seq_num = ++next_seq_num;   // reuse current state
       else
-        TOP.seq_num = ++next_seq_num;
+        stack_push( curr_line_type, indent_left, indent_hang );
       break;
 
     default:
