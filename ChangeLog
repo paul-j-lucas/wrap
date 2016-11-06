@@ -1,3 +1,96 @@
+2016-11-05  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, alloca.in.h, config.charset, flexmember.h, fnmatch.c,
+     fnmatch.in.h, fnmatch_loop.c, getopt.c, getopt.in.h, getopt1.c,
+     getopt_int.h, gettext.h, hard-locale.c, hard-locale.h, localcharset.c,
+     localcharset.h, mbrtowc.c, mbsinit.c, mbsrtowcs-impl.h, mbsrtowcs-state.c,
+     mbsrtowcs.c, memchr.c, ref-add.sin, ref-del.sin, stdbool.in.h,
+     stddef.in.h, stdlib.in.h, streq.h, string.in.h, strndup.c, strnlen.c,
+     strnlen1.c, strnlen1.h, sys_types.in.h, sysexits.in.h, unistd.in.h,
+     verify.h, wchar.in.h, wctype.in.h, 00gnulib.m4, absolute-header.m4,
+     alloca.m4, codeset.m4, configmake.m4, extensions.m4, extern-inline.m4,
+     fcntl-o.m4, flexmember.m4, fnmatch.m4, getopt.m4, glibc21.m4,
+     gnulib-cache.m4, gnulib-common.m4, gnulib-comp.m4, gnulib-tool.m4,
+     hard-locale.m4, include_next.m4, localcharset.m4, locale-fr.m4,
+     locale-ja.m4, locale-zh.m4, mbrtowc.m4, mbsinit.m4, mbsrtowcs.m4,
+     mbstate_t.m4, memchr.m4, mmap-anon.m4, nocrash.m4, off_t.m4, onceonly.m4,
+     ssize_t.m4, stdbool.m4, stddef_h.m4, stdlib_h.m4, string_h.m4, strndup.m4,
+     strnlen.m4, sys_types_h.m4, sysexits.m4, unistd_h.m4, warn-on-use.m4,
+     wchar_h.m4, wchar_t.m4, wctype_h.m4, wint_t.m4, snippet/arg-nonnull.h,
+     snippet/c++defs.h, snippet/warn-on-use.h: Updated gnulib.
+   * NEWS: Updated NEWS.
+   * wrap.1: Updated for CommonMark.
+   * wrapc.1: Added mention of indent(1).
+   * markdown.c: No longer requireing any Markdown in column 1.
+
+2016-11-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c, markdown.h, test/Makefile.am, md-ol-09s.md, md-ol-ol-01s.md,
+     md-ol-ol-02s.md, md-ol-ol-03s.md, wrap--Markdown-ol-09s.txt,
+     wrap--Markdown-ol-ol-01s.txt, wrap--Markdown-ol-ol-02s.txt,
+     wrap--Markdown-ol-ol-03s.txt, wrap--Markdown-ol-09s.test,
+     wrap--Markdown-ol-ol-01s.test, wrap--Markdown-ol-ol-02s.test,
+     wrap--Markdown-ol-ol-03s.test: More tests for ')' ordered-list delimiter.
+   * test/Makefile.am, md-ol-08s.md, wrap--Markdown-ol-08s.txt,
+     wrap--Markdown-ol-08s.test: Added ordered-list test using ).
+   * markdown.c: Better incrementing of indent hang for 99, 999, 9999, etc.
+   * markdown.c: Now incrementing indent hang for 99, 999, 9999, etc.
+
+2016-11-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c, test/Makefile.am, md-html-06.md, md-html-07.md, md-html-08.md,
+     md-html-09.md, md-html-style-02.md, wrap--Markdown-html-06.txt,
+     wrap--Markdown-html-07.txt, wrap--Markdown-html-08.txt,
+     wrap--Markdown-html-09.txt, wrap--Markdown-html-style-02.txt,
+     wrap--Markdown-html-06.test, wrap--Markdown-html-07.test,
+     wrap--Markdown-html-08.test, wrap--Markdown-html-09.test,
+     wrap--Markdown-html-style-02.test: More tests; fixed bugs.
+   * markdown.c: Fixed bin_search().
+   * markdown.c: Clean-up.
+   * markdown.c: Tweaked skip_html_tag().
+
+2016-11-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c, test/Makefile.am, md-html-pre-01.md, md-html-script-01.md,
+     md-html-style-01.md, wrap--Markdown-html-pre-01.txt,
+     wrap--Markdown-html-script-01.txt, wrap--Markdown-html-style-01.txt,
+     wrap--Markdown-html-pre-01.test, wrap--Markdown-html-script-01.test,
+     wrap--Markdown-html-style-01.test: Added pre, script, and style tests.
+   * markdown.c, md-html-03.c, md-html-03.md, md-html-03a.md, md-html-04.c,
+     md-html-04.md, md-html-04a.md, wrap--Markdown-html-03.txt,
+     wrap--Markdown-html-03a.txt, wrap--Markdown-html-04.txt,
+     wrap--Markdown-html-04a.txt, wrapc--Markdown-html-03.txt,
+     wrapc--Markdown-html-04.txt: CommonMark HTML handling.
+   * options.c, util.c: Capitalized static char const arrays.
+
+2016-10-30  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c: Moved comment.
+
+2016-10-29  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c, markdown.h, wrap.c, test/Makefile.am, md-ul-06.c,
+     wrapc--Markdown-ul-06.txt, wrapc--Markdown-ul-06.test: Fixed interaction
+     between Markdown and block paragraphs.
+
+2016-10-24  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c: Fixed typo in comment.
+
+2016-10-19  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c: Now setting is_end_tag on return for an XML end tag.
+
+2016-10-18  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c: Now checking for XML terminating / only if !is_end_tag.
+   * markdown.c: No longer allowing quotes in HTML end tags.
+   * markdown.c: Variable renaming.
+   * markdown.c: Smaller skip_html_element() implementation.
+   * markdown.c, options.c: Clean-up.
+   * wrapc.c: Fixed typo in comment.
+   * markdown.c: Added skip_html_element().
+
 2016-10-17  Paul J. Lucas <paul@lucasmail.org>
 
    * markdown.c, test/Makefile.am, md-html-CDATA-01a.md, md-html-CDATA-01b.md,
