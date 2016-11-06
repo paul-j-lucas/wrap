@@ -54,8 +54,7 @@ typedef enum indent indent_t;
 char const         *me;                 // executable name
 
 // local constant definitions
-static char const   UTF8_BOM[] = "\xEF\xBB\xBF";
-static size_t const UTF8_BOM_LEN = sizeof UTF8_BOM - 1; // terminating null
+static char const   UTF8_BOM[] = { '\xEF', '\xBB', '\xBF' };
 static char const   UTF8_LEN_TABLE[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
   /* 0 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -338,9 +337,9 @@ insert:
     } // for
     out_len = tmp_out_len;              // UTF-8 is valid
 
-    if ( len == UTF8_BOM_LEN ) {
-      size_t const utf8_start_pos = out_len - UTF8_BOM_LEN;
-      if ( strncmp( out_buf + utf8_start_pos, UTF8_BOM, UTF8_BOM_LEN ) == 0 )
+    if ( len == sizeof UTF8_BOM ) {
+      size_t const utf8_start_pos = out_len - sizeof UTF8_BOM;
+      if ( strncmp( out_buf + utf8_start_pos, UTF8_BOM, sizeof UTF8_BOM ) == 0 )
         continue;                       // discard UTF-8 BOM
     }
 
