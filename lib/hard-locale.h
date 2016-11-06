@@ -1,6 +1,6 @@
-/* Convert string to wide string.
-   Copyright (C) 2008-2016 Free Software Foundation, Inc.
-   Written by Bruno Haible <bruno@clisp.org>, 2008.
+/* Determine whether a locale is hard.
+
+   Copyright (C) 1999, 2003-2004, 2009-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,18 +15,11 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-#include <config.h>
+#ifndef HARD_LOCALE_H_
+# define HARD_LOCALE_H_ 1
 
-/* Specification.  */
-#include <wchar.h>
+# include <stdbool.h>
 
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+bool hard_locale (int);
 
-#include "strnlen1.h"
-
-
-extern mbstate_t _gl_mbsrtowcs_state;
-
-#include "mbsrtowcs-impl.h"
+#endif /* HARD_LOCALE_H_ */

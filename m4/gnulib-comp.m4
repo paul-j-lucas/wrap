@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2015 Free Software Foundation, Inc.
+# Copyright (C) 2002-2016 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,10 +48,12 @@ AC_DEFUN([gl_EARLY],
   # Code from module configmake:
   # Code from module extensions:
   # Code from module extern-inline:
+  # Code from module flexmember:
   # Code from module fnmatch:
   # Code from module getopt-gnu:
   # Code from module getopt-posix:
   # Code from module gettext-h:
+  # Code from module hard-locale:
   # Code from module include_next:
   # Code from module localcharset:
   # Code from module mbrtowc:
@@ -99,6 +101,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_ALLOCA
   gl_CONFIGMAKE_PREP
   AC_REQUIRE([gl_EXTERN_INLINE])
+  AC_C_FLEXIBLE_ARRAY_MEMBER
   gl_FUNC_FNMATCH_POSIX
   if test -n "$FNMATCH_H"; then
     AC_LIBOBJ([fnmatch])
@@ -125,6 +128,7 @@ AC_DEFUN([gl_INIT],
   AC_SUBST([GNULIB_GL_UNISTD_H_GETOPT])
   AC_SUBST([LIBINTL])
   AC_SUBST([LTLIBINTL])
+  gl_HARD_LOCALE
   gl_LOCALCHARSET
   LOCALCHARSET_TESTS_ENVIRONMENT="CHARSETALIASDIR=\"\$(abs_top_builddir)/$gl_source_base\""
   AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
@@ -322,6 +326,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/alloca.c
   lib/alloca.in.h
   lib/config.charset
+  lib/flexmember.h
   lib/fnmatch.c
   lib/fnmatch.in.h
   lib/fnmatch_loop.c
@@ -330,6 +335,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getopt1.c
   lib/getopt_int.h
   lib/gettext.h
+  lib/hard-locale.c
+  lib/hard-locale.h
   lib/localcharset.c
   lib/localcharset.h
   lib/mbrtowc.c
@@ -366,10 +373,12 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/extensions.m4
   m4/extern-inline.m4
   m4/fcntl-o.m4
+  m4/flexmember.m4
   m4/fnmatch.m4
   m4/getopt.m4
   m4/glibc21.m4
   m4/gnulib-common.m4
+  m4/hard-locale.m4
   m4/include_next.m4
   m4/localcharset.m4
   m4/locale-fr.m4
