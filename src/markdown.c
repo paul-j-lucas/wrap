@@ -187,7 +187,7 @@ static inline void md_code_fence_init( md_code_fence_t *fence ) {
  */
 static inline bool md_is_code_fence_end( char const *s,
                                          md_code_fence_t *fence ) {
-  return (s[0] == '~' || s[0] == '`') && md_is_code_fence( s, fence );
+  return (s[0] == '`' || s[0] == '~') && md_is_code_fence( s, fence );
 }
 
 /**
@@ -412,9 +412,10 @@ static bool md_is_atx_header( char const *s ) {
  * more \c ~ or \c ` characters.
  *
  * @param s The null-terminated line to check.
- * @param fence A pointer to the \c struct containing the fence info: if 0,
- * return new fence info; otherwise checks to see if \a s matches the existing
- * fence info.
+ * @param fence A pointer to the \c struct containing the fence info: if
+ * \c fence->cf_c, return new fence info; otherwise checks to see if \a s
+ * matches the existing fence info.
+
  * @return Returns \c true only if it is.
  */
 static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
@@ -432,8 +433,9 @@ static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
   for ( ; *s == c; ++s, ++len )
     /* empty */;
 
-  if ( fence->cf_len )
-    return len >= fence->cf_len;
+  if ( fence->cf_len )                  // closing code fence
+    return len >= fence->cf_len && is_blank_line( s );
+
   if ( len >= MD_CODE_FENCE_CHAR_MIN ) {
     fence->cf_c   = c;
     fence->cf_len = len;
@@ -830,7 +832,7 @@ static bool md_is_ul( char const *s, md_indent_t *indent_hang ) {
  */
 static bool md_is_Setext_header( char const *s ) {
   assert( s );
-  assert( s[0] == '=' || s[0] == '-' );
+  assert( s[0] == '-' || s[0] == '=' );
 
   for ( char const c = *s; *s && !is_eol( *s ); ++s ) {
     if ( *s != c )
@@ -1001,6 +1003,8 @@ md_state_t const* markdown_parse( char *s ) {
   PREV_BOOL( code_fence_end );
   PREV_BOOL( link_label_has_title );
 
+  /////////////////////////////////////////////////////////////////////////////
+
   switch ( TOP.line_type ) {
     case MD_CODE:
       //
@@ -1014,7 +1018,7 @@ md_state_t const* markdown_parse( char *s ) {
         // If code_fence.cf_c is set, that distinguishes a code fence from
         // indented code.
         //
-        if ( md_is_code_fence_end( s, &code_fence ) )
+        if ( md_is_code_fence_end( nws, &code_fence ) )
           prev_code_fence_end = true;
         //
         // As long as we're in the MD_CODE state, we can just return without
@@ -1062,6 +1066,8 @@ md_state_t const* markdown_parse( char *s ) {
       /* suppress warning */;
   } // switch
 
+  /////////////////////////////////////////////////////////////////////////////
+
   //
   // While blank lines don't change state directly, we do have to keep track of
   // when we've seen one because:
@@ -1076,6 +1082,8 @@ md_state_t const* markdown_parse( char *s ) {
     prev_blank_line = true;
     return &TOP;
   }
+
+  /////////////////////////////////////////////////////////////////////////////
 
   if ( top_is( MD_HTML_BLOCK ) ) {
     //
@@ -1115,62 +1123,28 @@ md_state_t const* markdown_parse( char *s ) {
     }
   }
 
-  //
-  // Markdown that must not occur with indentation.
-  //
-  switch ( s[0] ) {
+  /////////////////////////////////////////////////////////////////////////////
+
+  switch ( nws[0] ) {
+
     // atx headers.
     case '#':
-      if ( md_is_atx_header( s ) )
+      if ( md_is_atx_header( nws ) )
         CLEAR_RETURN( MD_HEADER_ATX );
       break;
-
-    // Setext headers.
-    case '=':
-    case '-':
-      if ( !blank_line && md_is_Setext_header( s ) )
-        CLEAR_RETURN( MD_HEADER_LINE );
-      break;
-
-    // PHP Markdown Extra code fences.
-    case '~':
-    case '`':
-      md_code_fence_init( &code_fence );
-      if ( md_is_code_fence( s, &code_fence ) )
-        CLEAR_RETURN( MD_CODE );
-      break;
-  } // switch
-
-  //
-  // Markdown that may occur with indentation.
-  //
-  switch ( nws[0] ) {
 
     // PHP Markdown Extra abbreviations.
     case '*':
       if ( md_is_html_abbr( nws ) )
         CLEAR_RETURN( MD_HTML_ABBR );
-      // no break;
+      break;
 
-    // Markdown horizontal rules.
+    // Setext headers.
     case '-':
-    case '_':
-      if ( md_is_hr( nws ) )
-        CLEAR_RETURN( MD_HR );
+    case '=':
+      if ( !blank_line && md_is_Setext_header( nws ) )
+        CLEAR_RETURN( MD_HEADER_LINE );
       break;
-
-    // Block-level HTML.
-    case '<': {
-      bool is_end_tag;
-      html_state = md_is_html_tag( nws, &is_end_tag );
-      if ( html_state ) {
-        if ( is_end_tag )               // HTML ends on same line as it begins
-          html_state = HTML_END;
-        stack_push( MD_HTML_BLOCK, indent_left, 0 );
-        return &TOP;
-      }
-      break;
-    }
 
     // Markdown link labels or PHP Markdown Extra footnote definitions.
     case '[':
@@ -1186,6 +1160,40 @@ md_state_t const* markdown_parse( char *s ) {
           CLEAR_RETURN( MD_LINK_LABEL );
       }
       break;
+
+    // PHP Markdown Extra code fences.
+    case '`':
+    case '~':
+      md_code_fence_init( &code_fence );
+      if ( md_is_code_fence( nws, &code_fence ) )
+        CLEAR_RETURN( MD_CODE );
+      break;
+
+    // Block-level HTML.
+    case '<': {
+      bool is_end_tag;
+      html_state = md_is_html_tag( nws, &is_end_tag );
+      if ( html_state ) {
+        if ( is_end_tag )               // HTML ends on same line as it begins
+          html_state = HTML_END;
+        stack_push( MD_HTML_BLOCK, indent_left, 0 );
+        return &TOP;
+      }
+      break;
+    }
+  } // switch
+
+  //
+  // Markdown horizontal rules: these are handled more simply if they are in
+  // their own switch statement since the * and - would otherwise be duplicate
+  // case values in the above switch statement.
+  //
+  switch ( nws[0] ) {
+    case '*':
+    case '-':
+    case '_':
+      if ( md_is_hr( nws ) )
+        CLEAR_RETURN( MD_HR );
   } // switch
 
   /////////////////////////////////////////////////////////////////////////////
