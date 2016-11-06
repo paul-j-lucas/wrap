@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\fP 1 "August 18, 2016" "PJL TOOLS"
+.TH \f3wrap\fP 1 "November 5, 2016" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -372,12 +372,9 @@ atx-style headers may be ``closed''
 with trailing \f(CW#\fP characters,
 but the number of closing \f(CW#\fP characters
 need not match the number of opening characters.
-Headers of either style
-.I must not
-be indented.
+Headers of either style may be indented by up to 3 spaces.
 .SS Unordered/Bulleted Lists
 Unordered lists use asterisks, plusses, and minuses
-(interchangably)
 as list item markers:
 .cS
 * Red
@@ -444,7 +441,10 @@ multiline items are
 .I always
 hang-indented.
 .SS Ordered/Numbered Lists
-Ordered lists use numbers followed by a period and a space:
+Ordered lists use numbers and
+.I must
+be followed by either a period or a right parenthesis \f(CW)\fP delimiter
+and a space:
 .cS
 1. Chocolate
 2. Vanilla
@@ -453,8 +453,12 @@ Ordered lists use numbers followed by a period and a space:
 When reformatted,
 out-of-sequence numbers will automatically be renumbered
 starting at the first number.
-(This follows PHP Markdown Extra.)
-.P
+A list item having a delimiter that is different from a previous list item
+starts a new list:
+.cS
+1. This is one list.
+1) This is another list.
+.cE
 Aside from using numbers as list item markers,
 everything else about unordered lists
 also applies to ordered lists.
@@ -487,12 +491,6 @@ Aside from using a colon as the list item marker,
 everything else about unordered lists
 also applies to definition lists.
 .SS Nested Lists
-The original Markdown specification
-does not support nested lists;
-other Markdowns and
-.BR wrap ,
-however,
-do.
 Nested lists
 .I must
 be indented 4 spaces per nesting level
@@ -535,8 +533,8 @@ Alternatively,
 code blocks may be ``fenced,''
 that is a sequence of lines
 starting with 3 or more
-non-indented tildes or backticks
-and ending with the same number of the same character:
+tildes \f(CW~\fP or backticks \f(CW`\fP
+and ending with at least as many of the same character:
 .cS
 ~~~
 #include <stdio.h>
@@ -550,7 +548,7 @@ Fenced code blocks are passed through unaltered.
 .SS Horizontal Rules
 Horitontal rules
 (lines separating sections of a document)
-are three or more
+are 3 or more
 hyphens,
 asterisks,
 or
@@ -565,31 +563,77 @@ ___
 * * *
 ----------
 .cE
-Since a non-indented \f(CW---\fP
+Since a \f(CW---\fP
 would be ambiguous with a Setext 2nd-level header,
 the latter
 .I must
 have a non-blank line preceding it.
 .SS Block-Level HTML
-Block-level HTML are lines
-that are bracketed by a beginning and ending tag
-of any HTML element:
-.cS
-<table>
-  <tr>
-    <td>Aha!</td>
-  </tr>
-</table>
-.cE
+Block-level HTML are lines of one of the following:
+.nr step 1 1
+.IP \n[step]. 3
+Starts with
+\f(CW<pre\fP,
+\f(CW<script\fP,
+or
+\f(CW<style\fP,
+and is optionally followed by \f(CW>\fP or whitespace;
+ends with a line containing
+\f(CW</pre>\fP,
+\f(CW</script>\fP,
+or
+\f(CW</style>\fP.
+.IP \n+[step].
+Starts with \f(CW<!--\fP (comment);
+ends with a line containing \f(CW-->\fP.
+.IP \n+[step].
+Starts with \f(CW<?\fP (processing instruction);
+ends with a line containing \f(CW?>\fP.
+.IP \n+[step].
+Starts with \f(CW<!\fP followed by an uppercase letter (DOCTYPE);
+ends with a line containing \f(CW>\fP.
+.IP \n+[step].
+Starts with \f(CW<![CDATA[\fP (CDATA section);
+ends with a line containing \f(CW]]>\fP.
+.IP \n+[step].
+Starts with \f(CW<\fP or \f(CW</\fP
+followed by one of
+\f(CWarticle\fP, \f(CWaside\fP,
+\f(CWbase\fP, \f(CWbasefont\fP, \f(CWblockquote\fP, \f(CWbody\fP, \f(CWbr\fP,
+\f(CWbutton\fP,
+\f(CWcanvas\fP, \f(CWcaption\fP, \f(CWcenter\fP, \f(CWcol\fP, \f(CWcolgroup\fP,
+\f(CWdd\fP, \f(CWdetails\fP, \f(CWdialog\fP, \f(CWdir\fP, \f(CWdiv\fP,
+\f(CWdl\fP, \f(CWdt\fP,
+\f(CWembed\fP,
+\f(CWfieldset\fP, \f(CWfigcaption\fP, \f(CWfigure\fP, \f(CWfooter\fP,
+\f(CWform\fP, \f(CWframe\fP, \f(CWframeset\fP,
+\f(CWh1\fP, \f(CWh2\fP, \f(CWh3\fP, \f(CWh4\fP, \f(CWh5\fP, \f(CWh6\fP,
+\f(CWhead\fP, \f(CWheader\fP, \f(CWhgroup\fP, \f(CWhr\fP, \f(CWhtml\fP,
+\f(CWiframe\fP,
+\f(CWlegend\fP, \f(CWli\fP, \f(CWlink\fP,
+\f(CWmain\fP, \f(CWmap\fP, \f(CWmenu\fP, \f(CWmenuitem\fP, \f(CWmeta\fP,
+\f(CWnav\fP, \f(CWnoframes\fP,
+\f(CWobject\fP, \f(CWol\fP, \f(CWoptgroup\fP, \f(CWoption\fP,
+\f(CWp\fP, \f(CWparam\fP, \f(CWprogress\fP,
+\f(CWsection\fP, \f(CWsource\fP, \f(CWsummary\fP,
+\f(CWtable\fP, \f(CWtbody\fP, \f(CWtd\fP, \f(CWtextarea\fP, \f(CWtfoot\fP,
+\f(CWth\fP, \f(CWthead\fP, \f(CWtitle\fP, \f(CWtr\fP, \f(CWtrack\fP,
+\f(CWul\fP,
+or
+\f(CWvideo\fP,
+and is optionally followed by \f(CW>\fP, \f(CW/>\fP, or whitespace;
+ends with a blank line.
+.IP \n+[step].
+Starts with a complete HTML (or XML) open or close tag
+(having any tag name other than \f(CWpre\fP, \f(CWscript\fP, or \f(CWstyle\fP)
+optionally followed
+.I only
+by whitespace;
+ends with a blank line.
+.P
+If the line meets both the start and end conditions,
+the block be only that line.
 HTML blocks are passed through unaltered.
-Unlike the original Markdown specification,
-the beginning and ending HTML tags
-need not be separated from surrounding text
-by blank lines
-and the tags may be indented
-by up to 3 spaces.
-However,
-the beginning and ending tags must be on lines by themselves.
 .SS Links
 Neither inline nor reference links need any special treatment;
 however,
@@ -730,6 +774,10 @@ Paul J. Lucas
 .BR wraprc (5)
 .P
 .nf
+.IR "CommonMark" ", John MacFarlane,"
+.br
+<\f(CWhttp://commonmark.org/\fP>
+.P
 .IR "Markdown" ", John Gruber,"
 .br
 <\f(CWhttps://daringfireball.net/projects/markdown/\fP>
