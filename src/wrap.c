@@ -372,7 +372,7 @@ insert:
     // Slide the partial word to the left where we can pick up from where we
     // left off the next time around.
     //
-    for ( size_t from = wrap_pos + 1; from < tmp_out_len; ++from ) {
+    for ( size_t from = wrap_pos + 1/*null*/; from < tmp_out_len; ++from ) {
       c = out_buf[ from ];
       if ( !isspace( c ) ) {
         out_buf[ out_len++ ] = c;
