@@ -1079,8 +1079,8 @@ static void usage( void ) {
 "  -s number  Specify tab-spaces equivalence [default: %d].\n"
 "  -T         Treat paragraph first line as title.\n"
 "  -u         Format Markdown.\n"
-"  -w number  Specify line width [default: %d]\n"
 "  -v         Print version an exit.\n"
+"  -w number  Specify line width [default: %d]\n"
     , me, me, CONF_FILE_NAME, COMMENT_CHARS_DEFAULT, TAB_SPACES_DEFAULT,
     LINE_WIDTH_DEFAULT
   );
