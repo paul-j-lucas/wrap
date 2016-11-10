@@ -1,3 +1,33 @@
+2016-11-09  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrap.1, wrapc.1, options.c, options.h, wrap.c,
+     wrapc.c, test/Makefile.am, hyphen-01.txt, hyphen-02.txt, hyphen-03.txt,
+     hyphen-04.txt, hyphen-U+00AD-01.txt, hyphen-U+2010-01.txt,
+     wrap-H3-t1-T.txt, wrap-P-01.txt, wrap-hyphen-01.txt, wrap-hyphen-02.txt,
+     wrap-hyphen-03.txt, wrap-hyphen-04.txt, wrap-hyphen-U+00AD-01.txt,
+     wrap-hyphen-U+2010-01.txt, wrap-y-01.txt, wrap-y-02.txt,
+     wrapc--Ada-00.txt, wrapc--Ada-01.txt, wrapc--Ada-02.txt,
+     wrapc--C++-00.txt, wrapc--C++-01.txt, wrapc--Fortran-01.txt,
+     wrapc--Fortran-02.txt, wrapc--Fortran-03.txt, wrapc--Fortran-04.txt,
+     wrap-hyphen-01.test, wrap-hyphen-02.test, wrap-hyphen-03.test,
+     wrap-hyphen-04.test, wrap-hyphen-U+00AD-01.test,
+     wrap-hyphen-U+2010-01.test, wrap-y-01.test, wrap-y-02.test: Added wrapping
+     at hyphenation.
+   * wrap.c: s/Does/Do/
+
+2016-11-08  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac: Added missing AC_C_INLINE anf AC_TYPE_SSIZE_T.
+
+2016-11-07  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Fixed order of options in help message.
+
+2016-11-06  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Add comment.
+   * wrap.c: Removed UTF8_BOM_LEN.
+
 2016-11-05  Paul J. Lucas <paul@lucasmail.org>
 
    * lib/Makefile.am, alloca.in.h, config.charset, flexmember.h, fnmatch.c,
