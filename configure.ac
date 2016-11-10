@@ -35,14 +35,18 @@ AC_PROG_INSTALL
 AC_CHECK_HEADERS([ctype.h])
 AC_CHECK_HEADERS([errno.h])
 AC_CHECK_HEADERS([fnmatch.h])
+AC_CHECK_HEADERS([getopt.h])
+AC_CHECK_HEADERS([inttypes.h])
 AC_CHECK_HEADERS([limits.h])
 AC_CHECK_HEADERS([pwd.h])
 AC_CHECK_HEADERS([signal.h])
+AC_CHECK_HEADERS([stddef.h])
 AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([sysexits.h])
 AC_CHECK_HEADERS([unistd.h])
 AC_HEADER_ASSERT
 AC_HEADER_STDBOOL
+AC_HEADER_SYS_WAIT
 gl_INIT
 
 # Checks for typedefs, structures, and compiler characteristics.

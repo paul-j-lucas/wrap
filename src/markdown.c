@@ -27,7 +27,7 @@
 // standard
 #include <assert.h>
 #include <ctype.h>
-#include <stddef.h>
+#include <stddef.h>                     /* for size_t */
 #include <stdlib.h>
 #include <string.h>
 

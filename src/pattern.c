@@ -26,6 +26,7 @@
 // standard
 #include <assert.h>
 #include <fnmatch.h>
+#include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

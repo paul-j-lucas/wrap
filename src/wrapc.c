@@ -31,6 +31,7 @@
 #include <ctype.h>
 #include <limits.h>                     /* for PATH_MAX */
 #include <signal.h>                     /* for kill() */
+#include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit() */
 #include <string.h>                     /* for str...() */

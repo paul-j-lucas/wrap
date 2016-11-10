@@ -30,7 +30,8 @@
 // standard
 #include <assert.h>
 #include <ctype.h>
-#include <stdint.h>                     /* for uint32_t */
+#include <inttypes.h>                   /* for uint32_t */
+#include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit(), ... */
 #include <string.h>

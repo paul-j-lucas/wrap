@@ -31,7 +31,6 @@
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
-#include <stdint.h>
 #include <string.h>                     /* for memset(3) */
 
 ///////////////////////////////////////////////////////////////////////////////
