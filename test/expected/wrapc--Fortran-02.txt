@@ -1,7 +1,7 @@
 !
-! Fortran (formerly FORTRAN, derived from "Formula Translation") is a
-! general-purpose, imperative programming language that is especially suited to
-! numeric computation and scientific computing.
+! Fortran (formerly FORTRAN, derived from "Formula Translation") is a general-
+! purpose, imperative programming language that is especially suited to numeric
+! computation and scientific computing.
 !
 ! Originally developed by IBM in the 1950s for scientific and engineering
 ! applications, Fortran came to dominate this area of programming early on and

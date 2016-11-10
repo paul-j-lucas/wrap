@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\fP 1 "November 5, 2016" "PJL TOOLS"
+.TH \f3wrap\fP 1 "November 9, 2016" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -45,9 +45,18 @@ is a filter for reformatting text by wrapping and filling lines
 to a given
 .IR line-width ,
 the default for which is 80 characters.
-Lines are wrapped at
+Lines are wrapped at either
 .I whitespace
-characters.
+or
+.I hyphen
+characters
+(unless the
+.B \-y
+option is specified;
+see
+.B Hyphen Characters
+below).
+.P
 A whitespace character is any character for which
 .BR isspace (3)
 returns non-zero
@@ -117,7 +126,76 @@ Text is assumed to be encoded in UTF-8.
 All multiple-byte, UTF-8-encoded characters
 are considered to have a width of 1.
 UTF-8 Byte-Order Marks (BOMs)
+and UTF-8 byte sequences that result in invalid Unicode code-points
 are discarded.
+.SS Hyphen Characters
+In addition to wrapping at whitespace characters,
+.B wrap
+also wraps at
+.I hyphen
+characters
+(unless
+.B \-y
+is specified),
+but only when they appear between letters.
+A hyphen character is any character that has either the
+``hyphen''
+or
+``dash''
+Unicode property
+(with the obvious exception of U+2011 Non-Breaking Hyphen)
+and are:
+.P
+.PD 0
+.IP \[bu] 2
+U+002D: Hyphen-Minus
+.IP \[bu]
+U+00AD: Soft Hyphen
+.IP \[bu]
+U+058A: Armenian Hyphen
+.IP \[bu]
+U+05BE: Hebrew Punctuation Maqaf
+.IP \[bu]
+U+1400: Canadian Syllabics Hyphen
+.IP \[bu]
+U+1806: Mongolian Soft Hyphen
+.IP \[bu]
+U+2010: Hyphen
+.IP \[bu]
+U+2013: En Dash
+.IP \[bu]
+U+2014: Em Dash
+.IP \[bu]
+U+2015: Horizontal Bar
+.IP \[bu]
+U+2027: Hyphenation Point
+.IP \[bu]
+U+2043: Hyphen Bullet
+.IP \[bu]
+U+2053: Swung Dash
+.IP \[bu]
+U+2E17: Double Oblique Hyphen
+.IP \[bu]
+U+2E1A: Hyphen with Diaeresis
+.IP \[bu]
+U+2E40: Double Hyphen
+.IP \[bu]
+U+301C: Wave Dash
+.IP \[bu]
+U+3030: Wavy Dash
+.IP \[bu]
+U+30A0: Katakana-Hiragana Double Hyphen
+.IP \[bu]
+U+30FB: Katakana Middle Dot
+.IP \[bu]
+U+FE58: Small Em Dash
+.IP \[bu]
+U+FE63: Small Hyphen-Minus
+.IP \[bu]
+U+FF0D: Fullwidth Hyphen-Minus
+.IP \[bu]
+U+FF65: Halfwidth Katakana Middle Dot
+.PD
 .SH OPTIONS
 An option argument
 .I f
@@ -322,6 +400,9 @@ characters
 .TP
 .B \-W
 Treats a line beginning with whitespace as a paragraph delimiter.
+.TP
+.B \-y
+Suppresses wrapping at hyphen characters.
 .SH MARKDOWN FORMATTING
 Via the
 .B \-u
@@ -785,6 +866,10 @@ Paul J. Lucas
 .IR "PHP Markdown Extra" ,
 .br
 <\f(CWhttps://michelf.ca/projects/php-markdown/extra/\fP>
+.P
+.IR "PropList" ,
+.br
+<\f(CWhttp://www.unicode.org/Public/UCD/latest/ucd/PropList.txt\fP>
 .P
 .IR "Writing on GitHub" ,
 .br

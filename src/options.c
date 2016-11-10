@@ -69,6 +69,7 @@ size_t              opt_mirror_spaces;
 size_t              opt_mirror_tabs;
 size_t              opt_newlines_delimit = NEWLINES_DELIMIT_DEFAULT;
 bool                opt_no_conf;
+bool                opt_no_hyphen;
 char const         *opt_para_delims;
 bool                opt_prototype;
 size_t              opt_tab_spaces = TAB_SPACES_DEFAULT;
@@ -232,6 +233,7 @@ static void parse_options( int argc, char const *argv[], char const *opts,
       case 'v': print_version         = true;                 break;
       case 'w': opt_line_width        = check_atou( optarg ); break;
       case 'W': opt_lead_ws_delimit   = true;                 break;
+      case 'y': opt_no_hyphen         = true;                 break;
       default : usage();
     } // switch
   } // for
@@ -240,7 +242,7 @@ static void parse_options( int argc, char const *argv[], char const *opts,
   check_mutually_exclusive( "n", "N" );
   check_mutually_exclusive( "Pu", "dhHiILmMStW" );
   check_mutually_exclusive( "u", "sT" );
-  check_mutually_exclusive( "v", "abcCdeEfFhHiIlmMnNopsStTuwW" );
+  check_mutually_exclusive( "v", "abcCdeEfFhHiIlmMnNopsStTuwWy" );
 
   if ( print_version ) {
     PRINT_ERR( "%s\n", PACKAGE_STRING );
@@ -250,7 +252,7 @@ static void parse_options( int argc, char const *argv[], char const *opts,
 
 ////////// extern functions ///////////////////////////////////////////////////
 
-#define COMMON_OPTS         "a:b:c:Cef:F:l:o:p:s:Tuvw:"
+#define COMMON_OPTS         "a:b:c:Cef:F:l:o:p:s:Tuvw:y"
 
 void init_options( int argc, char const *argv[], void (*usage)(void) ) {
   static char const WRAP_OPTS [] = COMMON_OPTS "dEh:H:i:I:L:m:M:nNPS:t:W";

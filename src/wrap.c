@@ -30,6 +30,7 @@
 // standard
 #include <assert.h>
 #include <ctype.h>
+#include <stdint.h>                     /* for uint32_t */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit(), ... */
 #include <string.h>
@@ -39,6 +40,21 @@
 
 #define WIPC_DEFERF(BUF,SIZE,CODE,FORMAT,...) \
   snprintf( (BUF), (SIZE), ("%c" FORMAT), (CODE), __VA_ARGS__ )
+
+/**
+ * Unicode code-point.
+ */
+typedef uint32_t codepoint_t;
+
+/**
+ * Hyphenation states.
+ */
+enum hyphen {
+  HYPHEN_NO,
+  HYPHEN_MAYBE,                         // encountered H-
+  HYPHEN_YES                            // encountered H-H
+};
+typedef enum hyphen hyphen_t;
 
 /**
  * Line indentation type.
@@ -54,26 +70,11 @@ typedef enum indent indent_t;
 char const         *me;                 // executable name
 
 // local constant definitions
-static char const   UTF8_BOM[] = { '\xEF', '\xBB', '\xBF' };
-static char const   UTF8_LEN_TABLE[] = {
-  /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
-  /* 0 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  /* 1 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  /* 2 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  /* 3 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  /* 4 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  /* 5 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  /* 6 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  /* 7 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-  /* 8 */ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  // continuation bytes
-  /* 9 */ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  //        |
-  /* A */ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  //        |
-  /* B */ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  //        |
-  /* C */ 0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,  // C0 & C1 are overlong ASCII
-  /* D */ 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-  /* E */ 3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
-  /* F */ 4,4,4,4,4,4,4,4,5,5,5,5,6,6,0,0
-};
+static codepoint_t const  CP_BYTE_ORDER_MARK      = 0x00FEFF;
+static codepoint_t const  CP_INVALID              = ~0;
+static codepoint_t const  CP_SURROGATE_HIGH_START = 0x00D800;
+static codepoint_t const  CP_SURROGATE_LOW_END    = 0x00DFFF;
+static codepoint_t const  CP_VALID_MAX            = 0x10FFFF;
 
 // local variable definitions
 static line_buf_t   in_buf;
@@ -90,6 +91,7 @@ static size_t       proto_width;
 
 // local variable definitions specific to wrap state
 static unsigned     consec_newlines;    // number of consecutive newlines
+static hyphen_t     hyphen;
 static bool         ignore_lead_dot;    // ignore leading '.' line?
 static indent_t     indent = INDENT_LINE;
 static bool         is_long_line;       // line longer than line_width?
@@ -102,15 +104,41 @@ static bool         was_para_delim_char;// prev char a paragraph delimiter?
 static int          buf_getc( char const** );
 static void         delimit_paragraph( void );
 static void         init( int, char const*[] );
+static bool         is_hyphen( codepoint_t );
 static void         markdown_reset();
 static void         print_lead_chars( void );
 static void         print_line( size_t, bool );
 static void         put_tabs_spaces( size_t, size_t );
 static size_t       read_line( line_buf_t );
 static void         usage( void );
+static codepoint_t  utf8_decode_impl( char const* );
 static void         wipc_send( FILE*, char* );
 
 ////////// inline functions ///////////////////////////////////////////////////
+
+/**
+ * Checks whether a given Unicode code-point is valid.
+ *
+ * @param cp The Unicode code-point to check.
+ * @return Returns \c true only if valid.
+ */
+static inline bool codepoint_valid( codepoint_t cp ) {
+  return  cp <= CP_VALID_MAX &&
+          // UTF-16 surrogate values are invalid in UTF-32.
+          !(cp >= CP_SURROGATE_HIGH_START && cp <= CP_SURROGATE_LOW_END);
+}
+
+/**
+ * Checks whether \a c is a "hyphen adjacent character," that is charcter that
+ * can appear adjacent to a hyphen on either side.
+ *
+ * @param c The character to check. (The type is \c int because the type of the
+ * argument to \c isalpha() is.)
+ * @return Returns \c true only if \a c can appear on either side of a hyphen.
+ */
+static inline bool is_hyphen_adjacent_char( int c ) {
+  return isalpha( c );
+}
 
 /**
  * Prints an end-of-line and sends any pending IPC message to wrapc.
@@ -121,6 +149,18 @@ static inline void print_eol( void ) {
 }
 
 /**
+ * Decodes a UTF-8 encoded character into its corresponding Unicode code-point.
+ * This inline version is optimized for the common case of ASCII.
+ *
+ * @param s A pointer to the first byte of the UTF-8 encoded character.
+ * @return Returns said code-point.
+ */
+static inline codepoint_t utf8_decode( char const *s ) {
+  unsigned char const *const u = (unsigned char const*)s;
+  return *u <= 127 ? *u : utf8_decode_impl( s );
+}
+
+/**
  * Gets the number of bytes comprising the UTF-8 encoding of a Unicode
  * codepoint.
  *
@@ -128,6 +168,25 @@ static inline void print_eol( void ) {
  * @return Returns 1-6, or 0 if \a c is invalid.
  */
 static inline size_t utf8_len( char c ) {
+  static char const UTF8_LEN_TABLE[] = {
+    /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
+    /* 0 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    /* 1 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    /* 2 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    /* 3 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    /* 4 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    /* 5 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    /* 6 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    /* 7 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    /* 8 */ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  // continuation bytes
+    /* 9 */ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  //        |
+    /* A */ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  //        |
+    /* B */ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  //        |
+    /* C */ 0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,  // C0 & C1 are overlong ASCII
+    /* D */ 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+    /* E */ 3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
+    /* F */ 4,4,4,4,4,4,4,4,5,5,5,5,6,6,0,0
+  };
   return (size_t)UTF8_LEN_TABLE[ (unsigned char)c ];
 }
 
@@ -137,13 +196,13 @@ int main( int argc, char const *argv[] ) {
   wait_for_debugger_attach( "WRAP_DEBUG" );
   init( argc, argv );
 
+  char    c_prev = '\0';                // prev char
   bool    next_line_is_title = opt_title_line;
-  bool    was_newline = false;          // prev char a '\n'?
   size_t  wrap_pos = 0;                 // position at which we can wrap
 
   /////////////////////////////////////////////////////////////////////////////
 
-  for ( int c; (c = buf_getc( &pc )) != EOF; was_newline = (c == '\n') ) {
+  for ( int c; (c = buf_getc( &pc )) != EOF; c_prev = c ) {
 
     ///////////////////////////////////////////////////////////////////////////
     //  HANDLE NEWLINE(s)
@@ -192,6 +251,25 @@ int main( int argc, char const *argv[] ) {
         put_spaces = 2;
         continue;
       }
+      if ( hyphen == HYPHEN_MAYBE ) {
+        //
+        // We've encountered H-\n meaning that a potentially hyphenated word
+        // ends a line: eat the newline so the word can potentially be rejoined
+        // to the next word when wrapped, e.g.:
+        //
+        //      non-
+        //      whitespace
+        //
+        // can become:
+        //
+        //      non-whitespace
+        //
+        // instead of:
+        //
+        //      non- whitespace
+        //
+        continue;
+      }
     } else {
       consec_newlines = 0;
     }
@@ -211,7 +289,7 @@ int main( int argc, char const *argv[] ) {
             // previous character was a newline which means this whitespace
             // character is at the beginning of a line: delimit the paragraph.
             //
-            (opt_lead_ws_delimit && was_newline) ||
+            (opt_lead_ws_delimit && c_prev == '\n') ||
             //
             // End-of-sentence characters delimit paragraphs and the previous
             // character was an end-of-sentence character: delimit the
@@ -247,7 +325,7 @@ int main( int argc, char const *argv[] ) {
     //  PARAGRAPH-DELIMITERS
     ///////////////////////////////////////////////////////////////////////////
 
-    if ( was_newline ) {
+    if ( c_prev == '\n' ) {
       if ( opt_lead_dot_ignore && c == '.' ) {
         ignore_lead_dot = true;
         delimit_paragraph();
@@ -260,6 +338,16 @@ int main( int argc, char const *argv[] ) {
           markdown_reset();
         }
         goto insert;
+      }
+      if ( hyphen == HYPHEN_MAYBE && !is_hyphen_adjacent_char( c ) ) {
+        //
+        // We had encountered H-\n on the previous line meaning that a
+        // potentially hyphenated word ends a line, but the first character on
+        // the next line is not a "hyphen adjacent character" so forget about
+        // hyphenation and put the previously eaten whitespace back.
+        //
+        hyphen = HYPHEN_NO;
+        put_spaces = 1;
       }
     }
 
@@ -320,7 +408,20 @@ insert:
     if ( !len )                         // unexpected UTF-8 continuation byte
       continue;
 
-    size_t tmp_out_len = out_len;       // save count in case invalid UTF-8
+    if ( hyphen == HYPHEN_MAYBE ) {
+      if ( is_hyphen_adjacent_char( c ) ) {
+        //
+        // We've encountered H-H meaning that this is definitely a
+        // hyphenated word: set wrap_pos to be here.
+        //
+        hyphen = HYPHEN_YES;
+        wrap_pos = out_len;
+      } else {
+        hyphen = HYPHEN_NO;
+      }
+    }
+
+    size_t tmp_out_len = out_len;       // save length in case invalid UTF-8
     out_buf[ tmp_out_len++ ] = c;
 
     //
@@ -328,19 +429,27 @@ insert:
     // the remaining bytes comprising the character.  The entire muti-byte
     // UTF-8 character is always treated as having a width of 1.
     //
-    for ( size_t i = len; i > 1; --i ) {
+    for ( ; len > 1; --len ) {
       if ( (c = buf_getc( &pc )) == EOF )
         goto done;                      // premature end of UTF-8 character
       out_buf[ tmp_out_len++ ] = c;
       if ( utf8_len( c ) )              // unexpected UTF-8 start byte
         goto next_char;                 // skip entire UTF-8 character
     } // for
-    out_len = tmp_out_len;              // UTF-8 is valid
 
-    if ( len == sizeof UTF8_BOM ) {
-      size_t const utf8_start_pos = out_len - sizeof UTF8_BOM;
-      if ( strncmp( out_buf + utf8_start_pos, UTF8_BOM, sizeof UTF8_BOM ) == 0 )
-        continue;                       // discard UTF-8 BOM
+    char const *const utf8_c = out_buf + out_len;
+    codepoint_t const cp = utf8_decode( utf8_c );
+    if ( cp == CP_BYTE_ORDER_MARK || cp == CP_INVALID )
+      continue;                         // discard UTF-8 BOM or invalid CP
+    out_len = tmp_out_len;              // UTF-8/codepoint is valid
+
+    if ( !opt_no_hyphen && hyphen != HYPHEN_MAYBE &&
+         is_hyphen_adjacent_char( c_prev ) && is_hyphen( cp ) ) {
+      //
+      // We've encountered H- meaning that this is potentially a hyphenated
+      // word.
+      //
+      hyphen = HYPHEN_MAYBE;
     }
 
     if ( ++out_width < line_width )
@@ -365,7 +474,29 @@ insert:
     is_long_line = false;
     tmp_out_len = out_len;
     print_lead_chars();
+
+    char c_past_hyphen;
+    if ( hyphen == HYPHEN_YES ) {
+      //
+      // A call to print_line() will terminate out_buf with a NULL at wrap_pos
+      // that is ordinarily at a space and so doesn't need to be preserved.
+      // However, during hyphenation, it's at the character past a '-' that
+      // must be preserved in the output so we keep a copy of it to be restored
+      // after the call to print_line().
+      //
+      c_past_hyphen = out_buf[ wrap_pos ];
+    }
+
     print_line( wrap_pos, true );
+
+    if ( hyphen == HYPHEN_YES ) {
+      //
+      // Per the above comment, put the preserved character back and include it
+      // in the slide-to-the-left (below).
+      //
+      out_buf[ wrap_pos-- ] = c_past_hyphen;
+    }
+
     put_tabs_spaces( opt_hang_tabs, opt_hang_spaces );
 
     //
@@ -382,6 +513,7 @@ insert:
       }
     } // for
 
+    hyphen = HYPHEN_NO;
     wrap_pos = 0;
 
 next_char:
@@ -492,6 +624,7 @@ static void delimit_paragraph( void ) {
   } else if ( is_long_line )
     print_eol();                      // delimit the "long line"
 
+  hyphen = HYPHEN_NO;
   put_spaces = 0;
   was_eos_char = was_para_delim_char = false;
 
@@ -595,6 +728,49 @@ static void init( int argc, char const *argv[] ) {
       split_tws( proto_buf, proto_len, proto_tws );
     }
   }
+}
+
+/**
+ * Checks whether the given Unicode code-point is a hyphen-like character.
+ *
+ * @param cp The Unicode codepoint to check.
+ * @return Returns \c true only if \a cp is a Unicode hyphen-like character.
+ */
+static bool is_hyphen( codepoint_t cp ) {
+  //
+  // This is (mostly) a union of code-points having the Dash and Hyphen
+  // properties; see http://www.unicode.org/Public/UCD/latest/ucd/PropList.txt
+  //
+  switch ( cp ) {
+    case 0x002D:  // HYPHEN-MINUS
+    case 0x00AD:  // SOFT HYPHEN
+    case 0x058A:  // ARMENIAN HYPHEN
+    case 0x05BE:  // HEBREW PUNCTUATION MAQAF
+    case 0x1400:  // CANADIAN SYLLABICS HYPHEN
+    case 0x1806:  // MONGOLIAN SOFT HYPHEN
+    case 0x2010:  // HYPHEN
+//  case 0x2011:  // NON-BREAKING HYPHEN // obviously don't want to wrap here
+    case 0x2013:  // EN DASH
+    case 0x2014:  // EM DASH
+    case 0x2015:  // HORIZONTAL BAR
+    case 0x2027:  // HYPHENATION POINT
+    case 0x2043:  // HYPHEN BULLET
+    case 0x2053:  // SWUNG DASH
+    case 0x2E17:  // DOUBLE OBLIQUE HYPHEN
+    case 0x2E1A:  // HYPHEN WITH DIAERESIS
+    case 0x2E40:  // DOUBLE HYPHEN
+    case 0x301C:  // WAVE DASH
+    case 0x3030:  // WAVY DASH
+    case 0x30A0:  // KATAKANA-HIRAGANA DOUBLE HYPHEN
+    case 0x30FB:  // KATAKANA MIDDLE DOT
+    case 0xFE58:  // SMALL EM DASH
+    case 0xFE63:  // SMALL HYPHEN-MINUS
+    case 0xFF0D:  // FULLWIDTH HYPHEN-MINUS
+    case 0xFF65:  // HALFWIDTH KATAKANA MIDDLE DOT
+      return true;
+    default:
+      return false;
+  } // switch
 }
 
 /**
@@ -795,9 +971,40 @@ static void usage( void ) {
 "  -v         Print version an exit.\n"
 "  -w number  Specify line width [default: %d]\n"
 "  -W         Treat line beginning with whitespace as paragraph delimiter.\n"
+"  -y         Suppress wrapping at hyphen characters.\n"
     , me, me, CONF_FILE_NAME, TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
   );
   exit( EX_USAGE );
+}
+
+/**
+ * Decodes a UTF-8 encoded character into its corresponding Unicode code-point.
+ *
+ * @param s A pointer to the first byte of the UTF-8 encoded character.
+ * @return Returns said code-point.
+ */
+static codepoint_t utf8_decode_impl( char const *s ) {
+  size_t const len = utf8_len( *s );
+  assert( len >= 1 );
+
+  codepoint_t cp = 0;
+  unsigned char const *u = (unsigned char const*)s;
+
+  switch ( len ) {
+    case 6: cp += *u++; cp <<= 6;
+    case 5: cp += *u++; cp <<= 6;
+    case 4: cp += *u++; cp <<= 6;
+    case 3: cp += *u++; cp <<= 6;
+    case 2: cp += *u++; cp <<= 6;
+    case 1: cp += *u;
+  } // switch
+
+  static codepoint_t const OFFSET_TABLE[] = {
+    0, // unused
+    0x0, 0x3080, 0xE2080, 0x3C82080, 0xFA082080, 0x82082080
+  };
+  cp -= OFFSET_TABLE[ len ];
+  return codepoint_valid( cp ) ? cp : CP_INVALID;
 }
 
 /**

@@ -82,6 +82,7 @@ extern size_t       opt_mirror_spaces;
 extern size_t       opt_mirror_tabs;
 extern size_t       opt_newlines_delimit;
 extern bool         opt_no_conf;        // do not read conf file
+extern bool         opt_no_hyphen;      // do not treat hyphens specially
 extern char const  *opt_para_delims;    // additional para delimiter chars
 extern bool         opt_prototype;      // first line whitespace is prototype?
 extern size_t       opt_tab_spaces;
