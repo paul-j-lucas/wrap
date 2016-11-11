@@ -31,6 +31,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
+#include <inttypes.h>                   /* for SIZE_MAX */
 #include <string.h>                     /* for memset(3) */
 
 ///////////////////////////////////////////////////////////////////////////////
