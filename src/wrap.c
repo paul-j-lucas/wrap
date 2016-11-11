@@ -476,7 +476,7 @@ insert:
     tmp_out_len = out_len;
     print_lead_chars();
 
-    char c_past_hyphen;
+    char c_past_hyphen = '\0';
     if ( hyphen == HYPHEN_YES ) {
       //
       // A call to print_line() will terminate out_buf with a NULL at wrap_pos
