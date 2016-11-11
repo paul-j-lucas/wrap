@@ -184,7 +184,10 @@ OUTPUT=/tmp/wrap_test_output_$$_
 
 trap "x=$?; rm -f /tmp/*_$$_* 2>/dev/null; exit $x" EXIT HUP INT TERM
 
-IFS='|' read COMMAND CONFIG OPTIONS INPUT EXPECTED_EXIT < $TEST
+[ "$IFS" ] && IFS_old=$IFS
+IFS='|'; read COMMAND CONFIG OPTIONS INPUT EXPECTED_EXIT < $TEST
+[ "$IFS_old" ] && IFS=$IFS_old
+
 COMMAND=`echo $COMMAND`                 # trims whitespace
 CONFIG=`echo $CONFIG`                   # trims whitespace
 [ "$CONFIG" != /dev/null ] && CONFIG=$DATA_DIR/$CONFIG
