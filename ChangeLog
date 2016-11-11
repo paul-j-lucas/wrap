@@ -1,3 +1,14 @@
+2016-11-11  Paul J. Lucas <paul@lucasmail.org>
+
+   * run_test.sh: Fixed IFS on Bourne Shell.
+   * wrap.c: Added explicit initialization to eliminate warning.
+   * options.c: Added #include <inttypes.h>.
+
+2016-11-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac, alias.c, markdown.c, options.c, pattern.c, read_conf.c,
+     wrap.c, wrapc.c: Header clean-up.
+
 2016-11-09  Paul J. Lucas <paul@lucasmail.org>
 
    * NEWS, configure.ac, wrap.1, wrapc.1, options.c, options.h, wrap.c,
