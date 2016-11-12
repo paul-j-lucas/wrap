@@ -123,7 +123,7 @@ static void         wipc_send( FILE*, char* );
  * @param cp The Unicode code-point to check.
  * @return Returns \c true only if valid.
  */
-static inline bool codepoint_valid( codepoint_t cp ) {
+static inline bool is_codepoint_valid( codepoint_t cp ) {
   return  cp <= CP_VALID_MAX &&
           // UTF-16 surrogate values are invalid in UTF-32.
           !(cp >= CP_SURROGATE_HIGH_START && cp <= CP_SURROGATE_LOW_END);
@@ -162,8 +162,21 @@ static inline codepoint_t utf8_decode( char const *s ) {
 }
 
 /**
- * Gets the number of bytes comprising the UTF-8 encoding of a Unicode
- * codepoint.
+ * Checks whether the given byte is not the first byte of a UTF-8 byte sequence
+ * of an encoded character.
+ *
+ * @param c The byte to check.
+ * @return Returns \c true only if the byte is not the first byte of a byte
+ * sequence of a UTF-8 encoded character.
+ */
+static inline bool utf8_is_cont( char c ) {
+  unsigned char const u = c;
+  return u >= 0x80 && u < 0xC0;
+}
+
+/**
+ * Gets the number of bytes for the UTF-8 encoding of a Unicode codepoint given
+ * its first byte.
  *
  * @param c The first byte of the UTF-8 encoded codepoint.
  * @return Returns 1-6, or 0 if \a c is invalid.
@@ -405,8 +418,8 @@ insert:
     //  INSERT NON-SPACE CHARACTER
     ///////////////////////////////////////////////////////////////////////////
 
-    size_t len = utf8_len( c );         // bytes comprising UTF-8 character
-    if ( !len )                         // unexpected UTF-8 continuation byte
+    size_t len = utf8_len( c );         // bytes in UTF-8 encoded character
+    if ( !len )                         // not a UTF-8 start byte
       continue;
 
     if ( hyphen == HYPHEN_MAYBE ) {
@@ -426,15 +439,15 @@ insert:
     out_buf[ tmp_out_len++ ] = c;
 
     //
-    // If we've just read the start byte of a multi-byte UTF-8 character, read
-    // the remaining bytes comprising the character.  The entire muti-byte
-    // UTF-8 character is always treated as having a width of 1.
+    // If we've just read the start byte of a multi-byte UTF-8 encoded
+    // character, read the remaining bytes.  The entire muti-byte character is
+    // always treated as having a width of 1.
     //
     for ( ; len > 1; --len ) {
       if ( (c = buf_getc( &pc )) == EOF )
         goto done;                      // premature end of UTF-8 character
       out_buf[ tmp_out_len++ ] = c;
-      if ( utf8_len( c ) )              // unexpected UTF-8 start byte
+      if ( !utf8_is_cont( c ) )         // not a UTF-8 continuation byte
         goto next_char;                 // skip entire UTF-8 character
     } // for
 
@@ -1005,7 +1018,7 @@ static codepoint_t utf8_decode_impl( char const *s ) {
     0x0, 0x3080, 0xE2080, 0x3C82080, 0xFA082080, 0x82082080
   };
   cp -= OFFSET_TABLE[ len ];
-  return codepoint_valid( cp ) ? cp : CP_INVALID;
+  return is_codepoint_valid( cp ) ? cp : CP_INVALID;
 }
 
 /**
