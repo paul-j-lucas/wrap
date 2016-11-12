@@ -817,18 +817,18 @@ static void read_prototype( void ) {
     //     This is the DELIM_EOL delimiter type.
     //
     //  2. Two characters:
-    //      * E.g., "/*", the characters comprising both the opening and
-    //        closing comment delimiters where the closing delimiter shares a
-    //        character with the opening delimiter (hence the final '/' in "*/"
-    //        isn't repeated).  This is the DELIM_DOUBLE delimiter type.
+    //      * E.g., "/*", the characters of both the opening and closing
+    //        comment delimiters where the closing delimiter shares a character
+    //        with the opening delimiter (hence the final '/' in "*/" isn't
+    //        repeated).  This is the DELIM_DOUBLE delimiter type.
     //      * E.g., "{}" (Pascal), two single-character open/close comment
     //        delimiter characters.  This is the DELIM_SINGLE delimiter type.
     //
-    //  3. Three characters, e.g., "(*)", the characters comprising both the
-    //     opening and closing comment delimiters where the closing delimiter
-    //     is different from the opening delimiter (hence, the opening
-    //     delimiter is "(*" and the closing is "*)").  This is also the
-    //     DELIM_DOUBLE delimiter type.
+    //  3. Three characters, e.g., "(*)", the characters of both the opening
+    //     and closing comment delimiters where the closing delimiter is
+    //     different from the opening delimiter (hence, the opening delimiter
+    //     is "(*" and the closing is "*)").  This is also the DELIM_DOUBLE
+    //     delimiter type.
     //
     // While this is useful (and efficient) for checking whether a character is
     // a comment delimiter character, it's difficult to use for other purposes.
