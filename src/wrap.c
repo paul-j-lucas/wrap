@@ -124,9 +124,8 @@ static void         wipc_send( FILE*, char* );
  * @return Returns \c true only if valid.
  */
 static inline bool is_codepoint_valid( codepoint_t cp ) {
-  return  cp <= CP_VALID_MAX &&
-          // UTF-16 surrogate values are invalid in UTF-32.
-          !(cp >= CP_SURROGATE_HIGH_START && cp <= CP_SURROGATE_LOW_END);
+  return  cp < CP_SURROGATE_HIGH_START
+      || (cp > CP_SURROGATE_LOW_END && cp <= CP_VALID_MAX);
 }
 
 /**
