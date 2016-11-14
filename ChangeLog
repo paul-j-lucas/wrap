@@ -1,3 +1,12 @@
+2016-11-13  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Tweaked is_codepoint_valid().
+
+2016-11-12  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Now using utf8_is_cont().
+   * wrapc.c: Comment fix.
+
 2016-11-11  Paul J. Lucas <paul@lucasmail.org>
 
    * run_test.sh: Fixed IFS on Bourne Shell.
