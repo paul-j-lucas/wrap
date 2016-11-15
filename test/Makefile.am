@@ -25,20 +25,12 @@ TESTS =	tests/utf8-w77.test \
 	tests/utf8-w79.test \
 	tests/utf8-w80.test \
 	tests/wrap-a.test \
-	tests/wrap-alias-dup.test \
-	tests/wrap-alias-no_equal.test \
-	tests/wrap-alias-options_exp.test \
-	tests/wrap-alias-unclosed_quote.test \
-	tests/wrap-alias-unexp_char.test \
-	tests/wrap-conf-not_found.test \
-	tests/wrap-conf-no_section.test \
 	tests/wrap-b.test \
 	tests/wrap-b-h1.test \
 	tests/wrap-b-t1.test \
 	tests/wrap-d.test \
 	tests/wrap-dep.test \
 	tests/wrap-f-F.test \
-	tests/wrap-file-not_found.test \
 	tests/wrap-h1-I5.test \
 	tests/wrap-H3-t1-T.test \
 	tests/wrap-H3.test \
@@ -51,16 +43,8 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap-lu-02.test \
 	tests/wrap-lx.test \
 	tests/wrap-L-01.test \
-	tests/wrap-long_line-01.test \
-	tests/wrap-long_line-02.test \
-	tests/wrap-long_line-03.test \
-	tests/wrap-long_line-04.test \
 	tests/wrap-n.test \
 	tests/wrap-n-N.test \
-	tests/wrap-no_options.test \
-	tests/wrap-pattern-alias_exp.test \
-	tests/wrap-pattern-no_equal.test \
-	tests/wrap-pattern-unexp_char.test \
 	tests/wrap-P-01.test \
 	tests/wrap-P-02.test \
 	tests/wrap-P-03.test \
@@ -68,12 +52,24 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap-t11.test \
 	tests/wrap-y-01.test \
 	tests/wrap-y-02.test \
+	tests/wrap--alias-dup.test \
+	tests/wrap--alias-no_equal.test \
+	tests/wrap--alias-options_exp.test \
+	tests/wrap--alias-unclosed_quote.test \
+	tests/wrap--alias-unexp_char.test \
+	tests/wrap--conf-not_found.test \
+	tests/wrap--conf-no_section.test \
+	tests/wrap--file-not_found.test \
 	tests/wrap--hyphen-01.test \
 	tests/wrap--hyphen-02.test \
 	tests/wrap--hyphen-03.test \
 	tests/wrap--hyphen-04.test \
 	tests/wrap--hyphen-U+00AD-01.test \
 	tests/wrap--hyphen-U+2010-01.test \
+	tests/wrap--long_line-01.test \
+	tests/wrap--long_line-02.test \
+	tests/wrap--long_line-03.test \
+	tests/wrap--long_line-04.test \
 	tests/wrap--Markdown-abbr-01.test \
 	tests/wrap--Markdown-abbr-02.test \
 	tests/wrap--Markdown-abbr-03.test \
@@ -192,6 +188,10 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap--Markdown-table-04.test \
 	tests/wrap--Markdown-table-05.test \
 	tests/wrap--Markdown-table-06.test \
+	tests/wrap--no_options.test \
+	tests/wrap--pattern-alias_exp.test \
+	tests/wrap--pattern-no_equal.test \
+	tests/wrap--pattern-unexp_char.test \
 	tests/crlf-01.test \
 	tests/crlf-ld-01.test \
 	tests/crlf-li-01.test \
@@ -199,9 +199,10 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc-01.test \
 	tests/wrapc-02.test \
 	tests/wrapc-b.test \
-	tests/wrapc-block-01.test \
-	tests/wrapc-block-02.test \
-	tests/wrapc-block-03.test \
+	tests/wrapc-D-01.test \
+	tests/wrapc--block-01.test \
+	tests/wrapc--block-02.test \
+	tests/wrapc--block-03.test \
 	tests/wrapc--box-double-01.test \
 	tests/wrapc--box-double-02.test \
 	tests/wrapc--box-double-03.test \
@@ -220,12 +221,6 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--box-single-03.test \
 	tests/wrapc--box-single-04.test \
 	tests/wrapc--box-single-05.test \
-	tests/wrapc-crlf-01.test \
-	tests/wrapc-noncomment-01.test \
-	tests/wrapc-noncomment-02.test \
-	tests/wrapc-single_line-01.test \
-	tests/wrapc-trailing-ws-01.test \
-	tests/wrapc-D-01.test \
 	tests/wrapc--Ada-00.test \
 	tests/wrapc--Ada-01.test \
 	tests/wrapc--Ada-02.test \
@@ -249,6 +244,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--COBOL-06.test \
 	tests/wrapc--COBOL-07.test \
 	tests/wrapc--COBOL-08.test \
+	tests/wrapc--crlf-01.test \
 	tests/wrapc--D-01.test \
 	tests/wrapc--Fortran-01.test \
 	tests/wrapc--Fortran-02.test \
@@ -314,10 +310,14 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--Markdown-table-04.test \
 	tests/wrapc--Markdown-table-05.test \
 	tests/wrapc--Markdown-table-06.test \
+	tests/wrapc--noncomment-01.test \
+	tests/wrapc--noncomment-02.test \
 	tests/wrapc--Pascal-00.test \
 	tests/wrapc--Pascal-01.test \
 	tests/wrapc--Pascal-02.test \
 	tests/wrapc--Pascal-03.test \
+	tests/wrapc--single_line-01.test \
+	tests/wrapc--trailing-ws-01.test \
 	tests/wrapc--XQuery-01.test \
 	tests/wrapc--XQuery-02.test \
 	tests/wrapc--XQuery-03.test \
