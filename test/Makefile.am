@@ -64,6 +64,8 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap--hyphen-02.test \
 	tests/wrap--hyphen-03.test \
 	tests/wrap--hyphen-04.test \
+	tests/wrap--hyphen-05.test \
+	tests/wrap--hyphen-06.test \
 	tests/wrap--hyphen-U+00AD-01.test \
 	tests/wrap--hyphen-U+2010-01.test \
 	tests/wrap--long_line-01.test \

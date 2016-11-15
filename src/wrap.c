@@ -421,20 +421,7 @@ insert:
     if ( !len )                         // not a UTF-8 start byte
       continue;
 
-    if ( hyphen == HYPHEN_MAYBE ) {
-      if ( is_hyphen_adjacent_char( c ) ) {
-        //
-        // We've encountered H-H meaning that this is definitely a
-        // hyphenated word: set wrap_pos to be here.
-        //
-        hyphen = HYPHEN_YES;
-        wrap_pos = out_len;
-      } else {
-        hyphen = HYPHEN_NO;
-      }
-    }
-
-    size_t tmp_out_len = out_len;       // save length in case invalid UTF-8
+    size_t tmp_out_len = out_len;       // use temp length if invalid UTF-8
     out_buf[ tmp_out_len++ ] = c;
 
     //
@@ -454,16 +441,41 @@ insert:
     codepoint_t const cp = utf8_decode( utf8_c );
     if ( cp == CP_BYTE_ORDER_MARK || cp == CP_INVALID )
       continue;                         // discard UTF-8 BOM or invalid CP
-    out_len = tmp_out_len;              // UTF-8/codepoint is valid
 
-    if ( !opt_no_hyphen && hyphen != HYPHEN_MAYBE &&
-         is_hyphen_adjacent_char( c_prev ) && is_hyphen( cp ) ) {
-      //
-      // We've encountered H- meaning that this is potentially a hyphenated
-      // word.
-      //
-      hyphen = HYPHEN_MAYBE;
+    if ( !opt_no_hyphen ) {
+      if ( hyphen == HYPHEN_MAYBE ) {
+        if ( is_hyphen_adjacent_char( c ) ) {
+          //
+          // We've encountered H-H meaning that this is definitely a
+          // hyphenated word: set wrap_pos to be here.
+          //
+          hyphen = HYPHEN_YES;
+          wrap_pos = out_len;
+        }
+        else if ( !is_hyphen( cp ) ) {
+          //
+          // We've encountered H-X meaning that this is not a hyphenated word.
+          //
+          hyphen = HYPHEN_NO;
+        }
+        else {
+          //
+          // We've encountered H-- meaning that this is still potentially a
+          // hyphenated word.
+          //
+        }
+      } else {
+        if ( is_hyphen_adjacent_char( c_prev ) && is_hyphen( cp ) ) {
+          //
+          // We've encountered H- meaning that this is potentially a hyphenated
+          // word.
+          //
+          hyphen = HYPHEN_MAYBE;
+        }
+      }
     }
+
+    out_len = tmp_out_len;
 
     if ( ++out_width < line_width )
       continue;                         // haven't exceeded line width yet
