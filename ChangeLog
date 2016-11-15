@@ -1,3 +1,12 @@
+2016-11-15  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c, test/Makefile.am, hyphen-05.txt, hyphen-06.txt,
+     wrap--hyphen-05.txt, wrap--hyphen-06.txt, wrap-I2-w72.txt, wrap-t1.txt,
+     wrap--hyphen-05.test, wrap--hyphen-06.test: Now handles multiple
+     consecutive hyphen characters.
+   * test/Makefile.am: Test renaming.
+   * test/Makefile.am: Hyphen test renaming.
+
 2016-11-13  Paul J. Lucas <paul@lucasmail.org>
 
    * wrap.c: Tweaked is_codepoint_valid().
