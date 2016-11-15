@@ -42,12 +42,6 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap-h1-I5.test \
 	tests/wrap-H3-t1-T.test \
 	tests/wrap-H3.test \
-	tests/wrap-hyphen-01.test \
-	tests/wrap-hyphen-02.test \
-	tests/wrap-hyphen-03.test \
-	tests/wrap-hyphen-04.test \
-	tests/wrap-hyphen-U+00AD-01.test \
-	tests/wrap-hyphen-U+2010-01.test \
 	tests/wrap-I2-m1.test \
 	tests/wrap-I2-W.test \
 	tests/wrap-I2-w72.test \
@@ -74,6 +68,12 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap-t11.test \
 	tests/wrap-y-01.test \
 	tests/wrap-y-02.test \
+	tests/wrap--hyphen-01.test \
+	tests/wrap--hyphen-02.test \
+	tests/wrap--hyphen-03.test \
+	tests/wrap--hyphen-04.test \
+	tests/wrap--hyphen-U+00AD-01.test \
+	tests/wrap--hyphen-U+2010-01.test \
 	tests/wrap--Markdown-abbr-01.test \
 	tests/wrap--Markdown-abbr-02.test \
 	tests/wrap--Markdown-abbr-03.test \
