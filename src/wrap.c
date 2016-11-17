@@ -248,14 +248,6 @@ int main( int argc, char const *argv[] ) {
         delimit_paragraph();
         continue;
       }
-      if ( opt_eos_delimit && was_eos_char ) {
-        //
-        // End-of-sentence characters delimit paragraphs and the previous
-        // character was an end-of-sentence character: delimit the paragraph.
-        //
-        delimit_paragraph();
-        continue;
-      }
       if ( out_len && true_reset( &next_line_is_title ) ) {
         //
         // The first line of the next paragraph is title line and the buffer
@@ -267,10 +259,18 @@ int main( int argc, char const *argv[] ) {
         continue;
       }
       if ( was_eos_char ) {
-        //
-        // We are joining a line after the end of a sentence: force 2 spaces.
-        //
-        put_spaces = 2;
+        if ( opt_eos_delimit ) {
+          //
+          // End-of-sentence characters delimit paragraphs and the previous
+          // character was an end-of-sentence character: delimit the paragraph.
+          //
+          delimit_paragraph();
+        } else {
+          //
+          // We are joining a line after the end of a sentence: force 2 spaces.
+          //
+          put_spaces = 2;
+        }
         continue;
       }
       if ( hyphen == HYPHEN_MAYBE ) {
