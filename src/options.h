@@ -28,6 +28,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+// Each character should appear only once.
 #define COMMENT_CHARS_DEFAULT \
   "#"   /*    AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell       */ \
   "/*"  /*    C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift    */ \
