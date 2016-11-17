@@ -1082,7 +1082,7 @@ static void usage( void ) {
 "  -T         Treat paragraph first line as title.\n"
 "  -u         Format Markdown.\n"
 "  -v         Print version an exit.\n"
-"  -w number  Specify line width [default: %d]\n"
+"  -w number  Specify line width [default: %d].\n"
 "  -y         Suppress wrapping at hyphen characters.\n"
     , me, me, CONF_FILE_NAME, COMMENT_CHARS_DEFAULT, TAB_SPACES_DEFAULT,
     LINE_WIDTH_DEFAULT

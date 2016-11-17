@@ -994,7 +994,7 @@ static void usage( void ) {
 "  -T         Treat paragraph first line as title.\n"
 "  -u         Format Markdown.\n"
 "  -v         Print version an exit.\n"
-"  -w number  Specify line width [default: %d]\n"
+"  -w number  Specify line width [default: %d].\n"
 "  -W         Treat line beginning with whitespace as paragraph delimiter.\n"
 "  -y         Suppress wrapping at hyphen characters.\n"
     , me, me, CONF_FILE_NAME, TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
