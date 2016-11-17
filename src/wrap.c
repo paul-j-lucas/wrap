@@ -99,7 +99,6 @@ static bool         is_long_line;       // line longer than line_width?
 static char const  *pc = in_buf;        // pointer to current character
 static unsigned     put_spaces;         // number of spaces to put between words
 static bool         was_eos_char;       // prev char an end-of-sentence char?
-static bool         was_para_delim_char;// prev char a paragraph delimiter?
 
 // local functions
 static int          buf_getc( char const** );
@@ -138,6 +137,16 @@ static inline bool is_codepoint_valid( codepoint_t cp ) {
  */
 static inline bool is_hyphen_adjacent_char( int c ) {
   return isalpha( c );
+}
+
+/**
+ * Checks wherher \a c is a paragraph delimiter character.
+ *
+ * @param c The character to check.
+ * @return Returns \c true only if \a c is a paragraph delimiter character.
+ */
+static inline bool is_para_delim_char( char c ) {
+  return opt_para_delims && strchr( opt_para_delims, c ) != NULL;
 }
 
 /**
@@ -313,7 +322,7 @@ int main( int argc, char const *argv[] ) {
             // The previous character was a paragraph-delimiter character (set
             // only if opt_para_delims was set): delimit the paragraph.
             //
-            was_para_delim_char ) {
+            is_para_delim_char( c_prev ) ) {
         delimit_paragraph();
       }
       else if ( out_len && put_spaces < 1u + was_eos_char ) {
@@ -370,9 +379,6 @@ int main( int argc, char const *argv[] ) {
     //
     if ( !(was_eos_char && strchr( "'\")]", c )) )
       was_eos_char = (strchr( ".?!", c ) != NULL);
-
-    if ( opt_para_delims )
-      was_para_delim_char = (strchr( opt_para_delims, c ) != NULL);
 
     ///////////////////////////////////////////////////////////////////////////
     //  INSERT SPACES
@@ -651,7 +657,7 @@ static void delimit_paragraph( void ) {
 
   hyphen = HYPHEN_NO;
   put_spaces = 0;
-  was_eos_char = was_para_delim_char = false;
+  was_eos_char = false;
 
   if ( true_reset( &ignore_lead_dot ) ) {
     //
