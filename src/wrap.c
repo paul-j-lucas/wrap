@@ -128,8 +128,31 @@ static inline bool is_codepoint_valid( codepoint_t cp ) {
 }
 
 /**
- * Checks whether \a c is a "hyphen adjacent character," that is charcter that
- * can appear adjacent to a hyphen on either side.
+ * Checks whether \a c is an "end-of-sentence character."
+ *
+ * @param c The character to check.
+ * @return Returns \c true only if \a c is an end-of-sentence character.
+ */
+static inline bool is_eos_char( char c ) {
+  return c == '.' || c == '?' || c == '!';
+}
+
+/**
+ * Checks whether \a c is an "end-of-sentence-extender character," that is a
+ * character that extends being in the end-of-sentence state, e.g., a ')'
+ * following a '.'.
+ *
+ * @param c The character to check.
+ * @return Returns \c true only if \a c is an end-of-sentence-extender
+ * character.
+ */
+static inline bool is_eos_ext_char( char c ) {
+  return c == '"' || c == '\'' || c == ')' || c == ']';
+}
+
+/**
+ * Checks whether \a c is a "hyphen adjacent character," that is a character
+ * that can appear adjacent to a hyphen on either side.
  *
  * @param c The character to check. (The type is \c int because the type of the
  * argument to \c isalpha() is.)
@@ -373,12 +396,7 @@ int main( int argc, char const *argv[] ) {
       }
     }
 
-    //
-    // Treat a quote or a closing parenthesis or bracket as an end-of-sentence
-    // character if it was preceded by a regular end-of-sentence character.
-    //
-    if ( !(was_eos_char && strchr( "'\")]", c )) )
-      was_eos_char = (strchr( ".?!", c ) != NULL);
+    was_eos_char = is_eos_char( c ) || (was_eos_char && is_eos_ext_char( c ));
 
     ///////////////////////////////////////////////////////////////////////////
     //  INSERT SPACES
