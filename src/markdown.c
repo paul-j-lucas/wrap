@@ -87,8 +87,8 @@ static size_t const MD_LIST_INDENT_MAX     =  4;  // max indent for all lists
 static size_t const MD_DL_UL_INDENT_MIN    =  2;  // unordered list min indent
 static size_t const MD_OL_CHAR_MAX         =  9;  // ordered list max digits
 static size_t const MD_OL_INDENT_MIN       =  3;  // ordered list min indent
-static size_t const STATE_ALLOC_DEFAULT    = 5;
-static size_t const STATE_ALLOC_INCREMENT  = 5;
+static size_t const STATE_ALLOC_DEFAULT    =  5;
+static size_t const STATE_ALLOC_INCREMENT  =  5;
 
 /**
  * Block-level HTML 5 elements.
