@@ -94,7 +94,6 @@ static size_t       proto_width;
 static unsigned     consec_newlines;    // number of consecutive newlines
 static bool         encountered_non_whitespace;
 static hyphen_t     hyphen;
-static bool         ignore_lead_dot;    // ignore leading '.' line?
 static indent_t     indent = INDENT_LINE;
 static bool         is_long_line;       // line longer than line_width?
 static char const  *pc = in_buf;        // pointer to current character
@@ -394,8 +393,11 @@ int main( int argc, char const *argv[] ) {
 
     if ( c_prev == '\n' ) {
       if ( opt_lead_dot_ignore && c == '.' ) {
-        ignore_lead_dot = true;
+        consec_newlines = 0;
         delimit_paragraph();
+        FPUTS( in_buf, fout );          // print the line as-is
+        (void)read_line( in_buf );
+        pc = in_buf;
         continue;
       }
       if ( is_lead_para_delim_char( c ) ) {
@@ -700,23 +702,12 @@ static void delimit_paragraph( void ) {
   put_spaces = 0;
   was_eos_char = false;
 
-  if ( true_reset( &ignore_lead_dot ) ) {
-    //
-    // The line starts with a leading dot and opt_lead_dot_ignore is true:
-    // read/write the line as-is.
-    //
-    FPUTS( in_buf, fout );
-    (void)read_line( in_buf );
-    pc = in_buf;
+  if ( consec_newlines == 2 ||
+      (consec_newlines > 2 && opt_newlines_delimit == 1) ) {
+    print_lead_chars();
+    print_eol();
   }
-  else {
-    if ( consec_newlines == 2 ||
-        (consec_newlines > 2 && opt_newlines_delimit == 1) ) {
-      print_lead_chars();
-      print_eol();
-    }
-    indent = opt_markdown ? INDENT_NONE : INDENT_LINE;
-  }
+  indent = opt_markdown ? INDENT_NONE : INDENT_LINE;
 }
 
 /**
