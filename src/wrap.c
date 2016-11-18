@@ -697,6 +697,7 @@ static void delimit_paragraph( void ) {
 
   encountered_non_whitespace = false;
   hyphen = HYPHEN_NO;
+  indent = opt_markdown ? INDENT_NONE : INDENT_LINE;
   put_spaces = 0;
   was_eos_char = false;
 
@@ -705,7 +706,6 @@ static void delimit_paragraph( void ) {
     print_lead_chars();
     print_eol();
   }
-  indent = opt_markdown ? INDENT_NONE : INDENT_LINE;
 }
 
 /**
