@@ -404,9 +404,8 @@ int main( int argc, char const *argv[] ) {
           markdown_init();
           markdown_reset();
         }
-        goto insert;
       }
-      if ( hyphen == HYPHEN_MAYBE && !is_hyphen_adjacent_char( c ) ) {
+      else if ( hyphen == HYPHEN_MAYBE && !is_hyphen_adjacent_char( c ) ) {
         //
         // We had encountered H-\n on the previous line meaning that a
         // potentially hyphenated word ends a line, but the first character on
@@ -446,7 +445,6 @@ int main( int argc, char const *argv[] ) {
     //  PERFORM INDENTATION
     ///////////////////////////////////////////////////////////////////////////
 
-insert:
     switch ( indent ) {
       case INDENT_HANG:
         put_tabs_spaces( opt_hang_tabs, opt_hang_spaces );
