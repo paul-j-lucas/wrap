@@ -87,8 +87,6 @@ static size_t       out_len;            // number of characters in buffer
 static size_t       out_width;          // actual width of buffer
 static line_buf_t   proto_buf;
 static line_buf_t   proto_tws;          // prototype trailing whitespace, if any
-static size_t       proto_len;
-static size_t       proto_width;
 
 // local variable definitions specific to wrap state
 static unsigned     consec_newlines;    // number of consecutive newlines
@@ -763,15 +761,17 @@ static void init( int argc, char const *argv[] ) {
   // Copy the prototype and calculate its width.
   //
   if ( opt_lead_string || opt_prototype ) {
-    size_t pos = 0;
+    size_t proto_len = 0;
+    size_t proto_width = 0;
     for ( char const *s = opt_lead_string ? opt_lead_string : in_buf; *s;
-          ++s, ++pos ) {
+          ++s, ++proto_len ) {
       if ( opt_prototype && !is_space( *s ) )
         break;
       if ( proto_len == sizeof proto_buf - 1 )
         break;
-      proto_buf[ proto_len++ ] = *s;
-      proto_width += *s == '\t' ? (opt_tab_spaces - pos % opt_tab_spaces) : 1;
+      proto_buf[ proto_len ] = *s;
+      proto_width += *s == '\t' ?
+        (opt_tab_spaces - proto_len % opt_tab_spaces) : 1;
     } // for
     line_width = opt_line_width - proto_width;
     if ( opt_lead_string ) {
