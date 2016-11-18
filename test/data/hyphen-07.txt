@@ -1,0 +1,2 @@
+The null-
+ terminated string to check.

@@ -92,6 +92,7 @@ static size_t       proto_width;
 
 // local variable definitions specific to wrap state
 static unsigned     consec_newlines;    // number of consecutive newlines
+static bool         encountered_non_whitespace;
 static hyphen_t     hyphen;
 static bool         ignore_lead_dot;    // ignore leading '.' line?
 static indent_t     indent = INDENT_LINE;
@@ -273,6 +274,8 @@ int main( int argc, char const *argv[] ) {
     }
 
     if ( c == '\n' ) {
+      encountered_non_whitespace = false;
+
       if ( ++consec_newlines >= opt_newlines_delimit ) {
         //
         // At least opt_newlines_delimit consecutive newlines: set that the
@@ -358,6 +361,15 @@ int main( int argc, char const *argv[] ) {
             //
             is_para_delim_char( c_prev ) ) {
         delimit_paragraph();
+      }
+      else if ( hyphen == HYPHEN_MAYBE && !encountered_non_whitespace ) {
+        //
+        // This case is similar to above: we've encountered H-\n meaning that a
+        // potentially hyphenated word ended a line and we've only encountered
+        // leading whitespace on the next line so far: eat the space so the
+        // word can potentially be rejoined to the next word when wrapped.
+        //
+        continue;
       }
       else if ( out_len && put_spaces < 1u + was_eos_char ) {
         //
@@ -451,6 +463,8 @@ insert:
     ///////////////////////////////////////////////////////////////////////////
     //  INSERT NON-SPACE CHARACTER
     ///////////////////////////////////////////////////////////////////////////
+
+    encountered_non_whitespace = true;
 
     size_t len = utf8_len( c );         // bytes in UTF-8 encoded character
     if ( !len )                         // not a UTF-8 start byte
@@ -684,6 +698,7 @@ static void delimit_paragraph( void ) {
   } else if ( is_long_line )
     print_eol();                      // delimit the "long line"
 
+  encountered_non_whitespace = false;
   hyphen = HYPHEN_NO;
   put_spaces = 0;
   was_eos_char = false;
