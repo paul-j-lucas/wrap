@@ -369,7 +369,6 @@ int main( int argc, char const *argv[] ) {
         // leading whitespace on the next line so far: eat the space so the
         // word can potentially be rejoined to the next word when wrapped.
         //
-        continue;
       }
       else if ( out_len && put_spaces < 1u + was_eos_char ) {
         //
