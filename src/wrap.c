@@ -163,6 +163,17 @@ static inline bool is_hyphen_adjacent_char( int c ) {
 }
 
 /**
+ * Checks wherher \a c is a leading paragraph delimiter character.
+ *
+ * @param c The character to check.
+ * @return Returns \c true only if \a c is a leading paragraph delimiter
+ * character.
+ */
+static inline bool is_lead_para_delim_char( char c ) {
+  return opt_lead_para_delims && strchr( opt_lead_para_delims, c ) != NULL;
+}
+
+/**
  * Checks wherher \a c is a paragraph delimiter character.
  *
  * @param c The character to check.
@@ -376,7 +387,7 @@ int main( int argc, char const *argv[] ) {
         delimit_paragraph();
         continue;
       }
-      if ( opt_lead_para_delims && strchr( opt_lead_para_delims, c ) ) {
+      if ( is_lead_para_delim_char( c ) ) {
         delimit_paragraph();
         if ( opt_markdown ) {
           markdown_init();
