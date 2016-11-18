@@ -315,7 +315,7 @@ static bool bin_search( char const *s, char const *const a[], size_t n ) {
  * converted to equivalent spaces).
  * @return Returns a pointer to the first non-whitespace character.
  */
-static char* first_nws( char *s, md_indent_t *indent_left ) {
+static char* first_non_whitespace( char *s, md_indent_t *indent_left ) {
   assert( s );
   assert( indent_left );
 
@@ -998,7 +998,7 @@ md_state_t const* markdown_parse( char *s ) {
 
   static md_code_fence_t code_fence;
   md_indent_t indent_left;
-  char *const nws = first_nws( s, &indent_left );
+  char *const nws = first_non_whitespace( s, &indent_left );
 
   PREV_BOOL( code_fence_end );
   PREV_BOOL( link_label_has_title );
