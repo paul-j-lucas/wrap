@@ -44,11 +44,6 @@
   snprintf( (BUF), (SIZE), ("%c" FORMAT), (CODE), __VA_ARGS__ )
 
 /**
- * Unicode code-point.
- */
-typedef uint32_t codepoint_t;
-
-/**
  * Hyphenation states.
  */
 enum hyphen {
