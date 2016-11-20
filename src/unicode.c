@@ -60,7 +60,7 @@ char const UTF8_LEN_TABLE[] = {
  * @param cp The Unicode code-point to check.
  * @return Returns \c true only if valid.
  */
-static bool cp_is_valid( codepoint_t cp ) {
+static inline bool cp_is_valid( codepoint_t cp ) {
   return  cp < CP_SURROGATE_HIGH_START
       || (cp > CP_SURROGATE_LOW_END && cp <= CP_VALID_MAX);
 }
