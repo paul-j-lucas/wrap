@@ -149,7 +149,7 @@ bool cp_is_space( codepoint_t cp );
  */
 WRAP_UNICODE_INLINE codepoint_t utf8_decode( char const *s ) {
   extern codepoint_t utf8_decode_impl( char const* );
-  return (unsigned char)*s <= 127 ? *s : utf8_decode_impl( s );
+  return (unsigned char)*s <= 127 ? (codepoint_t)*s : utf8_decode_impl( s );
 }
 
 /**
