@@ -1,3 +1,32 @@
+2016-11-19  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrap.1, src/Makefile.am, unicode.c, unicode.h, wrap.c:
+     Better Unicode support.
+
+2016-11-18  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Moved indent reset.
+   * wrap.c: Simplified proto_len/proto_width.
+   * wrap.c: Got rid of ignore_lead_dot variable.
+
+2016-11-17  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Removed "goto insert".
+   * wrap.c: Don't need 'continue'.
+   * wrap.c, test/Makefile.am, hyphen-07.txt, wrap--hyphen-07.txt,
+     wrap--hyphen-07.test: Fixed hyphenation with leading whitespace bug.
+   * markdown.c: s/first_nws/first_non_whitespace/
+   * wrap.c: Added is_lead_para_delim_char().
+   * wrap.c: Improved EOS handling.
+   * wrap.c: Simplified was_eos_char logic.
+   * wrap.c: Replaced was_para_delim_char by is_para_delim_char().
+   * wrap.c, wrapc.c: Added missing ..
+
+2016-11-16  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c: Cosmetic change.
+   * options.h: Added comment.
+
 2016-11-15  Paul J. Lucas <paul@lucasmail.org>
 
    * wrap.c, test/Makefile.am, hyphen-05.txt, hyphen-06.txt,
