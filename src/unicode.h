@@ -113,7 +113,7 @@ bool cp_is_hyphen( codepoint_t cp );
  * @return Returns \c true only if \a cp can appear on either side of a hyphen.
  */
 WRAP_UNICODE_INLINE bool cp_is_hyphen_adjacent( codepoint_t cp ) {
-  return cp_is_ascii( cp ) && cp_is_alpha( cp );
+  return cp_is_alpha( cp );
 }
 
 /**
