@@ -67,6 +67,31 @@ static inline bool cp_is_valid( codepoint_t cp ) {
 
 ////////// extern functions ///////////////////////////////////////////////////
 
+bool cp_is_alpha( codepoint_t cp ) {
+  if ( cp_is_ascii( cp ) )              // short-cut common case
+    return isalpha( (int)cp );
+  //
+  // Next, try the less-but-still-common case of ISO-8859-1.  Letters occupy
+  // the code-points U+00C0 through U+00FF with two exceptions annoyingly in
+  // the middle.
+  //
+  switch ( cp ) {
+    case 0x00D7:  // MULTIPLICATION SIGN
+    case 0x00F7:  // DIVISION SIGN
+      return false;
+    default:
+      if ( cp >= 0x00C0 && cp <= 0x00FF )
+        return true;
+  } // switch
+
+  //
+  // TODO: Handle all alphabetic Unicode characters.  Since there are 118240
+  // characters having the "Alphabetic" Derived Core Property, this is non-
+  // trivial.  For now, just return false for all other code-points.
+  //
+  return false;
+}
+
 bool cp_is_eos( codepoint_t cp ) {
   switch ( cp ) {
     case '.'   :  // FULL STOP

@@ -51,6 +51,14 @@ typedef uint32_t codepoint_t;
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
+ * Checks whether \a cp is an alphabetic character.
+ *
+ * @param cp The Unicode code-point to check.
+ * @return Returns \c true only if \a cp is an alphabetic character.
+ */
+bool cp_is_alpha( codepoint_t cp );
+
+/**
  * Checks whether \a cp is an ASCII character.
  *
  * @param cp The Unicode code-point to check.
@@ -105,7 +113,7 @@ bool cp_is_hyphen( codepoint_t cp );
  * @return Returns \c true only if \a cp can appear on either side of a hyphen.
  */
 WRAP_UNICODE_INLINE bool cp_is_hyphen_adjacent( codepoint_t cp ) {
-  return cp_is_ascii( cp ) && isalpha( (int)cp );
+  return cp_is_ascii( cp ) && cp_is_alpha( cp );
 }
 
 /**
