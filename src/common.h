@@ -23,11 +23,6 @@
 
 // local
 #include "config.h"
-#include "util.h"
-
-// standard
-#include <stddef.h>                     /* for size_t */
-#include <stdio.h>                      /* for FILE */
 
 /**
  * @file
@@ -98,21 +93,7 @@
  */
 #define WIPC_SEP                  "|"
 
-///////////////////////////////////////////////////////////////////////////////
-
-typedef char line_buf_t[ LINE_BUF_SIZE ];
-
 ////////// extern functions ///////////////////////////////////////////////////
-
-/**
- * Reads a newline-terminated line from \a ffrom.
- * If reading fails, prints an error message and exits.
- *
- * @param line The line buffer to read into.
- * @param ffrom The \c FILE to read from.
- * @return Returns the number of characters read.
- */
-size_t check_readline( line_buf_t line, FILE *ffrom );
 
 /**
  * Cleans up all data and closes files.

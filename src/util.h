@@ -85,6 +85,8 @@ _GL_INLINE_HEADER_BEGIN
 #define UNGETC(C,STREAM) \
   BLOCK( if ( ungetc( (C), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
 
+typedef char line_buf_t[ LINE_BUF_SIZE ];
+
 // extern variable definitions
 extern char const  *me;                 // executable name
 
@@ -113,6 +115,16 @@ char const* base_name( char const *path_name );
  * @return Returns the unsigned integer.
  */
 unsigned check_atou( char const *s );
+
+/**
+ * Reads a newline-terminated line from \a ffrom.
+ * If reading fails, prints an error message and exits.
+ *
+ * @param line The line buffer to read into.
+ * @param ffrom The \c FILE to read from.
+ * @return Returns the number of characters read.
+ */
+size_t check_readline( line_buf_t line, FILE *ffrom );
 
 /**
  * Calls \c realloc(3) and checks for failure.

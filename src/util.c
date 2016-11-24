@@ -68,6 +68,14 @@ unsigned check_atou( char const *s ) {
   return (unsigned)strtoul( s, NULL, 10 );
 }
 
+size_t check_readline( line_buf_t line, FILE *ffrom ) {
+  assert( ffrom );
+  size_t size = sizeof( line_buf_t );
+  if ( !fgetsz( line, &size, ffrom ) )
+    FERROR( ffrom );
+  return size;
+}
+
 void* check_realloc( void *p, size_t size ) {
   //
   // Autoconf, 5.5.1:
