@@ -19,8 +19,8 @@
 */
 
 // local
-#include "common.h"
 #include "pattern.h"
+#include "common.h"
 #include "util.h"
 
 // standard

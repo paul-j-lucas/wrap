@@ -19,9 +19,9 @@
 */
 
 // local
-#include "config.h"
 #include "alias.h"
 #include "common.h"
+#include "config.h"
 #include "pattern.h"
 #include "util.h"
 

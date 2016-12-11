@@ -19,9 +19,9 @@
 */
 
 // local
+#include "markdown.h"
 #include "config.h"
 #include "common.h"
-#include "markdown.h"
 #include "util.h"
 
 // standard

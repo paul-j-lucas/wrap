@@ -22,6 +22,7 @@
 #define wrap_util_H
 
 // local
+#include "common.h"
 #include "config.h"
 #include "options.h"
 

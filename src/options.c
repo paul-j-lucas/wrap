@@ -19,9 +19,9 @@
 */
 
 // local
+#include "options.h"
 #include "alias.h"
 #include "common.h"
-#include "options.h"
 #include "pattern.h"
 #include "read_conf.h"
 #include "util.h"

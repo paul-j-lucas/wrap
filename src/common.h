@@ -22,7 +22,7 @@
 #define wrap_common_H
 
 // local
-#include "config.h"
+#include "config.h"                     /* for PACKAGE */
 
 /**
  * @file

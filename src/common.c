@@ -19,8 +19,8 @@
 */
 
 // local
-#include "alias.h"
 #include "common.h"
+#include "alias.h"
 #include "markdown.h"
 #include "options.h"
 #include "pattern.h"
