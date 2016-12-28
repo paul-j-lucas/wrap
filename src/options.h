@@ -64,6 +64,7 @@ extern char const  *opt_conf_file;
 extern bool         opt_data_link_esc;  // respond to in-band control
 extern eol_t        opt_eol;
 extern bool         opt_eos_delimit;    // end-of-sentence delimits para's?
+extern size_t       opt_eos_spaces;     // spaces after end-of-sentence
 extern char const  *opt_fin;            // file in path
 extern char const  *opt_fin_name;       // file in name (only)
 extern char const  *opt_fout;           // file out path

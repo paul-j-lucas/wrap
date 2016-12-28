@@ -30,6 +30,7 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap-b-t1.test \
 	tests/wrap-d.test \
 	tests/wrap-dep.test \
+	tests/wrap-E1.test \
 	tests/wrap-f-F.test \
 	tests/wrap-h1-I5.test \
 	tests/wrap-H3-t1-T.test \

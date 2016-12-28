@@ -200,6 +200,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   arg_buf_t arg_opt_alias;
   arg_buf_t arg_opt_conf_file;
   arg_buf_t arg_opt_eol;
+  arg_buf_t arg_opt_eos_spaces;
   char      arg_opt_fin_name[ PATH_MAX ];
   arg_buf_t arg_opt_lead_para_delims;
   arg_buf_t arg_opt_line_width;
@@ -207,7 +208,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   arg_buf_t arg_opt_tab_spaces;
 
   int argc = 0;
-  char *argv[15];                       // must be +1 of greatest arg below
+  char *argv[16];                       // must be +1 of greatest arg below
 
 #define ARG_SET(ARG)          argv[ argc++ ] = (ARG)
 #define ARG_DUP(FMT)          ARG_SET( check_strdup( FMT ) )
@@ -229,7 +230,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   /*  3 */ IF_ARG_FMT( opt_conf_file       , "-c%s"  );
   /*  4 */ IF_ARG_DUP( opt_no_conf         , "-C"    );
   /*  5 */ IF_ARG_DUP( opt_eos_delimit     , "-e"    );
-  /*  6 */    ARG_DUP(                       "-E"    );
+  /*  6 */ IF_ARG_FMT( opt_eos_spaces      , "-E%zu" );
   /*  7 */ IF_ARG_FMT( opt_fin_name        , "-F%s"  );
   /*  8 */    ARG_FMT( opt_eol             , "-l%c"  );
   /*  9 */ IF_ARG_FMT( opt_para_delims     , "-p%s"  );
@@ -238,7 +239,8 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   /* 11 */ IF_ARG_DUP( opt_title_line      , "-T"    );
   /* 12 */    ARG_FMT( opt_line_width      , "-w%zu" );
   /* 13 */ IF_ARG_DUP( opt_no_hyphen       , "-y"    );
-  /* 14 */    ARG_END;
+  /* 14 */    ARG_DUP(                       "-Z"    );
+  /* 15 */    ARG_END;
 
   //
   // Read from pipes[TO_WRAP] (read_source_write_wrap() in child 1) and write

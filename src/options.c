@@ -48,6 +48,7 @@ char const         *opt_alias;
 char const         *opt_comment_chars = COMMENT_CHARS_DEFAULT;
 char const         *opt_conf_file;
 bool                opt_eos_delimit;
+size_t              opt_eos_spaces = EOS_SPACES_DEFAULT;
 bool                opt_data_link_esc;
 eol_t               opt_eol = EOL_INPUT;
 char const         *opt_fin;
@@ -209,7 +210,7 @@ static void parse_options( int argc, char const *argv[], char const *opts,
       case 'd': opt_lead_dot_ignore   = true;                 break;
       case 'D': opt_comment_chars     = optarg;               break;
       case 'e': opt_eos_delimit       = true;                 break;
-      case 'E': opt_data_link_esc     = true;                 break;
+      case 'E': opt_eos_spaces        = check_atou( optarg ); break;
       case 'f': opt_fin               = optarg;         // no break;
       case 'F': opt_fin_name          = base_name( optarg );  break;
       case 'h': opt_hang_tabs         = check_atou( optarg ); break;
@@ -234,6 +235,7 @@ static void parse_options( int argc, char const *argv[], char const *opts,
       case 'w': opt_line_width        = check_atou( optarg ); break;
       case 'W': opt_lead_ws_delimit   = true;                 break;
       case 'y': opt_no_hyphen         = true;                 break;
+      case 'Z': opt_data_link_esc     = true;                 break;
       default : usage();
     } // switch
   } // for
@@ -252,10 +254,10 @@ static void parse_options( int argc, char const *argv[], char const *opts,
 
 ////////// extern functions ///////////////////////////////////////////////////
 
-#define COMMON_OPTS         "a:b:c:Cef:F:l:o:p:s:Tuvw:y"
+#define COMMON_OPTS         "a:b:c:CeE:f:F:l:o:p:s:Tuvw:y"
 
 void init_options( int argc, char const *argv[], void (*usage)(void) ) {
-  static char const WRAP_OPTS [] = COMMON_OPTS "dEh:H:i:I:L:m:M:nNPS:t:W";
+  static char const WRAP_OPTS [] = COMMON_OPTS "dh:H:i:I:L:m:M:nNPS:t:WZ";
   static char const WRAPC_OPTS[] = COMMON_OPTS "D:";
 
   assert( usage );

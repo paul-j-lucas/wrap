@@ -170,9 +170,10 @@ int main( int argc, char const *argv[] ) {
           delimit_paragraph();
         } else {
           //
-          // We are joining a line after the end of a sentence: force 2 spaces.
+          // We are joining a line after the end of a sentence: force requested
+          // number of spaces.
           //
-          put_spaces = 2;
+          put_spaces = opt_eos_spaces;
         }
         continue;
       }
@@ -236,10 +237,10 @@ int main( int argc, char const *argv[] ) {
         // word can potentially be rejoined to the next word when wrapped.
         //
       }
-      else if ( out_len && put_spaces < 1u + was_eos_char ) {
+      else if ( out_len && put_spaces < (was_eos_char ? opt_eos_spaces : 1) ) {
         //
         // We are not at the beginning of a line: remember to insert 1 space
-        // later and allow 2 after the end of a sentence.
+        // later and allow opt_eos_spaces after the end of a sentence.
         //
         ++put_spaces;
       }
@@ -825,7 +826,8 @@ static void usage( void ) {
 "  -c file    Specify the configuration file [default: ~/%s].\n"
 "  -C         Suppress reading configuration file.\n"
 "  -d         Do not alter lines that begin with '.' (dot).\n"
-"  -e         Treat whitespace after end-of-sentence as new paragraph.\n"
+"  -e         Treat whitespace after an end-of-sentence as new paragraph.\n"
+"  -E number  Specify number of spaces after an end-of-sentence [default: %d].\n"
 "  -f file    Read from this file [default: stdin].\n"
 "  -F string  Specify filename for stdin.\n"
 "  -h number  Hang-indent tabs for all but first line of each paragraph.\n"
@@ -850,7 +852,8 @@ static void usage( void ) {
 "  -w number  Specify line width [default: %d].\n"
 "  -W         Treat line beginning with whitespace as paragraph delimiter.\n"
 "  -y         Suppress wrapping at hyphen characters.\n"
-    , me, me, CONF_FILE_NAME, TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
+    , me, me,
+    CONF_FILE_NAME, EOS_SPACES_DEFAULT, TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
   );
   exit( EX_USAGE );
 }
