@@ -1,5 +1,32 @@
+2016-12-28  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrap.1, wrapc.1, common.h, options.c, options.h,
+     wrap.c, wrapc.c, test/Makefile.am, wrap-E1.txt, wrap-E1.test: Added -E
+     option.
+
+2016-12-11  Paul J. Lucas <paul@lucasmail.org>
+
+   * common.c, common.h, markdown.c, options.c, pattern.c, read_conf.c, util.c,
+     util.h: #include file re-ordering.
+
+2016-11-24  Paul J. Lucas <paul@lucasmail.org>
+
+   * common.c, common.h, util.c, util.h: Moved check_readline() from common.c
+     to util.c.
+
+2016-11-21  Paul J. Lucas <paul@lucasmail.org>
+
+   * unicode.h: Fixed cp_is_hyphen_adjacent().
+   * unicode.c, unicode.h: Now accepting ISO-8859-1 alphabetic characters as
+     hyphen-adjacent characters.
+
 2016-11-19  Paul J. Lucas <paul@lucasmail.org>
 
+   * unicode.c: s/static/static inline/
+   * unicode.c: Cosmetic change.
+   * wrap.c: Removed duplicate tyedef.
+   * unicode.h: Fixed signed/unsigned warning.
+   * c++defs.h, snippet/c++defs.h: Updated gnulib.
    * NEWS, configure.ac, wrap.1, src/Makefile.am, unicode.c, unicode.h, wrap.c:
      Better Unicode support.
 
