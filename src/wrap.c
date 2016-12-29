@@ -97,7 +97,7 @@ static void         print_line( size_t, bool );
 static void         put_tabs_spaces( size_t, size_t );
 static size_t       read_line( line_buf_t );
 static void         usage( void );
-static void         wipc_send( FILE*, char* );
+static void         wipc_send( char* );
 
 ////////// inline functions ///////////////////////////////////////////////////
 
@@ -106,7 +106,7 @@ static void         wipc_send( FILE*, char* );
  */
 static inline void print_eol( void ) {
   FPUTS( eol(), fout );
-  wipc_send( fout, ipc_buf );
+  wipc_send( ipc_buf );
 }
 
 ////////// main ///////////////////////////////////////////////////////////////
@@ -884,10 +884,9 @@ static void usage( void ) {
  * Sends an already formatted IPC (interprocess communication) message (if not
  * empty) to wrapc.
  *
- * @param fout The FILE to send to.
  * @param msg The message to send.  If sent, the buffer is truncated.
  */
-static void wipc_send( FILE *fout, char *msg ) {
+static void wipc_send( char *msg ) {
   if ( msg[0] ) {
     WIPC_SENDF( fout, /*IPC_code=*/msg[0], "%s", msg + 1 );
     msg[0] = '\0';
