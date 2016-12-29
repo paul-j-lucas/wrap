@@ -760,11 +760,17 @@ static bool markdown_adjust( line_buf_t line ) {
   } // switch
 }
 
+/**
+ * Resets variables affected by the Markdown parser.
+ */
 static void markdown_reset( void ) {
   line_width = opt_line_width;
   opt_hang_spaces = opt_lead_spaces = 0;
 }
 
+/**
+ * Prints the leading characters for lines.
+ */
 static void print_lead_chars( void ) {
   if ( proto_buf[0] ) {
     FPRINTF( fout, "%s%s", proto_buf, out_len ? proto_tws : "" );
@@ -776,6 +782,13 @@ static void print_lead_chars( void ) {
   }
 }
 
+/**
+ * Prints the current output buffer as a line and resets the output buffer's
+ * length.
+ *
+ * @param len The length of the output buffer.
+ * @param do_eol If \c true, prints and end-of-line afterwards.
+ */
 static void print_line( size_t len, bool do_eol ) {
   out_buf[ len ] = '\0';
   if ( len ) {
@@ -786,6 +799,13 @@ static void print_line( size_t len, bool do_eol ) {
   out_len = out_width = 0;
 }
 
+/**
+ * Puts \a tabs tabs and \a spaces spaces (in that order) into the output
+ * buffer and increments the output width accordingly.
+ *
+ * @param tabs The number of tabs to put.
+ * @param spaces The number of spaces to put.
+ */
 static void put_tabs_spaces( size_t tabs, size_t spaces ) {
   out_width += tabs * opt_tab_spaces + spaces;
   for ( ; tabs > 0; --tabs )
@@ -814,6 +834,9 @@ static size_t read_line( line_buf_t line ) {
   return bytes_read;
 }
 
+/**
+ * Prints the usage message to standard error and exits.
+ */
 static void usage( void ) {
   PRINT_ERR(
 "usage: %s [options]\n"

@@ -1026,6 +1026,12 @@ static size_t strlen_no_eol( char const *s ) {
   return n;
 }
 
+/**
+ * Gets the text associated with the given exit status.
+ *
+ * @param status The exit status to get the text for.
+ * @return Returns said text or "unknown status."
+ */
 static char const* str_status( int status ) {
   switch ( status ) {
     case EX_OK        : return "success";
@@ -1063,6 +1069,9 @@ static size_t str_width( char const *s ) {
   return width;
 }
 
+/**
+ * Prints the usage message to standard error and exits.
+ */
 static void usage( void ) {
   PRINT_ERR(
 "usage: %s [options]\n"
@@ -1092,6 +1101,9 @@ static void usage( void ) {
   exit( EX_USAGE );
 }
 
+/**
+ * Wait for child processes to terminate so they don't become zombies.
+ */
 static void wait_for_child_processes( void ) {
 #ifndef DEBUG_RSWW
   int wait_status;
