@@ -1084,6 +1084,7 @@ static void usage( void ) {
 "  -C         Suppress reading configuration file.\n"
 "  -D chars   Specify comment delimiter characters [default: %s].\n"
 "  -e         Treat whitespace after end-of-sentence as new paragraph.\n"
+"  -E number  Specify number of spaces after an end-of-sentence [default: %d].\n"
 "  -f file    Read from this file [default: stdin].\n"
 "  -F string  Specify filename for stdin.\n"
 "  -l char    Specify line-endings as input/Unix/Windows [default: input].\n"
@@ -1095,8 +1096,9 @@ static void usage( void ) {
 "  -v         Print version an exit.\n"
 "  -w number  Specify line width [default: %d].\n"
 "  -y         Suppress wrapping at hyphen characters.\n"
-    , me, me, CONF_FILE_NAME, COMMENT_CHARS_DEFAULT, TAB_SPACES_DEFAULT,
-    LINE_WIDTH_DEFAULT
+    , me, me,
+    CONF_FILE_NAME, COMMENT_CHARS_DEFAULT, EOS_SPACES_DEFAULT,
+    TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
   );
   exit( EX_USAGE );
 }
