@@ -793,7 +793,7 @@ static void read_prototype( void ) {
   if ( !size )
     exit( EX_OK );
 
-  if ( opt_eol == EOL_INPUT && size >= 2 && CURR[ size - 2 ] == '\r' ) {
+  if ( opt_eol == EOL_INPUT && is_windows_eol( CURR, size ) ) {
     //
     // Retroactively set opt_eol because we pass it to wrap(1).
     //

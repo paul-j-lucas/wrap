@@ -612,8 +612,7 @@ static void init( int argc, char const *argv[] ) {
     // Therefore, we have to read only the first line in its entirety and peek
     // ahead to see if it ends with \r\n.
     //
-    opt_eol = bytes_read >= 2 && in_buf[ bytes_read - 2 ] == '\r' ?
-      EOL_WINDOWS : EOL_UNIX;
+    opt_eol = is_windows_eol( in_buf, bytes_read ) ? EOL_WINDOWS : EOL_UNIX;
   }
 
   //

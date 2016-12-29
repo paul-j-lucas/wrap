@@ -223,6 +223,18 @@ WRAP_UTIL_INLINE bool is_windows() {
 }
 
 /**
+ * Gets whether the line in \a buf is a Windows line, i.e., ends with
+ * \c {CR}{LF}.
+ *
+ * @param buf The buffer to check.
+ * @param buf_len The length of \a buf.
+ * @return Returns \c true only if \a buf ends with \c {CR}{LF}.
+ */
+WRAP_UTIL_INLINE bool is_windows_eol( char const buf[], size_t buf_len ) {
+  return buf_len >= 2 && buf[ buf_len - 2 ] == '\r';
+}
+
+/**
  * Gets the end-of-line string to use.
  *
  * @return Returns said end-of-line string.
