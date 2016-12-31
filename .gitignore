@@ -4,6 +4,7 @@
 *~
 .*.swp
 .deps
+.DS_Store
 Makefile
 
 /aclocal.m4
