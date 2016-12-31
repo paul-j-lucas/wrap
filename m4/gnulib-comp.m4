@@ -45,6 +45,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module absolute-header:
   # Code from module alloca:
   # Code from module alloca-opt:
+  # Code from module builtin-expect:
   # Code from module configmake:
   # Code from module extensions:
   # Code from module extern-inline:
@@ -99,6 +100,7 @@ AC_DEFUN([gl_INIT],
   gl_COMMON
   gl_source_base='lib'
   gl_FUNC_ALLOCA
+  gl___BUILTIN_EXPECT
   gl_CONFIGMAKE_PREP
   AC_REQUIRE([gl_EXTERN_INLINE])
   AC_C_FLEXIBLE_ARRAY_MEMBER
@@ -116,7 +118,6 @@ AC_DEFUN([gl_INIT],
     GNULIB_GL_UNISTD_H_GETOPT=1
   fi
   AC_SUBST([GNULIB_GL_UNISTD_H_GETOPT])
-  gl_MODULE_INDICATOR_FOR_TESTS([getopt-gnu])
   gl_FUNC_GETOPT_POSIX
   if test $REPLACE_GETOPT = 1; then
     AC_LIBOBJ([getopt])
@@ -368,6 +369,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/00gnulib.m4
   m4/absolute-header.m4
   m4/alloca.m4
+  m4/builtin-expect.m4
   m4/codeset.m4
   m4/configmake.m4
   m4/extensions.m4
