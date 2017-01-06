@@ -28,9 +28,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define CP_SURROGATE_HIGH_START   0x00D800u
-#define CP_SURROGATE_LOW_END      0x00DFFFu
-#define CP_VALID_MAX              0x10FFFFu
+static codepoint_t const CP_SURROGATE_HIGH_START  = 0x00D800u;
+static codepoint_t const CP_SURROGATE_LOW_END     = 0x00DFFFu;
+static codepoint_t const CP_VALID_MAX             = 0x10FFFFu;
 
 char const UTF8_LEN_TABLE[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
