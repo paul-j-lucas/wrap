@@ -88,7 +88,7 @@ static unsigned     put_spaces;         // number of spaces to put between words
 static bool         was_eos_char;       // prev char an end-of-sentence char?
 
 // local functions
-static codepoint_t  buf_getcp( char const**, char* );
+static codepoint_t  buf_getcp( char const**, utf8c_t );
 static void         delimit_paragraph( void );
 static void         init( int, char const*[] );
 static void         markdown_reset();
@@ -116,7 +116,7 @@ int main( int argc, char const *argv[] ) {
   init( argc, argv );
 
   bool    next_line_is_title = opt_title_line;
-  char    utf8_char[ UTF8_CHAR_SIZE_MAX ];
+  utf8c_t utf8_char;
   size_t  wrap_pos = 0;                 // position at which we can wrap
 
   /////////////////////////////////////////////////////////////////////////////
@@ -516,26 +516,28 @@ read_line:
 }
 
 /**
- * Gets the next Unicode code-point from the input.
+ * Gets bytes comprising the next UTF-8 character and its corresponding Unicode
+ * code-point from the input.
  *
  * @param ps A pointer to the pointer to character to advance.
+ * @param utf8c The buffer to put the UTF-8 bytes into.
  * @return Returns said code-point or \c CP_EOF.
  */
-static codepoint_t buf_getcp( char const **ps, char *buf ) {
-  if ( (buf[0] = buf_getc( ps )) == EOF )
+static codepoint_t buf_getcp( char const **ps, utf8c_t utf8c ) {
+  if ( (utf8c[0] = buf_getc( ps )) == EOF )
     return CP_EOF;
-  size_t const len = utf8_len( buf[0] );
+  size_t const len = utf8_len( utf8c[0] );
   if ( !len )
     return CP_INVALID;
 
   for ( size_t i = 1; i < len; ++i ) {
-    if ( (buf[i] = buf_getc( ps )) == EOF )
+    if ( (utf8c[i] = buf_getc( ps )) == EOF )
       return CP_EOF;
-    if ( !utf8_is_cont( buf[i] ) )
+    if ( !utf8_is_cont( utf8c[i] ) )
       return CP_INVALID;
   } // for
 
-  return utf8_decode( buf );
+  return utf8_decode( utf8c );
 }
 
 /**

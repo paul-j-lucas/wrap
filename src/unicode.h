@@ -48,6 +48,11 @@ typedef uint32_t codepoint_t;
 #define CP_INVALID                0x1FFFFFu
 #define UTF8_CHAR_SIZE_MAX        6     /* max bytes needed for UTF-8 char */
 
+/**
+ * UTF-8 character.
+ */
+typedef char utf8c_t[ UTF8_CHAR_SIZE_MAX ];
+
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
