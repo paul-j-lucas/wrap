@@ -83,7 +83,6 @@ static bool         encountered_non_whitespace;
 static hyphen_t     hyphen;
 static indent_t     indent = INDENT_LINE;
 static bool         is_long_line;       // line longer than line_width?
-static char const  *pc = in_buf;        // pointer to current character
 static unsigned     put_spaces;         // number of spaces to put between words
 static bool         was_eos_char;       // prev char an end-of-sentence char?
 
@@ -115,9 +114,10 @@ int main( int argc, char const *argv[] ) {
   wait_for_debugger_attach( "WRAP_DEBUG" );
   init( argc, argv );
 
-  bool    next_line_is_title = opt_title_line;
-  utf8c_t utf8_char;
-  size_t  wrap_pos = 0;                 // position at which we can wrap
+  bool        next_line_is_title = opt_title_line;
+  char const *pc = in_buf;              // pointer to current character
+  utf8c_t     utf8_char;
+  size_t      wrap_pos = 0;             // position at which we can wrap
 
   /////////////////////////////////////////////////////////////////////////////
 
