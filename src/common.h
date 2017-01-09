@@ -23,11 +23,21 @@
 
 // local
 #include "config.h"                     /* for PACKAGE */
+#include "options.h"
+
+// standard
+#include <stdio.h>											/* for FILE */
 
 /**
  * @file
- * Contains constants, macros, and functions common to both wrap and wrapc.
+ * Contains constants, macros, typedefs, and functions common to both wrap and
+ * wrapc.
  */
+
+_GL_INLINE_HEADER_BEGIN
+#ifndef WRAP_COMMON_INLINE
+# define WRAP_COMMON_INLINE _GL_INLINE
+#endif /* WRAP_COMMON_INLINE */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +48,8 @@
 #define LINE_WIDTH_MINIMUM        1
 #define NEWLINES_DELIMIT_DEFAULT  2     /* # newlines that delimit a para */
 #define TAB_SPACES_DEFAULT        8     /* number of spaces a tab equals */
+
+typedef char line_buf_t[ LINE_BUF_SIZE ];
 
 ////////// Interprocess Communication (IPC) ///////////////////////////////////
 
@@ -97,9 +109,37 @@
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
+ * Reads a newline-terminated line from \a ffrom.
+ * If reading fails, prints an error message and exits.
+ *
+ * @param line The line buffer to read into.
+ * @param ffrom The \c FILE to read from.
+ * @return Returns the number of characters read.
+ */
+size_t check_readline( line_buf_t line, FILE *ffrom );
+
+/**
  * Cleans up all data and closes files.
  */
 void clean_up( void );
+
+/**
+ * Gets whether the end-of-lines are Windows' end-of-lines, i.e., \c {CR}{LF}.
+ *
+ * @return Returns \c true only if end-of-lines are Windows' end-of-lines.
+ */
+WRAP_COMMON_INLINE bool is_windows() {
+  return opt_eol == EOL_WINDOWS;
+}
+
+/**
+ * Gets the end-of-line string to use.
+ *
+ * @return Returns said end-of-line string.
+ */
+WRAP_COMMON_INLINE char const* eol() {
+  return (char const*)"\r\n" + !is_windows();
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -116,6 +156,8 @@ void clean_up( void );
 #endif /* DEBUG_MARKDOWN */
 
 ///////////////////////////////////////////////////////////////////////////////
+
+_GL_INLINE_HEADER_END
 
 #endif /* wrap_common_H */
 /* vim:set et sw=2 ts=2: */

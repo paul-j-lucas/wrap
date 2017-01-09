@@ -154,7 +154,7 @@ char const* read_conf( char const *conf_file ) {
   }
 
   // parse configuration file
-  char line_buf[ LINE_BUF_SIZE ];
+  line_buf_t line_buf;
   unsigned line_no = 0;
   while ( fgets( line_buf, sizeof line_buf, fconf ) ) {
     ++line_no;

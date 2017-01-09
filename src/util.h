@@ -22,9 +22,7 @@
 #define wrap_util_H
 
 // local
-#include "common.h"
 #include "config.h"
-#include "options.h"
 
 // standard
 #include <errno.h>
@@ -86,8 +84,6 @@ _GL_INLINE_HEADER_BEGIN
 #define UNGETC(C,STREAM) \
   BLOCK( if ( ungetc( (C), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
 
-typedef char line_buf_t[ LINE_BUF_SIZE ];
-
 // extern variable definitions
 extern char const  *me;                 // executable name
 
@@ -116,16 +112,6 @@ char const* base_name( char const *path_name );
  * @return Returns the unsigned integer.
  */
 unsigned check_atou( char const *s );
-
-/**
- * Reads a newline-terminated line from \a ffrom.
- * If reading fails, prints an error message and exits.
- *
- * @param line The line buffer to read into.
- * @param ffrom The \c FILE to read from.
- * @return Returns the number of characters read.
- */
-size_t check_readline( line_buf_t line, FILE *ffrom );
 
 /**
  * Calls \c realloc(3) and checks for failure.
@@ -214,15 +200,6 @@ WRAP_UTIL_INLINE bool is_space( char c ) {
 }
 
 /**
- * Gets whether the end-of-lines are Windows' end-of-lines, i.e., \c {CR}{LF}.
- *
- * @return Returns \c true only if end-of-lines are Windows' end-of-lines.
- */
-WRAP_UTIL_INLINE bool is_windows() {
-  return opt_eol == EOL_WINDOWS;
-}
-
-/**
  * Gets whether the line in \a buf is a Windows line, i.e., ends with
  * \c {CR}{LF}.
  *
@@ -232,15 +209,6 @@ WRAP_UTIL_INLINE bool is_windows() {
  */
 WRAP_UTIL_INLINE bool is_windows_eol( char const buf[], size_t buf_len ) {
   return buf_len >= 2 && buf[ buf_len - 2 ] == '\r';
-}
-
-/**
- * Gets the end-of-line string to use.
- *
- * @return Returns said end-of-line string.
- */
-WRAP_UTIL_INLINE char const* eol() {
-  return (char const*)"\r\n" + !is_windows();
 }
 
 /**
