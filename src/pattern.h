@@ -27,11 +27,11 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-struct pattern_s {
+struct pattern {
   char const     *pattern;
   alias_t const  *alias;
 };
-typedef struct pattern_s pattern_t;
+typedef struct pattern pattern_t;
 
 ////////// extern functions ///////////////////////////////////////////////////
 

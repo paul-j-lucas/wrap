@@ -26,12 +26,12 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-struct alias_s {
+struct alias {
   unsigned      line_no;                // line in conf file defined on
   unsigned      argc;                   // number of arguments + 1
   char const  **argv;                   // argv[0] = alias name
 };
-typedef struct alias_s alias_t;
+typedef struct alias alias_t;
 
 ////////// extern functions ///////////////////////////////////////////////////
 
