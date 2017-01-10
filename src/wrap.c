@@ -94,9 +94,9 @@ static void         markdown_reset();
 static void         print_lead_chars( void );
 static void         print_line( size_t, bool );
 static void         put_tabs_spaces( size_t, size_t );
-static size_t       read_line( line_buf_t );
 static void         usage( void );
 static void         wipc_send( char* );
+static size_t       wrap_readline( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
 
@@ -264,7 +264,7 @@ int main( int argc, char const *argv[] ) {
         consec_newlines = 0;
         delimit_paragraph();
         FPUTS( in_buf, fout );          // print the line as-is
-        (void)read_line( in_buf );
+        (void)wrap_readline();
         pc = in_buf;
         continue;
       }
@@ -451,7 +451,7 @@ int main( int argc, char const *argv[] ) {
 static int buf_getc( char const **ppc ) {
   while ( !**ppc ) {
 read_line:
-    if ( !read_line( in_buf ) )
+    if ( !wrap_readline() )
       return EOF;
     *ppc = in_buf;
     //
@@ -599,7 +599,7 @@ static void init( int argc, char const *argv[] ) {
   opt_lead_tabs   += opt_mirror_tabs;
   opt_lead_spaces += opt_mirror_spaces;
 
-  size_t const bytes_read = read_line( in_buf );
+  size_t const bytes_read = wrap_readline();
   if ( !bytes_read )
     exit( EX_OK );
 
@@ -817,26 +817,6 @@ static void put_tabs_spaces( size_t tabs, size_t spaces ) {
 }
 
 /**
- * Reads the next line of input.  If wrapping Markdown, adjust wrap's settings.
- *
- * @param line The line to read into.
- * @return Returns the number of bytes read.
- */
-static size_t read_line( line_buf_t line ) {
-  size_t bytes_read;
-
-  while ( (bytes_read = check_readline( line, fin )) ) {
-    // Don't pass IPC lines through the Markdown parser.
-    if ( !opt_markdown || line[0] == WIPC_HELLO || markdown_adjust( line ) )
-      break;
-  } // while
-
-  if ( !bytes_read )
-    MD_DEBUG( "====================\n" );
-  return bytes_read;
-}
-
-/**
  * Prints the usage message to standard error and exits.
  */
 static void usage( void ) {
@@ -897,6 +877,25 @@ static void wipc_send( char *msg ) {
       ipc_width = 0;
     }
   }
+}
+
+/**
+ * Reads the next line of input.  If wrapping Markdown, adjust wrap's settings.
+ *
+ * @return Returns the number of bytes read.
+ */
+static size_t wrap_readline( void ) {
+  size_t bytes_read;
+
+  while ( (bytes_read = check_readline( in_buf, fin )) ) {
+    // Don't pass IPC lines through the Markdown parser.
+    if ( !opt_markdown || in_buf[0] == WIPC_HELLO || markdown_adjust( in_buf ) )
+      break;
+  } // while
+
+  if ( !bytes_read )
+    MD_DEBUG( "====================\n" );
+  return bytes_read;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
