@@ -445,27 +445,27 @@ int main( int argc, char const *argv[] ) {
 /**
  * Gets the next character from the input.
  *
- * @param ps A pointer to the pointer to character to advance.
+ * @param ppc A pointer to the pointer to character to advance.
  * @return Returns said character or \c EOF.
  */
-static int buf_getc( char const **ps ) {
-  while ( !**ps ) {
+static int buf_getc( char const **ppc ) {
+  while ( !**ppc ) {
 read_line:
     if ( !read_line( in_buf ) )
       return EOF;
-    *ps = in_buf;
+    *ppc = in_buf;
     //
     // When wrapping Markdown, we have to strip leading whitespace from lines
     // since it interferes with indenting.
     //
-    if ( !opt_markdown || *SKIP_CHARS( *ps, WS_STR ) )
+    if ( !opt_markdown || *SKIP_CHARS( *ppc, WS_STR ) )
       break;
   } // while
 
-  int c = *(*ps)++;
+  int c = *(*ppc)++;
 
   if ( opt_data_link_esc && c == WIPC_HELLO ) {
-    switch ( c = *(*ps)++ ) {
+    switch ( c = *(*ppc)++ ) {
       case WIPC_END_WRAP:
         //
         // We've been told by wrapc (child 1) that we've reached the end of
@@ -475,7 +475,7 @@ read_line:
         //
         print_lead_chars();
         print_line( out_len, true );
-        WIPC_SENDF( fout, WIPC_END_WRAP, "%s", *ps );
+        WIPC_SENDF( fout, WIPC_END_WRAP, "%s", *ppc );
         fcopy( fin, fout );
         exit( EX_OK );
 
@@ -490,7 +490,7 @@ read_line:
         // immediately.
         //
         char *sep;
-        size_t const new_line_width = strtoul( *ps, &sep, 10 );
+        size_t const new_line_width = strtoul( *ppc, &sep, 10 );
         if ( out_len ) {
           WIPC_DEFERF(
             ipc_buf, sizeof ipc_buf, WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
@@ -519,19 +519,19 @@ read_line:
  * Gets bytes comprising the next UTF-8 character and its corresponding Unicode
  * code-point from the input.
  *
- * @param ps A pointer to the pointer to character to advance.
+ * @param ppc A pointer to the pointer to character to advance.
  * @param utf8c The buffer to put the UTF-8 bytes into.
  * @return Returns said code-point or \c CP_EOF.
  */
-static codepoint_t buf_getcp( char const **ps, utf8c_t utf8c ) {
-  if ( (utf8c[0] = buf_getc( ps )) == EOF )
+static codepoint_t buf_getcp( char const **ppc, utf8c_t utf8c ) {
+  if ( (utf8c[0] = buf_getc( ppc )) == EOF )
     return CP_EOF;
   size_t const len = utf8_len( utf8c[0] );
   if ( !len )
     return CP_INVALID;
 
   for ( size_t i = 1; i < len; ++i ) {
-    if ( (utf8c[i] = buf_getc( ps )) == EOF )
+    if ( (utf8c[i] = buf_getc( ppc )) == EOF )
       return CP_EOF;
     if ( !utf8_is_cont( utf8c[i] ) )
       return CP_INVALID;
