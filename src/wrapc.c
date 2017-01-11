@@ -626,7 +626,7 @@ done:
  * @param argv The command-line arguments from main().
  */
 static void init( int argc, char const *argv[] ) {
-  atexit( clean_up );
+  atexit( common_cleanup );
   init_options( argc, argv, usage );
 
   CURR = input_buf.dl_line[0];

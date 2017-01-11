@@ -121,7 +121,7 @@ size_t check_readline( line_buf_t line, FILE *ffrom );
 /**
  * Cleans up all data and closes files.
  */
-void clean_up( void );
+void common_cleanup( void );
 
 /**
  * Gets whether the end-of-lines are Windows' end-of-lines, i.e., \c {CR}{LF}.

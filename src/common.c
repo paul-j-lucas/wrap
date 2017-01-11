@@ -41,7 +41,7 @@ size_t check_readline( line_buf_t line, FILE *ffrom ) {
   return size;
 }
 
-void clean_up( void ) {
+void common_cleanup( void ) {
   alias_cleanup();
   free_now();
   markdown_cleanup();
