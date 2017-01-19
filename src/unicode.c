@@ -52,7 +52,7 @@ char const UTF8_LEN_TABLE[] = {
   /* F */ 4,4,4,4,4,4,4,4,5,5,5,5,6,6,0,0
 };
 
-////////// local functions ////////////////////////////////////////////////////
+////////// inline functions ///////////////////////////////////////////////////
 
 /**
  * Checks whether a given Unicode code-point is valid.
