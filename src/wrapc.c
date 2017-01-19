@@ -449,7 +449,7 @@ static void read_wrap( void ) {
           //
           FPRINTF( fout, "%s%s", line + 2, eol() );
           fcopy( fwrap, fout );
-          goto break_loop;
+          goto done;
 
         case WIPC_NEW_LEADER: {
           //
@@ -490,8 +490,8 @@ static void read_wrap( void ) {
       eol()
     );
   } // for
-break_loop:
 
+done:
   FERROR( fwrap );
 #endif /* DEBUG_RSWW */
 }
