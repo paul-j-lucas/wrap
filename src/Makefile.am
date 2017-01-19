@@ -19,13 +19,17 @@
 ##
 
 bin_PROGRAMS = wrap wrapc
+check_PROGRAMS = regex_test
 
 AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_builddir)/lib -L$(top_srcdir)/lib
 
-wrap_SOURCES = alias.c common.c markdown.c options.c pattern.c read_conf.c unicode.c util.c wrap.c
+wrap_SOURCES = alias.c common.c markdown.c options.c pattern.c read_conf.c unicode.c util.c wrap.c wregex.c
 wrap_LDADD = $(top_builddir)/lib/libgnu.a
 
 wrapc_SOURCES = alias.c common.c markdown.c options.c pattern.c read_conf.c util.c wrapc.c
 wrapc_LDADD = $(top_builddir)/lib/libgnu.a
+
+regex_test_SOURCES = regex_test.c util.c wregex.c
+regex_test_LDADD = $(top_builddir)/lib/libgnu.a
 
 # vim:set noet sw=8 ts=8:

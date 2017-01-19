@@ -1,0 +1,28 @@
+# E-mail addresses: should match
+a@b.com                     a@b.com
+a@b.com                     a@b.com.
+a@b.com                     a@b.com?
+a@b.com                     "a@b.com"
+a@b.com                     (a@b.com)
+a@b.com                     <a@b.com>
+a@b.com                     .a@b.com
+a@bbc.co.uk                 a@bbc.co.uk
+a.b@c.de                    a.b@c.de
+a-b@c.de                    a-b@c.de
+a+b@c.de                    a+b@c.de
+mailto:a@b.com              mailto:a@b.com
+mailto:a@b.com              <mailto:a@b.com>
+*@x.ca                      *@x.ca
+a@b.com                     a@b.com@
+
+# E-mail addresses: should not match
+ a@b
+ a@b.c
+ a@-b.c
+ a@b-.c
+ a.@c.de
+ a@@b.com
+ @twitter
+ .@x.com
+
+# vim:set et sw=2 ts=2:

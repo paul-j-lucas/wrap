@@ -1,0 +1,47 @@
+# HTTP URIs: should match
+http://a.co.uk/             http://a.co.uk/
+http://a.co.uk/             "http://a.co.uk/"
+http://a.co.uk/             <http://a.co.uk/>
+http://a.co.uk/a            http://a.co.uk/a
+http://a.co.uk/%61          http://a.co.uk/%61
+http://a.co.uk              http://a.co.uk
+http://a.co.uk              http://a.co.uk.
+http://a.com:8080           http://a.com:8080
+http://user@a.ca            http://user@a.ca
+http://a.org?q              http://a.org?q
+http://a.org?q=x            http://a.org?q=x
+http://a.org?q=%ff          http://a.org?q=%ff
+http://a.org?q=%FF          http://a.org?q=%FF
+http://a.org?q=x&q=y        http://a.org?q=x&q=y
+http://a.org#f              http://a.org#f
+http://a.org?q#f            http://a.org?q#f
+http://münchen.de           http://münchen.de
+
+https://a.co.uk             https://a.co.uk
+
+# HTTP URIs: should not match
+ http
+ http:
+ http:/
+ http://
+ http://#
+ http://##
+ http://##/
+ http://-a.b.co
+ http://.
+ http://..
+ http://../
+ http:///a
+ http://?
+ http://??
+ http://??/
+ http://@host
+ http://a.b-.co
+ http://a.b-.co
+ http:a
+ http:a.com
+
+ httpp://a.com
+ hhttp://a.com
+
+# vim:set et sw=2 ts=2:

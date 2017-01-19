@@ -182,46 +182,60 @@ OUTPUT=/tmp/wrap_test_output_$$_
 
 ########## Run test ###########################################################
 
-trap "x=$?; rm -f /tmp/*_$$_* 2>/dev/null; exit $x" EXIT HUP INT TERM
+run_regex_file() {
+  if regex_test $TEST > $LOG_FILE 2>&1
+  then pass
+  else fail
+  fi
+}
 
-[ "$IFS" ] && IFS_old=$IFS
-IFS='|'; read COMMAND CONFIG OPTIONS INPUT EXPECTED_EXIT < $TEST
-[ "$IFS_old" ] && IFS=$IFS_old
+run_wrap_file() {
+  [ "$IFS" ] && IFS_old=$IFS
+  IFS='|'; read COMMAND CONFIG OPTIONS INPUT EXPECTED_EXIT < $TEST
+  [ "$IFS_old" ] && IFS=$IFS_old
 
-COMMAND=`echo $COMMAND`                 # trims whitespace
-CONFIG=`echo $CONFIG`                   # trims whitespace
-[ "$CONFIG" != /dev/null ] && CONFIG=$DATA_DIR/$CONFIG
-INPUT=$DATA_DIR/`echo $INPUT`           # trims whitespace
-EXPECTED_EXIT=`echo $EXPECTED_EXIT`     # trims whitespace
-if echo $TEST | grep crlf >/dev/null
-then EXT=crlf
-else EXT=txt
-fi
-EXPECTED_OUTPUT="$EXPECTED_DIR/`echo $TEST_NAME | sed s/test$/$EXT/`"
+  COMMAND=`echo $COMMAND`               # trims whitespace
+  CONFIG=`echo $CONFIG`                 # trims whitespace
+  [ "$CONFIG" != /dev/null ] && CONFIG=$DATA_DIR/$CONFIG
+  INPUT=$DATA_DIR/`echo $INPUT`         # trims whitespace
+  EXPECTED_EXIT=`echo $EXPECTED_EXIT`   # trims whitespace
+  case $TEST in
+  *crlf*) EXT=crlf ;;
+  *)      EXT=txt ;;
+  esac
+  EXPECTED_OUTPUT="$EXPECTED_DIR/`echo $TEST_NAME | sed s/test$/$EXT/`"
+
+  #echo $COMMAND -c $CONFIG "$OPTIONS" -f $INPUT -o $OUTPUT
+  if $COMMAND -c $CONFIG $OPTIONS -f $INPUT -o $OUTPUT 2> $LOG_FILE
+  then
+    if [ 0 -eq $EXPECTED_EXIT ]
+    then
+      if diff $EXPECTED_OUTPUT $OUTPUT > $LOG_FILE
+      then pass; mv $OUTPUT $LOG_FILE
+      else fail
+      fi
+    else
+      fail
+    fi
+  else
+    ACTUAL_EXIT=$?
+    if [ $ACTUAL_EXIT -eq $EXPECTED_EXIT ]
+    then pass
+    else fail
+    fi
+  fi
+}
 
 ##
 # Must put BUILD_SRC first in PATH so we get the correct version of wrap/wrapc.
 ##
 PATH=$BUILD_SRC:$PATH
 
-#echo $COMMAND -c $CONFIG "$OPTIONS" -f $INPUT -o $OUTPUT
-if $COMMAND -c $CONFIG $OPTIONS -f $INPUT -o $OUTPUT 2> $LOG_FILE
-then
-  if [ 0 -eq $EXPECTED_EXIT ]
-  then
-    if diff $EXPECTED_OUTPUT $OUTPUT > $LOG_FILE
-    then pass; mv $OUTPUT $LOG_FILE
-    else fail
-    fi
-  else
-    fail
-  fi
-else
-  ACTUAL_EXIT=$?
-  if [ $ACTUAL_EXIT -eq $EXPECTED_EXIT ]
-  then pass
-  else fail
-  fi
-fi
+trap "x=$?; rm -f /tmp/*_$$_* 2>/dev/null; exit $x" EXIT HUP INT TERM
+
+case $TEST in
+*.regex)  run_regex_file ;;
+*.test)   run_wrap_file ;;
+esac
 
 # vim:set et sw=2 ts=2:

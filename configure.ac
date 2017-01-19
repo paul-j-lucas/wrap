@@ -20,7 +20,7 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-AC_INIT([wrap], [4.8], [paul@lucasmail.org],,[https://github.com/paul-j-lucas/wrap])
+AC_INIT([wrap], [4.9], [paul@lucasmail.org],,[https://github.com/paul-j-lucas/wrap])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
@@ -38,7 +38,9 @@ AC_CHECK_HEADERS([fnmatch.h])
 AC_CHECK_HEADERS([getopt.h])
 AC_CHECK_HEADERS([inttypes.h])
 AC_CHECK_HEADERS([limits.h])
+AC_CHECK_HEADERS([locale.h])
 AC_CHECK_HEADERS([pwd.h])
+AC_CHECK_HEADERS([regex.h])
 AC_CHECK_HEADERS([signal.h])
 AC_CHECK_HEADERS([stddef.h])
 AC_CHECK_HEADERS([stdlib.h])
@@ -62,6 +64,8 @@ AC_FUNC_FNMATCH
 AC_FUNC_FORK
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([geteuid getpwuid perror strerror strndup])
+
+# Makefile conditionals.
 
 # Miscellaneous.
 AC_LANG(C)

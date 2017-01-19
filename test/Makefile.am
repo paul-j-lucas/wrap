@@ -20,7 +20,12 @@
 
 AUTOMAKE_OPTIONS = 1.12			# needed for TEST_LOG_DRIVER
 
-TESTS =	tests/utf8-w77.test \
+TESTS =	tests/e-mail.regex \
+	tests/file.regex \
+	tests/ftp.regex \
+	tests/http.regex
+
+TESTS+= tests/utf8-w77.test \
 	tests/utf8-w78.test \
 	tests/utf8-w79.test \
 	tests/utf8-w80.test \
@@ -74,6 +79,8 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrap--long_line-02.test \
 	tests/wrap--long_line-03.test \
 	tests/wrap--long_line-04.test \
+	tests/wrap--regex-http-01.test \
+	tests/wrap--regex-http-02.test \
 	tests/wrap--Markdown-abbr-01.test \
 	tests/wrap--Markdown-abbr-02.test \
 	tests/wrap--Markdown-abbr-03.test \
@@ -331,8 +338,10 @@ TESTS =	tests/utf8-w77.test \
 	tests/wrapc--XQuery-07.test
 
 AM_TESTS_ENVIRONMENT = BUILD_SRC=$(top_builddir)/src; export BUILD_SRC ;
-TEST_EXTENSIONS = .test
+TEST_EXTENSIONS = .regex .test
+
 TEST_LOG_DRIVER = $(srcdir)/run_test.sh
+REGEX_LOG_DRIVER = $(srcdir)/run_test.sh
 
 EXTRA_DIST = run_test.sh tests data expected
 dist-hook:

@@ -1,0 +1,15 @@
+# file URIs: should match
+file:/home/user             file:/home/user
+file:/home/user             "file:/home/user"
+file:/home/user             <file:/home/user>
+file://                     file://
+file://localhost/home/user  file://localhost/home/user
+file://user@host/home/user  file://user@host/home/user
+file:///home/user           file:///home/user
+file:///c:/home/user        file:///c:/home/user
+
+# file URIs: should not match
+ file:
+ ffile:/home/user
+
+# vim:set et sw=2 ts=2:

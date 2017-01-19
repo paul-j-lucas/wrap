@@ -27,12 +27,13 @@
 #include "pattern.h"
 #include "unicode.h"
 #include "util.h"
+#include "wregex.h"
 
 // standard
 #include <assert.h>
 #include <ctype.h>
-#include <inttypes.h>                   /* for uint32_t */
 #include <stddef.h>                     /* for size_t */
+#include <stdint.h>                     /* for uint32_t */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit(), ... */
 #include <string.h>
@@ -83,6 +84,8 @@ static bool         encountered_non_whitespace;
 static hyphen_t     hyphen;
 static indent_t     indent = INDENT_LINE;
 static bool         is_long_line;       // line longer than line_width?
+static size_t       nonws_no_wrap_range[2];
+static regex_t      nonws_no_wrap_regex;
 static unsigned     put_spaces;         // number of spaces to put between words
 static bool         was_eos_char;       // prev char an end-of-sentence char?
 
@@ -96,6 +99,7 @@ static void         print_line( size_t, bool );
 static void         put_tabs_spaces( size_t, size_t );
 static void         usage( void );
 static void         wipc_send( char* );
+static void         wrap_cleanup( void );
 static size_t       wrap_readline( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
@@ -334,34 +338,41 @@ int main( int argc, char const *argv[] ) {
     encountered_non_whitespace = true;
 
     if ( !opt_no_hyphen ) {
-      if ( hyphen == HYPHEN_MAYBE ) {
-        if ( cp_is_hyphen_adjacent( cp ) ) {
-          //
-          // We've encountered H-H meaning that this is definitely a
-          // hyphenated word: set wrap_pos to be here.
-          //
-          hyphen = HYPHEN_YES;
-          wrap_pos = out_len;
-        }
-        else if ( !cp_is_hyphen( cp ) ) {
-          //
-          // We've encountered H-X meaning that this is not a hyphenated word.
-          //
-          hyphen = HYPHEN_NO;
-        }
-        else {
-          //
-          // We've encountered H-- meaning that this is still potentially a
-          // hyphenated word.
-          //
-        }
-      } else {
-        if ( cp_is_hyphen_adjacent( cp_prev ) && cp_is_hyphen( cp ) ) {
-          //
-          // We've encountered H- meaning that this is potentially a hyphenated
-          // word.
-          //
-          hyphen = HYPHEN_MAYBE;
+      size_t const pos = pc - in_buf;
+      if ( pos >= nonws_no_wrap_range[1] || pos < nonws_no_wrap_range[0] ) {
+        //
+        // We're outside the non-whitespace-no-wrap range.
+        //
+        if ( hyphen == HYPHEN_MAYBE ) {
+          if ( cp_is_hyphen_adjacent( cp ) ) {
+            //
+            // We've encountered H-H meaning that this is definitely a
+            // hyphenated word: set wrap_pos to be here.
+            //
+            hyphen = HYPHEN_YES;
+            wrap_pos = out_len;
+          }
+          else if ( !cp_is_hyphen( cp ) ) {
+            //
+            // We've encountered H-X meaning that this is not a hyphenated
+            // word.
+            //
+            hyphen = HYPHEN_NO;
+          }
+          else {
+            //
+            // We've encountered H-- meaning that this is still potentially a
+            // hyphenated word.
+            //
+          }
+        } else {
+          if ( cp_is_hyphen_adjacent( cp_prev ) && cp_is_hyphen( cp ) ) {
+            //
+            // We've encountered H- meaning that this is potentially a
+            // hyphenated word.
+            //
+            hyphen = HYPHEN_MAYBE;
+          }
         }
       }
     }
@@ -449,11 +460,15 @@ int main( int argc, char const *argv[] ) {
  * @return Returns said character or \c EOF.
  */
 static int buf_getc( char const **ppc ) {
+  static bool check_for_nonws_no_wrap_match = true;
+
   while ( !**ppc ) {
 read_line:
     if ( !wrap_readline() )
       return EOF;
     *ppc = in_buf;
+    nonws_no_wrap_range[1] = 0;
+    check_for_nonws_no_wrap_match = true;
     //
     // When wrapping Markdown, we have to strip leading whitespace from lines
     // since it interferes with indenting.
@@ -461,6 +476,19 @@ read_line:
     if ( !opt_markdown || *SKIP_CHARS( *ppc, WS_STR ) )
       break;
   } // while
+
+  if ( !opt_no_hyphen && check_for_nonws_no_wrap_match ) {
+    size_t const pos = *ppc - in_buf;
+    //
+    // If there was a previous non-whitespace-no-wrap range and we're past it,
+    // see if there is another match on the same line.
+    //
+    if ( pos >= nonws_no_wrap_range[1] ) {
+      check_for_nonws_no_wrap_match = regex_match(
+        &nonws_no_wrap_regex, in_buf, pos, nonws_no_wrap_range
+      );
+    }
+  }
 
   int c = *(*ppc)++;
 
@@ -578,6 +606,7 @@ static void delimit_paragraph( void ) {
  */
 static void init( int argc, char const *argv[] ) {
   atexit( common_cleanup );
+  atexit( wrap_cleanup );
   init_options( argc, argv, usage );
 
   if ( opt_markdown ) {
@@ -598,6 +627,9 @@ static void init( int argc, char const *argv[] ) {
 
   opt_lead_tabs   += opt_mirror_tabs;
   opt_lead_spaces += opt_mirror_spaces;
+
+  if ( !opt_no_hyphen )
+    regex_init( &nonws_no_wrap_regex, WRAP_RE );
 
   size_t const bytes_read = wrap_readline();
   if ( !bytes_read )
@@ -877,6 +909,14 @@ static void wipc_send( char *msg ) {
       ipc_width = 0;
     }
   }
+}
+
+/**
+ * Cleans up wrap data.
+ */
+static void wrap_cleanup( void ) {
+  if ( !opt_no_hyphen )
+    regex_free( &nonws_no_wrap_regex );
 }
 
 /**

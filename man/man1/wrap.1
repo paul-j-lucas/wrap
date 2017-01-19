@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\fP 1 "December 27, 2016" "PJL TOOLS"
+.TH \f3wrap\fP 1 "January 18, 2017" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -146,7 +146,11 @@ characters
 (unless
 .B \-y
 is specified),
-but only when they appear between letters.
+but only when they appear between letters
+that are not part of either a URL
+(file, ftp, http, or https)
+or an e-mail address
+(optionally prefixed by \f(CWmailto:\fP).
 A hyphen character is any character that has either the
 ``hyphen''
 or
@@ -819,6 +823,9 @@ Paul J. Lucas
 .br
 <\f(CWhttp://commonmark.org/\fP>
 .P
+.IR "Internet Message Format" ", Peter W. Resnick,"
+RFC 5322, October 2008.
+.P
 .IR "Markdown" ", John Gruber,"
 .br
 <\f(CWhttps://daringfireball.net/projects/markdown/\fP>
@@ -831,10 +838,13 @@ Paul J. Lucas
 .br
 <\f(CWhttp://www.unicode.org/Public/UCD/latest/ucd/PropList.txt\fP>
 .P
+.IR "Uniform Resource Identifier (URI): Generic Syntax" ,
+Tim Berners-Lee, et al, RFC 3986, January 2005.
+.P
 .IR "Writing on GitHub" ,
 .br
 <\f(CWhttps://help.github.com/categories/writing-on-github/\fP>
 .P
-.IR "UTF-8, a transformation format of ISO 10646" ,
-RFC 3629, Francois Yergeau, November 2003.
+.IR "UTF-8, a transformation format of ISO 10646" ", Francois Yergeau,"
+RFC 3629, November 2003.
 .\" vim:set et sw=2 ts=2:

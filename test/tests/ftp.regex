@@ -1,0 +1,33 @@
+# FTP URIs: should match
+ftp://a.co.uk/              ftp://a.co.uk/
+ftp://a.co.uk/              "ftp://a.co.uk/"
+ftp://a.co.uk/              <ftp://a.co.uk/>
+ftp://a.co.uk/a             ftp://a.co.uk/a
+ftp://a.co.uk/%61           ftp://a.co.uk/%61
+ftp://a.co.uk               ftp://a.co.uk
+ftp://a.co.uk               ftp://a.co.uk.
+ftp://a.com:8080            ftp://a.com:8080
+ftp://user@a.ca             ftp://user@a.ca
+ftp://münchen.de            ftp://münchen.de
+
+# FTP URIs: should not match
+ ftp
+ ftp:
+ ftp:/
+ ftp://
+ ftp://-a.b.co
+ ftp://.
+ ftp://..
+ ftp://../
+ ftp:///a
+ ftp://@host
+ ftp://a
+ ftp://a.b-.co
+ ftp:/a
+ ftp:a
+ ftp:a.com
+
+ fftp://a.com
+ ftpp://a.com
+
+# vim:set et sw=2 ts=2:

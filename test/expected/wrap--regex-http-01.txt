@@ -1,0 +1,2 @@
+This is an example HTTP URI:
+http://www.example-site.com
