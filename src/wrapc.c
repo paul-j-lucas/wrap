@@ -74,12 +74,12 @@ typedef enum delim delim_t;
  * Contains the current and next lines of input so the next line can be peeked
  * at to determine how to proceed.
  */
-struct dual_line_s {
+struct dual_line {
   line_buf_t  dl_line[2];
   char       *dl_curr;                  // pointer to current line
   char       *dl_next;                  // pointer to next line
 };
-typedef struct dual_line_s dual_line_t;
+typedef struct dual_line dual_line_t;
 
 // extern variable definitions
 char const         *me;                 // executable name

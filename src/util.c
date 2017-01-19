@@ -41,11 +41,11 @@
  * A node for a singly linked list of pointers to memory to be freed via
  * \c atexit().
  */
-struct free_node_s {
-  void               *fn_ptr;
-  struct free_node_s *fn_next;
+struct free_node {
+  void             *fn_ptr;
+  struct free_node *fn_next;
 };
-typedef struct free_node_s free_node_t;
+typedef struct free_node free_node_t;
 
 // local variable definitions
 static free_node_t *free_head;          // linked list of stuff to free
