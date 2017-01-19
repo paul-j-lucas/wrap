@@ -1,5 +1,72 @@
+2017-01-18  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrap.1, src/Makefile.am, regex_test.c, wrap.c,
+     wregex.c, wregex.h, test/Makefile.am, regex-http-01.txt,
+     regex-http-02.txt, wrap--regex-http-01.txt, wrap--regex-http-02.txt,
+     run_test.sh, e-mail.regex, file.regex, ftp.regex, http.regex,
+     wrap--regex-http-01.test, wrap--regex-http-02.test: No longer wrap at
+     hyphens within URLs.
+
+2017-01-16  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, alloca.in.h, config.charset, flexmember.h, fnmatch.c,
+     fnmatch.in.h, fnmatch_loop.c, getopt.c, getopt.in.h, getopt1.c,
+     getopt_int.h, gettext.h, hard-locale.c, hard-locale.h, localcharset.c,
+     localcharset.h, mbrtowc.c, mbsinit.c, mbsrtowcs-impl.h, mbsrtowcs-state.c,
+     mbsrtowcs.c, memchr.c, ref-add.sin, ref-del.sin, stdbool.in.h,
+     stddef.in.h, stdlib.in.h, streq.h, string.in.h, strndup.c, strnlen.c,
+     strnlen1.c, strnlen1.h, sys_types.in.h, sysexits.in.h, unistd.in.h,
+     verify.h, wchar.in.h, wctype.in.h, 00gnulib.m4, absolute-header.m4,
+     alloca.m4, builtin-expect.m4, configmake.m4, extensions.m4,
+     extern-inline.m4, fcntl-o.m4, flexmember.m4, fnmatch.m4, getopt.m4,
+     glibc21.m4, gnulib-cache.m4, gnulib-common.m4, gnulib-comp.m4,
+     gnulib-tool.m4, hard-locale.m4, include_next.m4, localcharset.m4,
+     locale-fr.m4, locale-ja.m4, locale-zh.m4, mbrtowc.m4, mbsinit.m4,
+     mbsrtowcs.m4, mbstate_t.m4, memchr.m4, mmap-anon.m4, nocrash.m4, off_t.m4,
+     onceonly.m4, ssize_t.m4, stdbool.m4, stddef_h.m4, stdlib_h.m4,
+     string_h.m4, strndup.m4, strnlen.m4, sys_types_h.m4, sysexits.m4,
+     unistd_h.m4, warn-on-use.m4, wchar_h.m4, wchar_t.m4, wctype_h.m4,
+     wint_t.m4, snippet/arg-nonnull.h, snippet/c++defs.h,
+     snippet/warn-on-use.h: Updated GNUlib.
+
+2017-01-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * common.c, common.h, wrap.c, wrapc.c: s/clean_up/common_cleanup/
+
+2017-01-09  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: s/read_line()/wrap_readline()/
+   * wrap.c: s/ps/ppc/
+   * Makefile.am, configure.ac, man/Makefile.am, man/man1/Makefile.am, wrap.1,
+     wrapc.1, man/man5/Makefile.am, wraprc.5, src/Makefile.am, alias.c,
+     alias.h, common.c, common.h, markdown.c, markdown.h, options.c, options.h,
+     pattern.c, pattern.h, read_conf.c, read_conf.h, unicode.c, unicode.h,
+     util.c, util.h, wrap.c, wrapc.c, test/Makefile.am, run_test.sh: Updated
+     copyright year to 2017.
+   * common.c, common.h, read_conf.c, util.c, util.h: util.[ch] are now
+     wrap-free.
+   * alias.h, pattern.h: s/_s//
+
+2017-01-06  Paul J. Lucas <paul@lucasmail.org>
+
+   * wraprc.5: Corrected documentation of multiple matches.
+   * unicode.c: s/#define/static codepoint_t const/
+   * wrap.c: Made 'pc' local to main().
+   * unicode.h, wrap.c: Added utf8c_t.
+
+2016-12-31  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, c++defs.h, fnmatch.c, getopt.in.h, localcharset.c,
+     unistd.in.h, wchar.in.h, wctype.in.h, builtin-expect.m4, gnulib-comp.m4,
+     mbrtowc.m4, unistd_h.m4, wint_t.m4, snippet/c++defs.h: Gnulib update.
+
 2016-12-28  Paul J. Lucas <paul@lucasmail.org>
 
+   * wrap.c: wipc_send() no longer takes FILE*.
+   * wrapc.c: Added -E to wrapc usage message.
+   * wrap.c, wrapc.c: Added comments.
+   * util.h, wrap.c, wrapc.c: Added is_windows_eol().
+   * wrap.c: Whitespace fix.
    * NEWS, configure.ac, wrap.1, wrapc.1, common.h, options.c, options.h,
      wrap.c, wrapc.c, test/Makefile.am, wrap-E1.txt, wrap-E1.test: Added -E
      option.
