@@ -105,6 +105,29 @@ static size_t       wrap_readline( void );
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
+ * Checks whether \a cp is a leading paragraph delimiter Unicode character.
+ *
+ * @param cp The Unicode code-point to check.
+ * @return Returns \c true only if \a cp is a leading paragraph delimiter code-
+ * point.
+ */
+static inline bool cp_is_lead_para_delim( codepoint_t cp ) {
+  return  opt_lead_para_delims && cp_is_ascii( cp ) &&
+          strchr( opt_lead_para_delims, (int)cp ) != NULL;
+}
+
+/**
+ * Checks whether \a cp is a paragraph delimiter Unicode character.
+ *
+ * @param cp The Unicode code-point to check.
+ * @return Returns \c true only if \a cp is a paragraph delimiter character.
+ */
+static inline bool cp_is_para_delim( codepoint_t cp ) {
+  return  opt_para_delims && cp_is_ascii( cp ) &&
+          strchr( opt_para_delims, (int)cp ) != NULL;
+}
+
+/**
  * Prints an end-of-line and sends any pending IPC message to wrapc.
  */
 static inline void print_eol( void ) {

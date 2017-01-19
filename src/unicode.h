@@ -23,11 +23,11 @@
 
 // local
 #include "config.h"
-#include "options.h"
 
 // standard
 #include <ctype.h>
 #include <inttypes.h>                   /* for uint32_t */
+#include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
 #include <string.h>
 
@@ -119,29 +119,6 @@ bool cp_is_hyphen( codepoint_t cp );
  */
 WRAP_UNICODE_INLINE bool cp_is_hyphen_adjacent( codepoint_t cp ) {
   return cp_is_alpha( cp );
-}
-
-/**
- * Checks wherher \a cp is a leading paragraph delimiter Unicode character.
- *
- * @param cp The Unicode code-point to check.
- * @return Returns \c true only if \a cp is a leading paragraph delimiter code-
- * point.
- */
-WRAP_UNICODE_INLINE bool cp_is_lead_para_delim( codepoint_t cp ) {
-  return  opt_lead_para_delims && cp_is_ascii( cp ) &&
-          strchr( opt_lead_para_delims, (int)cp ) != NULL;
-}
-
-/**
- * Checks wherher \a cp is a paragraph delimiter Unicode character.
- *
- * @param cp The Unicode code-point to check.
- * @return Returns \c true only if \a cp is a paragraph delimiter character.
- */
-WRAP_UNICODE_INLINE bool cp_is_para_delim( codepoint_t cp ) {
-  return  opt_para_delims && cp_is_ascii( cp ) &&
-          strchr( opt_para_delims, (int)cp ) != NULL;
 }
 
 /**
