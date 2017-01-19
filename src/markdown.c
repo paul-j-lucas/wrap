@@ -124,7 +124,7 @@ static md_state_t  *stack;              // global stack of states
 static stack_pos_t  stack_top;          // index of the top of the stack
 
 // local functions
-static bool         bin_search( char const*, char const*const[], size_t );
+static bool         bin_search( char const*, char const *const[], size_t );
 static bool         md_is_code_fence( char const*, md_code_fence_t* );
 static bool         md_is_dl_ul_helper( char const*, md_indent_t* );
 static html_state_t md_is_html_tag( char const*, bool* );
