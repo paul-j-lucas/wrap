@@ -105,6 +105,8 @@ static void setlocale_orig( void ) {
  * Sets the locale to UTF-8.
  */
 static void setlocale_utf8( void ) {
+  static char const *locale_utf8;       // cached known good UTF-8 locale
+
   if ( !locale_orig ) {
     locale_orig = setlocale( LC_CTYPE, NULL );
     if ( !locale_orig ) {
@@ -114,13 +116,7 @@ static void setlocale_utf8( void ) {
       );
     }
     locale_orig = (char*)free_later( check_strdup( locale_orig ) );
-  }
 
-  static char const *locale_utf8;       // cached known good UTF-8 locale
-  if ( locale_utf8 ) {
-    if ( setlocale( LC_CTYPE, locale_utf8 ) )
-      return;
-  } else {
     static char const *const UTF8_LOCALES[] = {
       "UTF-8", "UTF8",
       "en_US.UTF-8", "en_US.UTF8",
@@ -132,9 +128,20 @@ static void setlocale_utf8( void ) {
         return;
       }
     } // for
+
+    PRINT_ERR( "%s: could not set locale to UTF-8; tried: ", me );
+    bool comma = false;
+    for ( char const *const *loc = UTF8_LOCALES; *loc; ++loc ) {
+      PRINT_ERR( "%s%s", (comma ? ", " : ""), *loc );
+      comma = true;
+    } // for
+    FPUTC( '\n', stderr );
+
+    exit( EX_UNAVAILABLE );
   }
 
-  setlocale_failed( "UTF-8" );
+  if ( !setlocale( LC_CTYPE, locale_utf8 ) )
+    setlocale_failed( "UTF-8" );
 }
 
 ////////// extern functions ///////////////////////////////////////////////////
