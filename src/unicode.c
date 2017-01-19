@@ -32,7 +32,7 @@ static codepoint_t const CP_SURROGATE_HIGH_START  = 0x00D800u;
 static codepoint_t const CP_SURROGATE_LOW_END     = 0x00DFFFu;
 static codepoint_t const CP_VALID_MAX             = 0x10FFFFu;
 
-char const UTF8_LEN_TABLE[] = {
+uint8_t const UTF8_LEN_TABLE[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
   /* 0 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
   /* 1 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -240,7 +240,7 @@ codepoint_t utf8_decode_impl( char const *s ) {
   assert( len >= 1 );
 
   codepoint_t cp = 0;
-  unsigned char const *u = (unsigned char const*)s;
+  uint8_t const *u = (uint8_t const*)s;
 
   switch ( len ) {
     case 6: cp += *u++; cp <<= 6;

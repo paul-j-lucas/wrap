@@ -139,7 +139,7 @@ bool cp_is_space( codepoint_t cp );
  */
 WRAP_UNICODE_INLINE codepoint_t utf8_decode( char const *s ) {
   extern codepoint_t utf8_decode_impl( char const* );
-  return (unsigned char)*s <= 127 ? (codepoint_t)*s : utf8_decode_impl( s );
+  return (uint8_t)*s <= 127 ? (codepoint_t)*s : utf8_decode_impl( s );
 }
 
 /**
@@ -151,7 +151,7 @@ WRAP_UNICODE_INLINE codepoint_t utf8_decode( char const *s ) {
  * sequence of a UTF-8 encoded character.
  */
 WRAP_UNICODE_INLINE bool utf8_is_cont( char c ) {
-  return (unsigned char)c >= 0x80 && (unsigned char)c < 0xC0;
+  return (uint8_t)c >= 0x80 && (uint8_t)c < 0xC0;
 }
 
 /**
@@ -162,8 +162,8 @@ WRAP_UNICODE_INLINE bool utf8_is_cont( char c ) {
  * @return Returns 1-6, or 0 if \a c is invalid.
  */
 WRAP_UNICODE_INLINE size_t utf8_len( char c ) {
-  extern char const UTF8_LEN_TABLE[];
-  return (size_t)UTF8_LEN_TABLE[ (unsigned char)c ];
+  extern uint8_t const UTF8_LEN_TABLE[];
+  return (size_t)UTF8_LEN_TABLE[ (uint8_t)c ];
 }
 
 /**
