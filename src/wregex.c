@@ -116,15 +116,24 @@ static void setlocale_utf8( void ) {
     locale_orig = (char*)free_later( check_strdup( locale_orig ) );
   }
 
-  static char const *const UTF8_LOCALES[] = {
-    "UTF-8", "UTF8",
-    "en_US.UTF-8", "en_US.UTF8",
-    NULL
-  };
-  for ( char const *const *loc = UTF8_LOCALES; *loc; ++loc ) {
-    if ( setlocale( LC_CTYPE, *loc ) )
+  static char const *locale_utf8;       // cached known good UTF-8 locale
+  if ( locale_utf8 ) {
+    if ( setlocale( LC_CTYPE, locale_utf8 ) )
       return;
-  } // for
+  } else {
+    static char const *const UTF8_LOCALES[] = {
+      "UTF-8", "UTF8",
+      "en_US.UTF-8", "en_US.UTF8",
+      NULL
+    };
+    for ( char const *const *loc = UTF8_LOCALES; *loc; ++loc ) {
+      if ( setlocale( LC_CTYPE, *loc ) ) {
+        locale_utf8 = *loc;
+        return;
+      }
+    } // for
+  }
+
   setlocale_failed( "UTF-8" );
 }
 
