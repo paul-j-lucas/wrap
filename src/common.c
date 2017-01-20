@@ -23,7 +23,6 @@
 #define WRAP_COMMON_INLINE _GL_EXTERN_INLINE
 #include "common.h"
 #include "alias.h"
-#include "markdown.h"
 #include "options.h"
 #include "pattern.h"
 #include "util.h"
@@ -44,7 +43,6 @@ size_t check_readline( line_buf_t line, FILE *ffrom ) {
 void common_cleanup( void ) {
   alias_cleanup();
   free_now();
-  markdown_cleanup();
   pattern_cleanup();
   if ( fin )
     fclose( fin );

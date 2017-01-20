@@ -938,6 +938,7 @@ static void wipc_send( char *msg ) {
  * Cleans up wrap data.
  */
 static void wrap_cleanup( void ) {
+  markdown_cleanup();
   if ( !opt_no_hyphen )
     regex_free( &nonws_no_wrap_regex );
 }
