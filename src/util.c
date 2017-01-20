@@ -26,9 +26,11 @@
 // standard
 #include <assert.h>
 #include <ctype.h>
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>                     /* for malloc(), ... */
 #include <string.h>
+#include <sysexits.h>
 
 #ifndef NDEBUG
 # include <signal.h>                    /* for raise(3) */
@@ -142,6 +144,28 @@ void free_now( void ) {
     p = next;
   } // for
   free_head = NULL;
+}
+
+void setlocale_LC_CTYPE_utf8( void ) {
+  static char const *const UTF8_LOCALES[] = {
+    "UTF-8", "UTF8",
+    "en_US.UTF-8", "en_US.UTF8",
+    NULL
+  };
+  for ( char const *const *loc = UTF8_LOCALES; *loc; ++loc ) {
+    if ( setlocale( LC_CTYPE, *loc ) )
+      return;
+  } // for
+
+  PRINT_ERR( "%s: could not set locale to UTF-8; tried: ", me );
+  bool comma = false;
+  for ( char const *const *loc = UTF8_LOCALES; *loc; ++loc ) {
+    PRINT_ERR( "%s%s", (comma ? ", " : ""), *loc );
+    comma = true;
+  } // for
+  FPUTC( '\n', stderr );
+
+  exit( EX_UNAVAILABLE );
 }
 
 void split_tws( char buf[], size_t buf_len, char tws[] ) {

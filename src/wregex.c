@@ -25,16 +25,12 @@
 // standard
 #include <assert.h>
 #include <ctype.h>
-#include <locale.h>
 #include <sysexits.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 
 // local constant definitions
 static int const    WRAP_REGEX_COMPILE_FLAGS = REG_EXTENDED;
-
-// local variable definitions
-static char const  *locale_orig;
 
 ////////// inline functions ///////////////////////////////////////////////////
 
@@ -84,66 +80,6 @@ static void regex_error( regex_t *re, int err_code ) {
   );
 }
 
-/**
- * Prints a \c setlocale() error message and exits.
- *
- * @param locale The locale that could not be set.
- */
-static void setlocale_failed( char const *locale ) {
-  PMESSAGE_EXIT( EX_UNAVAILABLE, "could not set locale to %s\n", locale );
-}
-
-/**
- * Restores the locale to the original one.
- */
-static void setlocale_orig( void ) {
-  if ( !setlocale( LC_CTYPE, locale_orig ) )
-    setlocale_failed( locale_orig );
-}
-
-/**
- * Sets the locale to UTF-8.
- */
-static void setlocale_utf8( void ) {
-  static char const *locale_utf8;       // cached known good UTF-8 locale
-
-  if ( !locale_orig ) {
-    locale_orig = setlocale( LC_CTYPE, NULL );
-    if ( !locale_orig ) {
-      PMESSAGE_EXIT( EX_UNAVAILABLE,
-        "setlocale(3) unexpectedly returned %s indicating no locale is set",
-        "NULL"
-      );
-    }
-    locale_orig = (char*)free_later( check_strdup( locale_orig ) );
-
-    static char const *const UTF8_LOCALES[] = {
-      "UTF-8", "UTF8",
-      "en_US.UTF-8", "en_US.UTF8",
-      NULL
-    };
-    for ( char const *const *loc = UTF8_LOCALES; *loc; ++loc ) {
-      if ( setlocale( LC_CTYPE, *loc ) ) {
-        locale_utf8 = *loc;
-        return;
-      }
-    } // for
-
-    PRINT_ERR( "%s: could not set locale to UTF-8; tried: ", me );
-    bool comma = false;
-    for ( char const *const *loc = UTF8_LOCALES; *loc; ++loc ) {
-      PRINT_ERR( "%s%s", (comma ? ", " : ""), *loc );
-      comma = true;
-    } // for
-    FPUTC( '\n', stderr );
-
-    exit( EX_UNAVAILABLE );
-  }
-
-  if ( !setlocale( LC_CTYPE, locale_utf8 ) )
-    setlocale_failed( "UTF-8" );
-}
-
 ////////// extern functions ///////////////////////////////////////////////////
 
 void regex_free( regex_t *re ) {
@@ -154,16 +90,8 @@ void regex_free( regex_t *re ) {
 void regex_init( regex_t *re, char const *pattern ) {
   assert( re );
   assert( pattern );
-  //
-  // regcomp(3) and regexec(3) can be used with UTF-8 if the locale is *.UTF-8
-  // but we don't want to force UTF-8 globally overriding the user's preference
-  // so we temporarily set it to UTF-8 then immediately set it back to whatever
-  // it was.
-  //
-  setlocale_utf8();
-  int const err_code = regcomp( re, pattern, WRAP_REGEX_COMPILE_FLAGS );
-  setlocale_orig();
 
+  int const err_code = regcomp( re, pattern, WRAP_REGEX_COMPILE_FLAGS );
   if ( err_code != 0 )
     regex_error( re, err_code );
 }
@@ -175,9 +103,7 @@ bool regex_match( regex_t *re, char const *s, size_t offset, size_t range[2] ) {
   char const *const so = s + offset;
   regmatch_t match[ re->re_nsub + 1 ];
 
-  setlocale_utf8();
   int const err_code = regexec( re, so, re->re_nsub + 1, match, /*eflags=*/0 );
-  setlocale_orig();
 
   if ( err_code == REG_NOMATCH )
     return false;
