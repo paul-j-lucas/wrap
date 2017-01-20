@@ -1,5 +1,35 @@
+2017-01-20  Paul J. Lucas <paul@lucasmail.org>
+
+   * src/Makefile.am, unicode.c, unicode.h, wregex.c, http.regex:
+     is_begin_word_boundary() now works with UTF-8.
+   * unicode.h: Tweaked utf8_is_cont().
+   * unicode.h: Tweaks.
+
+2017-01-19  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac: AC_HEADER clean-up.
+   * unicode.c, unicode.h: Replaced cp_is_alpha() and cp_is_space() with isw*()
+     equivalents.
+   * regex_test.c, util.c, util.h, wrap.c, wregex.c: Now always setting
+     LC_CTYPE locale to UTF-8.
+   * src/Makefile.am, common.c, wrap.c: Moved markdown_cleanup() to
+     wrap_cleanup() so wrapc no longer depends on markdown.o.
+   * util.c: Fixed definition of free_now().
+   * wrapc.c: s/break_loop/done/
+   * wregex.c: Now printing better error message when can't find UTF-8 locale.
+   * wregex.c: Now caching known good UTF-8 locale.
+   * unicode.c, unicode.h: s/unsigned char/uint8_t/
+   * unicode.c: s/local/inline/
+   * wrap.1: Added exit codes of 69 and 70.
+   * unicode.h, wrap.c: Moved cp_is_lead_para_delim() and cp_is_para_delim()
+     into wrap.c.
+   * wregex.c: Now also trying en_US.UTF-8.
+
 2017-01-18  Paul J. Lucas <paul@lucasmail.org>
 
+   * markdown.c: Made md_code_indent_min() actually be inline.
+   * markdown.c: Cosmetic change.
+   * util.c, wrapc.c: Removed _s struct suffix.
    * NEWS, configure.ac, wrap.1, src/Makefile.am, regex_test.c, wrap.c,
      wregex.c, wregex.h, test/Makefile.am, regex-http-01.txt,
      regex-http-02.txt, wrap--regex-http-01.txt, wrap--regex-http-02.txt,
