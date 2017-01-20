@@ -73,7 +73,7 @@ WRAP_UNICODE_INLINE bool cp_is_alpha( codepoint_t cp ) {
  * @return Returns \c true only if \a cp is an ASCII character.
  */
 WRAP_UNICODE_INLINE bool cp_is_ascii( codepoint_t cp ) {
-  return cp <= 127;
+  return cp <= 0x7F;
 }
 
 /**
@@ -144,7 +144,8 @@ WRAP_UNICODE_INLINE bool cp_is_space( codepoint_t cp ) {
  */
 WRAP_UNICODE_INLINE codepoint_t utf8_decode( char const *s ) {
   extern codepoint_t utf8_decode_impl( char const* );
-  return (uint8_t)*s <= 127 ? (codepoint_t)*s : utf8_decode_impl( s );
+  codepoint_t const cp = (uint8_t)*s;
+  return cp_is_ascii( cp ) ? cp : utf8_decode_impl( s );
 }
 
 /**
