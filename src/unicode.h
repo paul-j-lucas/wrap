@@ -157,7 +157,8 @@ WRAP_UNICODE_INLINE codepoint_t utf8_decode( char const *s ) {
  * sequence of a UTF-8 encoded character.
  */
 WRAP_UNICODE_INLINE bool utf8_is_cont( char c ) {
-  return (uint8_t)c >= 0x80 && (uint8_t)c < 0xC0;
+  uint8_t const u = (uint8_t)c;
+  return u >= 0x80 && u < 0xC0;
 }
 
 /**
