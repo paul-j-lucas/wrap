@@ -32,6 +32,7 @@ AC_PROG_INSTALL
 # Checks for libraries.
 
 # Checks for header files.
+AC_HEADER_ASSERT
 AC_CHECK_HEADERS([ctype.h])
 AC_CHECK_HEADERS([errno.h])
 AC_CHECK_HEADERS([fnmatch.h])
@@ -42,13 +43,11 @@ AC_CHECK_HEADERS([locale.h])
 AC_CHECK_HEADERS([pwd.h])
 AC_CHECK_HEADERS([regex.h])
 AC_CHECK_HEADERS([signal.h])
+AC_HEADER_STDBOOL
 AC_CHECK_HEADERS([stddef.h])
-AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([sysexits.h])
 AC_CHECK_HEADERS([unistd.h])
-AC_HEADER_ASSERT
-AC_HEADER_STDBOOL
-AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS([wctype.h])
 gl_INIT
 
 # Checks for typedefs, structures, and compiler characteristics.
