@@ -30,6 +30,7 @@
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
 #include <string.h>
+#include <wctype.h>
 
 _GL_INLINE_HEADER_BEGIN
 #ifndef WRAP_UNICODE_INLINE
@@ -61,7 +62,9 @@ typedef char utf8c_t[ UTF8_CHAR_SIZE_MAX ];
  * @param cp The Unicode code-point to check.
  * @return Returns \c true only if \a cp is an alphabetic character.
  */
-bool cp_is_alpha( codepoint_t cp );
+WRAP_UNICODE_INLINE bool cp_is_alpha( codepoint_t cp ) {
+  return iswalpha( cp );
+}
 
 /**
  * Checks whether \a cp is an ASCII character.
@@ -127,7 +130,9 @@ WRAP_UNICODE_INLINE bool cp_is_hyphen_adjacent( codepoint_t cp ) {
  * @param cp The Unicode code-point to check.
  * @return Returns \a true only if \a cp is a space character.
  */
-bool cp_is_space( codepoint_t cp );
+WRAP_UNICODE_INLINE bool cp_is_space( codepoint_t cp ) {
+  return iswspace( cp );
+}
 
 /**
  * Decodes a UTF-8 encoded character into its corresponding Unicode code-point.
