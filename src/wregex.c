@@ -20,12 +20,13 @@
 
 // local
 #include "wregex.h"
+#include "unicode.h"
 #include "util.h"
 
 // standard
 #include <assert.h>
-#include <ctype.h>
 #include <sysexits.h>
+#include <wctype.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -41,8 +42,8 @@ static int const    WRAP_REGEX_COMPILE_FLAGS = REG_EXTENDED;
  * @param c The character to check.
  * @return Returns \c true only if \a c is a word character.
  */
-static inline bool is_word_char( char c ) {
-  return isalnum( c ) || c == '_';
+static inline bool cp_is_word_char( codepoint_t cp ) {
+  return iswalnum( cp ) || cp == '_';
 }
 
 ////////// local functions ////////////////////////////////////////////////////
@@ -52,17 +53,28 @@ static inline bool is_word_char( char c ) {
  * function exists because POSIX regular expressions don't support \c \\b
  * (match a word boundary).
  *
- * @param s The string to check within.
- * @param pos The position of the character to check.
- * @return Returns \c true only if the character at \a pos is at the beginning
+ * @param s The UTF-8 encoded string to check within.
+ * @param curr A pointer to the first byte of the UTF-8 encoded character to
+ * check.
+ * @return Returns \c true only if the character at \a curr is at the beginning
  * of a word.
  */
-static bool is_begin_word_boundary( char const *s, size_t pos ) {
-  if ( pos == 0 )
+static bool is_begin_word_boundary( char const *s, char const *curr ) {
+  assert( s );
+  assert( curr );
+  assert( curr >= s );
+
+  if ( curr == s )
     return true;
-  char const *const begin = s + pos;
-  return  (!is_word_char( begin[0] ) || !is_word_char( begin[-1] )) ||
-          (isspace( begin[-1] ) && !isspace( begin[0] ));
+  char const *const prev = utf8_rsync( s, curr - 1 );
+  if ( !prev )
+    return true;
+
+  codepoint_t const cp_curr = utf8_decode( curr );
+  codepoint_t const cp_prev = utf8_decode( prev );
+
+  return (cp_is_word_char( cp_curr ) ^ cp_is_word_char( cp_prev ))
+      || (cp_is_space( cp_curr ) ^ cp_is_space( cp_prev ));
 }
 
 /**
@@ -109,7 +121,7 @@ bool regex_match( regex_t *re, char const *s, size_t offset, size_t range[2] ) {
     return false;
   if ( err_code < 0 )
     regex_error( re, err_code );
-  if ( !is_begin_word_boundary( so, match[0].rm_so ) )
+  if ( !is_begin_word_boundary( so, so + match[0].rm_so ) )
     return false;
 
   range[0] = (size_t)match[0].rm_so + offset;

@@ -15,6 +15,8 @@ http://a.org?q=%FF          http://a.org?q=%FF
 http://a.org?q=x&q=y        http://a.org?q=x&q=y
 http://a.org#f              http://a.org#f
 http://a.org?q#f            http://a.org?q#f
+
+http://a.com                ‹http://a.com›
 http://münchen.de           http://münchen.de
 
 https://a.co.uk             https://a.co.uk
@@ -40,6 +42,10 @@ https://a.co.uk             https://a.co.uk
  http://a.b-.co
  http:a
  http:a.com
+
+ ĥttp://a.com
+ ẖttp://a.com
+ Àhttp://a.com
 
  httpp://a.com
  hhttp://a.com

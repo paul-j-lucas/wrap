@@ -202,5 +202,11 @@ codepoint_t utf8_decode_impl( char const *s ) {
   return cp_is_valid( cp ) ? cp : CP_INVALID;
 }
 
+char const* utf8_rsync_impl( char const *buf, char const *pos ) {
+  while ( pos > buf && utf8_is_cont( *pos ) )
+    --pos;
+  return utf8_is_start( *pos ) ? pos : NULL;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 /* vim:set et sw=2 ts=2: */

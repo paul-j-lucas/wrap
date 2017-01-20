@@ -29,7 +29,7 @@ wrap_LDADD = $(top_builddir)/lib/libgnu.a
 wrapc_SOURCES = alias.c common.c options.c pattern.c read_conf.c util.c wrapc.c
 wrapc_LDADD = $(top_builddir)/lib/libgnu.a
 
-regex_test_SOURCES = regex_test.c util.c wregex.c
+regex_test_SOURCES = regex_test.c unicode.c util.c wregex.c
 regex_test_LDADD = $(top_builddir)/lib/libgnu.a
 
 # vim:set noet sw=8 ts=8:

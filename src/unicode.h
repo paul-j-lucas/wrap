@@ -136,7 +136,7 @@ WRAP_UNICODE_INLINE bool cp_is_space( codepoint_t cp ) {
 
 /**
  * Decodes a UTF-8 encoded character into its corresponding Unicode code-point.
- * This inline version is optimized for the common case of ASCII.
+ * (This inline version is optimized for the common case of ASCII.)
  *
  * @param s A pointer to the first byte of the UTF-8 encoded character.
  * @return Returns said code-point or \c CP_INVALID if the UTF-8 byte sequence
@@ -146,6 +146,24 @@ WRAP_UNICODE_INLINE codepoint_t utf8_decode( char const *s ) {
   extern codepoint_t utf8_decode_impl( char const* );
   codepoint_t const cp = (uint8_t)*s;
   return cp_is_ascii( cp ) ? cp : utf8_decode_impl( s );
+}
+
+/**
+ * Given a pointer to any byte within a UTF-8 encoded string, synchronizes in
+ * reverse to find the first byte of the UTF-8 character byte sequence the
+ * pointer is pointing within.  (This inline version is optimized for the
+ * common case of ASCII.)
+ *
+ * @param bug A pointer to the beginning of the buffer.
+ * @param pos A pointer to any byte with the buffer.
+ * @return Returns a pointer less than or equal to \a buf that points to the
+ * first byte of a UTF-8 encoded character byte sequence or NULL if there is
+ * none.
+ */
+WRAP_UNICODE_INLINE char const* utf8_rsync( char const *buf, char const *pos ) {
+  extern char const* utf8_rsync_impl( char const*, char const* );
+  codepoint_t const cp = (uint8_t)*pos;
+  return cp_is_ascii( cp ) ? pos : utf8_rsync_impl( buf, pos );
 }
 
 /**
@@ -159,6 +177,19 @@ WRAP_UNICODE_INLINE codepoint_t utf8_decode( char const *s ) {
 WRAP_UNICODE_INLINE bool utf8_is_cont( char c ) {
   uint8_t const u = (uint8_t)c;
   return u >= 0x80 && u < 0xC0;
+}
+
+/**
+ * Checks whether the given byte is the first byte of a UTF-8 byte sequence of
+ * an encoded character.
+ *
+ * @param c The byte to check.
+ * @return Returns \c true only if the byte is the first byte of a byte
+ * sequence of a UTF-8 encoded character.
+ */
+WRAP_UNICODE_INLINE bool utf8_is_start( char c ) {
+  uint8_t const u = (uint8_t)c;
+  return u <= 0x7F || (u >= 0xC2 && u < 0xFE);
 }
 
 /**
