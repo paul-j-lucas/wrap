@@ -47,6 +47,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module alloca-opt:
   # Code from module builtin-expect:
   # Code from module configmake:
+  # Code from module errno:
   # Code from module extensions:
   # Code from module extern-inline:
   # Code from module flexmember:
@@ -56,6 +57,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module gettext-h:
   # Code from module hard-locale:
   # Code from module include_next:
+  # Code from module intprops:
   # Code from module localcharset:
   # Code from module mbrtowc:
   # Code from module mbsinit:
@@ -71,6 +73,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module stddef:
   # Code from module stdlib:
   # Code from module streq:
+  # Code from module strerror:
+  # Code from module strerror-override:
   # Code from module string:
   # Code from module strndup:
   # Code from module strnlen:
@@ -102,6 +106,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_ALLOCA
   gl___BUILTIN_EXPECT
   gl_CONFIGMAKE_PREP
+  gl_HEADER_ERRNO_H
   AC_REQUIRE([gl_EXTERN_INLINE])
   AC_C_FLEXIBLE_ARRAY_MEMBER
   gl_FUNC_FNMATCH_POSIX
@@ -162,6 +167,18 @@ AC_DEFUN([gl_INIT],
   AM_STDBOOL_H
   gl_STDDEF_H
   gl_STDLIB_H
+  gl_FUNC_STRERROR
+  if test $REPLACE_STRERROR = 1; then
+    AC_LIBOBJ([strerror])
+  fi
+  gl_MODULE_INDICATOR([strerror])
+  gl_STRING_MODULE_INDICATOR([strerror])
+  AC_REQUIRE([gl_HEADER_ERRNO_H])
+  AC_REQUIRE([gl_FUNC_STRERROR_0])
+  if test -n "$ERRNO_H" || test $REPLACE_STRERROR_0 = 1; then
+    AC_LIBOBJ([strerror-override])
+    gl_PREREQ_SYS_H_WINSOCK2
+  fi
   gl_HEADER_STRING_H
   gl_FUNC_STRNDUP
   if test $HAVE_STRNDUP = 0 || test $REPLACE_STRNDUP = 1; then
@@ -327,6 +344,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/alloca.c
   lib/alloca.in.h
   lib/config.charset
+  lib/errno.in.h
   lib/flexmember.h
   lib/fnmatch.c
   lib/fnmatch.in.h
@@ -338,6 +356,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gettext.h
   lib/hard-locale.c
   lib/hard-locale.h
+  lib/intprops.h
   lib/localcharset.c
   lib/localcharset.h
   lib/mbrtowc.c
@@ -353,6 +372,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stddef.in.h
   lib/stdlib.in.h
   lib/streq.h
+  lib/strerror-override.c
+  lib/strerror-override.h
+  lib/strerror.c
   lib/string.in.h
   lib/strndup.c
   lib/strnlen.c
@@ -372,6 +394,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/builtin-expect.m4
   m4/codeset.m4
   m4/configmake.m4
+  m4/errno_h.m4
   m4/extensions.m4
   m4/extern-inline.m4
   m4/fcntl-o.m4
@@ -399,9 +422,11 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/stdbool.m4
   m4/stddef_h.m4
   m4/stdlib_h.m4
+  m4/strerror.m4
   m4/string_h.m4
   m4/strndup.m4
   m4/strnlen.m4
+  m4/sys_socket_h.m4
   m4/sys_types_h.m4
   m4/sysexits.m4
   m4/unistd_h.m4
