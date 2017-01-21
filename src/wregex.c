@@ -19,6 +19,7 @@
 */
 
 // local
+#include "config.h"
 #include "wregex.h"
 #include "unicode.h"
 #include "util.h"
