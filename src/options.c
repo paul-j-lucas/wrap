@@ -43,6 +43,27 @@
 
 typedef char opts_given_t[ 2 /* lower/upper */ ][ 26 + 1/*null*/ ];
 
+// extern constants
+char const          COMMENT_CHARS_DEFAULT[] =
+    // Each character should appear only once.
+    "#"   //    AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell
+    "/*"  //    C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift
+    "+"   // /+ D
+    "-"   // -- Ada, AppleScript
+    "(:"  //    XQuery
+  // (*   //    AppleScript, Delphi, ML, Modula-[23], Oberon, OCaml, Pascal
+    "{"   // {- Haskell
+    "}"   //    Pascal
+    "!"   //    Fortran
+    "%"   //    Erlang, PostScript, Prolog, TeX
+    ";"   //    Assembly, Clojure, Lisp, Scheme
+    "<"   // <# PowerShell
+    "="   // #= Julia
+    ">"   //    Quoted e-mail
+  // *>"  //    COBOL 2002
+    "|"   // |# Lisp, Racket, Scheme
+    ;
+
 // extern option variables
 char const         *opt_alias;
 char const         *opt_comment_chars = COMMENT_CHARS_DEFAULT;

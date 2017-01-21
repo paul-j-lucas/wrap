@@ -28,25 +28,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// Each character should appear only once.
-#define COMMENT_CHARS_DEFAULT \
-  "#"   /*    AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell       */ \
-  "/*"  /*    C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift    */ \
-  "+"   /* /+ D                                                           */ \
-  "-"   /* -- Ada, AppleScript                                            */ \
-  "(:"  /*    XQuery                                                      */ \
-/* (*   |*    AppleScript, Delphi, ML, Modula-[23], Oberon, OCaml, Pascal */ \
-  "{"   /* {- Haskell                                                     */ \
-  "}"   /*    Pascal                                                      */ \
-  "!"   /*    Fortran                                                     */ \
-  "%"   /*    Erlang, PostScript, Prolog, TeX                             */ \
-  ";"   /*    Assembly, Clojure, Lisp, Scheme                             */ \
-  "<"   /* <# PowerShell                                                  */ \
-  "="   /* #= Julia                                                       */ \
-  ">"   /*    Quoted e-mail                                               */ \
-/* *>"  |*    COBOL 2002                                                  */ \
-  "|"   /* |# Lisp, Racket, Scheme                                        */
-
 /**
  * End-of-Line formats.
  */
@@ -56,6 +37,9 @@ enum eol {
   EOL_WINDOWS = 'w'
 };
 typedef enum eol eol_t;
+
+// extern constants
+extern char const   COMMENT_CHARS_DEFAULT[];
 
 // extern option variables
 extern char const  *opt_alias;
