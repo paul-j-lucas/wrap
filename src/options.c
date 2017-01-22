@@ -115,10 +115,11 @@ static char const *const SHORT_OPTS[] = {
 
 static struct option const WRAP_LONG_OPTS[] = {
   { "alias",                required_argument,  NULL, 'a' },
-  { "block",                required_argument,  NULL, 'b' },
+  { "block-chars",          required_argument,  NULL, 'b' },
   { "config",               required_argument,  NULL, 'c' },
   { "no-config",            no_argument,        NULL, 'C' },
   { "dot-ignore",           no_argument,        NULL, 'd' },
+//{ "comment-chars",        required_argument,  NULL, 'D' },  // only for wrapc
   { "eos-delimit",          no_argument,        NULL, 'e' },
   { "eos-spaces",           required_argument,  NULL, 'E' },
   { "file",                 required_argument,  NULL, 'f' },
@@ -151,7 +152,7 @@ static struct option const WRAP_LONG_OPTS[] = {
 
 static struct option const WRAPC_LONG_OPTS[] = {
   { "alias",                required_argument,  NULL, 'a' },
-  { "block",                required_argument,  NULL, 'b' },
+  { "block-chars",          required_argument,  NULL, 'b' },
   { "config",               required_argument,  NULL, 'c' },
   { "no-config",            no_argument,        NULL, 'C' },
   { "comment-chars",        required_argument,  NULL, 'D' },
