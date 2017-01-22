@@ -1,3 +1,13 @@
+2017-01-21  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrap.1, wrapc.1, options.c: Added long command-line
+     options.
+   * wregex.c: Added missing header.
+   * options.c, options.h: Made COMMENT_CHARS_DEFAULT a constant.
+   * lib/Makefile.am, errno.in.h, intprops.h, strerror-override.c,
+     strerror-override.h, strerror.c, errno_h.m4, gnulib-cache.m4,
+     gnulib-comp.m4, strerror.m4, sys_socket_h.m4: Updated Gnulib.
+
 2017-01-20  Paul J. Lucas <paul@lucasmail.org>
 
    * src/Makefile.am, unicode.c, unicode.h, wregex.c, http.regex:
