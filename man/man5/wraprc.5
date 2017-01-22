@@ -87,13 +87,16 @@ for command-line options
 that are frequently used together.
 For example:
 .cS
-html = -ep,;:
+html = --eos-delimit --para-chars=,;:
 .cE
 creates an alias named
 \f(CWhtml\fP
 for the options shown.
+(Arguments need not be shell-escaped since no shell is involved.)
 Once specified,
 an alias can be requested via the
+.B \-\-alias
+or
 .B \-a
 option
 to either
@@ -102,31 +105,31 @@ or
 .BR wrapc .
 For example:
 .cS
-wrap -a html
+wrap --alias html
 .cE
 would be the same as:
 .cS
-wrap -ep',;:'
+wrap --eos-delimit --para-chars=',;:'
 .cE
 Note that some options don't make sense
 in a configuration file
 and are therefore forbidden there.
 Those options are:
-.B \-a
-(alias),
-.B \-c
-(configuration file),
-.B \-C
-(suppress configuration file),
-.B \-f
-(input file),
-.B \-F
-(input file name),
-.B \-o
-(output file),
+.B \-\-alias
+.RB ( \-a ),
+.B \-\-config
+.RB ( \-c ),
+.B \-\-no-config
+.RB ( \-C ),
+.B \-\-file
+.RB ( \-f ),
+.B \-\-file-name
+.RB ( \-F ),
+.B \-\-output
+.RB ( \-o ),
 and
-.B \-v
-(version).
+.B \-\-version
+.RB ( \-v ).
 .SS Patterns Section
 The
 .I "patterns section"
@@ -139,7 +142,9 @@ A
 is used to apply aliases automatially
 when a file matching that pattern is wrapped
 using the
-.B \-f
+.BR \-\-file ,
+.BR \-f ,
+.BR \-\-file-name ,
 or
 .B \-F
 option.
@@ -174,9 +179,9 @@ The default configuration file.
 .nf
 .ft CW
 [ALIASES]
-code = -b@ -u    # @param, @return, etc.
-html = -ep,:;
-man  = -dep,:;
+code = --block-chars=@ --markdown # @param, @return, etc.
+html = --eos-delimit --para-chars=,:;
+man  = --dot-ignore --eos-delimit --para-chars=,:;
 
 [PATTERNS]
 *.[ch] = code
