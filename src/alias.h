@@ -26,10 +26,13 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Contains a configuration file alias and its associated command-line options.
+ */
 struct alias {
-  unsigned      line_no;                // line in conf file defined on
   unsigned      argc;                   // number of arguments + 1
   char const  **argv;                   // argv[0] = alias name
+  unsigned      line_no;                // line in conf file defined on
 };
 typedef struct alias alias_t;
 

@@ -27,6 +27,10 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Contains a filename pattern and the configuration file alias to which it
+ * maps.
+ */
 struct pattern {
   char const     *pattern;
   alias_t const  *alias;

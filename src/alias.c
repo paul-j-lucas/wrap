@@ -175,9 +175,9 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
 
   size_t n_argv_alloc = ALIAS_ARGV_ALLOC_DEFAULT;
   alias_t *const alias = alias_alloc();
-  alias->line_no = line_no;
   alias->argc = 1;
   alias->argv = MALLOC( char const*, n_argv_alloc );
+  alias->line_no = line_no;
 
   // alias line: <name>[<ws>]={[<ws>]<options>}...
   //      parts:   1     2   3   4       5        
