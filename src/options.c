@@ -41,8 +41,6 @@
 #define OPTION_VALUE(OPT)   opts_given[ !islower(OPT) ][ toupper(OPT) - 'A' ]
 #define SET_OPTION(OPT)     OPTION_VALUE(OPT) = (OPT)
 
-typedef char opts_given_t[ 2 /* lower/upper */ ][ 26 + 1/*null*/ ];
-
 // extern constants
 char const          COMMENT_CHARS_DEFAULT[] =
     // Each character should appear only once.
@@ -102,9 +100,99 @@ FILE               *fin;
 FILE               *fout;
 
 // local variables
-static opts_given_t opts_given;         // options given
+static bool         is_wrapc;           // are we wrapc?
+static char         opts_given[ 2 /* lower/upper */ ][ 26 + 1 /*NULL*/ ];
+
+///////////////////////////////////////////////////////////////////////////////
+
+#define COMMON_SHORT_OPTS   "a:b:c:CeE:f:F:l:o:p:s:Tuvw:y"
+#define CONF_FORBIDDEN_OPTS "acCfFov"
+
+static char const *const SHORT_OPTS[] = {
+  COMMON_SHORT_OPTS "dh:H:i:I:L:m:M:nNPS:t:WZ", // wrap
+  COMMON_SHORT_OPTS "D:"                        // wrapc
+};
+
+static struct option const WRAP_LONG_OPTS[] = {
+  { "alias",                required_argument,  NULL, 'a' },
+  { "block",                required_argument,  NULL, 'b' },
+  { "config",               required_argument,  NULL, 'c' },
+  { "no-config",            no_argument,        NULL, 'C' },
+  { "dot-ignore",           no_argument,        NULL, 'd' },
+  { "eos-delimit",          no_argument,        NULL, 'e' },
+  { "eos-spaces",           required_argument,  NULL, 'E' },
+  { "file",                 required_argument,  NULL, 'f' },
+  { "file-name",            required_argument,  NULL, 'F' },
+  { "hang-tabs",            required_argument,  NULL, 'h' },
+  { "hang-spaces",          required_argument,  NULL, 'H' },
+  { "indent-tabs",          required_argument,  NULL, 'i' },
+  { "indent-spaces",        required_argument,  NULL, 'I' },
+  { "eol",                  required_argument,  NULL, 'l' },
+  { "lead-string",          required_argument,  NULL, 'L' },
+  { "mirror-tabs",          required_argument,  NULL, 'm' },
+  { "mirror-spaces",        required_argument,  NULL, 'M' },
+  { "no-newlines-delimit",  no_argument,        NULL, 'n' },
+  { "all-newlines-delimit", no_argument,        NULL, 'N' },
+  { "output",               required_argument,  NULL, 'o' },
+  { "para-chars",           required_argument,  NULL, 'p' },
+  { "prototype",            no_argument,        NULL, 'P' },
+  { "tab-spaces",           required_argument,  NULL, 's' },
+  { "lead-spaces",          required_argument,  NULL, 'S' },
+  { "lead-tabs",            required_argument,  NULL, 't' },
+  { "title-line",           no_argument,        NULL, 'T' },
+  { "markdown",             no_argument,        NULL, 'u' },
+  { "version",              no_argument,        NULL, 'v' },
+  { "width",                required_argument,  NULL, 'w' },
+  { "whitespace-delimit",   no_argument,        NULL, 'W' },
+  { "no-hyphen",            no_argument,        NULL, 'y' },
+  { "_INTERNAL-DLE",        no_argument,        NULL, 'Z' },
+  { NULL,                   0,                  NULL, 0   }
+};
+
+static struct option const WRAPC_LONG_OPTS[] = {
+  { "alias",                required_argument,  NULL, 'a' },
+  { "block",                required_argument,  NULL, 'b' },
+  { "config",               required_argument,  NULL, 'c' },
+  { "no-config",            no_argument,        NULL, 'C' },
+  { "comment-chars",        required_argument,  NULL, 'D' },
+  { "eos-delimit",          no_argument,        NULL, 'e' },
+  { "eos-spaces",           required_argument,  NULL, 'E' },
+  { "file",                 required_argument,  NULL, 'f' },
+  { "file-name",            required_argument,  NULL, 'F' },
+  { "eol",                  required_argument,  NULL, 'l' },
+  { "output",               required_argument,  NULL, 'o' },
+  { "para-chars",           required_argument,  NULL, 'p' },
+  { "tab-spaces",           required_argument,  NULL, 's' },
+  { "title-line",           no_argument,        NULL, 'T' },
+  { "markdown",             no_argument,        NULL, 'u' },
+  { "version",              no_argument,        NULL, 'v' },
+  { "width",                required_argument,  NULL, 'w' },
+  { "no-hyphen",            no_argument,        NULL, 'y' },
+  { NULL,                   0,                  NULL, 0   }
+};
+
+static struct option const *const LONG_OPTS[] = {
+  WRAP_LONG_OPTS,
+  WRAPC_LONG_OPTS
+};
 
 ////////// local functions ////////////////////////////////////////////////////
+
+/**
+ * Gets the corresponding name of the long option for the given short option.
+ *
+ * @param short_opt The short option to get the corresponding long option for.
+ * @return Returns the said option.
+ */
+static char const* get_long_opt( char short_opt ) {
+  for ( struct option const *long_opt = LONG_OPTS[ is_wrapc ]; long_opt->name;
+        ++long_opt ) {
+    if ( long_opt->val == short_opt )
+      return long_opt->name;
+  } // for
+  assert( false );
+  return NULL;                          // suppress warning (never gets here)
+}
 
 /**
  * Checks that no options were given that are among the two given mutually
@@ -128,7 +216,9 @@ static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
         if ( ++gave_count > 1 ) {
           char const gave_opt2 = *opt;
           PMESSAGE_EXIT( EX_USAGE,
-            "-%c and -%c are mutually exclusive\n", gave_opt1, gave_opt2
+            "--%s/-%c and --%s/-%c are mutually exclusive\n",
+            get_long_opt( gave_opt1 ), gave_opt1,
+            get_long_opt( gave_opt2 ), gave_opt2
           );
         }
         gave_opt1 = *opt;
@@ -193,8 +283,8 @@ static eol_t parse_eol( char const *s ) {
     pnames += strlen( m->em_name );
   } // for
   PMESSAGE_EXIT( EX_USAGE,
-    "\"%s\": invalid value for -%c; must be one of:\n\t%s\n",
-    s, 'l', names_buf
+    "\"%s\": invalid value for --%s/-%c; must be one of:\n\t%s\n",
+    s, get_long_opt( 'l' ), 'l', names_buf
   );
 }
 
@@ -203,22 +293,28 @@ static eol_t parse_eol( char const *s ) {
  *
  * @param argc The argument count from \c main().
  * @param argv The argument values from \c main().
- * @param opts The set of options as required by \c getopt(3).
+ * @param short_opts The set of short options.
+ * @param long_opts The set of long options.
  * @param usage A pointer to a function that prints a usage message and exits.
  * @param line_no When parsing options from a configuration file, the
  * originating line number; zero otherwise.
  */
-static void parse_options( int argc, char const *argv[], char const *opts,
+static void parse_options( int argc, char const *argv[],
+                           char const short_opts[],
+                           struct option const long_opts[],
                            void (*usage)(void), unsigned line_no ) {
-  assert( opts );
+  assert( usage );
 
   optind = opterr = 1;
   bool print_version = false;
   CLEAR_OPTIONS();
 
-  for ( int opt; (opt = getopt( argc, (char**)argv, opts )) != EOF; ) {
+  for (;;) {
+    int opt = getopt_long( argc, (char**)argv, short_opts, long_opts, NULL );
+    if ( opt == -1 )
+      break;
     SET_OPTION( opt );
-    if ( line_no && strchr( "acCfFov", opt ) )
+    if ( line_no && strchr( CONF_FORBIDDEN_OPTS, opt ) )
       PMESSAGE_EXIT( EX_CONFIG,
         "%s:%u: '%c': option not allowed in configuration file\n",
         opt_conf_file, line_no, opt
@@ -275,17 +371,14 @@ static void parse_options( int argc, char const *argv[], char const *opts,
 
 ////////// extern functions ///////////////////////////////////////////////////
 
-#define COMMON_OPTS         "a:b:c:CeE:f:F:l:o:p:s:Tuvw:y"
-
 void init_options( int argc, char const *argv[], void (*usage)(void) ) {
-  static char const WRAP_OPTS [] = COMMON_OPTS "dh:H:i:I:L:m:M:nNPS:t:WZ";
-  static char const WRAPC_OPTS[] = COMMON_OPTS "D:";
-
   assert( usage );
   me = base_name( argv[0] );
-  bool const is_wrap = strcmp( me, PACKAGE ) == 0;
+  is_wrapc = strcmp( me, PACKAGE "c" ) == 0;
 
-  parse_options( argc, argv, is_wrap ? WRAP_OPTS : WRAPC_OPTS, usage, 0 );
+  parse_options(
+    argc, argv, SHORT_OPTS[ is_wrapc ], LONG_OPTS[ is_wrapc ], usage, 0
+  );
   argc -= optind, argv += optind;
   if ( argc )
     usage();
@@ -304,7 +397,8 @@ void init_options( int argc, char const *argv[], void (*usage)(void) ) {
       alias = pattern_find( opt_fin_name );
     if ( alias )
       parse_options(
-        alias->argc, alias->argv, WRAP_OPTS, usage, alias->line_no
+        alias->argc, alias->argv, SHORT_OPTS[0], LONG_OPTS[0], usage,
+        alias->line_no
       );
   }
 

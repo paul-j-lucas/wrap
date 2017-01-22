@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\fP 1 "January 19, 2017" "PJL TOOLS"
+.TH \f3wrap\fP 1 "January 21, 2017" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -50,7 +50,9 @@ Lines are wrapped at either
 or
 .I hyphen
 characters
-(unless the
+(unless either the
+.B \-\-no-hyphen
+or
 .B \-y
 option is specified).
 .SS Whitespace Characters
@@ -63,7 +65,9 @@ with the following exceptions:
 .nr step 1 1
 .IP \n[step]. 3
 Force two spaces
-(by default, unless the
+(by default, unless either the
+.B \-\-eos-spaces
+or
 .B \-E
 option is specified)
 after the end of a sentence that ends a line;
@@ -73,7 +77,9 @@ sentences are ended by an ``end-of-sentence'' character
 below).
 .IP \n+[step].
 Allow two spaces
-(by default, unless the
+(by default, unless either the
+.B \-\-eos-spaces
+or
 .B \-E
 option is specified)
 after the end of a sentence that does not end a line.
@@ -81,22 +87,30 @@ after the end of a sentence that does not end a line.
 a period that is an abbreviation and not the end of a sentence.
 Periods at the end of a line will hopefully not be abbreviations.)
 .IP \n+[step].
-If neither the
-.B \-n
+If none of the
+.BR \-\-all-newlines-delimit ,
+.BR \-N ,
+.BR \-\-no-newlines-delimit ,
 nor the
-.B \-N
-option is specified,
+.B \-n
+options are specified,
 two consecutive newline characters delimit a paragraph and are not folded;
 more than two are folded.
-If
+If either
+.B \-\-no-newlines-delimit
+or
 .B \-n
 is specified,
 newlines receive no special treatment.
-If
+If either
+.B \-\-all-newlines-delimit
+or
 .B \-N
 is specified, every newline delimits a paragraph.
 .IP \n+[step].
-If the
+If either the
+.B \-\-dot-ignore
+or
 .B \-d
 option is specified,
 a line beginning with a `\f(CW.\fP' (dot),
@@ -105,7 +119,9 @@ presumed to be an
 control line,
 is not altered.
 .IP \n+[step].
-If the
+If either the
+.B \-\-markdown
+or
 .B \-u
 option is specified,
 exceptions are made in order to pretty-print Markdown text
@@ -143,7 +159,9 @@ In addition to wrapping at whitespace characters,
 also wraps at
 .I hyphen
 characters
-(unless
+(unless either
+.B \-\-markdown
+or
 .B \-y
 is specified),
 but only when they appear between letters
@@ -169,8 +187,8 @@ and
 .I s
 means
 .IR string .
-.TP
-.BI \-a " s"
+.TP 8
+.BI \-\-alias \f1=\fPs "\f1 | \fP" "" \-a " s"
 Specifies the alias name
 .I s
 from the configuration file to be used.
@@ -182,14 +200,14 @@ or
 .B \-F
 options.
 .TP
-.BI \-b " s"
+.BI \-\-block \f1=\fPs "\f1 | \fP" "" \-b " s"
 Specifies the set of ``block'' characters
 .I s
 that,
 when the first non-whitespace character on a line,
 delimits a paragraph.
 .TP
-.BI \-c " f"
+.BI \-\-config \f1=\fPf "\f1 | \fP" "" \-c " f"
 Specifies the configuration file
 .I f
 to read
@@ -197,63 +215,21 @@ to read
 .BR ~/.wraprc )
 if warranted.
 .TP
-.B \-C
+.BR \-\-no-config " | " \-C
 Suppresses reading of any configuration file,
-even one explicitly specified via
+even one explicitly specified via either
+.BR \-\-config
+or
 .BR \-c .
 .TP
-.B \-d
+.BR \-\-dot-ignore " | " \-d
 Does not alter lines that begin with a
 .RB ` . '
 (dot) presumed to be
 .RB [ nt ] roff (1)
 control lines.
 .TP
-.B \-e
-Treats whitespace after an end-of-sentence character as a paragraph delimiter.
-.TP
-.BI \-E " n"
-Specifies the number of spaces to emit or allow after an end-of-sentence
-(default is 2).
-.TP
-.BI \-f " f"
-Reads from file
-.I f
-(default is standard input).
-.TP
-.BI \-F " f"
-Sets the file-name to
-.I f
-as if it were being read from
-but still reads from standard input.
-(This allows the file-name to be matched against a pattern
-in a configuration file to use an alias
-while still allowing
-.B wrap
-to be used as part of a shell pipeline.)
-.TP
-.BI \-h " n"
-Hang-indents
-.I n
-more tabs for all but the first line of each paragraph.
-.TP
-.BI \-H " n"
-Hang-indents
-.I n
-more spaces for all but the first line of each paragraph
-after any tabs.
-.TP
-.BI \-i " n"
-Indents
-.I n
-more tabs for the first line of each paragraph.
-.TP
-.BI \-I " n"
-Indents
-.I n
-more spaces for the first line of each paragraph after any tabs.
-.TP
-.BI \-l " s"
+.BI \-\-eol \f1=\fPs "\f1 | \fP" "" \-l " s"
 Specifies the line-endings to use
 .IR s ,
 one of
@@ -277,7 +253,51 @@ or
 (Unix: LF);
 all case-insensitive.
 .TP
-.BI \-L " s"
+.BR \-\-eos-delimit " | " \-e
+Treats whitespace after an end-of-sentence character as a paragraph delimiter.
+.TP
+.BI \-\-eos-spaces \f1=\fPn "\f1 | \fP" "" \-E " n"
+Specifies the number of spaces to emit or allow after an end-of-sentence
+(default is 2).
+.TP
+.BI \-\-file \f1=\fPf "\f1 | \fP" "" \-f " f"
+Reads from file
+.I f
+(default is standard input).
+.TP
+.BI \-\-file-name \f1=\fPf "\f1 | \fP" "" \-F " f"
+Sets the file-name to
+.I f
+as if it were being read from
+but still reads from standard input.
+(This allows the file-name to be matched against a pattern
+in a configuration file to use an alias
+while still allowing
+.B wrap
+to be used as part of a shell pipeline.)
+.TP
+.BI \-\-hang-spaces \f1=\fPn "\f1 | \fP" "" \-H " n"
+Hang-indents
+.I n
+more spaces for all but the first line of each paragraph
+after any tabs.
+.TP
+.BI \-\-hang-tabs \f1=\fPn "\f1 | \fP" "" \-h " n"
+Hang-indents
+.I n
+more tabs for all but the first line of each paragraph.
+.TP
+.BI \-\-indent-spaces \f1=\fPn "\f1 | \fP" "" \-I " n"
+Indents
+.I n
+more spaces for the first line of each paragraph after any tabs.
+.TP
+.BI \-\-indent-tabs \f1=\fPn "\f1 | \fP" "" \-i " n"
+Indents
+.I n
+more tabs for the first line of each paragraph.
+.TP
+.BI \-\-lead-string \f1=\fPs "\f1 | \fP" "" \-L " s"
 Specifies a string
 .I s
 that is to be prepended to every line.
@@ -286,42 +306,61 @@ The width of
 is subtracted from
 .IR line-width .
 .TP
-.BI \-m " n"
-Mirrors tabs; equivalent to:
-.BI \-t n
-.BI \-w m
-where
-.IR "m = line-width \- tab-spaces * n" .
+.BI \-\-lead-spaces \f1=\fPn "\f1 | \fP" "" \-S " n"
+Prepends
+.I n
+leading spaces to each line after any leading tabs.
 .TP
-.BI \-M " n"
+.BI \-\-lead-tabs \f1=\fPn "\f1 | \fP" "" \-t " n"
+Prepends
+.I n
+leading tabs to each line.
+.TP
+.BI \-\-mirror-spaces \f1=\fPn "\f1 | \fP" "" \-M " n"
 Mirrors spaces; equivalent to:
 .BI \-S n
 .BI \-w m
 where
 .IR "m = line-width \- 2n" .
 .TP
-.B \-n
+.BI \-\-mirror-tabs \f1=\fPn "\f1 | \fP" "" \-m " n"
+Mirrors tabs; equivalent to:
+.BI \-t n
+.BI \-w m
+where
+.IR "m = line-width \- tab-spaces * n" .
+.TP
+.BR \-\-markdown " | " \-u
+Formats Markdown text
+(see
+.B MARKDOWN FORMATTING
+below).
+.TP
+.BR \-\-no-hyphen " | "  \-y
+Suppresses wrapping at hyphen characters.
+.TP
+.BR \-\-no-newlines-delimit " | " \-n
 Does not treat newlines as paragraph delimiters.
 .TP
-.B \-N
+.BR \-\-all-newlines-delimit " | "  \-N
 Treats every newline as a paragraph delimiter.
 This option is useful for line-breaking code prior to printing.
 .TP
-.BI \-o " f"
+.BI \-\-output \f1=\fPf "\f1 | \fP" "" \-o " f"
 Writes to file
 .I f
 (default is standard output).
 .TP
-.BI \-p " s"
+.BI \-\-para-chars \f1=\fPs "\f1 | \fP" "" \-p " s"
 Treats the given characters in
 .I s
 as paragraph delimiters.
 .TP
-.B \-P
+.BR \-\-prototype " | " \-P
 Treats the leading whitespace on the first line
 as a prototype for all subsequent lines.
 .TP
-.BI \-s " n"
+.BI \-\-tab-spaces \f1=\fPn "\f1 | \fP" "" \-s " n"
 Sets
 .I tab-spaces
 (the number of spaces a tab character should be considered the same as)
@@ -330,32 +369,16 @@ to
 characters
 (default is 8).
 .TP
-.BI \-S " n"
-Prepends
-.I n
-leading spaces to each line after any leading tabs.
-.TP
-.BI \-t " n"
-Prepends
-.I n
-leading tabs to each line.
-.TP
-.B \-T
+.BR \-\-title-line " | "  \-T
 Treats the first line of every paragraph as a title
 and puts it on a line by itself.
 .TP
-.B \-u
-Formats Markdown text
-(see
-.B MARKDOWN FORMATTING
-below).
-.TP
-.B \-v
+.BR \-\-version " | " \-v
 Prints the version number to
 .I stderr
 and exit.
 .TP
-.BI \-w " n"
+.BI \-\-width \f1=\fPn "\f1 | \fP" "" \-w " n"
 Sets
 .I line-width
 to
@@ -363,15 +386,14 @@ to
 characters
 (default is 80).
 .TP
-.B \-W
+.BR \-\-whitespace-delimit " | " \-W
 Treats a line beginning with whitespace as a paragraph delimiter.
-.TP
-.B \-y
-Suppresses wrapping at hyphen characters.
 .SH MARKDOWN FORMATTING
-Via the
+Via either the
+.B \-\-markdown
+or
 .B \-u
-option,
+options,
 .B wrap
 can reformat Markdown text.
 Unlike most Markdown formatters,
@@ -793,12 +815,17 @@ does not support this.
 .B ~/.wraprc
 The default configuration file.
 A configuration file,
-even one explicitly specified via
+even one explicitly specified via either
+.B \-\-config
+or
 .BR \-c ,
 is neither actually checked for existence nor read
 unless one of the
+.BR \-\-alias ,
 .BR \-a ,
+.BR \-\-file ,
 .BR \-f ,
+.BR \-\-file-name ,
 or
 .B \-F
 options
@@ -809,7 +836,7 @@ Wrap text into paragraphs having a line width of 72 characters,
 indenting one tab-stop,
 and further indenting the start of each paragraph by 3 spaces:
 .cS
-wrap -m1 -I3
+wrap --mirror-tabs=1 --indent-spaces=3
 .cE 0
 .SH AUTHOR
 Paul J. Lucas

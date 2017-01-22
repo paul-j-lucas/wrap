@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\fP 1 "December 27, 2016" "PJL TOOLS"
+.TH \f3wrapc\fP 1 "January 21, 2017" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -175,6 +175,8 @@ If comprised of only comment delimiter characters,
 the first and last lines are either lengthened or shortened to
 .I line-width
 (see the
+.B \-\-width
+or
 .B \-w
 option).
 .IP \[bu]
@@ -190,7 +192,9 @@ a comment delimiter character,
 then whatever leading whitespace alone, if any,
 is used as the prototype for all lines.
 .SS Markdown Text
-If the
+If either the
+.B \-\-markdown
+or
 .B \-u
 option is specified,
 exceptions are made
@@ -212,8 +216,8 @@ and
 .I s
 means
 .IR string .
-.TP
-.BI \-a " s"
+.TP 8
+.BI \-\-alias \f1=\fPs "\f1 | \fP" "" \-a " s"
 Specifies the alias name
 .I s
 from the configuration file to be used.
@@ -225,14 +229,19 @@ or
 .B \-F
 options.
 .TP
-.BI \-b " s"
+.BI \-\-block \f1=\fPs "\f1 | \fP" "" \-b " s"
 Specifies the set of ``block'' characters
 .I s
 that,
-when the first character on a line,
+when the first non-whitespace character on a line,
 delimits a paragraph.
 .TP
-.BI \-c " f"
+.BI \-\-comment-chars \f1=\fPs "\f1 | \fP" "" \-D " s"
+Specifies the set of comment delimiter characters
+.I s
+overriding the default.
+.TP
+.BI \-\-config \f1=\fPf "\f1 | \fP" "" \-c " f"
 Specifies the configuration file
 .I f
 to read
@@ -240,29 +249,26 @@ to read
 .BR ~/.wraprc )
 if warranted.
 .TP
-.B \-C
+.BR \-\-no-config " | " \-C
 Suppresses reading of any configuration file,
-even one explicitly specified via
+even one explicitly specified via either
+.BR \-\-config
+or
 .BR \-c .
 .TP
-.BI \-D " s"
-Specifies the set of comment delimiter characters
-.I s
-overriding the default.
-.TP
-.B \-e
+.BR \-\-eos-delimit " | " \-e
 Treats whitespace after an end-of-sentence character as a paragraph delimiter.
 .TP
-.BI \-E " n"
+.BI \-\-eos-spaces \f1=\fPn "\f1 | \fP" "" \-E " n"
 Specifies the number of spaces to emit or allow after an end-of-sentence
 (default is 2).
 .TP
-.BI \-f " f"
+.BI \-\-file \f1=\fPf "\f1 | \fP" "" \-f " f"
 Reads from file
 .I f
 (default is standard input).
 .TP
-.BI \-F " f"
+.BI \-\-file-name \f1=\fPf "\f1 | \fP" "" \-F " f"
 Sets the file-name to
 .I f
 as if it were being read from
@@ -273,7 +279,7 @@ while still allowing
 .B wrapc
 to be used as part of a shell pipeline.)
 .TP
-.BI \-l " s"
+.BI \-\-eol \f1=\fPs "\f1 | \fP" "" \-l " s"
 Specifies the line-endings to use
 .IR s ,
 one of
@@ -297,17 +303,23 @@ or
 (Unix: LF);
 all case-insensitive.
 .TP
-.BI \-o " f"
+.BR \-\-markdown " | " \-u
+Formats Markdown text.
+.TP
+.BR \-\-no-hyphen " | "  \-y
+Suppresses special treatment of hyphens.
+.TP
+.BI \-\-output \f1=\fPf "\f1 | \fP" "" \-o " f"
 Writes to file
 .I f
 (default is standard output).
 .TP
-.BI \-p " s"
+.BI \-\-para-chars \f1=\fPs "\f1 | \fP" "" \-p " s"
 Treats the given characters in
 .I s
 as paragraph delimiters.
 .TP
-.BI \-s " n"
+.BI \-\-tab-spaces \f1=\fPn "\f1 | \fP" "" \-s " n"
 Sets
 .I tab-spaces
 (the number of spaces a tab character should be considered the same as)
@@ -316,28 +328,22 @@ to
 characters
 (default is 8).
 .TP
-.B \-T
+.BR \-\-title-line " | "  \-T
 Treats the first line of every paragraph as a title
 and puts it on a line by itself.
 .TP
-.B \-u
-Formats Markdown text.
-.TP
-.B \-v
+.BR \-\-version " | " \-v
 Prints the version number to
 .I stderr
 and exits.
 .TP
-.BI \-w " n"
+.BI \-\-width \f1=\fPn "\f1 | \fP" "" \-w " n"
 Sets
 .I line-width
 to
 .I n
 characters
 (default is 80).
-.TP
-.B \-y
-Suppresses special treatment of hyphens.
 .SH EXIT STATUS
 .PD 0
 .IP 0
@@ -370,12 +376,17 @@ no default configuration file is read.
 .B ~/.wraprc
 The default configuration file.
 A configuration file,
-even one explicitly specified via
+even one explicitly specified via either
+.B \-\-config
+or
 .BR \-c ,
 is neither actually checked for existence nor read
 unless one of the
+.BR \-\-alias ,
 .BR \-a ,
+.BR \-\-file ,
 .BR \-f ,
+.BR \-\-file-name ,
 or
 .B \-F
 options
@@ -386,10 +397,10 @@ While in
 .BR vi ,
 wrap the comment from the current line to the end of the paragraph:
 .cS
-!}wrapc -F'%'
+!}wrapc --file-name='%'
 .cE
 The \f(CW%\fP argument to the
-.B \-F
+.B \-\-file-name
 option is expaned by
 .B vi
 to be the file's path name.
@@ -404,7 +415,7 @@ the above can be mapped to a key sequence in
 \f(CW.exrc\fP
 file:
 .cS
-map `c !}wrapc -F'%'\f3^M\fP
+map `c !}wrapc --file-name='%'\f3^M\fP
 .cE 0
 .SH AUTHOR
 Paul J. Lucas
