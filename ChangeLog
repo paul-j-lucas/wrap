@@ -1,5 +1,17 @@
+2017-01-22  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.1, wrapc.1, options.c: Changed --block to --block-chars.
+   * wraprc.5: Updated to use long options.
+
 2017-01-21  Paul J. Lucas <paul@lucasmail.org>
 
+   * wregex.h: RE tweaks.
+   * alias.h, common.h, options.c, options.h, pattern.h, read_conf.c,
+     regex_test.c, unicode.h, util.h, wrapc.c: Cosmetic changes.
+   * lib/Makefile.am, malloc.c, strdup.c, gnulib-cache.m4, gnulib-comp.m4,
+     malloc.m4, strdup.m4: Added strdup-posix to Gnulib.
+   * wraprc.5: Mention the characters comprising alias names.
+   * alias.c, alias.h, pattern.h: Comments.
    * NEWS, configure.ac, wrap.1, wrapc.1, options.c: Added long command-line
      options.
    * wregex.c: Added missing header.
