@@ -35,11 +35,11 @@
 #define RE_TLD      "\\." "[" RE_ALNUM "]{2,63}"
 
 // regular expressions for any URI (RFC 3986)
-#define RE_PCT_ENC  "%([" "[:xdigit:]" "]{2}|%)"
+#define RE_PCT_ENC  "%(" "[[:xdigit:]]{2}" "|" "%" ")"
 #define RE_PORT     "[1-9][0-9]{1,4}"
 #define RE_SUBDELIM "!$&'()*+,;="
 #define RE_UNRESERV RE_ALNUM "._~-"
-#define RE_USER     "([" RE_SUBDELIM ":" RE_UNRESERV "]|" RE_PCT_ENC ")+"
+#define RE_USER     "(" "[" RE_SUBDELIM ":" RE_UNRESERV "]" "|" RE_PCT_ENC ")+"
 
 // regular expressions for an e-mail address (RFC 5322)
 #define RE_ATEXT    RE_ALNUM "!#$%&'*+/=?^_`{|}~-"
@@ -51,9 +51,9 @@
 #define RE_FRAGMENT "#" RE_Q_OR_F "*"
 #define RE_HOSTPORT RE_DOMAIN "(:" RE_PORT ")?"
 #define RE_PATH     "/" RE_PCHAR "*"
-#define RE_PCHAR    "([" RE_SUBDELIM "/:@" RE_UNRESERV "]|" RE_PCT_ENC ")"
+#define RE_PCHAR    "([" RE_SUBDELIM "/:@" RE_UNRESERV "]" "|" RE_PCT_ENC ")"
 #define RE_QUERY    "\\?" RE_Q_OR_F "*"
-#define RE_Q_OR_F   "([" RE_SUBDELIM "/:?@" RE_UNRESERV "]|" RE_PCT_ENC ")"
+#define RE_Q_OR_F   "([" RE_SUBDELIM "/:?@" RE_UNRESERV "]" "|" RE_PCT_ENC ")"
 
 /**
  * Regular expression for an e-mail address.  Note that this regular expression
