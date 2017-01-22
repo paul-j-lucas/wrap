@@ -55,7 +55,7 @@ int main( int argc, char const *argv[] ) {
   char const *const test_path = argv[1];
 	FILE *const fin = fopen( test_path, "r" );
   if ( !fin )
-    PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", test_path, ERROR_STR );
+    PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", test_path, STRERROR );
 
   setlocale_LC_CTYPE_utf8();
 
@@ -124,7 +124,7 @@ int main( int argc, char const *argv[] ) {
   regex_free( &re );
 
   if ( ferror( fin ) )
-    PMESSAGE_EXIT( EX_IOERR, "\"%s\": %s\n", test_path, ERROR_STR );
+    PMESSAGE_EXIT( EX_IOERR, "\"%s\": %s\n", test_path, STRERROR );
   fclose( fin );
 
   printf( "%u mismatches\n", mismatches );

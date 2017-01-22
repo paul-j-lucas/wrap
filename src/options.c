@@ -403,9 +403,9 @@ void init_options( int argc, char const *argv[], void (*usage)(void) ) {
   }
 
   if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
-    PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", opt_fin, ERROR_STR );
+    PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", opt_fin, STRERROR );
   if ( opt_fout && !(fout = fopen( opt_fout, "w" )) )
-    PMESSAGE_EXIT( EX_CANTCREAT, "\"%s\": %s\n", opt_fout, ERROR_STR );
+    PMESSAGE_EXIT( EX_CANTCREAT, "\"%s\": %s\n", opt_fout, STRERROR );
 
   if ( !fin )
     fin = stdin;

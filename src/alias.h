@@ -21,9 +21,6 @@
 #ifndef wrap_alias_H
 #define wrap_alias_H
 
-// standard
-#include <stddef.h>                     /* for size_t */
-
 ///////////////////////////////////////////////////////////////////////////////
 
 /**

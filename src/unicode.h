@@ -25,11 +25,10 @@
 #include "config.h"
 
 // standard
-#include <ctype.h>
 #include <inttypes.h>                   /* for uint32_t */
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
-#include <string.h>
+#include <string.h>                     /* for memmove(3) */
 #include <wctype.h>
 
 _GL_INLINE_HEADER_BEGIN
@@ -83,7 +82,7 @@ WRAP_UNICODE_INLINE bool cp_is_ascii( codepoint_t cp ) {
  * @return Returns \c true only if \a cp is a control character.
  */
 WRAP_UNICODE_INLINE bool cp_is_control( codepoint_t cp ) {
-  return cp_is_ascii( cp ) && iscntrl( (int)cp );
+  return iswcntrl( cp );
 }
 
 /**

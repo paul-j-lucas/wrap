@@ -149,7 +149,7 @@ char const* read_conf( char const *conf_file ) {
   FILE *const fconf = fopen( conf_file, "r" );
   if ( !fconf ) {
     if ( explicit_conf_file )
-      PMESSAGE_EXIT( EX_NOINPUT, "%s: %s\n", conf_file, ERROR_STR );
+      PMESSAGE_EXIT( EX_NOINPUT, "%s: %s\n", conf_file, STRERROR );
     return NULL;
   }
 
@@ -199,7 +199,7 @@ char const* read_conf( char const *conf_file ) {
   } // while
 
   if ( ferror( fconf ) )
-    PMESSAGE_EXIT( EX_IOERR, "%s: %s\n", conf_file, ERROR_STR );
+    PMESSAGE_EXIT( EX_IOERR, "%s: %s\n", conf_file, STRERROR );
   fclose( fconf );
   return conf_file;
 }

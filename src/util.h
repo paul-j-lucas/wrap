@@ -40,14 +40,14 @@ _GL_INLINE_HEADER_BEGIN
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define BLOCK(...)          do { __VA_ARGS__ } while (0)
-#define ERROR_STR           strerror( errno )
-#define NO_OP               ((void)0)
-#define PERROR_EXIT(STATUS) BLOCK( perror( me ); exit( STATUS ); )
-#define PRINT_ERR(...)      fprintf( stderr, __VA_ARGS__ )
-#define WS_ST               " \t"       /* Space Tab */
-#define WS_STR              WS_ST "\r"  /* Space Tab Return */
-#define WS_STRN             WS_STR "\n" /* Space Tab Return Newline */
+#define BLOCK(...)                do { __VA_ARGS__ } while (0)
+#define NO_OP                     ((void)0)
+#define PERROR_EXIT(STATUS)       BLOCK( perror( me ); exit( STATUS ); )
+#define PRINT_ERR(...)            fprintf( stderr, __VA_ARGS__ )
+#define STRERROR                  strerror( errno )
+#define WS_ST                     " \t"       /* Space Tab */
+#define WS_STR                    WS_ST "\r"  /* Space Tab Return */
+#define WS_STRN                   WS_STR "\n" /* Space Tab Return Newline */
 
 #define PMESSAGE_EXIT(STATUS,FORMAT,...) \
   BLOCK( PRINT_ERR( "%s: " FORMAT, me, __VA_ARGS__ ); exit( STATUS ); )
@@ -79,7 +79,7 @@ _GL_INLINE_HEADER_BEGIN
 #define REALLOC(PTR,TYPE,N) \
   (PTR) = (TYPE*)check_realloc( (PTR), sizeof(TYPE) * (N) )
 
-#define SKIP_CHARS(S,CHARS) ((S) += strspn( (S), (CHARS) ))
+#define SKIP_CHARS(S,CHARS)       ((S) += strspn( (S), (CHARS) ))
 
 #define UNGETC(C,STREAM) \
   BLOCK( if ( ungetc( (C), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
