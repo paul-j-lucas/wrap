@@ -83,13 +83,13 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
 #define WIPC_HELLO                ASCII_DLE
 
 /**
- * IPC code to indicate the end of the block of text to be wrapped.  Any text
+ * IPC code to signal the end of the block of text to be wrapped.  Any text
  * sent after this is passed through verbatim.
  */
 #define WIPC_END_WRAP             ASCII_ETB
 
 /**
- * IPC code us it to signal a change in the leading comment characters and/or
+ * IPC code to signal a change in the leading comment characters and/or
  * whitespace.  It \e must be terminated by a newline.
  */
 #define WIPC_NEW_LEADER           ASCII_SOH
