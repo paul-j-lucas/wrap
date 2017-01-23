@@ -53,7 +53,7 @@ int main( int argc, char const *argv[] ) {
     usage();
 
   char const *const test_path = argv[1];
-	FILE *const fin = fopen( test_path, "r" );
+  FILE *const fin = fopen( test_path, "r" );
   if ( !fin )
     PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", test_path, STRERROR );
 
