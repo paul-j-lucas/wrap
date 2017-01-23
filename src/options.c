@@ -155,7 +155,7 @@ static struct option const WRAPC_LONG_OPTS[] = {
   { "block-chars",          required_argument,  NULL, 'b' },
   { "config",               required_argument,  NULL, 'c' },
   { "no-config",            no_argument,        NULL, 'C' },
-  { "comment-chars",        required_argument,  NULL, 'D' },
+  { "comment-chars",        required_argument,  NULL, 'D' },  // not in wrap
   { "eos-delimit",          no_argument,        NULL, 'e' },
   { "eos-spaces",           required_argument,  NULL, 'E' },
   { "file",                 required_argument,  NULL, 'f' },
@@ -246,7 +246,7 @@ static eol_t parse_eol( char const *s ) {
   };
   typedef struct eol_map eol_map_t;
 
-  static eol_map_t const eol_map[] = {
+  static eol_map_t const EOL_MAP[] = {
     { "-",        EOL_INPUT   },
     { "crlf",     EOL_WINDOWS },
     { "d",        EOL_WINDOWS },
@@ -265,7 +265,7 @@ static eol_t parse_eol( char const *s ) {
   char const *const s_lc = tolower_s( (char*)free_later( check_strdup( s ) ) );
   size_t names_buf_size = 1;            // for trailing null
 
-  for ( eol_map_t const *m = eol_map; m->em_name; ++m ) {
+  for ( eol_map_t const *m = EOL_MAP; m->em_name; ++m ) {
     if ( strcmp( s_lc, m->em_name ) == 0 )
       return m->em_eol;
     // sum sizes of names in case we need to construct an error message
@@ -275,7 +275,7 @@ static eol_t parse_eol( char const *s ) {
   // name not found: construct valid name list for an error message
   char *const names_buf = (char*)free_later( MALLOC( char, names_buf_size ) );
   char *pnames = names_buf;
-  for ( eol_map_t const *m = eol_map; m->em_name; ++m ) {
+  for ( eol_map_t const *m = EOL_MAP; m->em_name; ++m ) {
     if ( pnames > names_buf ) {
       strcpy( pnames, ", " );
       pnames += 2;
