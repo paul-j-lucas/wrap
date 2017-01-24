@@ -81,10 +81,10 @@ static bool is_begin_word_boundary( char const *s, char const *curr ) {
 /**
  * Prints a regular expression error to standard error and exits.
  *
- * @param re The regex_t involved in the error.
+ * @param re The wregex_t involved in the error.
  * @param err_code The error code.
  */
-static void regex_error( regex_t *re, int err_code ) {
+static void regex_error( wregex_t *re, int err_code ) {
   assert( re );
   char err_buf[ 128 ];
   regerror( err_code, re, err_buf, sizeof err_buf );
@@ -95,12 +95,12 @@ static void regex_error( regex_t *re, int err_code ) {
 
 ////////// extern functions ///////////////////////////////////////////////////
 
-void regex_free( regex_t *re ) {
+void regex_free( wregex_t *re ) {
   assert( re );
   regfree( re );
 }
 
-void regex_init( regex_t *re, char const *pattern ) {
+void regex_init( wregex_t *re, char const *pattern ) {
   assert( re );
   assert( pattern );
 
@@ -109,7 +109,8 @@ void regex_init( regex_t *re, char const *pattern ) {
     regex_error( re, err_code );
 }
 
-bool regex_match( regex_t *re, char const *s, size_t offset, size_t range[2] ) {
+bool regex_match( wregex_t *re, char const *s, size_t offset,
+                  size_t range[2] ) {
   assert( re );
   assert( s );
 

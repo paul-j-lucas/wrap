@@ -59,7 +59,7 @@ int main( int argc, char const *argv[] ) {
 
   setlocale_LC_CTYPE_utf8();
 
-  regex_t re;
+  wregex_t re;
   regex_init( &re, WRAP_RE );
 
   char line_buf[ 128 ];
@@ -123,8 +123,7 @@ int main( int argc, char const *argv[] ) {
 
   regex_free( &re );
 
-  if ( ferror( fin ) )
-    PMESSAGE_EXIT( EX_IOERR, "\"%s\": %s\n", test_path, STRERROR );
+  FERROR( fin );
   fclose( fin );
 
   printf( "%u mismatches\n", mismatches );

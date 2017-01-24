@@ -85,7 +85,7 @@ static hyphen_t     hyphen;
 static indent_t     indent = INDENT_LINE;
 static bool         is_long_line;       // line longer than line_width?
 static size_t       nonws_no_wrap_range[2];
-static regex_t      nonws_no_wrap_regex;
+static wregex_t     nonws_no_wrap_regex;
 static unsigned     put_spaces;         // number of spaces to put between words
 static bool         was_eos_char;       // prev char an end-of-sentence char?
 
