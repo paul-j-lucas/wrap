@@ -47,7 +47,7 @@
 /**
  * Hyphenation states.
  */
-enum hyphen {
+enum hyphen {                           // H = hyphen-adjacent char
   HYPHEN_NO,
   HYPHEN_MAYBE,                         // encountered H-
   HYPHEN_YES                            // encountered H-H
@@ -80,7 +80,7 @@ static line_buf_t   proto_tws;          // prototype trailing whitespace, if any
 
 // local variable definitions specific to wrap state
 static unsigned     consec_newlines;    // number of consecutive newlines
-static bool         encountered_non_whitespace;
+static bool         encountered_nonws;  // encountered a non-whitespace char?
 static hyphen_t     hyphen;
 static indent_t     indent = INDENT_LINE;
 static bool         is_long_line;       // line longer than line_width?
@@ -143,13 +143,13 @@ int main( int argc, char const *argv[] ) {
 
   bool        next_line_is_title = opt_title_line;
   char const *pc = in_buf;              // pointer to current character
-  utf8c_t     utf8_char;
+  utf8c_t     utf8c;                    // current character's UTF-8 byte(s)
   size_t      wrap_pos = 0;             // position at which we can wrap
 
   /////////////////////////////////////////////////////////////////////////////
 
-  for ( codepoint_t cp, cp_prev = 0;
-        (cp = buf_getcp( &pc, utf8_char )) != CP_EOF; cp_prev = cp ) {
+  for ( codepoint_t cp, cp_prev = 0;    // current and previous codepoints
+        (cp = buf_getcp( &pc, utf8c )) != CP_EOF; cp_prev = cp ) {
 
     if ( cp == CP_BYTE_ORDER_MARK || cp == CP_INVALID )
       continue;
@@ -167,7 +167,7 @@ int main( int argc, char const *argv[] ) {
     }
 
     if ( cp == '\n' ) {
-      encountered_non_whitespace = false;
+      encountered_nonws = false;
 
       if ( ++consec_newlines >= opt_newlines_delimit ) {
         //
@@ -256,7 +256,7 @@ int main( int argc, char const *argv[] ) {
             cp_is_para_delim( cp_prev ) ) {
         delimit_paragraph();
       }
-      else if ( hyphen == HYPHEN_MAYBE && !encountered_non_whitespace ) {
+      else if ( hyphen == HYPHEN_MAYBE && !encountered_nonws ) {
         //
         // This case is similar to above: we've encountered H-\n meaning that a
         // potentially hyphenated word ended a line and we've only encountered
@@ -358,7 +358,7 @@ int main( int argc, char const *argv[] ) {
     //  INSERT NON-SPACE CHARACTER
     ///////////////////////////////////////////////////////////////////////////
 
-    encountered_non_whitespace = true;
+    encountered_nonws = true;
 
     if ( !opt_no_hyphen ) {
       size_t const pos = pc - in_buf;
@@ -400,7 +400,7 @@ int main( int argc, char const *argv[] ) {
       }
     }
 
-    out_len += utf8_copy_char( out_buf + out_len, utf8_char );
+    out_len += utf8_copy_char( out_buf + out_len, utf8c );
     if ( ++out_width < line_width )
       continue;                         // haven't exceeded line width yet
 
@@ -607,7 +607,7 @@ static void delimit_paragraph( void ) {
   } else if ( is_long_line )
     print_eol();                      // delimit the "long line"
 
-  encountered_non_whitespace = false;
+  encountered_nonws = false;
   hyphen = HYPHEN_NO;
   indent = opt_markdown ? INDENT_NONE : INDENT_LINE;
   put_spaces = 0;
