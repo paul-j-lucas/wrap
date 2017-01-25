@@ -57,7 +57,7 @@ int main( int argc, char const *argv[] ) {
   if ( !fin )
     PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", test_path, STRERROR );
 
-  setlocale_LC_CTYPE_utf8();
+  setlocale_utf8();
 
   wregex_t re;
   regex_init( &re, WRAP_RE );

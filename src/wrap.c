@@ -632,7 +632,7 @@ static void init( int argc, char const *argv[] ) {
   atexit( wrap_cleanup );
 
   init_options( argc, argv, usage );
-  setlocale_LC_CTYPE_utf8();
+  setlocale_utf8();
 
   if ( opt_markdown ) {
     markdown_init();

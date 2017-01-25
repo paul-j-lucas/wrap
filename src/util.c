@@ -146,14 +146,14 @@ void free_now( void ) {
   free_head = NULL;
 }
 
-void setlocale_LC_CTYPE_utf8( void ) {
+void setlocale_utf8( void ) {
   static char const *const UTF8_LOCALES[] = {
     "UTF-8", "UTF8",
     "en_US.UTF-8", "en_US.UTF8",
     NULL
   };
   for ( char const *const *loc = UTF8_LOCALES; *loc; ++loc ) {
-    if ( setlocale( LC_CTYPE, *loc ) )
+    if ( setlocale( LC_COLLATE, *loc ) && setlocale( LC_CTYPE, *loc ) )
       return;
   } // for
 

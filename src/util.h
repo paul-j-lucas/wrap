@@ -212,9 +212,9 @@ WRAP_UTIL_INLINE bool is_windows_eol( char const buf[], size_t buf_len ) {
 }
 
 /**
- * Sets the locale for the LC_CTYPE category to UTF-8.
+ * Sets the locale for the LC_COLLATE and LC_CTYPE categories to UTF-8.
  */
-void setlocale_LC_CTYPE_utf8( void );
+void setlocale_utf8( void );
 
 /**
  * Splits off the trailing whitespace (tws) from \a buf into \a tws.  For
