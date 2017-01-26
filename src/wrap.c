@@ -67,13 +67,13 @@ typedef enum indent indent_t;
 char const         *me;                 // executable name
 
 // local variable definitions
-static line_buf_t   in_buf;
+static line_buf_t   input_buf;
 static line_buf_t   ipc_buf;            // deferred IPC message
 static size_t       ipc_width;          // deferred IPC line width
 static size_t       line_width;         // max width of line
-static line_buf_t   out_buf;
-static size_t       out_len;            // number of characters in buffer
-static size_t       out_width;          // actual width of buffer
+static line_buf_t   output_buf;
+static size_t       output_len;         // number of characters in buffer
+static size_t       output_width;       // actual width of buffer
 static line_buf_t   proto_buf;
 static line_buf_t   proto_tws;          // prototype trailing whitespace, if any
 
@@ -142,7 +142,7 @@ int main( int argc, char const *argv[] ) {
   init( argc, argv );
 
   bool        next_line_is_title = opt_title_line;
-  char const *pc = in_buf;              // pointer to current character
+  char const *pc = input_buf;           // pointer to current character
   utf8c_t     utf8c;                    // current character's UTF-8 byte(s)
   size_t      wrap_pos = 0;             // position at which we can wrap
 
@@ -178,13 +178,13 @@ int main( int argc, char const *argv[] ) {
         delimit_paragraph();
         continue;
       }
-      if ( out_len && true_reset( &next_line_is_title ) ) {
+      if ( output_len && true_reset( &next_line_is_title ) ) {
         //
         // The first line of the next paragraph is title line and the buffer
         // isn't empty (there is a title): print the title.
         //
         print_lead_chars();
-        print_line( out_len, true );
+        print_line( output_len, true );
         indent = INDENT_HANG;
         continue;
       }
@@ -264,7 +264,8 @@ int main( int argc, char const *argv[] ) {
         // word can potentially be rejoined to the next word when wrapped.
         //
       }
-      else if ( out_len && put_spaces < (was_eos_char ? opt_eos_spaces : 1) ) {
+      else if ( output_len &&
+                put_spaces < (was_eos_char ? opt_eos_spaces : 1) ) {
         //
         // We are not at the beginning of a line: remember to insert 1 space
         // later and allow opt_eos_spaces after the end of a sentence.
@@ -290,9 +291,9 @@ int main( int argc, char const *argv[] ) {
       if ( opt_lead_dot_ignore && cp == '.' ) {
         consec_newlines = 0;
         delimit_paragraph();
-        FPUTS( in_buf, fout );          // print the line as-is
+        FPUTS( input_buf, fout );       // print the line as-is
         (void)buf_readline();
-        pc = in_buf;
+        pc = input_buf;
         continue;
       }
       if ( cp_is_lead_para_delim( cp ) ) {
@@ -321,14 +322,14 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( put_spaces ) {
-      if ( out_len ) {
+      if ( output_len ) {
         //
         // Mark position at a space to perform a wrap if necessary.
         //
-        wrap_pos = out_len;
-        out_width += put_spaces;
+        wrap_pos = output_len;
+        output_width += put_spaces;
         do {
-          out_buf[ out_len++ ] = ' ';
+          output_buf[ output_len++ ] = ' ';
         } while ( --put_spaces );
       } else {
         //
@@ -361,7 +362,7 @@ int main( int argc, char const *argv[] ) {
     encountered_nonws = true;
 
     if ( !opt_no_hyphen ) {
-      size_t const pos = pc - in_buf;
+      size_t const pos = pc - input_buf;
       if ( pos >= nonws_no_wrap_range[1] || pos < nonws_no_wrap_range[0] ) {
         //
         // We're outside the non-whitespace-no-wrap range.
@@ -373,7 +374,7 @@ int main( int argc, char const *argv[] ) {
             // hyphenated word: set wrap_pos to be here.
             //
             hyphen = HYPHEN_YES;
-            wrap_pos = out_len;
+            wrap_pos = output_len;
           }
           else if ( !cp_is_hyphen( cp ) ) {
             //
@@ -400,8 +401,8 @@ int main( int argc, char const *argv[] ) {
       }
     }
 
-    out_len += utf8_copy_char( out_buf + out_len, utf8c );
-    if ( ++out_width < line_width )
+    output_len += utf8_copy_char( output_buf + output_len, utf8c );
+    if ( ++output_width < line_width )
       continue;                         // haven't exceeded line width yet
 
     ///////////////////////////////////////////////////////////////////////////
@@ -415,22 +416,22 @@ int main( int argc, char const *argv[] ) {
       //
       if ( !is_long_line )
         print_lead_chars();
-      print_line( out_len, false );
+      print_line( output_len, false );
       is_long_line = true;
       continue;
     }
 
     //
-    // A call to print_line() will terminate out_buf with a NULL at wrap_pos
+    // A call to print_line() will terminate output_buf with a NULL at wrap_pos
     // that is ordinarily at a space and so doesn't need to be preserved.
     // However, when wrapping at a hyphen, it's at the character past the
     // hyphen that must be preserved in the output so we keep a copy of it to
     // be restored after the call to print_line().
     //
-    char const c_past_hyphen = out_buf[ wrap_pos ];
+    char const c_past_hyphen = output_buf[ wrap_pos ];
 
     print_lead_chars();
-    size_t const prev_out_len = out_len;
+    size_t const prev_output_len = output_len;
     print_line( wrap_pos, true );
 
     if ( hyphen == HYPHEN_YES ) {
@@ -438,7 +439,7 @@ int main( int argc, char const *argv[] ) {
       // Per the above comment, put the preserved character back and include it
       // in the slide-to-the-left (below).
       //
-      out_buf[ wrap_pos-- ] = c_past_hyphen;
+      output_buf[ wrap_pos-- ] = c_past_hyphen;
     }
 
     put_tabs_spaces( opt_hang_tabs, opt_hang_spaces );
@@ -447,13 +448,14 @@ int main( int argc, char const *argv[] ) {
     // Slide the partial word to the left where we can pick up from where we
     // left off the next time around.
     //
-    for ( size_t from_pos = wrap_pos + 1/*null*/; from_pos < prev_out_len; ) {
-      char const *const from = out_buf + from_pos;
+    for ( size_t from_pos = wrap_pos + 1/*null*/;
+          from_pos < prev_output_len; ) {
+      char const *const from = output_buf + from_pos;
       size_t const len = utf8_len( from[0] );
       if ( !cp_is_space( utf8_decode( from ) ) ) {
-        utf8_copy_char( out_buf + out_len, from );
-        out_len += len;
-        ++out_width;
+        utf8_copy_char( output_buf + output_len, from );
+        output_len += len;
+        ++output_width;
       }
       from_pos += len;
     } // for
@@ -466,10 +468,10 @@ int main( int argc, char const *argv[] ) {
   /////////////////////////////////////////////////////////////////////////////
 
   FERROR( fin );
-  if ( out_len ) {                      // print left-over text
+  if ( output_len ) {                   // print left-over text
     if ( !is_long_line )
       print_lead_chars();
-    print_line( out_len, true );
+    print_line( output_len, true );
   }
   exit( EX_OK );
 }
@@ -489,7 +491,7 @@ static int buf_getc( char const **ppc ) {
 read_line:
     if ( !buf_readline() )
       return EOF;
-    *ppc = in_buf;
+    *ppc = input_buf;
     nonws_no_wrap_range[1] = 0;
     check_for_nonws_no_wrap_match = true;
     //
@@ -501,14 +503,14 @@ read_line:
   } // while
 
   if ( !opt_no_hyphen && check_for_nonws_no_wrap_match ) {
-    size_t const pos = *ppc - in_buf;
+    size_t const pos = *ppc - input_buf;
     //
     // If there was a previous non-whitespace-no-wrap range and we're past it,
     // see if there is another match on the same line.
     //
     if ( pos >= nonws_no_wrap_range[1] ) {
       check_for_nonws_no_wrap_match = regex_match(
-        &nonws_no_wrap_regex, in_buf, pos, nonws_no_wrap_range
+        &nonws_no_wrap_regex, input_buf, pos, nonws_no_wrap_range
       );
     }
   }
@@ -525,7 +527,7 @@ read_line:
         // verbatim.
         //
         print_lead_chars();
-        print_line( out_len, true );
+        print_line( output_len, true );
         WIPC_SENDF( fout, WIPC_END_WRAP, "%s", *ppc );
         fcopy( fin, fout );
         exit( EX_OK );
@@ -542,7 +544,7 @@ read_line:
         //
         char *sep;
         size_t const new_line_width = strtoul( *ppc, &sep, 10 );
-        if ( out_len ) {
+        if ( output_len ) {
           WIPC_DEFERF(
             ipc_buf, sizeof ipc_buf, WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
             new_line_width, sep + 1
@@ -599,9 +601,9 @@ static codepoint_t buf_getcp( char const **ppc, utf8c_t utf8c ) {
 static size_t buf_readline( void ) {
   size_t bytes_read;
 
-  while ( (bytes_read = check_readline( in_buf, fin )) ) {
+  while ( (bytes_read = check_readline( input_buf, fin )) ) {
     // Don't pass IPC lines through the Markdown parser.
-    if ( !opt_markdown || in_buf[0] == WIPC_HELLO || markdown_adjust() )
+    if ( !opt_markdown || input_buf[0] == WIPC_HELLO || markdown_adjust() )
       break;
   } // while
 
@@ -614,7 +616,7 @@ static size_t buf_readline( void ) {
  * Delimits a paragraph.
  */
 static void delimit_paragraph( void ) {
-  if ( out_len ) {
+  if ( output_len ) {
     //
     // Print what's in the buffer before delimiting the paragraph.  If we've
     // been handling a "long line," it's now finally ended; otherwise, print
@@ -622,7 +624,7 @@ static void delimit_paragraph( void ) {
     //
     if ( !true_reset( &is_long_line ) )
       print_lead_chars();
-    print_line( out_len, true );
+    print_line( output_len, true );
   } else if ( is_long_line )
     print_eol();                      // delimit the "long line"
 
@@ -658,16 +660,16 @@ static void init( int argc, char const *argv[] ) {
     opt_tab_spaces = TAB_SPACES_MARKDOWN;
   }
 
-  int const out_width = (int)opt_line_width -
+  int const temp_width = (int)opt_line_width -
     (int)(2 * (opt_mirror_tabs * opt_tab_spaces + opt_mirror_spaces) +
           opt_lead_tabs * opt_tab_spaces + opt_lead_spaces);
 
-  if ( out_width < LINE_WIDTH_MINIMUM )
+  if ( temp_width < LINE_WIDTH_MINIMUM )
     PMESSAGE_EXIT( EX_USAGE,
       "line-width (%d) is too small (<%d)\n",
-      out_width, LINE_WIDTH_MINIMUM
+      temp_width, LINE_WIDTH_MINIMUM
     );
-  opt_line_width = line_width = out_width;
+  opt_line_width = line_width = temp_width;
 
   opt_lead_tabs   += opt_mirror_tabs;
   opt_lead_spaces += opt_mirror_spaces;
@@ -690,7 +692,7 @@ static void init( int argc, char const *argv[] ) {
     // Therefore, we have to read only the first line in its entirety and peek
     // ahead to see if it ends with \r\n.
     //
-    opt_eol = is_windows_eol( in_buf, bytes_read ) ? EOL_WINDOWS : EOL_UNIX;
+    opt_eol = is_windows_eol( input_buf, bytes_read ) ? EOL_WINDOWS : EOL_UNIX;
   }
 
   //
@@ -699,7 +701,7 @@ static void init( int argc, char const *argv[] ) {
   if ( opt_lead_string || opt_prototype ) {
     size_t proto_len = 0;
     size_t proto_width = 0;
-    for ( char const *s = opt_lead_string ? opt_lead_string : in_buf; *s;
+    for ( char const *s = opt_lead_string ? opt_lead_string : input_buf; *s;
           ++s, ++proto_len ) {
       if ( opt_prototype && !is_space( *s ) )
         break;
@@ -739,11 +741,11 @@ static bool markdown_adjust( void ) {
   static md_line_t  prev_line_type;
   static md_seq_t   prev_seq_num = MD_SEQ_NUM_INIT;
 
-  md_state_t const *const md = markdown_parse( in_buf );
+  md_state_t const *const md = markdown_parse( input_buf );
   MD_DEBUG(
     "T=%c N=%2u D=%u L=%u H=%u|%s",
     (char)md->line_type, md->seq_num, md->depth,
-    md->indent_left, md->indent_hang, in_buf
+    md->indent_left, md->indent_hang, input_buf
   );
 
   if ( prev_line_type != md->line_type ) {
@@ -756,12 +758,12 @@ static bool markdown_adjust( void ) {
       case MD_LINK_LABEL:
       case MD_TABLE:
         consec_newlines = 0;
-        if ( is_blank_line( in_buf ) ) {
+        if ( is_blank_line( input_buf ) ) {
           //
           // Prevent blank lines immediately after these Markdown line types
           // from being swallowed by wrap by just printing them directly.
           //
-          FPUTS( in_buf, fout );
+          FPUTS( input_buf, fout );
         }
         break;
       default:
@@ -781,8 +783,8 @@ static bool markdown_adjust( void ) {
           // print the marker line as-is "behind wrap's back" so it won't be
           // wrapped.
           //
-          FPUTS( in_buf, fout );
-          in_buf[0] = '\0';
+          FPUTS( input_buf, fout );
+          input_buf[0] = '\0';
         }
         break;
       default:
@@ -801,12 +803,12 @@ static bool markdown_adjust( void ) {
     case MD_LINK_LABEL:
     case MD_TABLE:
       //
-      // Flush out_buf and print the Markdown line as-is "behind wrap's back"
-      // because these line types are never wrapped.
+      // Flush output_buf and print the Markdown line as-is "behind wrap's
+      // back" because these line types are never wrapped.
       //
       print_lead_chars();
-      print_line( out_len, true );
-      FPUTS( in_buf, fout );
+      print_line( output_len, true );
+      FPUTS( input_buf, fout );
       return false;
 
     case MD_DL:
@@ -815,12 +817,12 @@ static bool markdown_adjust( void ) {
     case MD_UL:
       if ( md->seq_num > prev_seq_num ) {
         //
-        // We're changing line types: flush out_buf.
+        // We're changing line types: flush output_buf.
         //
         print_lead_chars();
-        print_line( out_len, true );
+        print_line( output_len, true );
         prev_seq_num = md->seq_num;
-      } else if ( !out_len && !is_blank_line( in_buf ) ) {
+      } else if ( !output_len && !is_blank_line( input_buf ) ) {
         //
         // Same line type, but new line: hang indent.
         //
@@ -850,8 +852,8 @@ static void markdown_reset( void ) {
  */
 static void print_lead_chars( void ) {
   if ( proto_buf[0] ) {
-    FPRINTF( fout, "%s%s", proto_buf, out_len ? proto_tws : "" );
-  } else if ( out_len ) {
+    FPRINTF( fout, "%s%s", proto_buf, output_len ? proto_tws : "" );
+  } else if ( output_len ) {
     for ( size_t i = 0; i < opt_lead_tabs; ++i )
       FPUTC( '\t', fout );
     for ( size_t i = 0; i < opt_lead_spaces; ++i )
@@ -867,13 +869,13 @@ static void print_lead_chars( void ) {
  * @param do_eol If \c true, prints and end-of-line afterwards.
  */
 static void print_line( size_t len, bool do_eol ) {
-  out_buf[ len ] = '\0';
+  output_buf[ len ] = '\0';
   if ( len ) {
-    FPUTS( out_buf, fout );
+    FPUTS( output_buf, fout );
     if ( do_eol )
       print_eol();
   }
-  out_len = out_width = 0;
+  output_len = output_width = 0;
 }
 
 /**
@@ -884,11 +886,11 @@ static void print_line( size_t len, bool do_eol ) {
  * @param spaces The number of spaces to put.
  */
 static void put_tabs_spaces( size_t tabs, size_t spaces ) {
-  out_width += tabs * opt_tab_spaces + spaces;
+  output_width += tabs * opt_tab_spaces + spaces;
   for ( ; tabs > 0; --tabs )
-    out_buf[ out_len++ ] = '\t';
+    output_buf[ output_len++ ] = '\t';
   for ( ; spaces > 0; --spaces )
-    out_buf[ out_len++ ] = ' ';
+    output_buf[ output_len++ ] = ' ';
 }
 
 /**
