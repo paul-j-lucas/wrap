@@ -91,8 +91,10 @@ static bool         was_eos_char;       // prev char an end-of-sentence char?
 
 // local functions
 static codepoint_t  buf_getcp( char const**, utf8c_t );
+static size_t       buf_readline( void );
 static void         delimit_paragraph( void );
 static void         init( int, char const*[] );
+static bool         markdown_adjust( void );
 static void         markdown_reset();
 static void         print_lead_chars( void );
 static void         print_line( size_t, bool );
@@ -100,7 +102,6 @@ static void         put_tabs_spaces( size_t, size_t );
 static void         usage( void );
 static void         wipc_send( char* );
 static void         wrap_cleanup( void );
-static size_t       wrap_readline( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
 
@@ -291,7 +292,7 @@ int main( int argc, char const *argv[] ) {
         consec_newlines = 0;
         delimit_paragraph();
         FPUTS( in_buf, fout );          // print the line as-is
-        (void)wrap_readline();
+        (void)buf_readline();
         pc = in_buf;
         continue;
       }
@@ -487,7 +488,7 @@ static int buf_getc( char const **ppc ) {
 
   while ( !**ppc ) {
 read_line:
-    if ( !wrap_readline() )
+    if ( !buf_readline() )
       return EOF;
     *ppc = in_buf;
     nonws_no_wrap_range[1] = 0;
@@ -592,6 +593,25 @@ static codepoint_t buf_getcp( char const **ppc, utf8c_t utf8c ) {
 }
 
 /**
+ * Reads the next line of input.  If wrapping Markdown, adjust wrap's settings.
+ *
+ * @return Returns the number of bytes read.
+ */
+static size_t buf_readline( void ) {
+  size_t bytes_read;
+
+  while ( (bytes_read = check_readline( in_buf, fin )) ) {
+    // Don't pass IPC lines through the Markdown parser.
+    if ( !opt_markdown || in_buf[0] == WIPC_HELLO || markdown_adjust() )
+      break;
+  } // while
+
+  if ( !bytes_read )
+    MD_DEBUG( "====================\n" );
+  return bytes_read;
+}
+
+/**
  * Delimits a paragraph.
  */
 static void delimit_paragraph( void ) {
@@ -656,7 +676,7 @@ static void init( int argc, char const *argv[] ) {
   if ( !opt_no_hyphen )
     regex_init( &nonws_no_wrap_regex, WRAP_RE );
 
-  size_t const bytes_read = wrap_readline();
+  size_t const bytes_read = buf_readline();
   if ( !bytes_read )
     exit( EX_OK );
 
@@ -713,19 +733,18 @@ static void init( int argc, char const *argv[] ) {
 /**
  * Adjusts wrap's indent, hang-indent, and line-width for each Markdown line.
  *
- * @param line The line to parse.
  * @return Returns \c true if we're to proceed or \c false if another line
  * should be read.
  */
-static bool markdown_adjust( line_buf_t line ) {
+static bool markdown_adjust( void ) {
   static md_line_t  prev_line_type;
   static md_seq_t   prev_seq_num = MD_SEQ_NUM_INIT;
 
-  md_state_t const *const md = markdown_parse( line );
+  md_state_t const *const md = markdown_parse( in_buf );
   MD_DEBUG(
     "T=%c N=%2u D=%u L=%u H=%u|%s",
     (char)md->line_type, md->seq_num, md->depth,
-    md->indent_left, md->indent_hang, line
+    md->indent_left, md->indent_hang, in_buf
   );
 
   if ( prev_line_type != md->line_type ) {
@@ -738,12 +757,12 @@ static bool markdown_adjust( line_buf_t line ) {
       case MD_LINK_LABEL:
       case MD_TABLE:
         consec_newlines = 0;
-        if ( is_blank_line( line ) ) {
+        if ( is_blank_line( in_buf ) ) {
           //
           // Prevent blank lines immediately after these Markdown line types
           // from being swallowed by wrap by just printing them directly.
           //
-          FPUTS( line, fout );
+          FPUTS( in_buf, fout );
         }
         break;
       default:
@@ -763,8 +782,8 @@ static bool markdown_adjust( line_buf_t line ) {
           // print the marker line as-is "behind wrap's back" so it won't be
           // wrapped.
           //
-          FPUTS( line, fout );
-          line[0] = '\0';
+          FPUTS( in_buf, fout );
+          in_buf[0] = '\0';
         }
         break;
       default:
@@ -788,7 +807,7 @@ static bool markdown_adjust( line_buf_t line ) {
       //
       print_lead_chars();
       print_line( out_len, true );
-      FPUTS( line, fout );
+      FPUTS( in_buf, fout );
       return false;
 
     case MD_DL:
@@ -802,7 +821,7 @@ static bool markdown_adjust( line_buf_t line ) {
         print_lead_chars();
         print_line( out_len, true );
         prev_seq_num = md->seq_num;
-      } else if ( !out_len && !is_blank_line( line ) ) {
+      } else if ( !out_len && !is_blank_line( in_buf ) ) {
         //
         // Same line type, but new line: hang indent.
         //
@@ -943,25 +962,6 @@ static void wrap_cleanup( void ) {
   markdown_cleanup();
   if ( !opt_no_hyphen )
     regex_free( &nonws_no_wrap_regex );
-}
-
-/**
- * Reads the next line of input.  If wrapping Markdown, adjust wrap's settings.
- *
- * @return Returns the number of bytes read.
- */
-static size_t wrap_readline( void ) {
-  size_t bytes_read;
-
-  while ( (bytes_read = check_readline( in_buf, fin )) ) {
-    // Don't pass IPC lines through the Markdown parser.
-    if ( !opt_markdown || in_buf[0] == WIPC_HELLO || markdown_adjust( in_buf ) )
-      break;
-  } // while
-
-  if ( !bytes_read )
-    MD_DEBUG( "====================\n" );
-  return bytes_read;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
