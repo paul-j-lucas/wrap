@@ -23,7 +23,7 @@
 
 // local
 #include "config.h"                     /* for PACKAGE */
-#include "options.h"
+#include "options.h"                    /* for opt_eol */
 
 // standard
 #include <stddef.h>                     /* for size_t */
@@ -125,21 +125,12 @@ size_t check_readline( line_buf_t line, FILE *ffrom );
 void common_cleanup( void );
 
 /**
- * Gets whether the end-of-lines are Windows' end-of-lines, i.e., \c {CR}{LF}.
- *
- * @return Returns \c true only if end-of-lines are Windows' end-of-lines.
- */
-WRAP_COMMON_INLINE bool is_windows( void ) {
-  return opt_eol == EOL_WINDOWS;
-}
-
-/**
  * Gets the end-of-line string to use.
  *
  * @return Returns said end-of-line string.
  */
 WRAP_COMMON_INLINE char const* eol( void ) {
-  return (char const*)"\r\n" + !is_windows();
+  return (char const*)"\r\n" + (opt_eol != EOL_WINDOWS);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
