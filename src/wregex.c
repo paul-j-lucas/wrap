@@ -131,6 +131,5 @@ bool regex_match( wregex_t *re, char const *s, size_t offset,
   return true;
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 /* vim:set et sw=2 ts=2: */

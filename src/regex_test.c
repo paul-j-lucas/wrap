@@ -130,4 +130,5 @@ int main( int argc, char const *argv[] ) {
   exit( mismatches ? EX_SOFTWARE : EX_OK );
 }
 
+///////////////////////////////////////////////////////////////////////////////
 /* vim:set et sw=2 ts=2: */
