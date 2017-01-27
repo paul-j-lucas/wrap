@@ -207,11 +207,11 @@ static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
   assert( opts1 );
   assert( opts2 );
 
-  int gave_count = 0;
+  unsigned gave_count = 0;
   char const *opt = opts1;
   char gave_opt1 = '\0';
 
-  for ( int i = 0; i < 2; ++i ) {
+  for ( unsigned i = 0; i < 2; ++i ) {
     for ( ; *opt; ++opt ) {
       if ( GAVE_OPTION( *opt ) ) {
         if ( ++gave_count > 1 ) {
