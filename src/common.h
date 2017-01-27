@@ -129,7 +129,7 @@ void common_cleanup( void );
  *
  * @return Returns \c true only if end-of-lines are Windows' end-of-lines.
  */
-WRAP_COMMON_INLINE bool is_windows() {
+WRAP_COMMON_INLINE bool is_windows( void ) {
   return opt_eol == EOL_WINDOWS;
 }
 
@@ -138,7 +138,7 @@ WRAP_COMMON_INLINE bool is_windows() {
  *
  * @return Returns said end-of-line string.
  */
-WRAP_COMMON_INLINE char const* eol() {
+WRAP_COMMON_INLINE char const* eol( void ) {
   return (char const*)"\r\n" + !is_windows();
 }
 

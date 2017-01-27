@@ -46,7 +46,7 @@
  *
  * @return Returns said directory or NULL if it is not obtainable.
  */
-static char const* home_dir() {
+static char const* home_dir( void ) {
   char const *home = getenv( "HOME" );
 #if HAVE_GETEUID && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR
   if ( !home ) {
