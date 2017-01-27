@@ -627,7 +627,7 @@ done:
  */
 static void init( int argc, char const *argv[] ) {
   atexit( common_cleanup );
-  init_options( argc, argv, usage );
+  options_init( argc, argv, usage );
 
   CURR = input_buf.dl_line[0];
   NEXT = input_buf.dl_line[1];

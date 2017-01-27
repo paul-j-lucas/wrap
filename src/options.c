@@ -372,7 +372,7 @@ static void parse_options( int argc, char const *argv[],
 
 ////////// extern functions ///////////////////////////////////////////////////
 
-void init_options( int argc, char const *argv[], void (*usage)(void) ) {
+void options_init( int argc, char const *argv[], void (*usage)(void) ) {
   assert( usage );
   me = base_name( argv[0] );
   is_wrapc = strcmp( me, PACKAGE "c" ) == 0;

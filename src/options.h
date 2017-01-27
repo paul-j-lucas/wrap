@@ -88,7 +88,7 @@ extern FILE        *fout;               // file out
  * @param usage A pointer to a function to print a usage message.  It must not
  * return.
  */
-void init_options( int argc, char const *argv[], void (*usage)(void) );
+void options_init( int argc, char const *argv[], void (*usage)(void) );
 
 ///////////////////////////////////////////////////////////////////////////////
 
