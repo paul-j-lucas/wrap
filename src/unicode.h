@@ -148,24 +148,6 @@ WRAP_UNICODE_INLINE codepoint_t utf8_decode( char const *s ) {
 }
 
 /**
- * Given a pointer to any byte within a UTF-8 encoded string, synchronizes in
- * reverse to find the first byte of the UTF-8 character byte sequence the
- * pointer is pointing within.  (This inline version is optimized for the
- * common case of ASCII.)
- *
- * @param bug A pointer to the beginning of the buffer.
- * @param pos A pointer to any byte with the buffer.
- * @return Returns a pointer less than or equal to \a buf that points to the
- * first byte of a UTF-8 encoded character byte sequence or NULL if there is
- * none.
- */
-WRAP_UNICODE_INLINE char const* utf8_rsync( char const *buf, char const *pos ) {
-  extern char const* utf8_rsync_impl( char const*, char const* );
-  codepoint_t const cp = (uint8_t)*pos;
-  return cp_is_ascii( cp ) ? pos : utf8_rsync_impl( buf, pos );
-}
-
-/**
  * Checks whether the given byte is not the first byte of a UTF-8 byte sequence
  * of an encoded character.
  *
@@ -214,6 +196,24 @@ WRAP_UNICODE_INLINE size_t utf8_copy_char( char *dest, char const *src ) {
   size_t const len = utf8_len( src[0] );
   memmove( dest, src, len );
   return len;
+}
+
+/**
+ * Given a pointer to any byte within a UTF-8 encoded string, synchronizes in
+ * reverse to find the first byte of the UTF-8 character byte sequence the
+ * pointer is pointing within.  (This inline version is optimized for the
+ * common case of ASCII.)
+ *
+ * @param bug A pointer to the beginning of the buffer.
+ * @param pos A pointer to any byte with the buffer.
+ * @return Returns a pointer less than or equal to \a buf that points to the
+ * first byte of a UTF-8 encoded character byte sequence or NULL if there is
+ * none.
+ */
+WRAP_UNICODE_INLINE char const* utf8_rsync( char const *buf, char const *pos ) {
+  extern char const* utf8_rsync_impl( char const*, char const* );
+  codepoint_t const cp = (uint8_t)*pos;
+  return cp_is_ascii( cp ) ? pos : utf8_rsync_impl( buf, pos );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
