@@ -47,7 +47,7 @@ Note on Test Names
 
 Care must be taken when naming files that differ only in case
 because of case-insensitive (but preserving) filesystems like HFS+
-used on Mac OS X.
+used on macOS.
 
 For example, tests such as these:
 
