@@ -1,7 +1,10 @@
 Test File Format
 ================
 
-Test files must be a single line in the following format:
+Wrap and Wrapc (`.test`) Files
+------------------------------
+
+Wrap and Wrapc Test files must be a single line in the following format:
 
 *command* `|` *config* `|` *options* `|` *input* `|` *exit*
 
@@ -14,6 +17,30 @@ where:
 + *options* = command-line options or blank for none
 + *input*   = name of file to wrap
 + *exit*    = expected exit status code
+
+Regular Expression (`.regex`) Files
+-----------------------------------
+
+Regular expression files
+(that stand-alone test both the regular expressions used and the wrapper code)
+are one or more lines in the following format:
+
+[*expected*] *text*
+
+that is two fields separated by the first space character
+where:
+
++ *expected* = optional expected matching UTF-8 pattern
++ *text*     = UTF-8 text containing pattern
+
+The *expected* field is optional.
+If missing, it means that *text* is *not* expected to match a pattern.
+Note that the space seperator character must remain
+(hence non-matching *text* must start with a leading space).
+
+Blank lines
+and lines beginning with `#` (a comment)
+are ignored.
 
 Note on Test Names
 ------------------
