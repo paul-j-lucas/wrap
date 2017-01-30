@@ -37,9 +37,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #define CLEAR_OPTIONS()     memset( opts_given, 0, sizeof opts_given )
-#define GAVE_OPTION(OPT)    isalpha( OPTION_VALUE(OPT) )
-#define OPTION_VALUE(OPT)   opts_given[ !islower(OPT) ][ toupper(OPT) - 'A' ]
-#define SET_OPTION(OPT)     OPTION_VALUE(OPT) = (OPT)
+#define GAVE_OPTION(OPT)    (opts_given[ (unsigned char)(OPT) ])
+#define SET_OPTION(OPT)     (opts_given[ (unsigned char)(OPT) ] = (OPT))
 
 // extern constants
 char const          COMMENT_CHARS_DEFAULT[] =
@@ -101,7 +100,7 @@ FILE               *fout;
 
 // local variables
 static bool         is_wrapc;           // are we wrapc?
-static char         opts_given[ 2 /* lower/upper */ ][ 26 + 1 /*NULL*/ ];
+static char         opts_given[ 128 ];
 
 ///////////////////////////////////////////////////////////////////////////////
 
