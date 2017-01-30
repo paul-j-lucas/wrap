@@ -24,9 +24,11 @@ check_PROGRAMS = regex_test
 AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_builddir)/lib
 LDADD = $(top_builddir)/lib/libgnu.a
 
-wrap_SOURCES = alias.c common.c markdown.c options.c pattern.c read_conf.c unicode.c util.c wrap.c wregex.c
+COMMON_SOURCES = alias.c common.c options.c pattern.c read_conf.c util.c
 
-wrapc_SOURCES = alias.c common.c options.c pattern.c read_conf.c util.c wrapc.c
+wrap_SOURCES = $(COMMON_SOURCES) markdown.c unicode.c wrap.c wregex.c
+
+wrapc_SOURCES = $(COMMON_SOURCES) wrapc.c
 
 regex_test_SOURCES = regex_test.c unicode.c util.c wregex.c
 
