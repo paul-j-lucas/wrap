@@ -36,9 +36,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define CLEAR_OPTIONS()     memset( opts_given, 0, sizeof opts_given )
-#define GAVE_OPTION(OPT)    (opts_given[ (unsigned char)(OPT) ])
-#define SET_OPTION(OPT)     (opts_given[ (unsigned char)(OPT) ] = (OPT))
+#define CLEAR_OPTIONS()           memset( opts_given, 0, sizeof opts_given )
+#define GAVE_OPTION(OPT)          (opts_given[ (unsigned char)(OPT) ])
+#define SET_OPTION(OPT)           (opts_given[ (unsigned char)(OPT) ] = (OPT))
 
 // extern constants
 char const          COMMENT_CHARS_DEFAULT[] =
