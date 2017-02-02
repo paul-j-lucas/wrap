@@ -41,29 +41,11 @@
 #define SET_OPTION(OPT)           (opts_given[ (unsigned char)(OPT) ] = (OPT))
 
 // extern constants
-char const          COMMENT_CHARS_DEFAULT[] =
-    // Each character should appear only once.
-    "#"   //    AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell
-    "/*"  //    C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift
-    "+"   // /+ D
-    "-"   // -- Ada, AppleScript
-    "(:"  //    XQuery
-  // (*   //    AppleScript, Delphi, ML, Modula-[23], Oberon, OCaml, Pascal
-    "{"   // {- Haskell
-    "}"   //    Pascal
-    "!"   //    Fortran
-    "%"   //    Erlang, PostScript, Prolog, TeX
-    ";"   //    Assembly, Clojure, Lisp, Scheme
-    "<"   // <# PowerShell
-    "="   // #= Julia
-    ">"   //    Quoted e-mail
-  // *>"  //    COBOL 2002
-    "|"   // |# Lisp, Racket, Scheme
-    ;
+char const         *COMMENT_CHARS_DEFAULT;
 
 // extern option variables
 char const         *opt_alias;
-char const         *opt_comment_chars = COMMENT_CHARS_DEFAULT;
+char const         *opt_comment_chars;
 char const         *opt_conf_file;
 bool                opt_eos_delimit;
 size_t              opt_eos_spaces = EOS_SPACES_DEFAULT;
@@ -98,9 +80,32 @@ bool                opt_title_line;
 FILE               *fin;
 FILE               *fout;
 
+// local constants
+static char const   COMMENT_CHARS_INIT[] =
+  "!"   // Fortran
+  "#"   // AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell
+  "#="  // Julia
+  "%"   // Erlang, PostScript, Prolog, TeX
+  "(*"  // AppleScript, Delphi, ML, Modula-[23], Oberon, OCaml, Pascal
+  "(:"  // XQuery
+  "*>"  // COBOL 2002
+  "--"  // Ada, AppleScript
+  "/*"  // C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift
+  "/+"  // D
+  "//"  // C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift
+  ";"   // Assembly, Clojure, Lisp, Scheme
+  "<#"  // PowerShell
+  "{}"  // Pascal
+  "{-"  // Haskell
+  "|#"  // Lisp, Racket, Scheme
+  ;
+
 // local variables
 static bool         is_wrapc;           // are we wrapc?
 static char         opts_given[ 128 ];
+
+// local functions
+static char const*  get_long_opt( char );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -177,6 +182,49 @@ static struct option const *const LONG_OPTS[] = {
 };
 
 ////////// local functions ////////////////////////////////////////////////////
+
+/**
+ * Compiles a set of comment delimiter characters by checking for illegal
+ * characters, removing duplicates and whitespace.
+ *
+ * @param in_cc The comment delimiter characters to compile.
+ * @return Returns said compiled characters.
+ */
+static char const* compile_comment_chars( char const *in_cc ) {
+  assert( in_cc );
+  char cc_set[ 128 ] = { 0 };
+  unsigned distinct_cc = 0;
+
+  for ( char const *cc = in_cc; *cc; ++cc ) {
+    if ( !isspace( *cc ) ) {
+      if ( !ispunct( *cc ) )
+        PMESSAGE_EXIT( EX_USAGE,
+          "\"%s\": invalid value for --%s/-%c;\n\tmust only be either: %s\n",
+          in_cc, get_long_opt( 'D' ), 'D',
+          "punctuation or whitespace characters"
+        );
+      char *const set_pos = cc_set + (unsigned char)*cc;
+      distinct_cc += !*set_pos;
+      *set_pos = *cc;
+    }
+  } // for
+
+  if ( !distinct_cc )
+    PMESSAGE_EXIT( EX_USAGE,
+      "value for --%s/-%c must not be only whitespace\n",
+      get_long_opt( 'D' ), 'D'
+    );
+
+  char *const out_cc = (char*)free_later( MALLOC( char, distinct_cc + 1 ) );
+  char *cc = out_cc;
+
+  for ( size_t i = 0; i < sizeof cc_set; ++i )
+    if ( cc_set[i] )
+      *cc++ = cc_set[i];
+  *cc = '\0';
+
+  return out_cc;
+}
 
 /**
  * Gets the corresponding name of the long option for the given short option.
@@ -307,6 +355,7 @@ static void parse_options( int argc, char const *argv[],
 
   optind = opterr = 1;
   bool print_version = false;
+  char const *tmp_comment_chars = NULL;
   CLEAR_OPTIONS();
 
   for (;;) {
@@ -325,7 +374,7 @@ static void parse_options( int argc, char const *argv[],
       case 'c': opt_conf_file         = optarg;               break;
       case 'C': opt_no_conf           = true;                 break;
       case 'd': opt_lead_dot_ignore   = true;                 break;
-      case 'D': opt_comment_chars     = optarg;               break;
+      case 'D': tmp_comment_chars     = optarg;               break;
       case 'e': opt_eos_delimit       = true;                 break;
       case 'E': opt_eos_spaces        = check_atou( optarg ); break;
       case 'f': opt_fin               = optarg;         // no break;
@@ -367,6 +416,9 @@ static void parse_options( int argc, char const *argv[],
     PRINT_ERR( "%s\n", PACKAGE_STRING );
     exit( EX_OK );
   }
+
+  if ( tmp_comment_chars )
+    opt_comment_chars = compile_comment_chars( tmp_comment_chars );
 }
 
 ////////// extern functions ///////////////////////////////////////////////////
@@ -375,6 +427,8 @@ void options_init( int argc, char const *argv[], void (*usage)(void) ) {
   assert( usage );
   me = base_name( argv[0] );
   is_wrapc = strcmp( me, PACKAGE "c" ) == 0;
+  COMMENT_CHARS_DEFAULT = compile_comment_chars( COMMENT_CHARS_INIT );
+  opt_comment_chars = COMMENT_CHARS_DEFAULT;
 
   parse_options(
     argc, argv, SHORT_OPTS[ is_wrapc ], LONG_OPTS[ is_wrapc ], usage, 0

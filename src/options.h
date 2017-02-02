@@ -39,7 +39,7 @@ enum eol {
 typedef enum eol eol_t;
 
 // extern constants
-extern char const   COMMENT_CHARS_DEFAULT[];
+extern char const  *COMMENT_CHARS_DEFAULT;
 
 // extern option variables
 extern char const  *opt_alias;

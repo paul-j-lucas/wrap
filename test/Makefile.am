@@ -211,6 +211,7 @@ TESTS+= tests/utf8-w77.test \
 	tests/wrapc-02.test \
 	tests/wrapc-b.test \
 	tests/wrapc-D-01.test \
+	tests/wrapc-D-02.test \
 	tests/wrapc--block-01.test \
 	tests/wrapc--block-02.test \
 	tests/wrapc--block-03.test \
