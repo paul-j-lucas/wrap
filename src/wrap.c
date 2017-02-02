@@ -919,7 +919,7 @@ static void usage( void ) {
 "  -L string  Specify string to prepend to every line.\n"
 "  -m number  Mirror tabs.\n"
 "  -M number  Mirror spaces.\n"
-"  -n         Do not treat newlines as paragraph delimeters.\n"
+"  -n         Do not treat newlines as paragraph delimiter.\n"
 "  -N         Treat every newline as a paragraph delimiter.\n"
 "  -o file    Write to this file [default: stdout].\n"
 "  -p chars   Specify additional paragraph delimiter characters.\n"
