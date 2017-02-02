@@ -1,5 +1,51 @@
+2017-02-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrapc.1, options.c, options.h, test/Makefile.am,
+     wrapc-D-02.test: Better handling of --comment-chars/-D value.
+
+2017-02-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Fixed typo in usage message.
+
+2017-01-30  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.c: Cosmetic change.
+   * options.c: Can now support non-alpha options.
+   * src/Makefile.am: Added COMMON_SOURCES.
+
+2017-01-27  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.c: s/int/unsigned/
+   * unicode.h: Sorted unicode.h.
+   * common.h: Removed is_windows() -- used only in 1 place.
+   * options.c, options.h, wrap.c, wrapc.c: s/init_options/options_init/
+   * regex_test.c, wregex.c: Comment change.
+   * common.h, read_conf.c: Added missing "void".
+
+2017-01-25  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Variable renaming.
+   * wrap.c: Removed unneeded #include.
+   * wrap.c: Function renaming.
+
+2017-01-24  Paul J. Lucas <paul@lucasmail.org>
+
+   * regex_test.c, util.c, util.h, wrap.c: Now setting locale for LC_COLLATE in
+     addition to LC_CTYPE to UTF-8.
+   * wrap.c: Cosmetic changes.
+
+2017-01-23  Paul J. Lucas <paul@lucasmail.org>
+
+   * src/Makefile.am: Now using global LDADD; remove -L from AM_CPPFLAGS.
+   * regex_test.c, wrap.c, wregex.c, wregex.h: Now using wregex_t typedef.
+   * common.h: Comment fix.
+   * options.c: Cosmetic changes.
+
 2017-01-22  Paul J. Lucas <paul@lucasmail.org>
 
+   * common.h: Removed tabs.
+   * regex_test.c: Fixed tab.
+   * wrap.1, wrapc.1: Changed .TP 8 to just .TP.
    * wrap.1, wrapc.1, options.c: Changed --block to --block-chars.
    * wraprc.5: Updated to use long options.
 
