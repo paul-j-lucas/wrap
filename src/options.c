@@ -184,6 +184,43 @@ static struct option const *const LONG_OPTS[] = {
 ////////// local functions ////////////////////////////////////////////////////
 
 /**
+ * Checks that no options were given that are among the two given mutually
+ * exclusive sets of short options.
+ * Prints an error message and exits if any such options are found.
+ *
+ * @param opts1 The first set of short options.
+ * @param opts2 The second set of short options.
+ */
+static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
+  assert( opts1 );
+  assert( opts2 );
+
+  unsigned gave_count = 0;
+  char const *opt = opts1;
+  char gave_opt1 = '\0';
+
+  for ( unsigned i = 0; i < 2; ++i ) {
+    for ( ; *opt; ++opt ) {
+      if ( GAVE_OPTION( *opt ) ) {
+        if ( ++gave_count > 1 ) {
+          char const gave_opt2 = *opt;
+          PMESSAGE_EXIT( EX_USAGE,
+            "--%s/-%c and --%s/-%c are mutually exclusive\n",
+            get_long_opt( gave_opt1 ), gave_opt1,
+            get_long_opt( gave_opt2 ), gave_opt2
+          );
+        }
+        gave_opt1 = *opt;
+        break;
+      }
+    } // for
+    if ( !gave_count )
+      break;
+    opt = opts2;
+  } // for
+}
+
+/**
  * Compiles a set of comment delimiter characters by checking for illegal
  * characters, removing duplicates and whitespace.
  *
@@ -240,43 +277,6 @@ static char const* get_long_opt( char short_opt ) {
   } // for
   assert( false );
   return NULL;                          // suppress warning (never gets here)
-}
-
-/**
- * Checks that no options were given that are among the two given mutually
- * exclusive sets of short options.
- * Prints an error message and exits if any such options are found.
- *
- * @param opts1 The first set of short options.
- * @param opts2 The second set of short options.
- */
-static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
-  assert( opts1 );
-  assert( opts2 );
-
-  unsigned gave_count = 0;
-  char const *opt = opts1;
-  char gave_opt1 = '\0';
-
-  for ( unsigned i = 0; i < 2; ++i ) {
-    for ( ; *opt; ++opt ) {
-      if ( GAVE_OPTION( *opt ) ) {
-        if ( ++gave_count > 1 ) {
-          char const gave_opt2 = *opt;
-          PMESSAGE_EXIT( EX_USAGE,
-            "--%s/-%c and --%s/-%c are mutually exclusive\n",
-            get_long_opt( gave_opt1 ), gave_opt1,
-            get_long_opt( gave_opt2 ), gave_opt2
-          );
-        }
-        gave_opt1 = *opt;
-        break;
-      }
-    } // for
-    if ( !gave_count )
-      break;
-    opt = opts2;
-  } // for
 }
 
 /**
