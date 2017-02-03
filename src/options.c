@@ -310,29 +310,29 @@ static eol_t parse_eol( char const *s ) {
 
   assert( s );
   char const *const s_lc = tolower_s( (char*)free_later( check_strdup( s ) ) );
-  size_t names_buf_size = 1;            // for trailing null
+  size_t values_buf_size = 1;           // for trailing null
 
   for ( eol_map_t const *m = EOL_MAP; m->em_name; ++m ) {
     if ( strcmp( s_lc, m->em_name ) == 0 )
       return m->em_eol;
     // sum sizes of names in case we need to construct an error message
-    names_buf_size += strlen( m->em_name ) + 2 /* ", " */;
+    values_buf_size += strlen( m->em_name ) + 2 /* ", " */;
   } // for
 
   // name not found: construct valid name list for an error message
-  char *const names_buf = (char*)free_later( MALLOC( char, names_buf_size ) );
-  char *pnames = names_buf;
+  char *const values_buf = (char*)free_later( MALLOC( char, values_buf_size ) );
+  char *pvalues = values_buf;
   for ( eol_map_t const *m = EOL_MAP; m->em_name; ++m ) {
-    if ( pnames > names_buf ) {
-      strcpy( pnames, ", " );
-      pnames += 2;
+    if ( pvalues > values_buf ) {
+      strcpy( pvalues, ", " );
+      pvalues += 2;
     }
-    strcpy( pnames, m->em_name );
-    pnames += strlen( m->em_name );
+    strcpy( pvalues, m->em_name );
+    pvalues += strlen( m->em_name );
   } // for
   PMESSAGE_EXIT( EX_USAGE,
     "\"%s\": invalid value for --%s/-%c; must be one of:\n\t%s\n",
-    s, get_long_opt( 'l' ), 'l', names_buf
+    s, get_long_opt( 'l' ), 'l', values_buf
   );
 }
 
