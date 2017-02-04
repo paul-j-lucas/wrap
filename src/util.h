@@ -67,7 +67,7 @@ _GL_INLINE_HEADER_BEGIN
 #define FPUTS(S,STREAM) \
   BLOCK( if ( fputs( (S), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
 
-#define FWRITE(BUF,SIZE,NITEMS,STREAM) \
+#define W_FWRITE(BUF,SIZE,NITEMS,STREAM) \
   BLOCK( if ( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS) ) PERROR_EXIT( EX_IOERR ); )
 
 #define MALLOC(TYPE,N) \
@@ -166,6 +166,15 @@ void* free_later( void *p );
  */
 void free_now( void );
 
+#ifdef WITH_WIDTH_TERM
+/**
+ * Gets the number of columns of the terminal.
+ *
+ * @return Returns said number of columns or 0 if it can not be determined.
+ */
+unsigned get_term_columns( void );
+#endif /* WITH_WIDTH_TERM */
+
 /**
  * Checks whether \a s is a blank like, that is a line consisting only
  * whitespace followed by an end-of-line.
@@ -176,6 +185,16 @@ void free_now( void );
 WRAP_UTIL_INLINE bool is_blank_line( char const *s ) {
   SKIP_CHARS( s, WS_STRN );
   return !*s;
+}
+
+/**
+ * Checks whether \a s only contains decimal digit characters.
+ *
+ * @param s The null-terminated string to check.
+ * @return Returns \c true only if \a s contains only digits.
+ */
+WRAP_UTIL_INLINE bool is_digits( char const *s ) {
+  return !s[ strspn( s, "0123456789" ) ];
 }
 
 /**

@@ -10,6 +10,11 @@ Wrapc now accepts only punctuation characters for the --comment-chars/-D value.
 Duplicated characters may be given, but are ignored.  Whitespace is also
 ignored.
 
+** Wrap to terminal width.
+Wrap and wrapc now accept one of "t", "term", or "terminal" as an argument to
+either the --width or -w option to set the line width to the width of the
+terminal in which either wrap or wrapc is running.
+
 * Changes in Wrap 4.10
 
 ** Long command-line options.

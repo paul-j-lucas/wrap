@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\fP 1 "January 22, 2017" "PJL TOOLS"
+.TH \f3wrap\fP 1 "February 3, 2017" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -385,6 +385,17 @@ to
 .I n
 characters
 (default is 80).
+Alternatively,
+one of
+\f(CWt\fP,
+\f(CWterm\fP,
+or
+\f(CWterminal\fP
+(case-insensitive)
+sets
+.I line-width
+to the width of the controlling terminal window,
+if any.
 .TP
 .BR \-\-whitespace-delimit " | " \-W
 Treats a line beginning with whitespace as a paragraph delimiter.
@@ -797,6 +808,19 @@ Configuration file error.
 .PD
 .SH ENVIRONMENT
 .TP
+.B COLUMNS
+The number of columns of the terminal on which
+.B wrap
+is being run.
+Used to get the terminal's width for the
+.B \-\-width
+or
+.B \-w
+option.
+Takes precedence over the number of columns specified by the
+.B TERM
+variable.
+.TP
 .B HOME
 The user's home directory:
 used to locate the default configuration file.
@@ -805,6 +829,19 @@ the home directory is obtained from the password database entry
 for the effective user.
 If that fails,
 no default configuration file is read.
+.TP
+.B TERM
+The type of the terminal on which
+.B wrap
+is being run.
+Used to get the terminal's width for the
+.B \-\-width
+or
+.B \-w
+option
+(unless
+.B COLUMNS
+is set and exported).
 .SH BUGS
 PHP Markdown Extra allows multiple terms to share the same a definition;
 however,

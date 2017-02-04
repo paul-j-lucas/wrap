@@ -34,7 +34,9 @@ AC_PROG_INSTALL
 # Checks for header files.
 AC_HEADER_ASSERT
 AC_CHECK_HEADERS([ctype.h])
+AC_CHECK_HEADERS([curses.h ncurses.h])
 AC_CHECK_HEADERS([errno.h])
+AC_CHECK_HEADERS([fcntl.h])
 AC_CHECK_HEADERS([fnmatch.h])
 AC_CHECK_HEADERS([getopt.h])
 AC_CHECK_HEADERS([inttypes.h])
@@ -46,6 +48,13 @@ AC_CHECK_HEADERS([signal.h])
 AC_HEADER_STDBOOL
 AC_CHECK_HEADERS([stddef.h])
 AC_CHECK_HEADERS([sysexits.h])
+AC_CHECK_HEADERS([term.h], [], [],
+[#if defined(HAVE_CURSES_H)
+#include <curses.h>
+#elif defined(HAVE_NCURSES_H)
+#include <ncurses.h>
+#endif
+])
 AC_CHECK_HEADERS([unistd.h])
 AC_CHECK_HEADERS([wctype.h])
 gl_INIT
@@ -63,6 +72,18 @@ AC_FUNC_FNMATCH
 AC_FUNC_FORK
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([geteuid getpwuid perror strerror strndup])
+AC_SEARCH_LIBS([endwin],[curses ncurses])
+
+# Program feature: --width=term
+AC_ARG_ENABLE([width-term],
+  AS_HELP_STRING([--disable-width-term], [disable support for --width=term]),
+  [],
+  [AC_DEFINE([WITH_WIDTH_TERM], [1],
+    [Define to 1 if --width=term is enabled.])]
+)
+AS_IF([test x$enable_width_term != xno -a x$ac_cv_search_endwin = xno],
+  [AC_MSG_ERROR([curses library for --width=term not found; use --disable-width-term to disable])]
+)
 
 # Makefile conditionals.
 

@@ -106,6 +106,7 @@ static char         opts_given[ 128 ];
 
 // local functions
 static char const*  get_long_opt( char );
+static unsigned     parse_width( char const* );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -369,39 +370,39 @@ static void parse_options( int argc, char const *argv[],
         opt_conf_file, line_no, opt
       );
     switch ( opt ) {
-      case 'a': opt_alias             = optarg;               break;
-      case 'b': opt_lead_para_delims  = optarg;               break;
-      case 'c': opt_conf_file         = optarg;               break;
-      case 'C': opt_no_conf           = true;                 break;
-      case 'd': opt_lead_dot_ignore   = true;                 break;
-      case 'D': tmp_comment_chars     = optarg;               break;
-      case 'e': opt_eos_delimit       = true;                 break;
-      case 'E': opt_eos_spaces        = check_atou( optarg ); break;
-      case 'f': opt_fin               = optarg;         // no break;
-      case 'F': opt_fin_name          = base_name( optarg );  break;
-      case 'h': opt_hang_tabs         = check_atou( optarg ); break;
-      case 'H': opt_hang_spaces       = check_atou( optarg ); break;
-      case 'i': opt_indt_tabs         = check_atou( optarg ); break;
-      case 'I': opt_indt_spaces       = check_atou( optarg ); break;
-      case 'l': opt_eol               = parse_eol( optarg );  break;
-      case 'L': opt_lead_string       = optarg;               break;
-      case 'm': opt_mirror_tabs       = check_atou( optarg ); break;
-      case 'M': opt_mirror_spaces     = check_atou( optarg ); break;
-      case 'n': opt_newlines_delimit  = SIZE_MAX;             break;
-      case 'N': opt_newlines_delimit  = 1;                    break;
-      case 'o': opt_fout              = optarg;               break;
-      case 'p': opt_para_delims       = optarg;               break;
-      case 'P': opt_prototype         = true;                 break;
-      case 's': opt_tab_spaces        = check_atou( optarg ); break;
-      case 'S': opt_lead_spaces       = check_atou( optarg ); break;
-      case 't': opt_lead_tabs         = check_atou( optarg ); break;
-      case 'T': opt_title_line        = true;                 break;
-      case 'u': opt_markdown          = true;                 break;
-      case 'v': print_version         = true;                 break;
-      case 'w': opt_line_width        = check_atou( optarg ); break;
-      case 'W': opt_lead_ws_delimit   = true;                 break;
-      case 'y': opt_no_hyphen         = true;                 break;
-      case 'Z': opt_data_link_esc     = true;                 break;
+      case 'a': opt_alias             = optarg;                 break;
+      case 'b': opt_lead_para_delims  = optarg;                 break;
+      case 'c': opt_conf_file         = optarg;                 break;
+      case 'C': opt_no_conf           = true;                   break;
+      case 'd': opt_lead_dot_ignore   = true;                   break;
+      case 'D': tmp_comment_chars     = optarg;                 break;
+      case 'e': opt_eos_delimit       = true;                   break;
+      case 'E': opt_eos_spaces        = check_atou( optarg );   break;
+      case 'f': opt_fin               = optarg;           // no break;
+      case 'F': opt_fin_name          = base_name( optarg );    break;
+      case 'h': opt_hang_tabs         = check_atou( optarg );   break;
+      case 'H': opt_hang_spaces       = check_atou( optarg );   break;
+      case 'i': opt_indt_tabs         = check_atou( optarg );   break;
+      case 'I': opt_indt_spaces       = check_atou( optarg );   break;
+      case 'l': opt_eol               = parse_eol( optarg );    break;
+      case 'L': opt_lead_string       = optarg;                 break;
+      case 'm': opt_mirror_tabs       = check_atou( optarg );   break;
+      case 'M': opt_mirror_spaces     = check_atou( optarg );   break;
+      case 'n': opt_newlines_delimit  = SIZE_MAX;               break;
+      case 'N': opt_newlines_delimit  = 1;                      break;
+      case 'o': opt_fout              = optarg;                 break;
+      case 'p': opt_para_delims       = optarg;                 break;
+      case 'P': opt_prototype         = true;                   break;
+      case 's': opt_tab_spaces        = check_atou( optarg );   break;
+      case 'S': opt_lead_spaces       = check_atou( optarg );   break;
+      case 't': opt_lead_tabs         = check_atou( optarg );   break;
+      case 'T': opt_title_line        = true;                   break;
+      case 'u': opt_markdown          = true;                   break;
+      case 'v': print_version         = true;                   break;
+      case 'w': opt_line_width        = parse_width( optarg );  break;
+      case 'W': opt_lead_ws_delimit   = true;                   break;
+      case 'y': opt_no_hyphen         = true;                   break;
+      case 'Z': opt_data_link_esc     = true;                   break;
       default : usage();
     } // switch
   } // for
@@ -419,6 +420,56 @@ static void parse_options( int argc, char const *argv[],
 
   if ( tmp_comment_chars )
     opt_comment_chars = compile_comment_chars( tmp_comment_chars );
+}
+
+/**
+ * Parses a width value.
+ *
+ * @param s The null-terminated string to parse.
+ * @return Returns the width value
+ * or prints an error message and exits if \a s is invalid.
+ */
+static unsigned parse_width( char const *s ) {
+#ifdef WITH_WIDTH_TERM
+  static char const *const TERM[] = {
+    "t",
+    "term",
+    "terminal",
+    NULL
+  };
+
+  assert( s );
+  if ( is_digits( s ) )
+    return (unsigned)strtoul( s, NULL, 10 );
+
+  char const *const s_lc = tolower_s( (char*)free_later( check_strdup( s ) ) );
+  size_t values_buf_size = 1;           // for trailing null
+
+  for ( char const *const *t = TERM; *t; ++t ) {
+    if ( strcmp( s_lc, *t ) == 0 )
+      return get_term_columns();
+    // sum sizes of values in case we need to construct an error message
+    values_buf_size += strlen( *t ) + 2 /* ", " */;
+  } // for
+
+  // value not found: construct valid value list for an error message
+  char *const values_buf = (char*)free_later( MALLOC( char, values_buf_size ) );
+  char *pvalues = values_buf;
+  for ( char const *const *t = TERM; *t; ++t ) {
+    if ( pvalues > values_buf ) {
+      strcpy( pvalues, ", " );
+      pvalues += 2;
+    }
+    strcpy( pvalues, *t );
+    pvalues += strlen( *t );
+  } // for
+  PMESSAGE_EXIT( EX_USAGE,
+    "\"%s\": invalid value for --%s/-%c; must be one of:\n\t%s\n",
+    s, get_long_opt( 'w' ), 'w', values_buf
+  );
+#else
+  return check_atou( s );
+#endif /* WITH_WIDTH_TERM */
 }
 
 ////////// extern functions ///////////////////////////////////////////////////

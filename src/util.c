@@ -32,6 +32,18 @@
 #include <string.h>
 #include <sysexits.h>
 
+#ifdef WITH_WIDTH_TERM
+# if defined(HAVE_CURSES_H)
+#   define _BOOL                        /* prevents clash of bool on Solaris */
+#   include <curses.h>
+#   undef _BOOL
+# elif defined(HAVE_NCURSES_H)
+#   include <ncurses.h>
+# endif
+# include <fcntl.h>                     /* for open(2) */
+# include <term.h>                      /* for setupterm(3) */
+#endif /* WITH_WIDTH_TERM */
+
 #ifndef NDEBUG
 # include <signal.h>                    /* for raise(3) */
 # include <unistd.h>                    /* for getpid(3) */
@@ -64,7 +76,7 @@ char const* base_name( char const *path_name ) {
 
 unsigned check_atou( char const *s ) {
   assert( s );
-  if ( s[ strspn( s, "0123456789" ) ] )
+  if ( !is_digits( s ) )
     PMESSAGE_EXIT( EX_USAGE, "\"%s\": invalid integer\n", s );
   return (unsigned)strtoul( s, NULL, 10 );
 }
@@ -99,7 +111,7 @@ void fcopy( FILE *ffrom, FILE *fto ) {
 
   char buf[ 8192 ];
   for ( size_t size; (size = fread( buf, 1, sizeof buf, ffrom )) > 0; )
-    FWRITE( buf, 1, size, fto );
+    W_FWRITE( buf, 1, size, fto );
   FERROR( ffrom );
 }
 
@@ -145,6 +157,85 @@ void free_now( void ) {
   } // for
   free_head = NULL;
 }
+
+#ifdef WITH_WIDTH_TERM
+unsigned get_term_columns( void ) {
+  static unsigned const UNSET = (unsigned)-1;
+  static unsigned cols = UNSET;
+
+  if ( cols == UNSET ) {
+    cols = 0;
+
+    char reason_buf[ 128 ];
+    char const *reason = NULL;
+    int tty_fd = -1;
+
+    char const *const ctty_path = ctermid( NULL );
+    if ( !ctty_path || !*ctty_path ) {
+      reason = "ctermid(3) failed to get controlling terminal";
+      goto error;
+    }
+
+    if ( (tty_fd = open( ctty_path, O_RDWR )) == -1 ) {
+      reason = STRERROR;
+      goto error;
+    }
+
+    char const *const term = getenv( "TERM" );
+    if ( !term ) {
+      reason = "TERM environment variable not set";
+      goto error;
+    }
+
+    int setupterm_err;
+    if ( setupterm( (char*)term, tty_fd, &setupterm_err ) == ERR ) {
+      reason = reason_buf;
+      switch ( setupterm_err ) {
+        case -1:
+          reason = "terminfo database not found";
+          break;
+        case 0:
+          snprintf(
+            reason_buf, sizeof reason_buf,
+            "TERM=%s not found in database or too generic", term
+          );
+          break;
+        case 1:
+          reason = "terminal is harcopy";
+          break;
+        default:
+          snprintf(
+            reason_buf, sizeof reason_buf,
+            "setupterm(3) returned error code %d", setupterm_err
+          );
+      } // switch
+      goto error;
+    }
+
+    int const ti_cols = tigetnum( (char*)"cols" );
+    if ( ti_cols < 0 ) {
+      snprintf(
+        reason_buf, sizeof reason_buf,
+        "tigetnum(\"cols\") returned error code %d", ti_cols
+      );
+      goto error;
+    }
+
+    cols = (unsigned)ti_cols;
+
+error:
+    if ( tty_fd != -1 )
+      close( tty_fd );
+    if ( reason )
+      PMESSAGE_EXIT( EX_UNAVAILABLE,
+        "failed to determine number of columns in terminal: %s\n",
+        reason
+      );
+  }
+
+  return cols;
+}
+#endif /* WITH_WIDTH_TERM */
 
 void setlocale_utf8( void ) {
   static char const *const UTF8_LOCALES[] = {
