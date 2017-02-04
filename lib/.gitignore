@@ -2,6 +2,7 @@
 /*.sed
 /alloca.h
 /configmake.h
+/errno.h
 /fnmatch.h
 /getopt.h
 /stdbool.h
