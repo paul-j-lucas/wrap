@@ -1,5 +1,12 @@
+2017-02-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrap.1, wrapc.1, options.c, util.c, util.h: Added
+     --width=term.
+   * options.c: Cosmetic change.
+
 2017-02-02  Paul J. Lucas <paul@lucasmail.org>
 
+   * options.c: Moved check_mutually_exclusive().
    * NEWS, configure.ac, wrapc.1, options.c, options.h, test/Makefile.am,
      wrapc-D-02.test: Better handling of --comment-chars/-D value.
 
