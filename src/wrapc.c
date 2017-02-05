@@ -1066,7 +1066,7 @@ static size_t str_width( char const *s ) {
   assert( s );
   size_t width = 0;
   while ( *s )
-    width += (*s++ == '\t' ) ? opt_tab_spaces - (width % opt_tab_spaces) : 1;
+    width += (*s++ == '\t') ? opt_tab_spaces - (width % opt_tab_spaces) : 1;
   return width;
 }
 
