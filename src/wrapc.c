@@ -619,6 +619,22 @@ done:
 }
 
 /**
+ * Given an "opening" character, gets it matching "closing" chcaracter.
+ *
+ * @param c The "opening" character.
+ * @return Returns said "closing" character.
+ */
+static char closing_char( char c ) {
+  switch ( c ) {
+    case '(': return ')' ;
+    case '<': return '>' ;
+    case '[': return ']' ;              // no language uses '['; completeness
+    case '{': return '}' ;
+    default : return '\0';
+  } // switch
+}
+
+/**
  * Parses command-line options, sets-up I/O, sets-up the input buffers, reads
  * the line prototype, and sets-up the pipes.
  *
@@ -846,14 +862,7 @@ static void read_prototype( void ) {
     // if any, and only if among the set of specified comment delimiter
     // characters.
     //
-    char closing;
-    switch ( cc[0] ) {
-      case '(': closing = ')' ; break;
-      case '<': closing = '>' ; break;
-      case '[': closing = ']' ; break;  // no language uses '['; completeness
-      case '{': closing = '}' ; break;
-      default : closing = '\0';
-    } // switch
+    char closing = closing_char( cc[0] );
     if ( closing && !is_comment_char( closing ) )
       closing = '\0';
 
