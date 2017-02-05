@@ -131,7 +131,7 @@ static inline bool cp_is_para_delim( codepoint_t cp ) {
  * Prints an end-of-line and sends any pending IPC message to wrapc.
  */
 static inline void print_eol( void ) {
-  FPUTS( eol(), fout );
+  W_FPUTS( eol(), fout );
   wipc_send( ipc_buf );
 }
 
@@ -291,7 +291,7 @@ int main( int argc, char const *argv[] ) {
       if ( opt_lead_dot_ignore && cp == '.' ) {
         consec_newlines = 0;
         delimit_paragraph();
-        FPUTS( input_buf, fout );       // print the line as-is
+        W_FPUTS( input_buf, fout );     // print the line as-is
         (void)buf_readline();
         pc = input_buf;
         continue;
@@ -467,7 +467,7 @@ int main( int argc, char const *argv[] ) {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  FERROR( fin );
+  W_FERROR( fin );
   if ( output_len ) {                   // print left-over text
     if ( !is_long_line )
       print_lead_chars();
@@ -763,7 +763,7 @@ static bool markdown_adjust( void ) {
           // Prevent blank lines immediately after these Markdown line types
           // from being swallowed by wrap by just printing them directly.
           //
-          FPUTS( input_buf, fout );
+          W_FPUTS( input_buf, fout );
         }
         break;
       default:
@@ -783,7 +783,7 @@ static bool markdown_adjust( void ) {
           // print the marker line as-is "behind wrap's back" so it won't be
           // wrapped.
           //
-          FPUTS( input_buf, fout );
+          W_FPUTS( input_buf, fout );
           input_buf[0] = '\0';
         }
         break;
@@ -808,7 +808,7 @@ static bool markdown_adjust( void ) {
       //
       print_lead_chars();
       print_line( output_len, true );
-      FPUTS( input_buf, fout );
+      W_FPUTS( input_buf, fout );
       return false;
 
     case MD_DL:
@@ -852,12 +852,12 @@ static void markdown_reset( void ) {
  */
 static void print_lead_chars( void ) {
   if ( proto_buf[0] ) {
-    FPRINTF( fout, "%s%s", proto_buf, output_len ? proto_tws : "" );
+    W_FPRINTF( fout, "%s%s", proto_buf, output_len ? proto_tws : "" );
   } else if ( output_len ) {
     for ( size_t i = 0; i < opt_lead_tabs; ++i )
-      FPUTC( '\t', fout );
+      W_FPUTC( '\t', fout );
     for ( size_t i = 0; i < opt_lead_spaces; ++i )
-      FPUTC( ' ', fout );
+      W_FPUTC( ' ', fout );
   }
 }
 
@@ -871,7 +871,7 @@ static void print_lead_chars( void ) {
 static void print_line( size_t len, bool do_eol ) {
   output_buf[ len ] = '\0';
   if ( len ) {
-    FPUTS( output_buf, fout );
+    W_FPUTS( output_buf, fout );
     if ( do_eol )
       print_eol();
   }

@@ -58,8 +58,8 @@ typedef enum delim delim_t;
 //#define DEBUG_RSWW
 
 #ifdef DEBUG_RSWW
-# undef PIPE
-# define PIPE(P) NO_OP
+# undef W_PIPE
+# define W_PIPE(P) NO_OP
 #endif /* DEBUG_RSWW */
 
 // Closes both ends of pipe P.
@@ -68,7 +68,7 @@ typedef enum delim delim_t;
 
 // Redirects file-descriptor FD to/from pipe P.
 #define REDIRECT(FD,P) \
-  BLOCK( close( FD ); DUP( pipes[P][FD] ); CLOSE_PIPES( P ); )
+  BLOCK( close( FD ); W_DUP( pipes[P][FD] ); CLOSE_PIPES( P ); )
 
 /**
  * Contains the current and next lines of input so the next line can be peeked
@@ -290,7 +290,7 @@ static pid_t read_source_write_wrap( void ) {
     // For block comments, write the first line directly to the output.
     //
     adjust_comment_width( CURR );
-    FPUTS( CURR, fout );
+    W_FPUTS( CURR, fout );
     swap_line_bufs();
   }
 
@@ -378,7 +378,7 @@ static pid_t read_source_write_wrap( void ) {
     if ( suffix_buf[0] )
       chop_suffix( line );
 
-    FPUTS( line, fwrap );
+    W_FPUTS( line, fwrap );
     swap_line_bufs();
   } // while
   exit( EX_OK );
@@ -447,7 +447,7 @@ static void read_wrap( void ) {
           // wrap) that we've reached the end of the comment: dump any
           // remaining buffer and pass text through verbatim.
           //
-          FPRINTF( fout, "%s%s", line + 2, eol() );
+          W_FPRINTF( fout, "%s%s", line + 2, eol() );
           fcopy( fwrap, fout );
           goto done;
 
@@ -484,7 +484,7 @@ static void read_wrap( void ) {
     }
 
     // don't emit proto_tws for blank lines
-    FPRINTF(
+    W_FPRINTF(
       fout, "%s%s%s%s%s",
       prefix_buf, is_blank_line( line ) ? "" : proto_tws, line, suffix_buf,
       eol()
@@ -492,7 +492,7 @@ static void read_wrap( void ) {
   } // for
 
 done:
-  FERROR( fwrap );
+  W_FERROR( fwrap );
 #endif /* DEBUG_RSWW */
 }
 
@@ -632,8 +632,8 @@ static void init( int argc, char const *argv[] ) {
   CURR = input_buf.dl_line[0];
   NEXT = input_buf.dl_line[1];
   read_prototype();
-  PIPE( pipes[ TO_WRAP ] );
-  PIPE( pipes[ FROM_WRAP ] );
+  W_PIPE( pipes[ TO_WRAP ] );
+  W_PIPE( pipes[ FROM_WRAP ] );
 }
 
 /**

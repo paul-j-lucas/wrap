@@ -99,7 +99,7 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
  * @hideinitializer
  */
 #define WIPC_SENDF(STREAM,CODE,FORMAT,...) \
-  FPRINTF( (STREAM), ("%c%c" FORMAT), WIPC_HELLO, (CODE), __VA_ARGS__ )
+  W_FPRINTF( (STREAM), ("%c%c" FORMAT), WIPC_HELLO, (CODE), __VA_ARGS__ )
 
 /**
  * Character used to separate fields in an Interprocess Communication (IPC)

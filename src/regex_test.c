@@ -123,7 +123,7 @@ int main( int argc, char const *argv[] ) {
 
   regex_free( &re );
 
-  FERROR( fin );
+  W_FERROR( fin );
   fclose( fin );
 
   printf( "%u mismatches\n", mismatches );

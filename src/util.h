@@ -44,45 +44,41 @@ _GL_INLINE_HEADER_BEGIN
 #define NO_OP                     ((void)0)
 #define PERROR_EXIT(STATUS)       BLOCK( perror( me ); exit( STATUS ); )
 #define PRINT_ERR(...)            fprintf( stderr, __VA_ARGS__ )
+#define SKIP_CHARS(S,CHARS)       ((S) += strspn( (S), (CHARS) ))
 #define STRERROR                  strerror( errno )
 #define WS_ST                     " \t"       /* Space Tab */
 #define WS_STR                    WS_ST "\r"  /* Space Tab Return */
 #define WS_STRN                   WS_STR "\n" /* Space Tab Return Newline */
 
+#define MALLOC(TYPE,N) \
+  (TYPE*)check_realloc( NULL, sizeof(TYPE) * (N) )
+
 #define PMESSAGE_EXIT(STATUS,FORMAT,...) \
   BLOCK( PRINT_ERR( "%s: " FORMAT, me, __VA_ARGS__ ); exit( STATUS ); )
 
-#define DUP(FD) \
+#define REALLOC(PTR,TYPE,N) \
+  (PTR) = (TYPE*)check_realloc( (PTR), sizeof(TYPE) * (N) )
+
+#define W_DUP(FD) \
   BLOCK( if ( dup( FD ) == -1 ) PERROR_EXIT( EX_OSERR ); )
 
-#define FERROR(STREAM) \
+#define W_FERROR(STREAM) \
   BLOCK( if ( ferror( STREAM ) ) PERROR_EXIT( EX_IOERR ); )
 
-#define FPRINTF(STREAM,...) \
+#define W_FPRINTF(STREAM,...) \
   BLOCK( if ( fprintf( (STREAM), __VA_ARGS__ ) < 0 ) PERROR_EXIT( EX_IOERR ); )
 
-#define FPUTC(C,STREAM) \
+#define W_FPUTC(C,STREAM) \
   BLOCK( if ( putc( (C), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
 
-#define FPUTS(S,STREAM) \
+#define W_FPUTS(S,STREAM) \
   BLOCK( if ( fputs( (S), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
 
 #define W_FWRITE(BUF,SIZE,NITEMS,STREAM) \
   BLOCK( if ( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS) ) PERROR_EXIT( EX_IOERR ); )
 
-#define MALLOC(TYPE,N) \
-  (TYPE*)check_realloc( NULL, sizeof(TYPE) * (N) )
-
-#define PIPE(FDS) \
+#define W_PIPE(FDS) \
   BLOCK( if ( pipe( FDS ) == -1 ) PERROR_EXIT( EX_OSERR ); )
-
-#define REALLOC(PTR,TYPE,N) \
-  (PTR) = (TYPE*)check_realloc( (PTR), sizeof(TYPE) * (N) )
-
-#define SKIP_CHARS(S,CHARS)       ((S) += strspn( (S), (CHARS) ))
-
-#define UNGETC(C,STREAM) \
-  BLOCK( if ( ungetc( (C), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
 
 // extern variable definitions
 extern char const  *me;                 // executable name
