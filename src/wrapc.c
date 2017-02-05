@@ -1064,17 +1064,9 @@ static char const* str_status( int status ) {
  */
 static size_t str_width( char const *s ) {
   assert( s );
-
-  size_t pos = 0, width = 0;
-  for ( ; *s; ++s ) {
-    if ( *s == '\t' ) {
-      width += opt_tab_spaces - pos;
-      pos = 0;
-    } else {
-      ++width;
-      pos = (pos + 1) % opt_tab_spaces;
-    }
-  } // for
+  size_t width = 0;
+  while ( *s )
+    width += (*s++ == '\t' ) ? opt_tab_spaces - (width % opt_tab_spaces) : 1;
   return width;
 }
 
