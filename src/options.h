@@ -33,8 +33,8 @@
  */
 enum eol {
   EOL_INPUT   = 'i',                    // do whatever the input does
-  EOL_UNIX    = 'u',
-  EOL_WINDOWS = 'w'
+  EOL_UNIX    = 'u',                    // \n
+  EOL_WINDOWS = 'w'                     // \r\n
 };
 typedef enum eol eol_t;
 
