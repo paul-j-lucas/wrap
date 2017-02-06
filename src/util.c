@@ -33,6 +33,7 @@
 #include <sysexits.h>
 
 #ifdef WITH_WIDTH_TERM
+# include <fcntl.h>                     /* for open(2) */
 # if defined(HAVE_CURSES_H)
 #   define _BOOL                        /* prevents clash of bool on Solaris */
 #   include <curses.h>
@@ -40,7 +41,6 @@
 # elif defined(HAVE_NCURSES_H)
 #   include <ncurses.h>
 # endif
-# include <fcntl.h>                     /* for open(2) */
 # include <term.h>                      /* for setupterm(3) */
 #endif /* WITH_WIDTH_TERM */
 
@@ -168,15 +168,15 @@ unsigned get_term_columns( void ) {
 
     char reason_buf[ 128 ];
     char const *reason = NULL;
-    int tty_fd = -1;
+    int cterm_fd = -1;
 
-    char const *const ctty_path = ctermid( NULL );
-    if ( !ctty_path || !*ctty_path ) {
+    char const *const cterm_path = ctermid( NULL );
+    if ( !cterm_path || !*cterm_path ) {
       reason = "ctermid(3) failed to get controlling terminal";
       goto error;
     }
 
-    if ( (tty_fd = open( ctty_path, O_RDWR )) == -1 ) {
+    if ( (cterm_fd = open( cterm_path, O_RDWR )) == -1 ) {
       reason = STRERROR;
       goto error;
     }
@@ -188,7 +188,7 @@ unsigned get_term_columns( void ) {
     }
 
     int setupterm_err;
-    if ( setupterm( (char*)term, tty_fd, &setupterm_err ) == ERR ) {
+    if ( setupterm( (char*)term, cterm_fd, &setupterm_err ) == ERR ) {
       reason = reason_buf;
       switch ( setupterm_err ) {
         case -1:
@@ -224,8 +224,8 @@ unsigned get_term_columns( void ) {
     cols = (unsigned)ti_cols;
 
 error:
-    if ( tty_fd != -1 )
-      close( tty_fd );
+    if ( cterm_fd != -1 )
+      close( cterm_fd );
     if ( reason )
       PMESSAGE_EXIT( EX_UNAVAILABLE,
         "failed to determine number of columns in terminal: %s\n",
