@@ -1043,14 +1043,18 @@ static size_t strlen_no_eol( char const *s ) {
  */
 static char const* str_status( int status ) {
   switch ( status ) {
-    case EX_OK        : return "success";
-    case EX_USAGE     : return "usage error";
-    case EX_NOINPUT   : return "error opening file";
-    case EX_OSERR     : return "system error (e.g., can't fork)";
-    case EX_CANTCREAT : return "error creating file";
-    case EX_IOERR     : return "I/O error";
-    case EX_CONFIG    : return "configuration file error";
-    default           : return "unknown status";
+    case /*  0 */ EX_OK         : return "success";
+    case /* 64 */ EX_USAGE      : return "usage error";
+    case /* 65 */ EX_DATAERR    : return "input data error";
+    case /* 66 */ EX_NOINPUT    : return "error opening file";
+    case /* 69 */ EX_UNAVAILABLE: return "service unavailable";
+    case /* 70 */ EX_SOFTWARE   : return "internal error";
+    case /* 71 */ EX_OSERR      : return "system error (e.g., can't fork)";
+    case /* 72 */ EX_OSFILE     : return "error opening system file";
+    case /* 73 */ EX_CANTCREAT  : return "error creating file";
+    case /* 74 */ EX_IOERR      : return "I/O error";
+    case /* 78 */ EX_CONFIG     : return "configuration file error";
+    default                     : return "unknown status";
   } // switch
 }
 
