@@ -21,6 +21,9 @@
 #ifndef wrap_wregex_H
 #define wrap_wregex_H
 
+// local
+#include "config.h"
+
 // standard
 #include <regex.h>
 #include <stdbool.h>

@@ -21,6 +21,9 @@
 #ifndef wrap_options_H
 #define wrap_options_H
 
+// local
+#include "config.h"
+
 // standard
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */

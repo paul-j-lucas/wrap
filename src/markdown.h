@@ -21,6 +21,9 @@
 #ifndef wrap_markdown_H
 #define wrap_markdown_H
 
+// local
+#include "config.h"
+
 // standard
 #include <stdbool.h>
 
