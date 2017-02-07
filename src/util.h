@@ -227,7 +227,7 @@ WRAP_UTIL_INLINE bool is_windows_eol( char const buf[], size_t buf_len ) {
 }
 
 /**
- * Sets the locale for the LC_COLLATE and LC_CTYPE categories to UTF-8.
+ * Sets the locale for the \c LC_COLLATE and \c LC_CTYPE categories to UTF-8.
  */
 void setlocale_utf8( void );
 
