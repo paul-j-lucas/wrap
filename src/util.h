@@ -172,6 +172,7 @@ void free_now( void );
 unsigned get_term_columns( void );
 #endif /* WITH_WIDTH_TERM */
 
+#ifndef NDEBUG
 /**
  * Checks whether \a s is an affirmative value.  An affirmative value is one of
  * 1, t, true, y, or yes, case-insensitive.
@@ -180,6 +181,7 @@ unsigned get_term_columns( void );
  * @return Returns \c true only if \a s is affirmative.
  */
 bool is_affirmative( char const *s );
+#endif /* NDEBUG */
 
 /**
  * Checks whether \a s is any one of \a matches, case-insensitive.

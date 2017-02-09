@@ -31,6 +31,7 @@
 #include <stdlib.h>                     /* for malloc(), ... */
 #include <string.h>
 #include <sysexits.h>
+#include <unistd.h>                     /* for close(2), getpid(3) */
 
 #ifdef WITH_WIDTH_TERM
 # include <fcntl.h>                     /* for open(2) */
@@ -46,7 +47,6 @@
 
 #ifndef NDEBUG
 # include <signal.h>                    /* for raise(3) */
-# include <unistd.h>                    /* for getpid(3) */
 #endif /* NDEBUG */
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -237,6 +237,7 @@ error:
 }
 #endif /* WITH_WIDTH_TERM */
 
+#ifndef NDEBUG
 bool is_affirmative( char const *s ) {
   static char const *const AFFIRMATIVES[] = {
     "1",
@@ -248,6 +249,7 @@ bool is_affirmative( char const *s ) {
   };
   return is_any( s, AFFIRMATIVES );
 }
+#endif /* NDEBUG */
 
 bool is_any( char const *s, char const *const matches[] ) {
   if ( s ) {

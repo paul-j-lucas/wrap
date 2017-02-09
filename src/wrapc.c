@@ -796,13 +796,15 @@ static char const* cc_map_compile( char const *in_cc ) {
   } // for
   *s = '\0';
 
-#if 0
-  for ( size_t i = 0; i < ARRAY_SIZE( cc_map ); ++i ) {
-    if ( cc_map[i] )
-      fprintf( stderr, "%c \"%s\"\n", (char)i, cc_map[i] );
+#ifndef NDEBUG
+  if ( is_affirmative( getenv( "WRAP_DUMP_CC_MAP" ) ) ) {
+    for ( size_t i = 0; i < ARRAY_SIZE( cc_map ); ++i ) {
+      if ( cc_map[i] )
+        PRINT_ERR( "%c \"%s\"\n", (char)i, cc_map[i] );
+    } // for
+    PRINT_ERR( "\n%u distinct = \"%s\"\n", distinct_cc, out_cc );
   }
-  fprintf( stderr, "\n%u distinct = \"%s\"\n", distinct_cc, out_cc );
-#endif
+#endif /* NDEBUG */
 
   return out_cc;
 }
