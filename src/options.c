@@ -459,11 +459,9 @@ static unsigned parse_width( char const *s ) {
   if ( is_digits( s ) )
     return (unsigned)strtoul( s, NULL, 10 );
 
-  char const *const s_lc = tolower_s( (char*)free_later( check_strdup( s ) ) );
   size_t values_buf_size = 1;           // for trailing null
-
   for ( char const *const *t = TERM; *t; ++t ) {
-    if ( strcmp( s_lc, *t ) == 0 )
+    if ( strcasecmp( s, *t ) == 0 )
       return get_term_columns();
     // sum sizes of values in case we need to construct an error message
     values_buf_size += strlen( *t ) + 2 /* ", " */;
