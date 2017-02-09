@@ -41,14 +41,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Comment character map indexed by character.  If an entry is:
+ * Comment delimiter character map indexed by character.  If an entry is:
  *
- *  + NULL, that character is not a comment character.
+ *  + NULL, that character is not a comment delimiter character.
  *
  *  + A non-empty string, that character followed by each character (except
  *    space) in said string forms a double comment character delimiter, e.g.,
- *    "//" or "(*".  A space means it forms a single comment character, e.g.,
- *    "#".
+ *    "//" or "(*".  A space means it forms a single comment character
+ *    delimiter, e.g., "#".
  */
 typedef char* cc_map_t[128];
 
@@ -808,7 +808,7 @@ static char const* cc_map_compile( char const *in_cc ) {
 }
 
 /**
- * Frees the memory used by the comment delimited character map.
+ * Frees the memory used by the comment delimiter character map.
  */
 static void cc_map_free( void ) {
   for ( size_t i = 0; i < ARRAY_SIZE( cc_map ); ++i )
@@ -821,7 +821,7 @@ static void cc_map_free( void ) {
  *
  * @param cc_set The set to add to.
  * @param c The character to add.
- * @return Returns the number of distinct comment characters added.
+ * @return Returns the number of distinct comment delimiter characters added.
  */
 static unsigned cc_set_add( cc_set_t cc_set, char c ) {
   unsigned added = 0;
