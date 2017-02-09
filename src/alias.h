@@ -60,6 +60,14 @@ alias_t const* alias_find( char const *name );
  */
 void alias_parse( char const *line, char const *conf_file, unsigned line_no );
 
+#ifndef NDEBUG
+/**
+ * Dumps the in-memory data structures for aliases read from a configuration
+ * file back out.  (This is used to test the alias parsing code.)
+ */
+void dump_aliases( void );
+#endif /* NDEBUG */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 #endif /* wrap_alias_H */

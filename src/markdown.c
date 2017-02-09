@@ -33,8 +33,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define ARRAY_SIZE(A)       (sizeof(A) / sizeof(A[0]))
-
 #define CLEAR_RETURN(TOKEN) \
   BLOCK( stack_clear(); stack_push( TOKEN, 0, 0 ); return &TOP; )
 

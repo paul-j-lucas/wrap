@@ -201,6 +201,15 @@ char const* read_conf( char const *conf_file ) {
   if ( ferror( fconf ) )
     PMESSAGE_EXIT( EX_IOERR, "%s: %s\n", conf_file, STRERROR );
   fclose( fconf );
+
+#ifndef NDEBUG
+  if ( is_affirmative( getenv( "WRAP_DUMP_CONF" ) ) ) {
+    dump_aliases();
+    dump_patterns();
+    exit( EX_OK );
+  }
+#endif /* NDEBUG */
+
   return conf_file;
 }
 

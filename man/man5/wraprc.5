@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wraprc\fP 1 "January 21, 2017" "PJL TOOLS"
+.TH \f3wraprc\fP 1 "February 7, 2017" "PJL TOOLS"
 .SH NAME
 wraprc \- text reformatter runtime configuration file
 .SH DESCRIPTION
@@ -87,10 +87,10 @@ for command-line options
 that are frequently used together.
 For example:
 .cS
-html = --eos-delimit --para-chars=,;:
+code = --block-chars=@ --markdown
 .cE
 creates an alias named
-\f(CWhtml\fP
+\f(CWcode\fP
 for the options shown.
 (Arguments need not be shell-escaped since no shell is involved.)
 Once specified,
@@ -105,11 +105,23 @@ or
 .BR wrapc .
 For example:
 .cS
-wrap --alias html
+wrap --alias code
 .cE
 would be the same as:
 .cS
-wrap --eos-delimit --para-chars=',;:'
+wrap --block-chars=@ --markdown
+.cE
+An option of the form
+.RI \f(CW@\fP name
+imports the options of the previously defined alias
+.IR name .
+For example:
+.cS
+c = @code --comment-chars=/*,//
+.cE
+would be the same as:
+.cS
+c = --block-chars=@ --markdown --comment-chars=/*,//
 .cE
 Note that some options don't make sense
 in a configuration file
@@ -150,13 +162,13 @@ or
 option.
 For example:
 .cS
-*.html = html
+*.[ch] = c
 .cE
 creates a pattern that matches all files ending in
-\f(CW.html\fP
-(HTML files)
+\f(CW.[ch]\fP
+(C source files)
 and will apply the options specified by the previously defined
-\f(CWhtml\fP
+\f(CWc\fP
 alias.
 .P
 If a file matches more than one pattern,
@@ -179,16 +191,19 @@ The default configuration file.
 .nf
 .ft CW
 [ALIASES]
-code = --block-chars=@ --markdown # @param, @return, etc.
-html = --eos-delimit --para-chars=,:;
-man  = --dot-ignore --eos-delimit --para-chars=,:;
+code   = --block-chars=@ --markdown
+c-like = @code --comment-chars=/*,//
+python = @code --comment-chars=#
+html   = --eos-delimit --para-chars=,:;
+man    = --dot-ignore --eos-delimit --para-chars=,:;
 
 [PATTERNS]
-*.[ch] = code
-*.cpp = code
-*.htm = html
-*.html = html
-*.java = code
+*.[ch]  = c-like
+*.cpp   = c-like
+*.htm   = html
+*.html  = html
+*.java  = c-like
+*.py    = python
 *.[1-9] = man
 .ft 1
 .fi

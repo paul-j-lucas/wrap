@@ -38,6 +38,14 @@ typedef struct pattern pattern_t;
 
 ////////// extern functions ///////////////////////////////////////////////////
 
+#ifndef NDEBUG
+/**
+ * Dumps the in-memory data structures for patterns read from a configuration
+ * file back out.  (This is used to test the pattern parsing code.)
+ */
+void dump_patterns( void );
+#endif /* NDEBUG */
+
 /**
  * Cleans-up all pattern data.
  */

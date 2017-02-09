@@ -25,8 +25,8 @@
 
 // standard
 #include <assert.h>
-#include <stdio.h>
 #include <stddef.h>                     /* for size_t */
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -39,11 +39,14 @@ static size_t const ALIAS_ARGV_ALLOC_DEFAULT    = 10;
 static size_t const ALIAS_ARGV_ALLOC_INCREMENT  = 10;
 static char const   ALIAS_NAME_CHARS[]          = "abcdefghijklmnopqrstuvwxyz"
                                                   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                                  "0123456789_";
+                                                  "0123456789+-.:_";
 
 // local variable definitions
 static alias_t     *aliases = NULL;     // global list of aliases
 static size_t       n_aliases = 0;      // number of aliases
+
+// local functions
+static size_t strcpy_set( char*, size_t, char const*, char const* );
 
 ////////// local functions ////////////////////////////////////////////////////
 
@@ -106,6 +109,36 @@ static void alias_free( alias_t *alias ) {
 }
 
 /**
+ * Imports the arguments from another alias into this one.
+ *
+ * @param to_alias A pointer to the alias to import to.
+ * @param ps A pointer to the string to parse for the alias name to import.  It
+ * is left one past the alias name.
+ * @param conf_file The configuration file path-name.
+ * @param line_no The line-number within \a conf_file.
+ */
+static void alias_import( alias_t *to_alias, char const **ps,
+                          char const *conf_file, unsigned line_no ) {
+  assert( to_alias );
+  assert( ps );
+  assert( **ps == '@' );
+  assert( conf_file );
+
+  char from_name[ 40 ];
+
+  ++*ps;                                // skip past '@'
+  *ps += strcpy_set( from_name, sizeof from_name, ALIAS_NAME_CHARS, *ps );
+  alias_t const *const from_alias = alias_find( from_name );
+  if ( !from_alias )
+    PMESSAGE_EXIT( EX_CONFIG,
+      "%s:%u: \"@%s\": no such alias\n",
+      conf_file, line_no, from_name
+    );
+  for ( size_t i = 1; i < from_alias->argc; ++i )
+    to_alias->argv[ to_alias->argc++ ] = check_strdup( from_alias->argv[ i ] );
+}
+
+/**
  * Duplicates the next command-line argument stripping quotes and backslashes
  * similar to what a shell would do.
  *
@@ -152,6 +185,31 @@ done:
   return arg_buf;
 }
 
+/**
+ * Performs a strcpy(3), but only while characters in \a src are in \a set.
+ *
+ * @param dest A pointer to the buffer to copy to.
+ * @param dest_size The size of \a dest.
+ * @param set The set of characters allowed to be copied.
+ * @param src The null-terminated string to be copied.
+ * @return Returns the number of characters copied.
+ */
+static size_t strcpy_set( char *dest, size_t dest_size, char const *set,
+                          char const *src ) {
+  assert( dest );
+  assert( set );
+  assert( src );
+
+  char const *const dest_end = dest + dest_size - 1/*null*/;
+  size_t n_copied = 0;
+
+  while ( dest < dest_end && *src && strchr( set, *src ) )
+    *dest++ = *src++, ++n_copied;
+
+  *dest = '\0';
+  return n_copied;
+}
+
 ////////// extern functions ///////////////////////////////////////////////////
 
 void alias_cleanup( void ) {
@@ -168,6 +226,20 @@ alias_t const* alias_find( char const *name ) {
   return NULL;
 }
 
+#ifndef NDEBUG
+void dump_aliases( void ) {
+  for ( size_t i = 0; i < n_aliases; ++i ) {
+    if ( i == 0 )
+      printf( "[ALIASES]\n" );
+    alias_t const *const alias = &aliases[i];
+    printf( "%s =", alias->argv[0] );
+    for ( size_t arg = 1; arg < alias->argc; ++arg )
+      printf( " %s", alias->argv[ arg ] );
+    fputc( '\n', stdout );
+  } // for
+}
+#endif /* NDEBUG */
+
 void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
   assert( line );
   assert( conf_file );
@@ -183,7 +255,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
   //      parts:   1     2   3   4       5        
 
   // part 1: name
-  size_t span = strspn( line, ALIAS_NAME_CHARS );
+  size_t const span = strspn( line, ALIAS_NAME_CHARS );
   alias->argv[0] = strndup( line, span );
   alias_check_dup( conf_file, line_no );
   line += span;
@@ -212,11 +284,16 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
         );
       break;
     }
+
     if ( alias->argc == n_argv_alloc ) {
       n_argv_alloc += ALIAS_ARGV_ALLOC_INCREMENT;
       REALLOC( alias->argv, char const*, n_argv_alloc );
     }
-    alias->argv[ alias->argc++ ] = arg_dup( &line );
+
+    if ( *line == '@' )
+      alias_import( alias, &line, conf_file, line_no );
+    else
+      alias->argv[ alias->argc++ ] = arg_dup( &line );
   } // for
 
   if ( n_argv_alloc > alias->argc + 1 )

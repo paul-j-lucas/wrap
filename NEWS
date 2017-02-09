@@ -3,6 +3,18 @@ Wrap NEWS -- history of user-visible changes.
 Copyright (C) 1996-2017 Paul J. Lucas.
 See the end of the file for license conditions.
 
+* Changes in Wrap 5.0
+
+** End‐of‐Line Comment Aligning
+Wrapc can now align end-of-line comments at a given column.
+
+** Alias importing.
+Aliases in configuration files can now import other aliases.
+
+** More lenient alias names.
+In addition to alphanumeric and the underscore character, alias names may now
+also use any of the +-.: characters.
+
 * Changes in Wrap 4.11
 
 ** Better handling of --comment-chars/-D value.

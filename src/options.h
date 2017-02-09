@@ -41,11 +41,10 @@ enum eol {
 };
 typedef enum eol eol_t;
 
-// extern constants
-extern char const  *COMMENT_CHARS_DEFAULT;
-
 // extern option variables
 extern char const  *opt_alias;
+extern char         opt_align_char;     // use this to pad comment alignment
+extern size_t       opt_align_column;   // align comment on given column
 extern char const  *opt_comment_chars;
 extern char const  *opt_conf_file;
 extern bool         opt_data_link_esc;  // respond to in-band control
@@ -82,6 +81,14 @@ extern FILE        *fin;                // file in
 extern FILE        *fout;               // file out
 
 ////////// extern functions ///////////////////////////////////////////////////
+
+/**
+ * Gets the corresponding name of the long option for the given short option.
+ *
+ * @param short_opt The short option to get the corresponding long option for.
+ * @return Returns the said option.
+ */
+char const* get_long_opt( char short_opt );
 
 /**
  * Initializes command-line option variables.

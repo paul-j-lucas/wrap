@@ -40,6 +40,7 @@ _GL_INLINE_HEADER_BEGIN
 
 ///////////////////////////////////////////////////////////////////////////////
 
+#define ARRAY_SIZE(A)             (sizeof(A) / sizeof(A[0]))
 #define BLOCK(...)                do { __VA_ARGS__ } while (0)
 #define NO_OP                     ((void)0)
 #define PERROR_EXIT(STATUS)       BLOCK( perror( me ); exit( STATUS ); )
@@ -170,6 +171,24 @@ void free_now( void );
  */
 unsigned get_term_columns( void );
 #endif /* WITH_WIDTH_TERM */
+
+/**
+ * Checks whether \a s is an affirmative value.  An affirmative value is one of
+ * 1, t, true, y, or yes, case-insensitive.
+ *
+ * @param s The null-terminated string to check or null.
+ * @return Returns \c true only if \a s is affirmative.
+ */
+bool is_affirmative( char const *s );
+
+/**
+ * Checks whether \a s is any one of \a matches, case-insensitive.
+ *
+ * @param s The null-terminated string to check or null.
+ * @param matches The null-terminated array of values to check against.
+ * @return Returns \c true only if \a s is among \a matches.
+ */
+bool is_any( char const *s, char const *const matches[] );
 
 /**
  * Checks whether \a s is a blank like, that is a line consisting only

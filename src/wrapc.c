@@ -41,6 +41,23 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
+ * Comment character map indexed by character.  If an entry is:
+ *
+ *  + NULL, that character is not a comment character.
+ *
+ *  + A non-empty string, that character followed by each character (except
+ *    space) in said string forms a double comment character delimiter, e.g.,
+ *    "//" or "(*".  A space means it forms a single comment character, e.g.,
+ *    "#".
+ */
+typedef char* cc_map_t[128];
+
+/**
+ * Comment character set indexed by character.
+ */
+typedef bool cc_set_t[128];
+
+/**
  * Types of comment delimiters.
  */
 enum delim {
@@ -86,8 +103,10 @@ char const         *me;                 // executable name
 
 // local constant definitions
 static size_t const ARG_BUF_SIZE = 25;  // max wrap(1) command-line arg size
+static char const   CC_SINGLE_CHAR = ' ';
 
 // local variable definitions
+static cc_map_t     cc_map;
 static char         close_cc[2];        // closing comment delimiter char(s)
 static delim_t      delim;              // comment delimiter type
 static dual_line_t  input_buf;
@@ -112,12 +131,16 @@ static int          pipes[2][2];
 
 // local functions
 static void         adjust_comment_width( char* );
+static void         align_eol_comments( void );
+static void         cc_map_free( void );
+static unsigned     cc_set_add( cc_set_t, char );
 static size_t       chop_eol( char*, size_t );
 static void         chop_suffix( char* );
+static char         closing_char( char );
 static void         fork_exec_wrap( pid_t );
 static void         init( int, char const*[] );
 static bool         is_block_comment( char const* );
-static char*        is_line_comment( char const* );
+static char const*  is_line_comment( char const* );
 static char const*  is_terminated_comment( char* );
 static size_t       prefix_span( char const* );
 static void         read_prototype( void );
@@ -132,8 +155,29 @@ static char const*  str_status( int );
 static size_t       str_width( char const* );
 static void         usage( void );
 static void         wait_for_child_processes( void );
+static void         wrapc_cleanup( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
+
+/**
+ * Initializes the comment character map.
+ */
+static inline void cc_map_init( void ) {
+  memset( cc_map, 0, sizeof cc_map );
+}
+
+/**
+ * Computes the width of a character where tabs have a width of
+ * \c opt_tab_spaces spaces minus the number of spaces we're into a tab-stop;
+ * all others characters have a width of 1.
+ *
+ * @param c The character to get the width of.
+ * @param width The line width so far.
+ * @return Returns said width.
+ */
+static inline size_t char_width( char c, size_t width ) {
+  return c == '\t' ? opt_tab_spaces - width % opt_tab_spaces : 1;
+}
 
 /**
  * Gets whether \a c is a comment delimiter character.
@@ -146,6 +190,24 @@ static inline bool is_comment_char( char c ) {
 }
 
 /**
+ * Gets whether \a s starts a comment.
+ *
+ * @param s The string to check.
+ * @return Returns \c true only if \a s starts a comment.
+ */
+static inline bool is_comment_start( char const *s ) {
+  char const *const cc = cc_map[ (unsigned char)s[0] ];
+  //
+  // s[0] starts a comment only if it's in the map and either if:
+  //
+  //  + It's a single character delimiter; or:
+  //  + s[1] is among the map entry's string.
+  //
+  return  cc &&
+          (strchr( cc, CC_SINGLE_CHAR ) || (s[1] && strchr( cc, s[1] )));
+}
+
+/**
  * Gets whether the first non-whitespace character in \a s is a comment
  * character.
  *
@@ -153,8 +215,8 @@ static inline bool is_comment_char( char c ) {
  * @return Returns a pointer to the first non-whitespace character in \a s only
  * if it's a comment delimiter character; NULL otherwise.
  */
-static inline char* is_line_comment( char const *s ) {
-  return is_comment_char( *SKIP_CHARS( s, WS_ST ) ) ? (char*)s : NULL;
+static inline char const* is_line_comment( char const *s ) {
+  return is_comment_char( SKIP_CHARS( s, WS_ST )[0] ) ? s : NULL;
 }
 
 /**
@@ -171,9 +233,16 @@ static inline void swap_line_bufs( void ) {
 int main( int argc, char const *argv[] ) {
   wait_for_debugger_attach( "WRAPC_DEBUG" );
   init( argc, argv );
-  fork_exec_wrap( read_source_write_wrap() );
-  read_wrap();
-  wait_for_child_processes();
+  if ( opt_align_column ) {
+    align_eol_comments();
+  } else {
+    read_prototype();
+    W_PIPE( pipes[ TO_WRAP ] );
+    W_PIPE( pipes[ FROM_WRAP ] );
+    fork_exec_wrap( read_source_write_wrap() );
+    read_wrap();
+    wait_for_child_processes();
+  }
   exit( EX_OK );
 }
 
@@ -186,7 +255,11 @@ int main( int argc, char const *argv[] ) {
  * (in case we need to kill it).
  */
 static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
-#ifndef DEBUG_RSWW
+#ifdef DEBUG_RSWW
+  (void)ARG_BUF_SIZE;
+  (void)pipes;
+  (void)read_source_write_wrap_pid;
+#else
   pid_t const pid = fork();
   if ( pid == -1 ) {                    // we failed, so kill the first child
     kill( read_source_write_wrap_pid, SIGTERM );
@@ -550,6 +623,221 @@ static void adjust_comment_width( char *s ) {
 }
 
 /**
+ * Aligns end-of-line comments to a particular column.
+ */
+static void align_eol_comments( void ) {
+  do {
+    bool        backslash = false;      // got a backslash?
+    size_t      col = 0;
+    size_t      last_nonws_col = 0;     // last non-whitespace column
+    size_t      last_nonws_len = 0;     // length to non-whitespace character
+    char        last_ws = ' ';          // last whitespace encountered
+    line_buf_t  output_buf;
+    size_t      output_len = 0;
+    char        quote = '\0';           // between quotes?
+
+    for ( char const *s = CURR; *s && !is_eol( *s ); ++s ) {
+      bool const was_backslash = true_reset( &backslash );
+
+      switch ( *s ) {
+        case '"':
+        case '\'':
+          if ( !quote )
+            quote = *s;
+          else if ( !was_backslash && *s == quote )
+            quote = '\0';
+          break;
+        case '\\':
+          backslash = true;
+          break;
+        default:
+          if ( is_comment_start( s ) ) {
+            if ( !opt_align_char ) {
+              //
+              // The user hasn't specified an alignment character: use whatever
+              // the first character is after the last non-whitespace character
+              // before the comment.  If that isn't a whitespace character, use
+              // whatever the last whitespace character we encountered was.
+              //
+              char const c = CURR[ last_nonws_len + 1 ];
+              opt_align_char = isspace( c ) ? c : last_ws;
+            }
+
+            //
+            // Reset the column and length to those of the last non-whitespace
+            // character before the comment.  We want to replace all the
+            // whitespace between there and the comment with opt_align_char.
+            //
+            col = last_nonws_col;
+            output_len = last_nonws_len;
+
+            //
+            // While we're less than the alignment column, insert whitespace.
+            //
+            while ( col < opt_align_column - 1 ) {
+              size_t width = char_width( opt_align_char, col );
+              if ( col + width > opt_align_column ) {
+                //
+                // If width > 1 (as it could be when using tabs) and the new
+                // column > the alignment column, fall back to using spaces.
+                //
+                width = 1;
+                opt_align_char = ' ';
+              }
+              col += width;
+              output_buf[ output_len++ ] = opt_align_char;
+            } // while
+
+            //
+            // Copy the comment without the end-of-line so we can replace it
+            // with whatever the choses line-ending is.
+            //
+            output_len += strcpy_len( output_buf + output_len, s );
+            output_len = chop_eol( output_buf, output_len );
+            goto next_line;
+          }
+      } // switch
+
+      col += char_width( *s, col );
+      output_buf[ output_len++ ] = *s;
+
+      if ( !quote ) {
+        //
+        // Keep track of the last whitespace character and non-whitespace
+        // column & position.
+        //
+        if ( is_space( *s ) ) {
+          last_ws = *s;
+        } else {
+          last_nonws_col = col;
+          last_nonws_len = s - CURR + 1;
+        }
+      }
+    } // for
+
+next_line:
+    output_buf[ output_len ] = '\0';
+    W_FPRINTF( fout, "%s%s", output_buf, eol() );
+  } while ( check_readline( CURR, fin ) );
+}
+
+/**
+ * Compiles a set of comment delimiter characters into a string of distinct
+ * comment delimiter characters and a cc_map_t used by align_eol_comments().
+ *
+ * @param in_cc The comment delimiter characters to compile.
+ * @return Returns said string of distinct comment delimiter characters.
+ */
+static char const* cc_map_compile( char const *in_cc ) {
+  assert( in_cc );
+  cc_set_t cc_set = { false };
+  unsigned distinct_cc = 0;
+
+  cc_map_free();
+  cc_map_init();
+
+  for ( char const *cc = in_cc; *cc; ++cc ) {
+    if ( isspace( *cc ) || *cc == ',' )
+      continue;
+    if ( !ispunct( *cc ) )
+      PMESSAGE_EXIT( EX_USAGE,
+        "\"%s\": invalid value for --%s/-%c;\n\tmust only be either: %s\n",
+        in_cc, get_long_opt( 'D' ), 'D',
+        "punctuation or whitespace characters"
+      );
+
+    bool const is_double_cc = ispunct( cc[1] ) && cc[1] != ',';
+    if ( is_double_cc && ispunct( cc[2] ) && cc[2] != ',' )
+      PMESSAGE_EXIT( EX_USAGE,
+        "\"%s\": invalid value for --%s/-%c: \"%c%c%c\": %s\n",
+        in_cc, get_long_opt( 'D' ), 'D', cc[0], cc[1], cc[2],
+        "more than two consecutive comment characters"
+      );
+    char const cc1 = is_double_cc ? cc[1] : CC_SINGLE_CHAR;
+
+    unsigned char const *const ucc = (unsigned char*)cc;
+    char *cc_map_entry = (char*)cc_map[ ucc[0] ];
+    if ( !cc_map_entry ) {
+      cc_map_entry = MALLOC( char, 1 + 1/*null*/ );
+      cc_map_entry[0] = cc1;
+      cc_map_entry[1] = '\0';
+    }
+    else if ( !strchr( cc_map_entry, cc1 ) ) {
+      //
+      // Add the second comment delimiter character only if it's not already
+      // there.
+      //
+      size_t const len = strlen( cc_map_entry );
+      REALLOC( cc_map_entry, char, len + 1 + 1/*null*/ );
+      cc_map_entry[ len ] = cc1;
+      cc_map_entry[ len + 1 ] = '\0';
+    }
+    cc_map[ ucc[0] ] = cc_map_entry;
+
+    distinct_cc += cc_set_add( cc_set, cc[0] );
+    if ( is_double_cc ) {
+      distinct_cc += cc_set_add( cc_set, cc[1] );
+      ++cc;                             // skip past second comment character
+    }
+  } // for
+
+  if ( !distinct_cc )
+    PMESSAGE_EXIT( EX_USAGE,
+      "value for --%s/-%c must not be only whitespace or commas\n",
+      get_long_opt( 'D' ), 'D'
+    );
+
+  char *const out_cc =
+    (char*)free_later( MALLOC( char, distinct_cc + 1/*null*/ ) );
+  char *s = out_cc;
+  for ( size_t i = 0; i < ARRAY_SIZE( cc_set ); ++i ) {
+    if ( cc_set[i] )
+      *s++ = (char)i;
+  } // for
+  *s = '\0';
+
+#if 0
+  for ( size_t i = 0; i < ARRAY_SIZE( cc_map ); ++i ) {
+    if ( cc_map[i] )
+      fprintf( stderr, "%c \"%s\"\n", (char)i, cc_map[i] );
+  }
+  fprintf( stderr, "\n%u distinct = \"%s\"\n", distinct_cc, out_cc );
+#endif
+
+  return out_cc;
+}
+
+/**
+ * Frees the memory used by the comment delimited character map.
+ */
+static void cc_map_free( void ) {
+  for ( size_t i = 0; i < ARRAY_SIZE( cc_map ); ++i )
+    free( cc_map[i] );
+}
+
+/**
+ * Adds a comment delimiter character, and its corresponding closing comment
+ * delimiter character (if any), to the given set.
+ *
+ * @param cc_set The set to add to.
+ * @param c The character to add.
+ * @return Returns the number of distinct comment characters added.
+ */
+static unsigned cc_set_add( cc_set_t cc_set, char c ) {
+  unsigned added = 0;
+  if ( !cc_set[ (unsigned char)c ] ) {
+    cc_set[ (unsigned char)c ] = true;
+    ++added;
+    char const closing = closing_char( c );
+    if ( closing && !cc_set[ (unsigned char)closing ] ) {
+      cc_set[ (unsigned char)closing ] = true;
+      ++added;
+    }
+  }
+  return added;
+}
+
+/**
  * Chops off the end-of-line character(s), if any.
  *
  * @param s The null-terminated string to chop.
@@ -635,21 +923,31 @@ static char closing_char( char c ) {
 }
 
 /**
- * Parses command-line options, sets-up I/O, sets-up the input buffers, reads
- * the line prototype, and sets-up the pipes.
+ * Parses command-line options, sets-up I/O, sets-up the input buffers, sets
+ * the end-of-lines.
  *
  * @param argc The number of command-line arguments from main().
  * @param argv The command-line arguments from main().
  */
 static void init( int argc, char const *argv[] ) {
   atexit( common_cleanup );
+  atexit( wrapc_cleanup );
   options_init( argc, argv, usage );
+  opt_comment_chars = cc_map_compile( opt_comment_chars );
 
   CURR = input_buf.dl_line[0];
   NEXT = input_buf.dl_line[1];
-  read_prototype();
-  W_PIPE( pipes[ TO_WRAP ] );
-  W_PIPE( pipes[ FROM_WRAP ] );
+
+  size_t const size = check_readline( CURR, fin );
+  if ( !size )
+    exit( EX_OK );
+
+  if ( opt_eol == EOL_INPUT && is_windows_eol( CURR, size ) ) {
+    //
+    // Retroactively set opt_eol because we pass it to wrap(1).
+    //
+    opt_eol = EOL_WINDOWS;
+  }
 }
 
 /**
@@ -690,7 +988,7 @@ static char const* is_terminated_comment( char *s ) {
   char const *cc = NULL;
   char *tws = NULL;                     // trailing whitespace
 
-  if ( (s = is_line_comment( s )) ) {
+  if ( (s = (char*)is_line_comment( s )) ) {
     switch ( delim ) {
       case DELIM_NONE:
         break;
@@ -805,17 +1103,6 @@ static size_t prefix_span( char const *s ) {
  * case.
  */
 static void read_prototype( void ) {
-  size_t const size = check_readline( CURR, fin );
-  if ( !size )
-    exit( EX_OK );
-
-  if ( opt_eol == EOL_INPUT && is_windows_eol( CURR, size ) ) {
-    //
-    // Retroactively set opt_eol because we pass it to wrap(1).
-    //
-    opt_eol = EOL_WINDOWS;
-  }
-
   char const *const cc = is_line_comment( CURR );
   if ( cc ) {
     //
@@ -852,19 +1139,16 @@ static void read_prototype( void ) {
     // a comment delimiter character, it's difficult to use for other purposes.
     // Therefore, the global close_cc[] and delim variables help out.
     //
-    static char cc_buf[ 3 + 1/*null*/ ];
+    char cc_buf[ 3 + 1/*null*/ ] = { '\0' };
     char *s = cc_buf;
     *s++ = cc[0];
     delim = DELIM_EOL;                  // assume this to start
 
     //
     // Get the closing comment delimiter character corresponding to the first,
-    // if any, and only if among the set of specified comment delimiter
-    // characters.
+    // if any.
     //
-    char closing = closing_char( cc[0] );
-    if ( closing && !is_comment_char( closing ) )
-      closing = '\0';
+    char const closing = closing_char( cc[0] );
 
     //
     // We also have to recognize the second character of two-character comment
@@ -890,15 +1174,16 @@ static void read_prototype( void ) {
         }
         break;
     } // switch
+
     //
-    // We also have to recognize the closing delimiter character, if any, only
-    // if it's different from the opening character.
+    // We also have to recognize the closing delimiter character, if any.
     //
-    if ( closing && closing != cc[0] ) {
+    if ( closing ) {
       *s++ = closing;
       if ( delim == DELIM_EOL )
         delim = DELIM_SINGLE;           // e.g., "}" (Pascal)
     }
+
     //
     // For later convenience, pluck out the terminating comment delimiter
     // character(s) in order.
@@ -919,7 +1204,9 @@ static void read_prototype( void ) {
         : cc_buf[0];                    // e.g., "/*"  (C)
     } // switch
 
-    opt_comment_chars = cc_buf;         // restrict recognized to those found
+    // restrict recognized comment characters to those found
+    cc_buf[2] = '\0';
+    opt_comment_chars = cc_map_compile( cc_buf );
   }
 
   char *proto = CURR;
@@ -1070,7 +1357,7 @@ static size_t str_width( char const *s ) {
   assert( s );
   size_t width = 0;
   while ( *s )
-    width += (*s++ == '\t') ? opt_tab_spaces - (width % opt_tab_spaces) : 1;
+    width += char_width( *s++, width );
   return width;
 }
 
@@ -1084,10 +1371,11 @@ static void usage( void ) {
 "\n"
 "options:\n"
 "  -a alias   Use alias from configuration file.\n"
+"  -A number  Specify column to align end-of-line comments on.\n"
 "  -b chars   Specify block leading delimiter characters.\n"
 "  -c file    Specify the configuration file [default: ~/%s].\n"
 "  -C         Suppress reading configuration file.\n"
-"  -D chars   Specify comment delimiter characters [default: %s].\n"
+"  -D chars   Specify comment delimiter characters.\n"
 "  -e         Treat whitespace after end-of-sentence as new paragraph.\n"
 "  -E number  Specify number of spaces after an end-of-sentence [default: %d].\n"
 "  -f file    Read from this file [default: stdin].\n"
@@ -1102,7 +1390,7 @@ static void usage( void ) {
 "  -w number  Specify line width [default: %d].\n"
 "  -y         Suppress wrapping at hyphen characters.\n"
     , me, me,
-    CONF_FILE_NAME, COMMENT_CHARS_DEFAULT, EOS_SPACES_DEFAULT,
+    CONF_FILE_NAME, EOS_SPACES_DEFAULT,
     TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
   );
   exit( EX_USAGE );
@@ -1132,6 +1420,13 @@ static void wait_for_child_processes( void ) {
     }
   } // for
 #endif /* DEBUG_RSWW */
+}
+
+/**
+ * Cleans up wrapc data.
+ */
+static void wrapc_cleanup( void ) {
+  cc_map_free();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

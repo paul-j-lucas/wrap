@@ -209,6 +209,27 @@ TESTS+= tests/utf8-w77.test \
 	tests/crlf-lw-01.test \
 	tests/wrapc-01.test \
 	tests/wrapc-02.test \
+	tests/wrapc-A-01a.test \
+	tests/wrapc-A-01b.test \
+	tests/wrapc-A-02a.test \
+	tests/wrapc-A-02b.test \
+	tests/wrapc-A-03a.test \
+	tests/wrapc-A-03b.test \
+	tests/wrapc-A-04a.test \
+	tests/wrapc-A-04b.test \
+	tests/wrapc-A-05a.test \
+	tests/wrapc-A-05b.test \
+	tests/wrapc-A-06.test \
+	tests/wrapc-A-10.test \
+	tests/wrapc-A-11.test \
+	tests/wrapc-A-12.test \
+	tests/wrapc-A-13.test \
+	tests/wrapc-A-14.test \
+	tests/wrapc-A-14s.test \
+	tests/wrapc-A-15.test \
+	tests/wrapc-A-16.test \
+	tests/wrapc-Ax-01.test \
+	tests/wrapc-Ax-02.test \
 	tests/wrapc-b.test \
 	tests/wrapc-D-01.test \
 	tests/wrapc-D-02.test \

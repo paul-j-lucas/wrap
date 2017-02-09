@@ -75,6 +75,17 @@ static void pattern_free( pattern_t *pattern ) {
 
 ////////// extern functions ///////////////////////////////////////////////////
 
+#ifndef NDEBUG
+void dump_patterns( void ) {
+  for ( size_t i = 0; i < n_patterns; ++i ) {
+    if ( i == 0 )
+      printf( "[PATTERNS]\n" );
+    pattern_t const *const pattern = &patterns[i];
+    printf( "%s = %s\n", pattern->pattern, pattern->alias->argv[0] );
+  } // for
+}
+#endif /* NDEBUG */
+
 void pattern_cleanup( void ) {
   while ( n_patterns )
     pattern_free( &patterns[ --n_patterns ] );

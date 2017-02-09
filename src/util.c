@@ -237,6 +237,28 @@ error:
 }
 #endif /* WITH_WIDTH_TERM */
 
+bool is_affirmative( char const *s ) {
+  static char const *const AFFIRMATIVES[] = {
+    "1",
+    "t",
+    "true",
+    "y",
+    "yes",
+    NULL
+  };
+  return is_any( s, AFFIRMATIVES );
+}
+
+bool is_any( char const *s, char const *const matches[] ) {
+  if ( s ) {
+    for ( char const *const *match = matches; *match; ++match ) {
+      if ( strcasecmp( s, *match ) == 0 )
+        return true;
+    } // for
+  }
+  return false;
+}
+
 void setlocale_utf8( void ) {
   static char const *const UTF8_LOCALES[] = {
     "UTF-8", "UTF8",
@@ -284,27 +306,11 @@ char* tolower_s( char *s ) {
 
 #ifndef NDEBUG
 void wait_for_debugger_attach( char const *env_var ) {
-  static char const *const AFFIRMATIVES[] = {
-    "1",
-    "t",
-    "true",
-    "y",
-    "yes",
-    NULL
-  };
-
   assert( env_var );
-  char *value = getenv( env_var );
-  if ( value ) {
-    value = tolower_s( value );
-    for ( char const *const *a = AFFIRMATIVES; *a; ++a ) {
-      if ( strcmp( value, *a ) == 0 ) {
-        PRINT_ERR( "pid=%u: waiting for debugger to attach...\n", getpid() );
-        if ( raise( SIGSTOP ) == -1 )
-          PERROR_EXIT( EX_OSERR );
-        break;
-      }
-    } // for
+  if ( is_affirmative( getenv( env_var ) ) ) {
+    PRINT_ERR( "pid=%u: waiting for debugger to attach...\n", getpid() );
+    if ( raise( SIGSTOP ) == -1 )
+      PERROR_EXIT( EX_OSERR );
   }
 }
 #endif /* NDEBUG */

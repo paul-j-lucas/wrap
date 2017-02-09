@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\fP 1 "February 3, 2017" "PJL TOOLS"
+.TH \f3wrapc\fP 1 "February 8, 2017" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -52,43 +52,45 @@ The
 that are recognized
 by default
 as comment delimiters
-and the non-exhaustive set of languages that use them
+and the non-exhaustive set of programming languages that use them
 are the union of:
 .P
 .PD 0
 .RS 5
-.IP "\f(CW#\fP" 5
+.IP "\f(CW!\fP" 5
+Fortran
+.IP "\f(CW#\fP"
 AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell
 .IP "\f(CW#=\fP"
 Julia
 .IP "\f(CW#|\fP"
 Lisp, Racket, Scheme
+.IP "\f(CW%\fP"
+Erlang, PostScript, Prolog, TeX
+.IP "\f(CW(*)\fP"
+AppleScript, Delphi, ML, Modula-[23], Oberon, OCaml, Pascal
+.IP "\f(CW(:)\fP"
+XQuery
+.IP "\f(CW*>\fP"
+COBOL 2002
+.IP "\f(CW--\fP"
+Ada, AppleScript, Eiffel, Haskell, Lua
 .IP "\f(CW/*\fP"
 C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift
 .IP "\f(CW/+\fP"
 D
-.IP "\f(CW--\fP"
-Ada, AppleScript, Eiffel, Haskell, Lua
-.IP "\f(CW(:\fP"
-XQuery
-.IP "\f(CW(*\fP"
-AppleScript, Delphi, ML, Modula-[23], Oberon, OCaml, Pascal
-.IP "\f(CW{-\fP"
-Haskell
-.IP "\f(CW{ }\fP"
-Pascal
-.IP "\f(CW!\fP"
-Fortran
-.IP "\f(CW%\fP"
-Erlang, PostScript, Prolog, TeX
+.IP "\f(CW//\fP"
+C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift
 .IP "\f(CW;\fP"
 Assembly, Clojure, Lisp, Scheme
-.IP "\f(CW<#\fP"
+.IP "\f(CW<#>\fP"
 PowerShell
 .IP "\f(CW>\fP"
 Quoted e-mail
-.IP "\f(CW*>\fP"
-COBOL 2002
+.IP "\f(CW{}\fP"
+Pascal
+.IP "\f(CW{-}\fP"
+Haskell
 .RE
 .PD
 .P
@@ -183,14 +185,6 @@ option).
 The trailing comment delimiter characters on every line
 are all vertically aligned at
 .IR line-width .
-.SS Non-Comments
-If the first non-whitespace character
-of the first line
-is
-.I not
-a comment delimiter character,
-then whatever leading whitespace alone, if any,
-is used as the prototype for all lines.
 .SS Markdown Text
 If either the
 .B \-\-markdown
@@ -204,6 +198,42 @@ within comments
 .B MARKDOWN FORMATTING
 in
 .BR wrap (1)).
+.SS Non-Comments
+When not aligning end-of-line comments via the
+.B \-\-align-column
+or
+.B \-A
+option,
+if the first non-whitespace character
+of the first line
+is
+.I not
+a comment delimiter character,
+then whatever leading whitespace alone, if any,
+is used as the prototype for all lines.
+.SS End-of-Line Comment Aligning
+When using the
+.B \-\-align-column
+or
+.B \-A
+option,
+comments at the ends of lines
+are aligned at a given column.
+For example, given:
+.cS
+DELIM_EOL,      // e.g., "#" or "//" (to end-of-line)
+DELIM_SINGLE, // e.g., "{" (Pascal)
+DELIM_DOUBLE,     // e.g., "/*" (but not "//")
+.cE
+the comments would all be aligned at the same column
+by either inserting or deleting whitespace
+before each comment.
+If enough whitespace is inserted
+such that the comment is longer than
+.IR line-width ,
+the comment is
+.I not
+wrapped.
 .SH OPTIONS
 An option argument
 .I f
@@ -223,10 +253,88 @@ Specifies the alias name
 from the configuration file to be used.
 This overrides any alias
 from a matched pattern
-via either the
-.B \-f
+via the
+.BR \-\-file ,
+.BR \-f ,
+.B \-\-file-name ,
 or
 .B \-F
+options.
+.TP
+.BI \-\-align-column \f1=\fPn [[,] c ] "\f1 | \fP" \-A " n" [[,] c ]
+Aligns end-of-line comments at column
+.I n
+by either inserting or deleting whitespace
+before each comment.
+.IP ""
+The optional alignment character specifier
+.I c
+is one of:
+.RS
+.TP 11
+.BR a " | " auto
+Uses the first whitespace character
+after the last non-whitespace character
+before the comment.
+For example, given:
+.cS
+          static char const SEP = '/'; // path separator
+.cE 0
+.IP ""
+the first whitespace character
+after the last non-whitespace character
+before the comment
+is the character after `\f(CW;\fP'.
+.IP ""
+If there is no such character,
+uses then the last whitespace character encountered.
+If no whitespace character was encountered,
+uses a space.
+Whitespace within quoted strings
+is never considered.
+.TP
+.BR s " | " space  " | " spaces
+Replaces all whitespace characters
+between the last non-whitespace character before the comment
+and the comment,
+if any,
+with spaces.
+.TP
+.BR t " | " tab " | " tabs
+Replaces all whitespace characters
+between the last non-whitespace character before the comment
+and the comment,
+if any,
+with tabs.
+However,
+if
+.I n
+doesn't fall on a tab-stop
+based on the current value of
+.I tab-spaces
+(see the
+.B \-\-tab-spaces
+or
+.B \-s
+option),
+then the last tab is replaced by spaces
+such that the comment is aligned at column
+.IR n .
+.RE
+.IP ""
+The default is
+.BR auto .
+.IP ""
+Since false-positive
+comment delimiter characters
+can more easily occur on lines containing code,
+it's better to specify
+only the needed language-specific
+comment delimiter characters
+via the
+.B \-\-comment-chars
+or
+.B \-D
 options.
 .TP
 .BI \-\-block-chars \f1=\fPs "\f1 | \fP" "" \-b " s"
@@ -245,7 +353,20 @@ Only punctuation characters
 .BR ispunct (3)
 returns non-zero)
 are allowed.
-Duplicate and whitespace characters are ignored.
+.IP ""
+Comment delimiters are specified by either one or two characters,
+e.g.,
+\f(CW#\fP,
+\f(CW//\fP,
+\f(CW/*\fP,
+i.e., whatever comment delimiter character(s) are used
+by a particular programming language.
+.IP ""
+Multiple delimiters are separated by either commas or whitespace.
+Specifying any of the characters
+\f(CW(<[{\fP
+automatically includes their respective closing characters
+\f(CW)>]}\fP.
 .TP
 .BI \-\-config \f1=\fPf "\f1 | \fP" "" \-c " f"
 Specifies the configuration file

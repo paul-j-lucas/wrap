@@ -40,12 +40,32 @@
 #define GAVE_OPTION(OPT)          (opts_given[ (unsigned char)(OPT) ])
 #define SET_OPTION(OPT)           (opts_given[ (unsigned char)(OPT) ] = (OPT))
 
-// extern constants
-char const         *COMMENT_CHARS_DEFAULT;
+// local constants
+static char const   COMMENT_CHARS_DEFAULT[] =
+  "!"  ","  // Fortran
+  "#"  ","  // AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell
+  "#=" ","  // Julia
+  "#|" ","  // Lisp, Racket, Scheme
+  "%"  ","  // Erlang, PostScript, Prolog, TeX
+  "(*" ","  // AppleScript, Delphi, ML, Modula-[23], Oberon, OCaml, Pascal
+  "(:" ","  // XQuery
+  "*>" ","  // COBOL 2002
+  "--" ","  // Ada, AppleScript
+  "/*" ","  // C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift
+  "/+" ","  // D
+  "//" ","  // C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift
+  ";"  ","  // Assembly, Clojure, Lisp, Scheme
+  "<#" ","  // PowerShell
+  ">"  ","  // Quoted e-mail
+  "{"  ","  // Pascal
+  "{-" ","  // Haskell
+  ;
 
 // extern option variables
 char const         *opt_alias;
-char const         *opt_comment_chars;
+char                opt_align_char;
+size_t              opt_align_column;
+char const         *opt_comment_chars = COMMENT_CHARS_DEFAULT;
 char const         *opt_conf_file;
 bool                opt_eos_delimit;
 size_t              opt_eos_spaces = EOS_SPACES_DEFAULT;
@@ -80,51 +100,46 @@ bool                opt_title_line;
 FILE               *fin;
 FILE               *fout;
 
-// local constants
-static char const   COMMENT_CHARS_INIT[] =
-  "!"   // Fortran
-  "#"   // AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell
-  "#="  // Julia
-  "%"   // Erlang, PostScript, Prolog, TeX
-  "(*"  // AppleScript, Delphi, ML, Modula-[23], Oberon, OCaml, Pascal
-  "(:"  // XQuery
-  "*>"  // COBOL 2002
-  "--"  // Ada, AppleScript
-  "/*"  // C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift
-  "/+"  // D
-  "//"  // C, Objective C, C++, C#, D, Go, Java, Rust, Scala, Swift
-  ";"   // Assembly, Clojure, Lisp, Scheme
-  "<#"  // PowerShell
-  "{}"  // Pascal
-  "{-"  // Haskell
-  "|#"  // Lisp, Racket, Scheme
-  ;
-
 // local variables
 static bool         is_wrapc;           // are we wrapc?
 static char         opts_given[ 128 ];
 
 // local functions
-static char const*  get_long_opt( char );
 static unsigned     parse_width( char const* );
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define COMMON_SHORT_OPTS   "a:b:c:CeE:f:F:l:o:p:s:Tuvw:y"
+#define COMMON_OPTS         "a:b:c:CeE:f:F:l:o:p:s:Tuvw:y"
 #define CONF_FORBIDDEN_OPTS "acCfFov"
+#define WRAP_SPECIFIC_OPTS  "dh:H:i:I:L:m:M:nNPS:t:WZ"
+#define WRAPC_SPECIFIC_OPTS "A:D:"
+
+//
+// Each command forbids the others' specific options, but only on the command-
+// line and not in the conf file.
+//
+static char const *const CMDLINE_FORBIDDEN_OPTS[] = {
+  WRAPC_SPECIFIC_OPTS,                  // wrap
+  WRAP_SPECIFIC_OPTS                    // wrapc
+};
 
 static char const *const SHORT_OPTS[] = {
-  COMMON_SHORT_OPTS "dh:H:i:I:L:m:M:nNPS:t:WZ", // wrap
-  COMMON_SHORT_OPTS "D:"                        // wrapc
+  //
+  // wrap's options have to include wrapc's specific options so they're
+  // accepted (but ignored) in conf files.
+  //
+  COMMON_OPTS WRAP_SPECIFIC_OPTS WRAPC_SPECIFIC_OPTS,
+  COMMON_OPTS WRAPC_SPECIFIC_OPTS
 };
 
 static struct option const WRAP_LONG_OPTS[] = {
   { "alias",                required_argument,  NULL, 'a' },
+  { "align-column",         required_argument,  NULL, 'A' },  // conf ignored
   { "block-chars",          required_argument,  NULL, 'b' },
   { "config",               required_argument,  NULL, 'c' },
   { "no-config",            no_argument,        NULL, 'C' },
   { "dot-ignore",           no_argument,        NULL, 'd' },
-//{ "comment-chars",        required_argument,  NULL, 'D' },  // only for wrapc
+  { "comment-chars",        required_argument,  NULL, 'D' },  // conf ignored
   { "eos-delimit",          no_argument,        NULL, 'e' },
   { "eos-spaces",           required_argument,  NULL, 'E' },
   { "file",                 required_argument,  NULL, 'f' },
@@ -157,6 +172,7 @@ static struct option const WRAP_LONG_OPTS[] = {
 
 static struct option const WRAPC_LONG_OPTS[] = {
   { "alias",                required_argument,  NULL, 'a' },
+  { "align-column",         required_argument,  NULL, 'A' },  // not in wrap
   { "block-chars",          required_argument,  NULL, 'b' },
   { "config",               required_argument,  NULL, 'c' },
   { "no-config",            no_argument,        NULL, 'C' },
@@ -222,62 +238,48 @@ static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
 }
 
 /**
- * Compiles a set of comment delimiter characters by checking for illegal
- * characters, removing duplicates and whitespace.
+ * Parses an alignment column specification, that is an integer optionally
+ * followed by an alignment character specification.
  *
- * @param in_cc The comment delimiter characters to compile.
- * @return Returns said compiled characters.
+ * @param s The null-terminated string to parse.
+ * @param align_char A pointer to the character to set if an alignment
+ * character specification is given.
+ * @return Returns the alignment column.
  */
-static char const* compile_comment_chars( char const *in_cc ) {
-  assert( in_cc );
-  char cc_set[ 128 ] = { 0 };
-  unsigned distinct_cc = 0;
+static unsigned parse_align( char const *s, char *align_char ) {
+  assert( s );
+  assert( align_char );
 
-  for ( char const *cc = in_cc; *cc; ++cc ) {
-    if ( !isspace( *cc ) ) {
-      if ( !ispunct( *cc ) )
-        PMESSAGE_EXIT( EX_USAGE,
-          "\"%s\": invalid value for --%s/-%c;\n\tmust only be either: %s\n",
-          in_cc, get_long_opt( 'D' ), 'D',
-          "punctuation or whitespace characters"
-        );
-      char *const set_pos = cc_set + (unsigned char)*cc;
-      distinct_cc += !*set_pos;
-      *set_pos = *cc;
-    }
-  } // for
+  static char const *const AUTO  [] = { "a", "auto", NULL };
+  static char const *const SPACES[] = { "s", "space", "spaces", NULL };
+  static char const *const TABS  [] = { "t", "tab", "tabs", NULL };
 
-  if ( !distinct_cc )
-    PMESSAGE_EXIT( EX_USAGE,
-      "value for --%s/-%c must not be only whitespace\n",
-      get_long_opt( 'D' ), 'D'
-    );
+  char *end = NULL;
+  errno = 0;
+  unsigned const col = strtoul( s, &end, 10 );
+  if ( errno || end == s )
+    goto error;
+  if ( *end ) {
+    if ( *end == ',' )
+      ++end;
+    if ( is_any( end, AUTO ) )
+      /* do nothing */;
+    else if ( is_any( end, SPACES ) )
+      *align_char = ' ';
+    else if ( is_any( end, TABS ) )
+      *align_char = '\t';
+    else
+      goto error;
+  }
+  return (unsigned)col;
 
-  char *const out_cc = (char*)free_later( MALLOC( char, distinct_cc + 1 ) );
-  char *cc = out_cc;
-
-  for ( size_t i = 0; i < sizeof cc_set; ++i )
-    if ( cc_set[i] )
-      *cc++ = cc_set[i];
-  *cc = '\0';
-
-  return out_cc;
-}
-
-/**
- * Gets the corresponding name of the long option for the given short option.
- *
- * @param short_opt The short option to get the corresponding long option for.
- * @return Returns the said option.
- */
-static char const* get_long_opt( char short_opt ) {
-  for ( struct option const *long_opt = LONG_OPTS[ is_wrapc ]; long_opt->name;
-        ++long_opt ) {
-    if ( long_opt->val == short_opt )
-      return long_opt->name;
-  } // for
-  assert( false );
-  return NULL;                          // suppress warning (never gets here)
+error:
+  PMESSAGE_EXIT( EX_USAGE,
+    "\"%s\": invalid value for --%s/-%c; %s\n",
+    s, get_long_opt( 'A' ), 'A',
+    "must be digits followed by one of:"
+    " a, auto, s, space, spaces, t, tab, tabs"
+  );
 }
 
 /**
@@ -344,6 +346,8 @@ static eol_t parse_eol( char const *s ) {
  * @param argv The argument values from \c main().
  * @param short_opts The set of short options.
  * @param long_opts The set of long options.
+ * @param cmdline_forbidden_opts The set of options that are forbidden on the
+ * command line.
  * @param usage A pointer to a function that prints a usage message and exits.
  * @param line_no When parsing options from a configuration file, the
  * originating line number; zero otherwise.
@@ -351,12 +355,12 @@ static eol_t parse_eol( char const *s ) {
 static void parse_options( int argc, char const *argv[],
                            char const short_opts[],
                            struct option const long_opts[],
+                           char const cmdline_forbidden_opts[],
                            void (*usage)(void), unsigned line_no ) {
   assert( usage );
 
   optind = opterr = 1;
   bool print_version = false;
-  char const *tmp_comment_chars = NULL;
   CLEAR_OPTIONS();
 
   for (;;) {
@@ -364,18 +368,28 @@ static void parse_options( int argc, char const *argv[],
     if ( opt == -1 )
       break;
     SET_OPTION( opt );
-    if ( line_no && strchr( CONF_FORBIDDEN_OPTS, opt ) )
-      PMESSAGE_EXIT( EX_CONFIG,
-        "%s:%u: '%c': option not allowed in configuration file\n",
-        opt_conf_file, line_no, opt
-      );
+
+    if ( line_no ) {                    // we're parsing a conf file
+      if ( strchr( CONF_FORBIDDEN_OPTS, opt ) )
+        PMESSAGE_EXIT( EX_CONFIG,
+          "%s:%u: '%c': option not allowed in configuration file\n",
+          opt_conf_file, line_no, opt
+        );
+    }
+    else if ( strchr( cmdline_forbidden_opts, opt ) ) {
+      PRINT_ERR( "%s: invalid option -- '%c'\n", me, opt );
+      usage();
+    }
+
     switch ( opt ) {
       case 'a': opt_alias             = optarg;                 break;
+      case 'A': opt_align_column      = parse_align( optarg, &opt_align_char );
+                                                                break;
       case 'b': opt_lead_para_delims  = optarg;                 break;
       case 'c': opt_conf_file         = optarg;                 break;
       case 'C': opt_no_conf           = true;                   break;
       case 'd': opt_lead_dot_ignore   = true;                   break;
-      case 'D': tmp_comment_chars     = optarg;                 break;
+      case 'D': opt_comment_chars     = optarg;                 break;
       case 'e': opt_eos_delimit       = true;                   break;
       case 'E': opt_eos_spaces        = check_atou( optarg );   break;
       case 'f': opt_fin               = optarg;           // no break;
@@ -407,19 +421,22 @@ static void parse_options( int argc, char const *argv[],
     } // switch
   } // for
 
-  check_mutually_exclusive( "f", "F" );
-  check_mutually_exclusive( "n", "N" );
-  check_mutually_exclusive( "Pu", "dhHiILmMStW" );
-  check_mutually_exclusive( "u", "sT" );
-  check_mutually_exclusive( "v", "abcCdeEfFhHiIlmMnNopsStTuwWy" );
+  if ( !line_no ) {
+    //
+    // Check for mutually exclusive options only when parsing the command-line.
+    //
+    check_mutually_exclusive( "A", "abdeEhHiILmMnNpPTuwWy" );
+    check_mutually_exclusive( "f", "F" );
+    check_mutually_exclusive( "n", "N" );
+    check_mutually_exclusive( "Pu", "dhHiILmMStW" );
+    check_mutually_exclusive( "u", "sT" );
+    check_mutually_exclusive( "v", "aAbcCdeEfFhHiIlmMnNopsStTuwWy" );
+  }
 
   if ( print_version ) {
     PRINT_ERR( "%s\n", PACKAGE_STRING );
     exit( EX_OK );
   }
-
-  if ( tmp_comment_chars )
-    opt_comment_chars = compile_comment_chars( tmp_comment_chars );
 }
 
 /**
@@ -474,15 +491,24 @@ static unsigned parse_width( char const *s ) {
 
 ////////// extern functions ///////////////////////////////////////////////////
 
+char const* get_long_opt( char short_opt ) {
+  for ( struct option const *long_opt = LONG_OPTS[ is_wrapc ]; long_opt->name;
+        ++long_opt ) {
+    if ( long_opt->val == short_opt )
+      return long_opt->name;
+  } // for
+  assert( false );
+  return NULL;                          // suppress warning (never gets here)
+}
+
 void options_init( int argc, char const *argv[], void (*usage)(void) ) {
   assert( usage );
   me = base_name( argv[0] );
   is_wrapc = strcmp( me, PACKAGE "c" ) == 0;
-  COMMENT_CHARS_DEFAULT = compile_comment_chars( COMMENT_CHARS_INIT );
-  opt_comment_chars = COMMENT_CHARS_DEFAULT;
 
   parse_options(
-    argc, argv, SHORT_OPTS[ is_wrapc ], LONG_OPTS[ is_wrapc ], usage, 0
+    argc, argv, SHORT_OPTS[ is_wrapc ], LONG_OPTS[ is_wrapc ],
+    CMDLINE_FORBIDDEN_OPTS[ is_wrapc ], usage, 0
   );
   argc -= optind, argv += optind;
   if ( argc )
@@ -502,7 +528,7 @@ void options_init( int argc, char const *argv[], void (*usage)(void) ) {
       alias = pattern_find( opt_fin_name );
     if ( alias )
       parse_options(
-        alias->argc, alias->argv, SHORT_OPTS[0], LONG_OPTS[0], usage,
+        alias->argc, alias->argv, SHORT_OPTS[0], LONG_OPTS[0], "", usage,
         alias->line_no
       );
   }
