@@ -629,8 +629,8 @@ static void align_eol_comments( void ) {
   do {
     bool        backslash = false;      // got a backslash?
     size_t      col = 0;
-    size_t      last_nonws_col = 0;     // last non-whitespace column
-    size_t      last_nonws_len = 0;     // length to non-whitespace character
+    ssize_t     last_nonws_col = -1;    // last non-whitespace column
+    ssize_t     last_nonws_len = -1;    // length to non-whitespace character
     char        last_ws = ' ';          // last whitespace encountered
     line_buf_t  output_buf;
     size_t      output_len = 0;
@@ -652,49 +652,59 @@ static void align_eol_comments( void ) {
           break;
         default:
           if ( is_comment_start( s ) ) {
-            if ( !opt_align_char ) {
+            //
+            // Align comment only if it was actually an end-of-line comment.
+            // Comments appearing on lines by themselves are passed through as-
+            // is (except that the end-of-lines are replaced by whatever the
+            // chosen line-ending is).
+            //
+            if ( last_nonws_col >= 0 ) {
+              if ( !opt_align_char ) {
+                //
+                // The user hasn't specified an alignment character: use
+                // whatever the first character is after the last non-
+                // whitespace character before the comment.  If that isn't a
+                // whitespace character, use whatever the last whitespace
+                // character we encountered was.
+                //
+                char const c = CURR[ last_nonws_len + 1 ];
+                opt_align_char = isspace( c ) ? c : last_ws;
+              }
+
               //
-              // The user hasn't specified an alignment character: use whatever
-              // the first character is after the last non-whitespace character
-              // before the comment.  If that isn't a whitespace character, use
-              // whatever the last whitespace character we encountered was.
+              // Reset the column and length to those of the last non-
+              // whitespace character before the comment.  We want to replace
+              // all the whitespace between there and the comment with
+              // opt_align_char.
               //
-              char const c = CURR[ last_nonws_len + 1 ];
-              opt_align_char = isspace( c ) ? c : last_ws;
+              col = last_nonws_col;
+              output_len = last_nonws_len;
+
+              //
+              // While we're less than the alignment column, insert whitespace.
+              //
+              while ( col < opt_align_column - 1 ) {
+                size_t width = char_width( opt_align_char, col );
+                if ( col + width > opt_align_column ) {
+                  //
+                  // If width > 1 (as it could be when using tabs) and the new
+                  // column > the alignment column, fall back to using spaces.
+                  //
+                  width = 1;
+                  opt_align_char = ' ';
+                }
+                col += width;
+                output_buf[ output_len++ ] = opt_align_char;
+              } // while
             }
 
             //
-            // Reset the column and length to those of the last non-whitespace
-            // character before the comment.  We want to replace all the
-            // whitespace between there and the comment with opt_align_char.
-            //
-            col = last_nonws_col;
-            output_len = last_nonws_len;
-
-            //
-            // While we're less than the alignment column, insert whitespace.
-            //
-            while ( col < opt_align_column - 1 ) {
-              size_t width = char_width( opt_align_char, col );
-              if ( col + width > opt_align_column ) {
-                //
-                // If width > 1 (as it could be when using tabs) and the new
-                // column > the alignment column, fall back to using spaces.
-                //
-                width = 1;
-                opt_align_char = ' ';
-              }
-              col += width;
-              output_buf[ output_len++ ] = opt_align_char;
-            } // while
-
-            //
             // Copy the comment without the end-of-line so we can replace it
-            // with whatever the choses line-ending is.
+            // by whatever the chosen line-ending is.
             //
             output_len += strcpy_len( output_buf + output_len, s );
             output_len = chop_eol( output_buf, output_len );
-            goto next_line;
+            goto print_line;
           }
       } // switch
 
@@ -715,7 +725,7 @@ static void align_eol_comments( void ) {
       }
     } // for
 
-next_line:
+print_line:
     output_buf[ output_len ] = '\0';
     W_FPRINTF( fout, "%s%s", output_buf, eol() );
   } while ( check_readline( CURR, fin ) );

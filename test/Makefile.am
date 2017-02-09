@@ -228,6 +228,7 @@ TESTS+= tests/utf8-w77.test \
 	tests/wrapc-A-14s.test \
 	tests/wrapc-A-15.test \
 	tests/wrapc-A-16.test \
+	tests/wrapc-A-17.test \
 	tests/wrapc-Ax-01.test \
 	tests/wrapc-Ax-02.test \
 	tests/wrapc-b.test \
