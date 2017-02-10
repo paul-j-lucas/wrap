@@ -1,3 +1,13 @@
+2017-02-09  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1: Added mention that comments on lines by themselves are passed
+     through unaltered.
+   * wrapc.c, test/Makefile.am, wrapc-A-17.c, wrapc-A-17.txt, wrapc-A-17.test:
+     No longer aligning non-end-of-line comments.
+   * util.c, util.h, wrapc.c: Fixed --disable-assert build; added
+     WRAP_DUMP_CC_MAP.
+   * wrapc.c: Comment tweaks.
+
 2017-02-08  Paul J. Lucas <paul@lucasmail.org>
 
    * options.c: Now using strcasecmp().
