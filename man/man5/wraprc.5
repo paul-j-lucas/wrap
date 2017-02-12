@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wraprc\fP 1 "February 7, 2017" "PJL TOOLS"
+.TH \f3wraprc\fP 1 "February 12, 2017" "PJL TOOLS"
 .SH NAME
 wraprc \- text reformatter runtime configuration file
 .SH DESCRIPTION
@@ -193,18 +193,19 @@ The default configuration file.
 [ALIASES]
 code   = --block-chars=@ --markdown
 c-like = @code --comment-chars=/*,//
-python = @code --comment-chars=#
 html   = --eos-delimit --para-chars=,:;
 man    = --dot-ignore --eos-delimit --para-chars=,:;
+script = @code --comment-chars=#
 
 [PATTERNS]
-*.[ch]  = c-like
-*.cpp   = c-like
-*.htm   = html
-*.html  = html
-*.java  = c-like
-*.py    = python
-*.[1-9] = man
+*.[chly] = c-like
+*.[ch]pp = c-like
+*.htm    = html
+*.html   = html
+*.java   = c-like
+*.p[ly]  = script
+*.sh     = script
+*.[1-9]  = man
 .ft 1
 .fi
 .SH AUTHOR
