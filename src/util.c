@@ -299,13 +299,6 @@ size_t strrspn( char const *s, char const *set ) {
   return n;
 }
 
-char* tolower_s( char *s ) {
-  assert( s );
-  for ( char *t = s; *t; ++t )
-    *t = tolower( *t );
-  return s;
-}
-
 #ifndef NDEBUG
 void wait_for_debugger_attach( char const *env_var ) {
   assert( env_var );

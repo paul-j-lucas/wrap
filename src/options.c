@@ -312,11 +312,10 @@ static eol_t parse_eol( char const *s ) {
   };
 
   assert( s );
-  char const *const s_lc = tolower_s( (char*)free_later( check_strdup( s ) ) );
   size_t values_buf_size = 1;           // for trailing null
 
   for ( eol_map_t const *m = EOL_MAP; m->em_name; ++m ) {
-    if ( strcmp( s_lc, m->em_name ) == 0 )
+    if ( strcasecmp( s, m->em_name ) == 0 )
       return m->em_eol;
     // sum sizes of names in case we need to construct an error message
     values_buf_size += strlen( m->em_name ) + 2 /* ", " */;

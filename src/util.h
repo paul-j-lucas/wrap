@@ -276,14 +276,6 @@ void split_tws( char buf[], size_t buf_len, char tws[] );
 size_t strrspn( char const *s, char const *set );
 
 /**
- * Converts a string to lower-case in-place.
- *
- * @param s The null-terminated string to convert.
- * @return Returns \a s.
- */
-char* tolower_s( char *s );
-
-/**
  * Checks the flag: if \c true, resets the flag to \c false.
  *
  * @param flag A pointer to the Boolean flag to be tested and, if true, reset.
