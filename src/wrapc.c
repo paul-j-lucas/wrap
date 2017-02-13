@@ -740,8 +740,10 @@ print_line:
  */
 static char const* cc_map_compile( char const *in_cc ) {
   assert( in_cc );
+
   cc_set_t cc_set = { false };
   unsigned distinct_cc = 0;
+  char opt_buf[ OPT_BUF_SIZE ];
 
   cc_map_free();
   cc_map_init();
@@ -751,16 +753,16 @@ static char const* cc_map_compile( char const *in_cc ) {
       continue;
     if ( !ispunct( *cc ) )
       PMESSAGE_EXIT( EX_USAGE,
-        "\"%s\": invalid value for --%s/-%c;\n\tmust only be either: %s\n",
-        in_cc, get_long_opt( 'D' ), 'D',
+        "\"%s\": invalid value for %s;\n\tmust only be either: %s\n",
+        in_cc, format_opt( 'D', opt_buf, sizeof opt_buf ),
         "punctuation or whitespace characters"
       );
 
     bool const is_double_cc = ispunct( cc[1] ) && cc[1] != ',';
     if ( is_double_cc && ispunct( cc[2] ) && cc[2] != ',' )
       PMESSAGE_EXIT( EX_USAGE,
-        "\"%s\": invalid value for --%s/-%c: \"%c%c%c\": %s\n",
-        in_cc, get_long_opt( 'D' ), 'D', cc[0], cc[1], cc[2],
+        "\"%s\": invalid value for %s: \"%c%c%c\": %s\n",
+        in_cc, format_opt( 'D', opt_buf, sizeof opt_buf ), cc[0], cc[1], cc[2],
         "more than two consecutive comment characters"
       );
     char const cc1 = is_double_cc ? cc[1] : CC_SINGLE_CHAR;
@@ -793,8 +795,8 @@ static char const* cc_map_compile( char const *in_cc ) {
 
   if ( !distinct_cc )
     PMESSAGE_EXIT( EX_USAGE,
-      "value for --%s/-%c must not be only whitespace or commas\n",
-      get_long_opt( 'D' ), 'D'
+      "value for %s must not be only whitespace or commas\n",
+      format_opt( 'D', opt_buf, sizeof opt_buf )
     );
 
   char *const out_cc =

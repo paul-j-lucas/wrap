@@ -29,6 +29,8 @@
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>                      /* for FILE */
 
+#define OPT_BUF_SIZE              32    /* used for format_opt() */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -83,12 +85,16 @@ extern FILE        *fout;               // file out
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
- * Gets the corresponding name of the long option for the given short option.
+ * Formats an option as <code>[--%s/]-%c</code> where \c %s is the long option
+ * (if any) and %c is the short option.
  *
- * @param short_opt The short option to get the corresponding long option for.
- * @return Returns the said option.
+ * @param short_opt The short option (along with its corresponding long option,
+ * if any) to format.
+ * @param buf The buffer to use.
+ * @param buf_size The size of \a buf.
+ * @return Returns \a buf.
  */
-char const* get_long_opt( char short_opt );
+char* format_opt( char short_opt, char buf[], size_t buf_size );
 
 /**
  * Initializes command-line option variables.

@@ -221,10 +221,12 @@ static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
       if ( GAVE_OPTION( *opt ) ) {
         if ( ++gave_count > 1 ) {
           char const gave_opt2 = *opt;
+          char opt1_buf[ OPT_BUF_SIZE ];
+          char opt2_buf[ OPT_BUF_SIZE ];
           PMESSAGE_EXIT( EX_USAGE,
-            "--%s/-%c and --%s/-%c are mutually exclusive\n",
-            get_long_opt( gave_opt1 ), gave_opt1,
-            get_long_opt( gave_opt2 ), gave_opt2
+            "%s and %s are mutually exclusive\n",
+            format_opt( gave_opt1, opt1_buf, sizeof opt1_buf ),
+            format_opt( gave_opt2, opt2_buf, sizeof opt2_buf  )
           );
         }
         gave_opt1 = *opt;
@@ -235,6 +237,21 @@ static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
       break;
     opt = opts2;
   } // for
+}
+
+/**
+ * Gets the corresponding name of the long option for the given short option.
+ *
+ * @param short_opt The short option to get the corresponding long option for.
+ * @return Returns the said option or the empty string if none.
+ */
+static char const* get_long_opt( char short_opt ) {
+  for ( struct option const *long_opt = LONG_OPTS[ is_wrapc ]; long_opt->name;
+        ++long_opt ) {
+    if ( long_opt->val == short_opt )
+      return long_opt->name;
+  } // for
+  return "";
 }
 
 /**
@@ -274,9 +291,11 @@ static unsigned parse_align( char const *s, char *align_char ) {
   return (unsigned)col;
 
 error:
+  NO_OP;
+  char opt_buf[ OPT_BUF_SIZE ];
   PMESSAGE_EXIT( EX_USAGE,
-    "\"%s\": invalid value for --%s/-%c; %s\n",
-    s, get_long_opt( 'A' ), 'A',
+    "\"%s\": invalid value for %s; %s\n",
+    s, format_opt( 'A', opt_buf, sizeof opt_buf ),
     "must be digits followed by one of:"
     " a, auto, s, space, spaces, t, tab, tabs"
   );
@@ -332,9 +351,11 @@ static eol_t parse_eol( char const *s ) {
     strcpy( pvalues, m->em_name );
     pvalues += strlen( m->em_name );
   } // for
+
+  char opt_buf[ OPT_BUF_SIZE ];
   PMESSAGE_EXIT( EX_USAGE,
-    "\"%s\": invalid value for --%s/-%c; must be one of:\n\t%s\n",
-    s, get_long_opt( 'l' ), 'l', values_buf
+    "\"%s\": invalid value for %s; must be one of:\n\t%s\n",
+    s, format_opt( 'l', opt_buf, sizeof opt_buf ), values_buf
   );
 }
 
@@ -477,9 +498,11 @@ static unsigned parse_width( char const *s ) {
     strcpy( pvalues, *t );
     pvalues += strlen( *t );
   } // for
+
+  char opt_buf[ OPT_BUF_SIZE ];
   PMESSAGE_EXIT( EX_USAGE,
-    "\"%s\": invalid value for --%s/-%c; must be one of:\n\t%s\n",
-    s, get_long_opt( 'w' ), 'w', values_buf
+    "\"%s\": invalid value for %s; must be one of:\n\t%s\n",
+    s, format_opt( 'w', opt_buf, sizeof opt_buf ), values_buf
   );
 #else
   return check_atou( s );
@@ -488,14 +511,13 @@ static unsigned parse_width( char const *s ) {
 
 ////////// extern functions ///////////////////////////////////////////////////
 
-char const* get_long_opt( char short_opt ) {
-  for ( struct option const *long_opt = LONG_OPTS[ is_wrapc ]; long_opt->name;
-        ++long_opt ) {
-    if ( long_opt->val == short_opt )
-      return long_opt->name;
-  } // for
-  assert( false );
-  return NULL;                          // suppress warning (never gets here)
+char* format_opt( char short_opt, char buf[], size_t size ) {
+  char const *const long_opt = get_long_opt( short_opt );
+  snprintf(
+    buf, size, "%s%s%s-%c",
+    *long_opt ? "--" : "", long_opt, *long_opt ? "/" : "", short_opt
+  );
+  return buf;
 }
 
 void options_init( int argc, char const *argv[], void (*usage)(void) ) {
