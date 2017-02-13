@@ -29,9 +29,9 @@
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>                      /* for FILE */
 
-#define OPT_BUF_SIZE              32    /* used for format_opt() */
-
 ///////////////////////////////////////////////////////////////////////////////
+
+#define OPT_BUF_SIZE              32    /* used for format_opt() */
 
 /**
  * End-of-Line formats.
