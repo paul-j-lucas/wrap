@@ -1,3 +1,30 @@
+2017-02-23  Paul J. Lucas <paul@lucasmail.org>
+
+   * COPYING, Makefile.am, NEWS, configure.ac, man/Makefile.am,
+     man/man1/Makefile.am, wrap.1, wrapc.1, man/man5/Makefile.am, wraprc.5,
+     src/Makefile.am, alias.c, alias.h, common.c, common.h, markdown.c,
+     markdown.h, options.c, options.h, pattern.c, pattern.h, read_conf.c,
+     read_conf.h, regex_test.c, unicode.c, unicode.h, util.c, util.h, wrap.c,
+     wrapc.c, wregex.c, wregex.h, test/Makefile.am, run_test.sh: Updated to
+     GPLv3.
+
+2017-02-13  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.h: Moved OPT_BUF_SIZE.
+   * options.c, options.h, wrapc.c: Now using format_opt().
+
+2017-02-12  Paul J. Lucas <paul@lucasmail.org>
+
+   * wraprc.5: More examples in conf file.
+
+2017-02-11  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.c, util.c, util.h: Removed tolower_s().
+
+2017-02-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.1: Fixed line width.
+
 2017-02-09  Paul J. Lucas <paul@lucasmail.org>
 
    * wrapc.1: Added mention that comments on lines by themselves are passed
