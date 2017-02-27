@@ -193,8 +193,8 @@ bool is_affirmative( char const *s );
 bool is_any( char const *s, char const *const matches[] );
 
 /**
- * Checks whether \a s is a blank like, that is a line consisting only
- * whitespace followed by an end-of-line.
+ * Checks whether \a s is a blank line, that is a line consisting only of
+ * whitespace.
  *
  * @param s The null-terminated string to check.
  * @return Returns \c true only if \a s is a blank line.
