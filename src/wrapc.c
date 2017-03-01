@@ -53,7 +53,7 @@
 typedef char* cc_map_t[128];
 
 /**
- * Comment character set indexed by character.
+ * Comment delimiter character set indexed by character.
  */
 typedef bool cc_set_t[128];
 
