@@ -105,6 +105,26 @@ char* check_strdup( char const *s ) {
   return dup;
 }
 
+size_t chop_eol( char *s, size_t s_len ) {
+  assert( s );
+  if ( s_len && s[ s_len-1 ] == '\n' ) {
+    if ( --s_len && s[ s_len-1 ] == '\r' )
+      --s_len;
+    s[ s_len ] = '\0';
+  }
+  return s_len;
+}
+
+char closing_char( char c ) {
+  switch ( c ) {
+    case '(': return ')' ;
+    case '<': return '>' ;
+    case '[': return ']' ;
+    case '{': return '}' ;
+    default : return '\0';
+  } // switch
+}
+
 void fcopy( FILE *ffrom, FILE *fto ) {
   assert( ffrom );
   assert( fto );
@@ -287,6 +307,15 @@ void split_tws( char buf[], size_t buf_len, char tws[] ) {
   size_t const tnws_len = buf_len - strrspn( buf, WS_ST );
   strcpy( tws, buf + tnws_len );
   buf[ tnws_len ] = '\0';
+}
+
+size_t strcpy_len( char *dst, char const *src ) {
+  assert( dst );
+  assert( src );
+  char const *const dst0 = dst;
+  while ( (*dst++ = *src++) )
+    /* empty */;
+  return dst - dst0 - 1;
 }
 
 size_t strrspn( char const *s, char const *set ) {

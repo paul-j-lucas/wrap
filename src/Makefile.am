@@ -28,7 +28,7 @@ COMMON_SOURCES = alias.c common.c options.c pattern.c read_conf.c util.c
 
 wrap_SOURCES = $(COMMON_SOURCES) markdown.c unicode.c wrap.c wregex.c
 
-wrapc_SOURCES = $(COMMON_SOURCES) wrapc.c
+wrapc_SOURCES = $(COMMON_SOURCES) align.c cc_map.c wrapc.c
 
 regex_test_SOURCES = regex_test.c unicode.c util.c wregex.c
 

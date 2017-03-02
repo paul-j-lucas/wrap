@@ -20,6 +20,7 @@
 
 // local
 #include "alias.h"
+#include "cc_map.h"
 #include "common.h"
 #include "markdown.h"
 #include "options.h"
@@ -38,24 +39,15 @@
 #include <sys/wait.h>                   /* for wait() */
 #include <unistd.h>                     /* for close(), fork(), ... */
 
+/**
+ * Aligns end-of-line comments to a particular column.
+ *
+ * @param input_buf The input buffer to use.  It must contain the first line of
+ * text read.
+ */
+void align_eol_comments( char[] );
+
 ///////////////////////////////////////////////////////////////////////////////
-
-/**
- * Comment delimiter character map indexed by character.  If an entry is:
- *
- *  + NULL, that character is not a comment delimiter character.
- *
- *  + A non-empty string, that character followed by each character (except
- *    space) in said string forms a two-character comment delimiter, e.g., "//"
- *    or "(*".  A space means it forms a single comment character delimiter,
- *    e.g., "#".
- */
-typedef char* cc_map_t[128];
-
-/**
- * Comment delimiter character set indexed by character.
- */
-typedef bool cc_set_t[128];
 
 /**
  * Types of comment delimiters.
@@ -103,10 +95,8 @@ char const         *me;                 // executable name
 
 // local constant definitions
 static size_t const ARG_BUF_SIZE = 25;  // max wrap(1) command-line arg size
-static char const   CC_SINGLE_CHAR = ' ';
 
 // local variable definitions
-static cc_map_t     cc_map;
 static char         close_cc[2];        // closing comment delimiter char(s)
 static delim_t      delim;              // comment delimiter type
 static dual_line_t  input_buf;
@@ -131,16 +121,10 @@ static int          pipes[2][2];
 
 // local functions
 static void         adjust_comment_width( char* );
-static void         align_eol_comments( void );
-static void         cc_map_free( void );
-static unsigned     cc_set_add( cc_set_t, char );
-static size_t       chop_eol( char*, size_t );
 static void         chop_suffix( char* );
-static char         closing_char( char );
 static void         fork_exec_wrap( pid_t );
 static void         init( int, char const*[] );
 static bool         is_block_comment( char const* );
-static bool         is_eol_comment( char const* );
 static char const*  is_line_comment( char const* );
 static char const*  is_terminated_comment( char* );
 static size_t       prefix_span( char const* );
@@ -150,7 +134,6 @@ static void         read_wrap( void );
 static void         set_prefix( char const*, size_t );
 static char*        skip_c( char*, char );
 static char*        skip_n( char*, size_t );
-static size_t       strcpy_len( char*, char const* );
 static size_t       strlen_no_eol( char const* );
 static char const*  str_status( int );
 static size_t       str_width( char const* );
@@ -159,26 +142,6 @@ static void         wait_for_child_processes( void );
 static void         wrapc_cleanup( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
-
-/**
- * Initializes the comment character map.
- */
-static inline void cc_map_init( void ) {
-  memset( cc_map, 0, sizeof cc_map );
-}
-
-/**
- * Computes the width of a character where tabs have a width of
- * \c opt_tab_spaces spaces minus the number of spaces we're into a tab-stop;
- * all others characters have a width of 1.
- *
- * @param c The character to get the width of.
- * @param width The line width so far.
- * @return Returns said width.
- */
-static inline size_t char_width( char c, size_t width ) {
-  return c == '\t' ? opt_tab_spaces - width % opt_tab_spaces : 1;
-}
 
 /**
  * Gets whether \a c is a comment delimiter character.
@@ -217,7 +180,7 @@ int main( int argc, char const *argv[] ) {
   wait_for_debugger_attach( "WRAPC_DEBUG" );
   init( argc, argv );
   if ( opt_align_column ) {
-    align_eol_comments();
+    align_eol_comments( CURR );
   } else {
     read_prototype();
     W_PIPE( pipes[ TO_WRAP ] );
@@ -606,252 +569,6 @@ static void adjust_comment_width( char *s ) {
 }
 
 /**
- * Aligns end-of-line comments to a particular column.
- */
-static void align_eol_comments( void ) {
-  do {
-    bool        backslash = false;      // got a backslash?
-    size_t      col = 0;
-    ssize_t     last_nonws_col = -1;    // last non-whitespace column
-    ssize_t     last_nonws_len = -1;    // length to non-whitespace character
-    char        last_ws = ' ';          // last whitespace encountered
-    line_buf_t  output_buf;
-    size_t      output_len = 0;
-    char        quote = '\0';           // between quotes?
-
-    for ( char const *s = CURR; *s && !is_eol( *s ); ++s ) {
-      bool const was_backslash = true_reset( &backslash );
-
-      switch ( *s ) {
-        case '"':
-        case '\'':
-          if ( !quote )
-            quote = *s;
-          else if ( !was_backslash && *s == quote )
-            quote = '\0';
-          break;
-        case '\\':
-          backslash = true;
-          break;
-        default:
-          if ( is_eol_comment( s ) ) {
-            //
-            // Align comment only if it was actually an end-of-line comment.
-            // Comments appearing on lines by themselves are passed through as-
-            // is (except that the end-of-lines are replaced by whatever the
-            // chosen line-ending is).
-            //
-            if ( last_nonws_col >= 0 ) {
-              if ( !opt_align_char ) {
-                //
-                // The user hasn't specified an alignment character: use
-                // whatever the first character is after the last non-
-                // whitespace character before the comment.  If that isn't a
-                // whitespace character, use whatever the last whitespace
-                // character we encountered was.
-                //
-                char const c = CURR[ last_nonws_len + 1 ];
-                opt_align_char = isspace( c ) ? c : last_ws;
-              }
-
-              //
-              // Reset the column and length to those of the last non-
-              // whitespace character before the comment.  We want to replace
-              // all the whitespace between there and the comment with
-              // opt_align_char.
-              //
-              col = last_nonws_col;
-              output_len = last_nonws_len;
-
-              //
-              // While we're less than the alignment column, insert whitespace.
-              //
-              while ( col < opt_align_column - 1 ) {
-                size_t width = char_width( opt_align_char, col );
-                if ( col + width > opt_align_column ) {
-                  //
-                  // If width > 1 (as it could be when using tabs) and the new
-                  // column > the alignment column, fall back to using spaces.
-                  //
-                  width = 1;
-                  opt_align_char = ' ';
-                }
-                col += width;
-                output_buf[ output_len++ ] = opt_align_char;
-              } // while
-            }
-
-            //
-            // Copy the comment without the end-of-line so we can replace it
-            // by whatever the chosen line-ending is.
-            //
-            output_len += strcpy_len( output_buf + output_len, s );
-            output_len = chop_eol( output_buf, output_len );
-            goto print_line;
-          }
-      } // switch
-
-      col += char_width( *s, col );
-      output_buf[ output_len++ ] = *s;
-
-      if ( !quote ) {
-        //
-        // Keep track of the last whitespace character and non-whitespace
-        // column & position.
-        //
-        if ( is_space( *s ) ) {
-          last_ws = *s;
-        } else {
-          last_nonws_col = col;
-          last_nonws_len = s - CURR + 1;
-        }
-      }
-    } // for
-
-print_line:
-    output_buf[ output_len ] = '\0';
-    W_FPRINTF( fout, "%s%s", output_buf, eol() );
-  } while ( check_readline( CURR, fin ) );
-}
-
-/**
- * Compiles a set of comment delimiter characters into a string of distinct
- * comment delimiter characters and a cc_map_t used by align_eol_comments().
- *
- * @param in_cc The comment delimiter characters to compile.
- * @return Returns said string of distinct comment delimiter characters.
- */
-static char const* cc_map_compile( char const *in_cc ) {
-  assert( in_cc );
-
-  cc_set_t cc_set = { false };
-  unsigned distinct_cc = 0;
-  char opt_buf[ OPT_BUF_SIZE ];
-
-  cc_map_free();
-  cc_map_init();
-
-  for ( char const *cc = in_cc; *cc; ++cc ) {
-    if ( isspace( *cc ) || *cc == ',' )
-      continue;
-    if ( !ispunct( *cc ) )
-      PMESSAGE_EXIT( EX_USAGE,
-        "\"%s\": invalid value for %s;\n\tmust only be either: %s\n",
-        in_cc, format_opt( 'D', opt_buf, sizeof opt_buf ),
-        "punctuation or whitespace characters"
-      );
-
-    bool const is_double_cc = ispunct( cc[1] ) && cc[1] != ',';
-    if ( is_double_cc && ispunct( cc[2] ) && cc[2] != ',' )
-      PMESSAGE_EXIT( EX_USAGE,
-        "\"%s\": invalid value for %s: \"%c%c%c\": %s\n",
-        in_cc, format_opt( 'D', opt_buf, sizeof opt_buf ), cc[0], cc[1], cc[2],
-        "more than two consecutive comment characters"
-      );
-    char const cc1 = is_double_cc ? cc[1] : CC_SINGLE_CHAR;
-
-    unsigned char const *const ucc = (unsigned char*)cc;
-    char *cc_map_entry = (char*)cc_map[ ucc[0] ];
-    if ( !cc_map_entry ) {
-      cc_map_entry = MALLOC( char, 1 + 1/*null*/ );
-      cc_map_entry[0] = cc1;
-      cc_map_entry[1] = '\0';
-    }
-    else if ( !strchr( cc_map_entry, cc1 ) ) {
-      //
-      // Add the second comment delimiter character only if it's not already
-      // there.
-      //
-      size_t const len = strlen( cc_map_entry );
-      REALLOC( cc_map_entry, char, len + 1 + 1/*null*/ );
-      cc_map_entry[ len ] = cc1;
-      cc_map_entry[ len + 1 ] = '\0';
-    }
-    cc_map[ ucc[0] ] = cc_map_entry;
-
-    distinct_cc += cc_set_add( cc_set, cc[0] );
-    if ( is_double_cc ) {
-      distinct_cc += cc_set_add( cc_set, cc[1] );
-      ++cc;                             // skip past second comment character
-    }
-  } // for
-
-  if ( !distinct_cc )
-    PMESSAGE_EXIT( EX_USAGE,
-      "value for %s must not be only whitespace or commas\n",
-      format_opt( 'D', opt_buf, sizeof opt_buf )
-    );
-
-  char *const out_cc =
-    (char*)free_later( MALLOC( char, distinct_cc + 1/*null*/ ) );
-  char *s = out_cc;
-  for ( size_t i = 0; i < ARRAY_SIZE( cc_set ); ++i ) {
-    if ( cc_set[i] )
-      *s++ = (char)i;
-  } // for
-  *s = '\0';
-
-#ifndef NDEBUG
-  if ( is_affirmative( getenv( "WRAP_DUMP_CC_MAP" ) ) ) {
-    for ( size_t i = 0; i < ARRAY_SIZE( cc_map ); ++i ) {
-      if ( cc_map[i] )
-        PRINT_ERR( "%c \"%s\"\n", (char)i, cc_map[i] );
-    } // for
-    PRINT_ERR( "\n%u distinct = \"%s\"\n", distinct_cc, out_cc );
-  }
-#endif /* NDEBUG */
-
-  return out_cc;
-}
-
-/**
- * Frees the memory used by the comment delimiter character map.
- */
-static void cc_map_free( void ) {
-  for ( size_t i = 0; i < ARRAY_SIZE( cc_map ); ++i )
-    free( cc_map[i] );
-}
-
-/**
- * Adds a comment delimiter character, and its corresponding closing comment
- * delimiter character (if any), to the given set.
- *
- * @param cc_set The set to add to.
- * @param c The character to add.
- * @return Returns the number of distinct comment delimiter characters added.
- */
-static unsigned cc_set_add( cc_set_t cc_set, char c ) {
-  unsigned added = 0;
-  if ( !cc_set[ (unsigned char)c ] ) {
-    cc_set[ (unsigned char)c ] = true;
-    ++added;
-    char const closing = closing_char( c );
-    if ( closing && !cc_set[ (unsigned char)closing ] ) {
-      cc_set[ (unsigned char)closing ] = true;
-      ++added;
-    }
-  }
-  return added;
-}
-
-/**
- * Chops off the end-of-line character(s), if any.
- *
- * @param s The null-terminated string to chop.
- * @param s_len The length of \a s.
- * @return Returns the new length of \a s.
- */
-static size_t chop_eol( char *s, size_t s_len ) {
-  assert( s );
-  if ( s_len && s[ s_len-1 ] == '\n' ) {
-    if ( --s_len && s[ s_len-1 ] == '\r' )
-      --s_len;
-    s[ s_len ] = '\0';
-  }
-  return s_len;
-}
-
-/**
  * Chops off the termininating comment delimiter character(s), if any.
  *
  * @param s The newline- and null-terminated string to chop.
@@ -904,22 +621,6 @@ done:
 }
 
 /**
- * Given an "opening" character, gets it matching "closing" chcaracter.
- *
- * @param c The "opening" character.
- * @return Returns said "closing" character.
- */
-static char closing_char( char c ) {
-  switch ( c ) {
-    case '(': return ')' ;
-    case '<': return '>' ;
-    case '[': return ']' ;              // no language uses '['; completeness
-    case '{': return '}' ;
-    default : return '\0';
-  } // switch
-}
-
-/**
  * Parses command-line options, sets-up I/O, sets-up the input buffers, sets
  * the end-of-lines.
  *
@@ -962,95 +663,6 @@ static bool is_block_comment( char const *s ) {
       /* empty */;
     return *s == '\n';
   }
-  return false;
-}
-
-/**
- * Gets whether \a s starts an end-of-line comment.
- *
- * @param s The null-terminated string to check.
- * @return Returns \c true only if \a s starts an end-of-line comment.
- */
-static bool is_eol_comment( char const *s ) {
-  char const *const cc = cc_map[ (unsigned char)*s ];
-  if ( !cc )
-    return false;
-
-  char closing = closing_char( *s );
-
-  if ( strchr( cc, CC_SINGLE_CHAR ) ) {
-    //
-    // Single-character comment delimiter, e.g., '#' (Python) or '{' (Pascal).
-    //
-    if ( !closing ) {
-      //
-      // A single-character comment delimiter that has no closing character,
-      // e.g., '#', invariably is a comment to the end of the line.
-      //
-      return true;
-    }
-
-    //
-    // We're dealing with a case like '{' ... '}' (Pascal): we have to attempt
-    // to find the closing comment delimiter character.
-    //
-    for (;;) {
-      if ( *s == '\0' )
-        return false;
-      if ( *s++ == closing ) {
-        //
-        // We found the closing comment delimiter character: now check to see
-        // if there's non-whitespace characters after it, e.g.:
-        //
-        //      { comment } something else?
-        //
-        // If so, then this comment isn't an end-of-line comment.
-        //
-        return is_blank_line( s );
-      }
-    } // for
-  }
-
-  if ( s[1] == s[0] ) {
-    //
-    // A two-character comment delimiter where both characters are the same,
-    // e.g., "//", invariably is a comment to the end of the line.
-    //
-    return true;
-  }
-
-  char const d1 = *s;                   // save first delimiter character
-  if ( !(*++s && strchr( cc, *s )) ) {
-    //
-    // If the next character isn't the second character in a two-character
-    // comment delimiter, then it's not a comment.
-    //
-    return false;
-  }
-
-  if ( !closing ) {
-    //
-    // If the first character in a two-character comment delimiter doesn't
-    // have a closing character, then it's its own closing character, e.g.,
-    // "/*" ... "*/".
-    //
-    closing = d1;
-  }
-
-  //
-  // Attempt to find the closing comment delimiter characters.
-  //
-  char const d2 = *s;                   // save second delimiter character
-  for ( char c_prev = '\0'; *++s; c_prev = *s ) {
-    if ( c_prev == d2 && *s == closing ) {
-      //
-      // We found the closing comment delimiter characters: now it's just like
-      // the single-character comment delimiter case above.
-      //
-      return is_blank_line( ++s );
-    }
-  } // for
-
   return false;
 }
 
@@ -1374,22 +986,6 @@ static char* skip_n( char *s, size_t n ) {
   for ( ; *s && !is_eol( *s ) && n > 0; ++s, --n )
     /* empty */;
   return s;
-}
-
-/**
- * A variant of strcpy(3) that returns the number of characters copied.
- *
- * @param dst A pointer to receive the copy of \a src.
- * @param src The null-terminated string to copy.
- * @return Returns the number of characters copied.
- */
-static size_t strcpy_len( char *dst, char const *src ) {
-  assert( dst );
-  assert( src );
-  char const *const dst0 = dst;
-  while ( (*dst++ = *src++) )
-    /* empty */;
-  return dst - dst0 - 1;
 }
 
 /**

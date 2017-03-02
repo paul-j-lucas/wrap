@@ -1,0 +1,235 @@
+/*
+**      wrapc -- comment reformatter
+**      align.c
+**
+**      Copyright (C) 2017  Paul J. Lucas
+**
+**      This program is free software: you can redistribute it and/or modify
+**      it under the terms of the GNU General Public License as published by
+**      the Free Software Foundation, either version 3 of the License, or
+**      (at your option) any later version.
+**
+**      This program is distributed in the hope that it will be useful,
+**      but WITHOUT ANY WARRANTY; without even the implied warranty of
+**      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**      GNU General Public License for more details.
+**
+**      You should have received a copy of the GNU General Public License
+**      along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+// local
+#include "config.h"                     /* must go first */
+#include "cc_map.h"
+#include "common.h"
+#include "options.h"
+#include "util.h"
+
+// standard
+#include <ctype.h>
+#include <stdbool.h>
+#include <stddef.h>                     /* for size_t */
+#include <stdio.h>
+#include <string.h>                     /* for str...() */
+
+////////// local functions ////////////////////////////////////////////////////
+
+/**
+ * Gets whether \a s starts an end-of-line comment.
+ *
+ * @param s The null-terminated string to check.
+ * @return Returns \c true only if \a s starts an end-of-line comment.
+ */
+static bool is_eol_comment( char const *s ) {
+  char const *const cc = cc_map[ (unsigned char)*s ];
+  if ( !cc )
+    return false;
+
+  char closing = closing_char( *s );
+
+  if ( strchr( cc, CC_SINGLE_CHAR ) ) {
+    //
+    // Single-character comment delimiter, e.g., '#' (Python) or '{' (Pascal).
+    //
+    if ( !closing ) {
+      //
+      // A single-character comment delimiter that has no closing character,
+      // e.g., '#', invariably is a comment to the end of the line.
+      //
+      return true;
+    }
+
+    //
+    // We're dealing with a case like '{' ... '}' (Pascal): we have to attempt
+    // to find the closing comment delimiter character.
+    //
+    for (;;) {
+      if ( *s == '\0' )
+        return false;
+      if ( *s++ == closing ) {
+        //
+        // We found the closing comment delimiter character: now check to see
+        // if there's non-whitespace characters after it, e.g.:
+        //
+        //      { comment } something else?
+        //
+        // If so, then this comment isn't an end-of-line comment.
+        //
+        return is_blank_line( s );
+      }
+    } // for
+  }
+
+  if ( s[1] == s[0] ) {
+    //
+    // A two-character comment delimiter where both characters are the same,
+    // e.g., "//", invariably is a comment to the end of the line.
+    //
+    return true;
+  }
+
+  char const d1 = *s;                   // save first delimiter character
+  if ( !(*++s && strchr( cc, *s )) ) {
+    //
+    // If the next character isn't the second character in a two-character
+    // comment delimiter, then it's not a comment.
+    //
+    return false;
+  }
+
+  if ( !closing ) {
+    //
+    // If the first character in a two-character comment delimiter doesn't
+    // have a closing character, then it's its own closing character, e.g.,
+    // "/*" ... "*/".
+    //
+    closing = d1;
+  }
+
+  //
+  // Attempt to find the closing comment delimiter characters.
+  //
+  char const d2 = *s;                   // save second delimiter character
+  for ( char c_prev = '\0'; *++s; c_prev = *s ) {
+    if ( c_prev == d2 && *s == closing ) {
+      //
+      // We found the closing comment delimiter characters: now it's just like
+      // the single-character comment delimiter case above.
+      //
+      return is_blank_line( ++s );
+    }
+  } // for
+
+  return false;
+}
+
+////////// extern functions ///////////////////////////////////////////////////
+
+void align_eol_comments( char input_buf[] ) {
+  do {
+    bool        backslash = false;      // got a backslash?
+    size_t      col = 0;
+    ssize_t     last_nonws_col = -1;    // last non-whitespace column
+    ssize_t     last_nonws_len = -1;    // length to non-whitespace character
+    char        last_ws = ' ';          // last whitespace encountered
+    line_buf_t  output_buf;
+    size_t      output_len = 0;
+    char        quote = '\0';           // between quotes?
+
+    for ( char const *s = input_buf; *s && !is_eol( *s ); ++s ) {
+      bool const was_backslash = true_reset( &backslash );
+
+      switch ( *s ) {
+        case '"':
+        case '\'':
+          if ( !quote )
+            quote = *s;
+          else if ( !was_backslash && *s == quote )
+            quote = '\0';
+          break;
+        case '\\':
+          backslash = true;
+          break;
+        default:
+          if ( is_eol_comment( s ) ) {
+            //
+            // Align comment only if it was actually an end-of-line comment.
+            // Comments appearing on lines by themselves are passed through as-
+            // is (except that the end-of-lines are replaced by whatever the
+            // chosen line-ending is).
+            //
+            if ( last_nonws_col >= 0 ) {
+              if ( !opt_align_char ) {
+                //
+                // The user hasn't specified an alignment character: use
+                // whatever the first character is after the last non-
+                // whitespace character before the comment.  If that isn't a
+                // whitespace character, use whatever the last whitespace
+                // character we encountered was.
+                //
+                char const c = input_buf[ last_nonws_len + 1 ];
+                opt_align_char = isspace( c ) ? c : last_ws;
+              }
+
+              //
+              // Reset the column and length to those of the last non-
+              // whitespace character before the comment.  We want to replace
+              // all the whitespace between there and the comment with
+              // opt_align_char.
+              //
+              col = last_nonws_col;
+              output_len = last_nonws_len;
+
+              //
+              // While we're less than the alignment column, insert whitespace.
+              //
+              while ( col < opt_align_column - 1 ) {
+                size_t width = char_width( opt_align_char, col );
+                if ( col + width > opt_align_column ) {
+                  //
+                  // If width > 1 (as it could be when using tabs) and the new
+                  // column > the alignment column, fall back to using spaces.
+                  //
+                  width = 1;
+                  opt_align_char = ' ';
+                }
+                col += width;
+                output_buf[ output_len++ ] = opt_align_char;
+              } // while
+            }
+
+            //
+            // Copy the comment without the end-of-line so we can replace it
+            // by whatever the chosen line-ending is.
+            //
+            output_len += strcpy_len( output_buf + output_len, s );
+            output_len = chop_eol( output_buf, output_len );
+            goto print_line;
+          }
+      } // switch
+
+      col += char_width( *s, col );
+      output_buf[ output_len++ ] = *s;
+
+      if ( !quote ) {
+        //
+        // Keep track of the last whitespace character and non-whitespace
+        // column & position.
+        //
+        if ( is_space( *s ) ) {
+          last_ws = *s;
+        } else {
+          last_nonws_col = col;
+          last_nonws_len = s - input_buf + 1;
+        }
+      }
+    } // for
+
+print_line:
+    output_buf[ output_len ] = '\0';
+    W_FPRINTF( fout, "%s%s", output_buf, eol() );
+  } while ( check_readline( input_buf, fin ) );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/* vim:set et sw=2 ts=2: */

@@ -22,7 +22,7 @@
 #define wrap_common_H
 
 // local
-#include "config.h"                     /* for PACKAGE */
+#include "config.h"                     /* must go first */
 #include "options.h"                    /* for opt_eol */
 
 // standard
@@ -108,6 +108,19 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
 #define WIPC_SEP                  "|"
 
 ////////// extern functions ///////////////////////////////////////////////////
+
+/**
+ * Computes the width of a character where tabs have a width of
+ * \c opt_tab_spaces spaces minus the number of spaces we're into a tab-stop;
+ * all others characters have a width of 1.
+ *
+ * @param c The character to get the width of.
+ * @param width The line width so far.
+ * @return Returns said width.
+ */
+WRAP_COMMON_INLINE size_t char_width( char c, size_t width ) {
+  return c == '\t' ? opt_tab_spaces - width % opt_tab_spaces : 1;
+}
 
 /**
  * Reads a newline-terminated line from \a ffrom.

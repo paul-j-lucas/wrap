@@ -130,6 +130,23 @@ void* check_realloc( void *p, size_t size );
 char* check_strdup( char const *s );
 
 /**
+ * Chops off the end-of-line character(s), if any.
+ *
+ * @param s The null-terminated string to chop.
+ * @param s_len The length of \a s.
+ * @return Returns the new length of \a s.
+ */
+size_t chop_eol( char *s, size_t s_len );
+
+/**
+ * Given an "opening" character, gets it matching "closing" chcaracter.
+ *
+ * @param c The "opening" character.
+ * @return Returns said "closing" character or the null byte if none.
+ */
+char closing_char( char c );
+
+/**
  * Copies \a ffrom to \a fto until EOF.
  *
  * @param ffrom The \c FILE to copy from.
@@ -264,6 +281,15 @@ void setlocale_utf8( void );
  * any.
  */
 void split_tws( char buf[], size_t buf_len, char tws[] );
+
+/**
+ * A variant of strcpy(3) that returns the number of characters copied.
+ *
+ * @param dst A pointer to receive the copy of \a src.
+ * @param src The null-terminated string to copy.
+ * @return Returns the number of characters copied.
+ */
+size_t strcpy_len( char *dst, char const *src );
 
 /**
  * Reverse strspn(3): spans the trailing part of \a s as long as characters
