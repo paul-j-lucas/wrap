@@ -46,9 +46,9 @@
  *  + NULL, that character is not a comment delimiter character.
  *
  *  + A non-empty string, that character followed by each character (except
- *    space) in said string forms a double comment character delimiter, e.g.,
- *    "//" or "(*".  A space means it forms a single comment character
- *    delimiter, e.g., "#".
+ *    space) in said string forms a two-character comment delimiter, e.g., "//"
+ *    or "(*".  A space means it forms a single comment character delimiter,
+ *    e.g., "#".
  */
 typedef char* cc_map_t[128];
 
@@ -140,6 +140,7 @@ static char         closing_char( char );
 static void         fork_exec_wrap( pid_t );
 static void         init( int, char const*[] );
 static bool         is_block_comment( char const* );
+static bool         is_eol_comment( char const* );
 static char const*  is_line_comment( char const* );
 static char const*  is_terminated_comment( char* );
 static size_t       prefix_span( char const* );
@@ -187,24 +188,6 @@ static inline size_t char_width( char c, size_t width ) {
  */
 static inline bool is_comment_char( char c ) {
   return c && strchr( opt_comment_chars, c ) != NULL;
-}
-
-/**
- * Gets whether \a s starts a comment.
- *
- * @param s The string to check.
- * @return Returns \c true only if \a s starts a comment.
- */
-static inline bool is_comment_start( char const *s ) {
-  char const *const cc = cc_map[ (unsigned char)s[0] ];
-  //
-  // s[0] starts a comment only if it's in the map and either if:
-  //
-  //  + It's a single character delimiter; or:
-  //  + s[1] is among the map entry's string.
-  //
-  return  cc &&
-          (strchr( cc, CC_SINGLE_CHAR ) || (s[1] && strchr( cc, s[1] )));
 }
 
 /**
@@ -651,7 +634,7 @@ static void align_eol_comments( void ) {
           backslash = true;
           break;
         default:
-          if ( is_comment_start( s ) ) {
+          if ( is_eol_comment( s ) ) {
             //
             // Align comment only if it was actually an end-of-line comment.
             // Comments appearing on lines by themselves are passed through as-
@@ -979,6 +962,95 @@ static bool is_block_comment( char const *s ) {
       /* empty */;
     return *s == '\n';
   }
+  return false;
+}
+
+/**
+ * Gets whether \a s starts an end-of-line comment.
+ *
+ * @param s The null-terminated string to check.
+ * @return Returns \c true only if \a s starts an end-of-line comment.
+ */
+static bool is_eol_comment( char const *s ) {
+  char const *const cc = cc_map[ (unsigned char)*s ];
+  if ( !cc )
+    return false;
+
+  char closing = closing_char( *s );
+
+  if ( strchr( cc, CC_SINGLE_CHAR ) ) {
+    //
+    // Single-character comment delimiter, e.g., '#' (Python) or '{' (Pascal).
+    //
+    if ( !closing ) {
+      //
+      // A single-character comment delimiter that has no closing character,
+      // e.g., '#', invariably is a comment to the end of the line.
+      //
+      return true;
+    }
+
+    //
+    // We're dealing with a case like '{' ... '}' (Pascal): we have to attempt
+    // to find the closing comment delimiter character.
+    //
+    for (;;) {
+      if ( *s == '\0' )
+        return false;
+      if ( *s++ == closing ) {
+        //
+        // We found the closing comment delimiter character: now check to see
+        // if there's non-whitespace characters after it, e.g.:
+        //
+        //      { comment } something else?
+        //
+        // If so, then this comment isn't an end-of-line comment.
+        //
+        return is_blank_line( s );
+      }
+    } // for
+  }
+
+  if ( s[1] == s[0] ) {
+    //
+    // A two-character comment delimiter where both characters are the same,
+    // e.g., "//", invariably is a comment to the end of the line.
+    //
+    return true;
+  }
+
+  char const d1 = *s;                   // save first delimiter character
+  if ( !(*++s && strchr( cc, *s )) ) {
+    //
+    // If the next character isn't the second character in a two-character
+    // comment delimiter, then it's not a comment.
+    //
+    return false;
+  }
+
+  if ( !closing ) {
+    //
+    // If the first character in a two-character comment delimiter doesn't
+    // have a closing character, then it's its own closing character, e.g.,
+    // "/*" ... "*/".
+    //
+    closing = d1;
+  }
+
+  //
+  // Attempt to find the closing comment delimiter characters.
+  //
+  char const d2 = *s;                   // save second delimiter character
+  for ( char c_prev = '\0'; *++s; c_prev = *s ) {
+    if ( c_prev == d2 && *s == closing ) {
+      //
+      // We found the closing comment delimiter characters: now it's just like
+      // the single-character comment delimiter case above.
+      //
+      return is_blank_line( ++s );
+    }
+  } // for
+
   return false;
 }
 
