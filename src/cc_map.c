@@ -77,19 +77,12 @@ static unsigned cc_set_add( cc_set_t cc_set, char c ) {
 
 ////////// extern functions ///////////////////////////////////////////////////
 
-/**
- * Compiles a set of comment delimiter characters into a string of distinct
- * comment delimiter characters and a cc_map_t used by align_eol_comments().
- *
- * @param in_cc The comment delimiter characters to compile.
- * @return Returns said string of distinct comment delimiter characters.
- */
 char const* cc_map_compile( char const *in_cc ) {
   assert( in_cc );
 
   cc_set_t cc_set = { false };
-  unsigned distinct_cc = 0;
-  char opt_buf[ OPT_BUF_SIZE ];
+  unsigned distinct_cc = 0;             // distinct comment characters
+  char opt_buf[ OPT_BUF_SIZE ];         // to format options in error messages
 
   cc_map_free();
   cc_map_init();

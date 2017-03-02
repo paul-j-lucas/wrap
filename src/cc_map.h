@@ -45,7 +45,9 @@ extern cc_map_t	cc_map;                 // comment delimiter character map
  * Compiles a set of comment delimiter characters into a string of distinct
  * comment delimiter characters and a cc_map_t used by align_eol_comments().
  *
- * @param in_cc The comment delimiter characters to compile.
+ * @param in_cc The comment delimiter characters to compile.  It is one or more
+ * one- or two-character comment delimiters separated by either commas or
+ * whitesspace.
  * @return Returns said string of distinct comment delimiter characters.
  */
 char const* cc_map_compile( char const *in_cc );
