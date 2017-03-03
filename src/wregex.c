@@ -38,11 +38,11 @@ static int const    WRAP_REGEX_COMPILE_FLAGS = REG_EXTENDED;
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
- * Checks whether \a c is a word character, that is an alphanumeric or \c _
+ * Checks whether \a cp is a word character, that is an alphanumeric or \c _
  * character.  Note that this function is locale sensitive.
  *
- * @param c The character to check.
- * @return Returns \c true only if \a c is a word character.
+ * @param cp The code-point to check.
+ * @return Returns \c true only if \a cp is a word code-point.
  */
 static inline bool cp_is_word_char( codepoint_t cp ) {
   return iswalnum( cp ) || cp == '_';
@@ -51,7 +51,7 @@ static inline bool cp_is_word_char( codepoint_t cp ) {
 ////////// local functions ////////////////////////////////////////////////////
 
 /**
- * Checks whether the character at \a pos is the beginning of a word.  This
+ * Checks whether the character at \a curr is the beginning of a word.  This
  * function exists because POSIX regular expressions don't support \c \\b
  * (match a word boundary).
  *
