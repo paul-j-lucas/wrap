@@ -73,7 +73,7 @@ static void path_append( char *path, char const *component ) {
   if ( len ) {
     path += len - 1;
     if ( *path != '/' )
-      strcpy( ++path, "/" );
+      *++path = '/';
     strcpy( ++path, component );
   }
 }
