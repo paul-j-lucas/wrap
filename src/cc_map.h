@@ -21,6 +21,18 @@
 #ifndef wrap_cc_map_H
 #define wrap_cc_map_H
 
+// local
+#include "config.h"
+
+// standard
+#include <stdbool.h>
+#include <string.h>
+
+_GL_INLINE_HEADER_BEGIN
+#ifndef WRAP_CC_MAP_INLINE
+# define WRAP_CC_MAP_INLINE _GL_INLINE
+#endif /* WRAP_CC_MAP_INLINE */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 #define CC_SINGLE_CHAR            ' '
@@ -37,9 +49,20 @@
  */
 typedef char* cc_map_t[128];
 
-extern cc_map_t	cc_map;                 // comment delimiter character map
-
 ////////// extern functions ///////////////////////////////////////////////////
+
+/**
+ * Gets whether the comment delimiter character referred to by the given map
+ * entry is a single comment delimiter character.
+ *
+ * @param cc_map_entry A comment delimiter character map entry returned by
+ * cc_map_get().
+ * @return Returns \c true only if \a cc_map_entry is a single comment
+ * delimiter character.
+ */
+WRAP_CC_MAP_INLINE bool cc_is_single( char const *cc_map_entry ) {
+  return strchr( cc_map_entry, CC_SINGLE_CHAR ) != NULL;
+}
 
 /**
  * Compiles a set of comment delimiter characters into a string of distinct
@@ -53,11 +76,25 @@ extern cc_map_t	cc_map;                 // comment delimiter character map
 char const* cc_map_compile( char const *in_cc );
 
 /**
+ * Gets the comment delimiter character map entry for the given character.
+ *
+ * @param c The character to get the comment delimiter character map entry for.
+ * @return Returns said entry or null if \a c is not a comment delimiter
+ * character.
+ */
+WRAP_CC_MAP_INLINE char const* cc_map_get( char c ) {
+  extern cc_map_t cc_map;
+  return cc_map[ (unsigned char)c ];
+}
+
+/**
  * Frees the memory used by the comment delimiter character map.
  */
 void cc_map_free( void );
 
 ///////////////////////////////////////////////////////////////////////////////
+
+_GL_INLINE_HEADER_END
 
 #endif /* wrap_cc_map_H */
 /* vim:set et sw=2 ts=2: */

@@ -41,13 +41,13 @@
  * @return Returns \c true only if \a s starts an end-of-line comment.
  */
 static bool is_eol_comment( char const *s ) {
-  char const *const cc = cc_map[ (unsigned char)*s ];
+  char const *const cc = cc_map_get( *s );
   if ( !cc )
     return false;
 
   char closing = closing_char( *s );
 
-  if ( strchr( cc, CC_SINGLE_CHAR ) ) {
+  if ( cc_is_single( cc ) ) {
     //
     // Single-character comment delimiter, e.g., '#' (Python) or '{' (Pascal).
     //
