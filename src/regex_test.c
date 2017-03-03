@@ -19,7 +19,7 @@
 */
 
 // local
-#include "config.h"
+#include "config.h"                     /* must go first */
 #include "util.h"
 #include "wregex.h"
 

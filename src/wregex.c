@@ -19,13 +19,14 @@
 */
 
 // local
-#include "config.h"
+#include "config.h"                     /* must go first */
 #include "wregex.h"
 #include "unicode.h"
 #include "util.h"
 
 // standard
 #include <assert.h>
+#include <stdbool.h>
 #include <sysexits.h>
 #include <wctype.h>
 

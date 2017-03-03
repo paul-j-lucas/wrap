@@ -19,6 +19,7 @@
 */
 
 // local
+#include "config.h"                     /* must go first */
 #include "alias.h"
 #include "common.h"
 #include "util.h"

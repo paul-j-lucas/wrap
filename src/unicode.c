@@ -19,12 +19,13 @@
 */
 
 // local
-#include "config.h"
+#include "config.h"                     /* must go first */
 #define WRAP_UNICODE_INLINE _GL_EXTERN_INLINE
 #include "unicode.h"
 
 // standard
 #include <assert.h>
+#include <stdbool.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -19,9 +19,9 @@
 */
 
 // local
+#include "config.h"                     /* must go first */
 #include "alias.h"
 #include "common.h"
-#include "config.h"
 #include "pattern.h"
 #include "util.h"
 
@@ -33,6 +33,7 @@
 #if HAVE_PWD_H
 # include <pwd.h>                       /* for getpwuid() */
 #endif /* HAVE_PWD_H */
+#include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>                     /* for getenv(), ... */

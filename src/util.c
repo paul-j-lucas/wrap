@@ -19,7 +19,7 @@
 */
 
 // local
-#include "config.h"
+#include "config.h"                     /* must go first */
 #define WRAP_UTIL_INLINE _GL_EXTERN_INLINE
 #include "util.h"
 
@@ -27,6 +27,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <locale.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>                     /* for malloc(), ... */
 #include <string.h>

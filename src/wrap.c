@@ -19,7 +19,7 @@
 */
 
 // local
-#include "config.h"
+#include "config.h"                     /* must go first */
 #include "alias.h"
 #include "common.h"
 #include "markdown.h"
@@ -32,6 +32,7 @@
 // standard
 #include <assert.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit(), ... */

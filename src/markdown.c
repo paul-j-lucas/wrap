@@ -19,8 +19,8 @@
 */
 
 // local
+#include "config.h"                     /* must go first */
 #include "markdown.h"
-#include "config.h"
 #include "common.h"
 #include "util.h"
 

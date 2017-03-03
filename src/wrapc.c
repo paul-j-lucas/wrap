@@ -19,6 +19,7 @@
 */
 
 // local
+#include "config.h"                     /* must go first */
 #include "alias.h"
 #include "cc_map.h"
 #include "common.h"
@@ -32,6 +33,7 @@
 #include <ctype.h>
 #include <limits.h>                     /* for PATH_MAX */
 #include <signal.h>                     /* for kill() */
+#include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit() */

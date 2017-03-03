@@ -19,6 +19,7 @@
 */
 
 // local
+#include "config.h"                     /* must go first */
 #include "options.h"
 #include "alias.h"
 #include "common.h"
@@ -32,6 +33,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <inttypes.h>                   /* for SIZE_MAX */
+#include <stdbool.h>
 #include <string.h>                     /* for memset(3) */
 
 ///////////////////////////////////////////////////////////////////////////////
