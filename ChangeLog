@@ -1,3 +1,30 @@
+2017-03-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Fixed typo in comment.
+   * wregex.c: Comment fix.
+   * alias.c, common.c, markdown.c, options.c, pattern.c, read_conf.c,
+     regex_test.c, unicode.c, util.c, wrap.c, wrapc.c, wregex.c: #include
+     clean-up.
+
+2017-03-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * read_conf.c: Replaced strcpy().
+   * align.c, cc_map.h: Added cc_is_single() and cc_map_get().
+   * cc_map.c, cc_map.h: Clean-up.
+   * src/Makefile.am, align.c, cc_map.c, cc_map.h, common.h, util.c, util.h,
+     wrapc.c: Refactored some wrapc code into separate .c files.
+
+2017-03-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrapc.c, test/Makefile.am, wrapc-A-18.c,
+     wrapc-A-19.pas, wrapc-A-18.txt, wrapc-A-19.txt, wrapc-A-18.test,
+     wrapc-A-19.test: Now ignoring within-line comments for -A.
+   * wrapc.c: Comment tweak.
+
+2017-02-26  Paul J. Lucas <paul@lucasmail.org>
+
+   * util.h: Comment fix.
+
 2017-02-23  Paul J. Lucas <paul@lucasmail.org>
 
    * COPYING, Makefile.am, NEWS, configure.ac, man/Makefile.am,
