@@ -962,7 +962,7 @@ static void set_prefix( char const *prefix, size_t len ) {
 }
 
 /**
- * Skips all consecutive occorrences of \a c in \a s.
+ * Skips all consecutive occurrences of \a c in \a s.
  *
  * @param s The null-terminated string to use.
  * @param c The character to skip.
