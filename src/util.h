@@ -304,7 +304,8 @@ size_t strrspn( char const *s, char const *set );
 /**
  * Checks the flag: if \c true, resets the flag to \c false.
  *
- * @param flag A pointer to the Boolean flag to be tested and, if true, reset.
+ * @param flag A pointer to the Boolean flag to be tested and, if \c true, set
+ * to \c false.
  * @return Returns \c true only if \c *flag is \c true.
  */
 WRAP_UTIL_INLINE bool true_reset( bool *flag ) {
