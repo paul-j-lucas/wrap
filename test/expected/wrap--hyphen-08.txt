@@ -1,0 +1,2 @@
+   Helper function for c_ast_gibberish_impl() that prints a pointer, pointer-
+   to-member, or reference qualifier, if any, and the name, if any.

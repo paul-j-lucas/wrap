@@ -435,7 +435,7 @@ int main( int argc, char const *argv[] ) {
     size_t const prev_output_len = output_len;
     print_line( wrap_pos, true );
 
-    if ( hyphen == HYPHEN_YES ) {
+    if ( hyphen != HYPHEN_NO ) {
       //
       // Per the above comment, put the preserved character back and include it
       // in the slide-to-the-left (below).
