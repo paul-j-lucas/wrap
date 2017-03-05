@@ -21,6 +21,12 @@
 #ifndef wrap_wregex_H
 #define wrap_wregex_H
 
+/**
+ * @file
+ * Contains macros for e-mail and URI regular expressions as well as a wrapper
+ * API around POSIX regex (that could easily be swapped out for, say, PCRE2).
+ */
+
 // local
 #include "config.h"
 
@@ -28,12 +34,6 @@
 #include <regex.h>
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
-
-/**
- * @file
- * Contains macros for e-mail and URI regular expressions as well as a wrapper
- * API around POSIX regex (that could easily be swapped out for, say, PCRE2).
- */
 
 ///////////////////////////////////////////////////////////////////////////////
 

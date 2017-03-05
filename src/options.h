@@ -21,6 +21,12 @@
 #ifndef wrap_options_H
 #define wrap_options_H
 
+/**
+ * @file
+ * Contains constants, enums, and variables for all wrap and wrapc command-line
+ * and configuration file options as well as a function to read and parse them.
+ */
+
 // local
 #include "config.h"
 

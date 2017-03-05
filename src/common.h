@@ -21,6 +21,12 @@
 #ifndef wrap_common_H
 #define wrap_common_H
 
+/**
+ * @file
+ * Contains constants, macros, typedefs, and functions common to both wrap and
+ * wrapc.
+ */
+
 // local
 #include "config.h"                     /* must go first */
 #include "options.h"                    /* for opt_eol */
@@ -28,12 +34,6 @@
 // standard
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>                      /* for FILE */
-
-/**
- * @file
- * Contains constants, macros, typedefs, and functions common to both wrap and
- * wrapc.
- */
 
 _GL_INLINE_HEADER_BEGIN
 #ifndef WRAP_COMMON_INLINE

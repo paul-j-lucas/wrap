@@ -21,6 +21,11 @@
 #ifndef wrap_alias_H
 #define wrap_alias_H
 
+/**
+ * @file
+ * Contains a data structure for a wrap alias and functions to manipulate it.
+ */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 /**

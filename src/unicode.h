@@ -21,6 +21,12 @@
 #ifndef wrap_unicode_H
 #define wrap_unicode_H
 
+/**
+ * @file
+ * Contains constants and types for Unicode code-points and UTF-8 byte
+ * sequences as well as functions for manipulating them.
+ */
+
 // local
 #include "config.h"
 

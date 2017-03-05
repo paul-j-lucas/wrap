@@ -21,6 +21,12 @@
 #ifndef wrap_markdown_H
 #define wrap_markdown_H
 
+/**
+ * @file
+ * Contains constants, enums, typedefs, data structures, and functions for
+ * parsing Markdown.
+ */
+
 // local
 #include "config.h"
 

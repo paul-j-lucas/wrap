@@ -21,6 +21,12 @@
 #ifndef wrap_cc_map_H
 #define wrap_cc_map_H
 
+/**
+ * @file
+ * Contains a type for a comment delimiter character map and functions to
+ * manipulate it.
+ */
+
 // local
 #include "config.h"
 

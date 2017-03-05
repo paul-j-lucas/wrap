@@ -21,6 +21,11 @@
 #ifndef wrap_pattern_H
 #define wrap_pattern_H
 
+/**
+ * @file
+ * Contains a data structure for a wrap pattern and functions to manipulate it.
+ */
+
 // local
 #include "alias.h"
 

@@ -21,6 +21,11 @@
 #ifndef wrap_util_H
 #define wrap_util_H
 
+/**
+ * @file
+ * Contains utility constants, macros, and functions.
+ */
+
 // local
 #include "config.h"
 

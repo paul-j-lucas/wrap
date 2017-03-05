@@ -21,6 +21,11 @@
 #ifndef wrap_read_conf_H
 #define wrap_read_conf_H
 
+/**
+ * @file
+ * Declares the function to read wrap configuration files.
+ */
+
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
