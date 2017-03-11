@@ -150,7 +150,11 @@ void align_eol_comments( char input_buf[] ) {
         case '\\':
           backslash = true;
           break;
+
         default:
+          if ( quote )                  // do nothing else while between quotes
+            break;
+
           if ( is_eol_comment( s ) ) {
             //
             // Align comment only if it was actually an end-of-line comment.
