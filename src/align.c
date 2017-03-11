@@ -127,28 +127,34 @@ static bool is_eol_comment( char const *s ) {
 
 void align_eol_comments( char input_buf[] ) {
   do {
-    bool        backslash = false;      // got a backslash?
     size_t      col = 0;
+    bool        is_alnum = false;       // got an alpha-numeric character?
+    bool        is_backslash = false;   // got a backslash?
     ssize_t     last_nonws_col = -1;    // last non-whitespace column
     ssize_t     last_nonws_len = -1;    // length to non-whitespace character
     char        last_ws = ' ';          // last whitespace encountered
     line_buf_t  output_buf;
     size_t      output_len = 0;
     char        quote = '\0';           // between quotes?
+    unsigned    token_count = 0;
 
     for ( char const *s = input_buf; *s && !is_eol( *s ); ++s ) {
-      bool const was_backslash = true_reset( &backslash );
+      bool const was_alnum = true_reset( &is_alnum );
+      bool const was_backslash = true_reset( &is_backslash );
 
       switch ( *s ) {
         case '"':
         case '\'':
-          if ( !quote )
+          if ( !quote ) {
             quote = *s;
-          else if ( !was_backslash && *s == quote )
+          }
+          else if ( !was_backslash && *s == quote ) {
             quote = '\0';
+            ++token_count;
+          }
           break;
         case '\\':
-          backslash = true;
+          is_backslash = true;
           break;
 
         default:
@@ -157,12 +163,29 @@ void align_eol_comments( char input_buf[] ) {
 
           if ( is_eol_comment( s ) ) {
             //
-            // Align comment only if it was actually an end-of-line comment.
-            // Comments appearing on lines by themselves are passed through as-
-            // is (except that the end-of-lines are replaced by whatever the
-            // chosen line-ending is).
+            // Align comment only if:
             //
-            if ( last_nonws_col >= 0 ) {
+            //  1. It is the last thing on the line -- so a comment within a
+            //     line is not aligned, e.g.:
+            //
+            //          char cc_buf[ 3 + 1/*null*/ ];
+            //
+            //  2. There is more than one "token" on the line before the
+            //     comment -- so a comment like:
+            //
+            //          } // for
+            //
+            //     is not aligned.  A "token" is one of:
+            //
+            //        * An alpha-numeric word.
+            //        * A single punctuation character.
+            //        * A single- or-double-quoted string.
+            //
+            // An end-of-line comment that does not meet these criteria is
+            // passed through verbatim (except that the line-ending is replaced
+            // by whatever the chosen line-ending is).
+            //
+            if ( token_count > 1 ) {
               if ( !opt_align_char ) {
                 //
                 // The user hasn't specified an alignment character: use
@@ -209,6 +232,14 @@ void align_eol_comments( char input_buf[] ) {
             output_len += strcpy_len( output_buf + output_len, s );
             output_len = chop_eol( output_buf, output_len );
             goto print_line;
+          }
+
+          if ( ispunct( *s ) )
+            ++token_count;
+          else if ( isalnum( *s ) ) {
+            if ( !was_alnum )
+              ++token_count;
+            is_alnum = true;
           }
       } // switch
 

@@ -222,6 +222,9 @@ TESTS+= tests/utf8-w77.test \
 	tests/wrapc-A-05b.test \
 	tests/wrapc-A-06.test \
 	tests/wrapc-A-07.test \
+	tests/wrapc-A-08a.test \
+	tests/wrapc-A-08b.test \
+	tests/wrapc-A-09a.test \
 	tests/wrapc-A-10.test \
 	tests/wrapc-A-11.test \
 	tests/wrapc-A-12.test \

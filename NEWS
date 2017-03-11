@@ -7,7 +7,8 @@ See the end of the file for license conditions.
 
 ** End‐of‐Line Comment Aligning Improvement
 Now aligns only comments that are really at the end of the line (as opposed to
-within a line).
+within a line).  It also does not align comments unless there is more than one
+"token" on the line.
 
 * Changes in Wrap 5.0
 

@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\fP 1 "February 9, 2017" "PJL TOOLS"
+.TH \f3wrapc\fP 1 "March 10, 2017" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -234,8 +234,41 @@ such that the comment is longer than
 the comment is
 .I not
 wrapped.
-Comments on lines by themselves
-are passed through unaltered.
+.P
+A comment is aligned only if:
+.nr step 1 1
+.IP \n[step]. 3
+It is the last thing on the line
+\(em so a comment within a line is not aligned,
+e.g.:
+.cS
+char cc_buf[ 3 + 1/*null*/ ];
+.cE 0
+.IP \n+[step].
+There is more than one ``token'' on the line before the comment
+\(em so a comment like:
+.cS
+} // for
+.cE 0
+.IP ""
+is not aligned.
+A ``token'' is one of:
+.P
+.PD 0
+.RS 5
+.IP \[bu] 2
+An alpha-numeric word.
+.IP \[bu]
+A single punctuation character
+.IP \[bu]
+A single- or-double-quoted string.
+.RE
+.PD
+.P
+An end-of-line comment that does not meet these criteria
+is passed through verbatim
+(except that the line-ending
+is replaced by whatever the chosen line-ending is).
 .SH OPTIONS
 An option argument
 .I f
