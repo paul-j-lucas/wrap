@@ -224,6 +224,7 @@ TESTS+= tests/utf8-w77.test \
 	tests/wrapc-A-07.test \
 	tests/wrapc-A-08a.test \
 	tests/wrapc-A-08b.test \
+	tests/wrapc-A-08c.test \
 	tests/wrapc-A-09a.test \
 	tests/wrapc-A-10.test \
 	tests/wrapc-A-11.test \

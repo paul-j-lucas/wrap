@@ -128,8 +128,8 @@ static bool is_eol_comment( char const *s ) {
 void align_eol_comments( char input_buf[] ) {
   do {
     size_t      col = 0;
-    bool        is_alnum = false;       // got an alpha-numeric character?
     bool        is_backslash = false;   // got a backslash?
+    bool        is_word = false;        // got a word character?
     ssize_t     last_nonws_col = -1;    // last non-whitespace column
     ssize_t     last_nonws_len = -1;    // length to non-whitespace character
     char        last_ws = ' ';          // last whitespace encountered
@@ -139,8 +139,8 @@ void align_eol_comments( char input_buf[] ) {
     unsigned    token_count = 0;
 
     for ( char const *s = input_buf; *s && !is_eol( *s ); ++s ) {
-      bool const was_alnum = true_reset( &is_alnum );
       bool const was_backslash = true_reset( &is_backslash );
+      bool const was_word = true_reset( &is_word );
 
       switch ( *s ) {
         case '"':
@@ -171,13 +171,15 @@ void align_eol_comments( char input_buf[] ) {
             //          char cc_buf[ 3 + 1/*null*/ ];
             //
             //  2. There is more than one "token" on the line before the
-            //     comment -- so a comment like:
+            //     comment -- so comments like:
             //
-            //          } // for
+            //            } // for
+            //          #endif /* NDEBUG */
             //
-            //     is not aligned.  A "token" is one of:
+            //     are not aligned.  A "token" is one of:
             //
-            //        * An alpha-numeric word.
+            //        * A "word": an optional '#' followed by one or more
+            //          alpha-numeric characters.
             //        * A single punctuation character.
             //        * A single- or-double-quoted string.
             //
@@ -234,12 +236,20 @@ void align_eol_comments( char input_buf[] ) {
             goto print_line;
           }
 
-          if ( ispunct( *s ) )
+          if ( ispunct( *s ) ) {
+            if ( s[0] == '#' && isalnum( s[1] ) && !was_word ) {
+              //
+              // Special case: allow '#' to start words so C/C++ preprocessor
+              // directives, e.g., #endif, are considered single tokens.
+              //
+              is_word = true;
+            }
             ++token_count;
+          }
           else if ( isalnum( *s ) ) {
-            if ( !was_alnum )
+            if ( !was_word )
               ++token_count;
-            is_alnum = true;
+            is_word = true;
           }
       } // switch
 

@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\fP 1 "March 10, 2017" "PJL TOOLS"
+.TH \f3wrapc\fP 1 "March 11, 2017" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -246,18 +246,21 @@ char cc_buf[ 3 + 1/*null*/ ];
 .cE 0
 .IP \n+[step].
 There is more than one ``token'' on the line before the comment
-\(em so a comment like:
+\(em so comments like:
 .cS
-} // for
+    } // for
+#endif /* NDEBUG */
 .cE 0
 .IP ""
-is not aligned.
+are not aligned.
 A ``token'' is one of:
 .P
 .PD 0
 .RS 5
 .IP \[bu] 2
-An alpha-numeric word.
+A ``word'':
+an optional \f(CW#\fP
+followed by one or more alpha-numeric characters.
 .IP \[bu]
 A single punctuation character
 .IP \[bu]
