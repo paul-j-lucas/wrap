@@ -316,7 +316,7 @@ static pid_t read_source_write_wrap( void ) {
   }
 
   //
-  // As a special-case, if the first line is NOT a comment, then just wrap all
+  // As a special case, if the first line is NOT a comment, then just wrap all
   // lines using the leading whitespace of the first line as a prototype for
   // all subsequent lines, i.e., do NOT ever tell wrap(1) to pass text through
   // verbatim (below).
