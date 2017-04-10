@@ -74,7 +74,7 @@ AC_FUNC_REALLOC
 AC_CHECK_FUNCS([geteuid getpwuid perror strerror strndup])
 AC_SEARCH_LIBS([endwin],[curses ncurses])
 
-# Program feature: --width=term
+# Program feature: --width-term
 AC_ARG_ENABLE([width-term],
   AS_HELP_STRING([--disable-width-term], [disable support for --width=term]),
   [],
