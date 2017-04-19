@@ -12,7 +12,7 @@ within a line).  It also does not align comments unless there is more than one
 
 * Changes in Wrap 5.0
 
-** End‐of‐Line Comment Aligning
+** End‐of‐Line Comment Aligning.
 Wrapc can now align end-of-line comments at a given column.
 
 ** Alias importing.
