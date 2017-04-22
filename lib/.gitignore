@@ -4,6 +4,7 @@
 /configmake.h
 /errno.h
 /fnmatch.h
+/getopt-cdefs.h
 /getopt.h
 /stdbool.h
 /stddef.h

@@ -117,19 +117,13 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_FNMATCH
   fi
   gl_FUNC_GETOPT_GNU
-  if test $REPLACE_GETOPT = 1; then
-    AC_LIBOBJ([getopt])
-    AC_LIBOBJ([getopt1])
-    gl_PREREQ_GETOPT
-    dnl Arrange for unistd.h to include getopt.h.
-    GNULIB_GL_UNISTD_H_GETOPT=1
-  fi
-  AC_SUBST([GNULIB_GL_UNISTD_H_GETOPT])
+  dnl Because of the way gl_FUNC_GETOPT_GNU is implemented (the gl_getopt_required
+  dnl mechanism), there is no need to do any AC_LIBOBJ or AC_SUBST here; they are
+  dnl done in the getopt-posix module.
   gl_FUNC_GETOPT_POSIX
   if test $REPLACE_GETOPT = 1; then
     AC_LIBOBJ([getopt])
     AC_LIBOBJ([getopt1])
-    gl_PREREQ_GETOPT
     dnl Arrange for unistd.h to include getopt.h.
     GNULIB_GL_UNISTD_H_GETOPT=1
   fi
@@ -350,18 +344,22 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
-  build-aux/snippet/_Noreturn.h
-  build-aux/snippet/arg-nonnull.h
-  build-aux/snippet/c++defs.h
-  build-aux/snippet/warn-on-use.h
+  lib/_Noreturn.h
   lib/alloca.c
   lib/alloca.in.h
+  lib/arg-nonnull.h
+  lib/c++defs.h
   lib/config.charset
   lib/errno.in.h
   lib/flexmember.h
   lib/fnmatch.c
   lib/fnmatch.in.h
   lib/fnmatch_loop.c
+  lib/getopt-cdefs.in.h
+  lib/getopt-core.h
+  lib/getopt-ext.h
+  lib/getopt-pfx-core.h
+  lib/getopt-pfx-ext.h
   lib/getopt.c
   lib/getopt.in.h
   lib/getopt1.c
@@ -400,6 +398,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/unistd.c
   lib/unistd.in.h
   lib/verify.h
+  lib/warn-on-use.h
   lib/wchar.in.h
   lib/wctype-h.c
   lib/wctype.in.h
