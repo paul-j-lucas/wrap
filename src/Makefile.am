@@ -24,12 +24,29 @@ check_PROGRAMS = regex_test
 AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_builddir)/lib
 LDADD = $(top_builddir)/lib/libgnu.a
 
-COMMON_SOURCES = alias.c common.c options.c pattern.c read_conf.c util.c
+COMMON_SOURCES = \
+	alias.c alias.h \
+	common.c common.h \
+	options.c options.h \
+	pattern.c pattern.h \
+	read_conf.c read_conf.h \
+	util.c util.h
 
-wrap_SOURCES = $(COMMON_SOURCES) markdown.c unicode.c wrap.c wregex.c
+wrap_SOURCES = $(COMMON_SOURCES) \
+	markdown.c markdown.h \
+	unicode.c unicode.h \
+	wrap.c \
+	wregex.c
 
-wrapc_SOURCES = $(COMMON_SOURCES) align.c cc_map.c wrapc.c
+wrapc_SOURCES = $(COMMON_SOURCES) \
+	align.c \
+	cc_map.c cc_map.h \
+	wrapc.c
 
-regex_test_SOURCES = regex_test.c unicode.c util.c wregex.c
+regex_test_SOURCES = \
+	regex_test.c \
+	unicode.c unicode.h \
+	util.c util.h \
+	wregex.c wregex.h
 
 # vim:set noet sw=8 ts=8:
