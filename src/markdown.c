@@ -922,7 +922,7 @@ static char const* skip_html_tag( char const *s, bool *is_end_tag ) {
           if ( *is_end_tag )            // invalid: more than one '/'
             return "";
           *is_end_tag = true;
-          // no break;
+          // FALLTHROUGH
         case '>':                       // found closing '>'
           return ++s;
       } // switch
