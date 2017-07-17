@@ -162,7 +162,7 @@ char const* cc_map_compile( char const *in_cc ) {
 
 void cc_map_free( void ) {
   for ( size_t i = 0; i < ARRAY_SIZE( cc_map ); ++i )
-    free( cc_map[i] );
+    FREE( cc_map[i] );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

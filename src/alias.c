@@ -105,8 +105,8 @@ static void alias_check_dup( char const *conf_file, unsigned line_no ) {
 static void alias_free( alias_t *alias ) {
   assert( alias );
   while ( alias->argc > 0 )
-    free( (void*)alias->argv[ --alias->argc ] );
-  free( alias->argv );
+    FREE( alias->argv[ --alias->argc ] );
+  FREE( alias->argv );
 }
 
 /**
@@ -216,7 +216,7 @@ static size_t strcpy_set( char *dest, size_t dest_size, char const *set,
 void alias_cleanup( void ) {
   while ( n_aliases )
     alias_free( &aliases[ --n_aliases ] );
-  free( aliases );
+  FREE( aliases );
 }
 
 alias_t const* alias_find( char const *name ) {

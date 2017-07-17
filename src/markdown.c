@@ -971,7 +971,7 @@ static void stack_push( md_line_t line_type, md_indent_t indent_left,
 ////////// extern functions ///////////////////////////////////////////////////
 
 void markdown_cleanup( void ) {
-  free( stack );
+  FREE( stack );
 }
 
 void markdown_init( void ) {

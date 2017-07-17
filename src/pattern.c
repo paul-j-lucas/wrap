@@ -71,7 +71,7 @@ static pattern_t* pattern_alloc( void ) {
  */
 static void pattern_free( pattern_t *pattern ) {
   assert( pattern );
-  free( (void*)pattern->pattern );
+  FREE( pattern->pattern );
 }
 
 ////////// extern functions ///////////////////////////////////////////////////
@@ -90,7 +90,7 @@ void dump_patterns( void ) {
 void pattern_cleanup( void ) {
   while ( n_patterns )
     pattern_free( &patterns[ --n_patterns ] );
-  free( patterns );
+  FREE( patterns );
 }
 
 alias_t const* pattern_find( char const *file_name ) {

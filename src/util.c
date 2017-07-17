@@ -172,8 +172,8 @@ void* free_later( void *p ) {
 void free_now( void ) {
   for ( free_node_t *p = free_head; p; ) {
     free_node_t *const next = p->fn_next;
-    free( p->fn_ptr );
-    free( p );
+    FREE( p->fn_ptr );
+    FREE( p );
     p = next;
   } // for
   free_head = NULL;
