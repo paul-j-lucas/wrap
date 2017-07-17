@@ -199,7 +199,7 @@ char const* read_conf( char const *conf_file ) {
     } // switch
   } // while
 
-  if ( ferror( fconf ) )
+  if ( unlikely( ferror( fconf ) ) )
     PMESSAGE_EXIT( EX_IOERR, "%s: %s\n", conf_file, STRERROR );
   fclose( fconf );
 

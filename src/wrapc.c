@@ -209,7 +209,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   (void)read_source_write_wrap_pid;
 #else
   pid_t const pid = fork();
-  if ( pid == -1 ) {                    // we failed, so kill the first child
+  if ( unlikely( pid == -1 ) ) {        // we failed, so kill the first child
     kill( read_source_write_wrap_pid, SIGTERM );
     PERROR_EXIT( EX_OSERR );
   }
@@ -284,7 +284,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 static pid_t read_source_write_wrap( void ) {
 #ifndef DEBUG_RSWW
   pid_t const pid = fork();
-  if ( pid == -1 )
+  if ( unlikely( pid == -1 ) )
     PERROR_EXIT( EX_OSERR );
   if ( pid != 0 )                       // parent process
     return pid;
@@ -297,7 +297,7 @@ static pid_t read_source_write_wrap( void ) {
   // Read from fin and write to pipes[TO_WRAP] (wrap).
   //
   FILE *const fwrap = fdopen( pipes[ TO_WRAP ][ STDOUT_FILENO ], "w" );
-  if ( !fwrap )
+  if ( unlikely( !fwrap ) )
     PMESSAGE_EXIT( EX_OSERR,
       "child can't open pipe for writing: %s\n", STRERROR
     );
@@ -429,7 +429,7 @@ static void read_wrap( void ) {
   // Read from pipes[FROM_WRAP] (wrap) and write to fout.
   //
   FILE *const fwrap = fdopen( pipes[ FROM_WRAP ][ STDIN_FILENO ], "r" );
-  if ( !fwrap )
+  if ( unlikely( !fwrap ) )
     PMESSAGE_EXIT( EX_OSERR,
       "parent can't open pipe for reading: %s\n", STRERROR
     );
@@ -456,7 +456,7 @@ static void read_wrap( void ) {
 
   for ( ;; ) {
     size_t line_size = sizeof line_buf;
-    if ( !fgetsz( line_buf, &line_size, fwrap ) )
+    if ( unlikely( !fgetsz( line_buf, &line_size, fwrap ) ) )
       break;
     line_size = chop_eol( line_buf, line_size );
     char *line = line_buf;

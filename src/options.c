@@ -276,7 +276,7 @@ static unsigned parse_align( char const *s, char *align_char ) {
   char *end = NULL;
   errno = 0;
   unsigned const col = strtoul( s, &end, 10 );
-  if ( errno || end == s )
+  if ( unlikely( errno || end == s ) )
     goto error;
   if ( *end ) {
     if ( *end == ',' )

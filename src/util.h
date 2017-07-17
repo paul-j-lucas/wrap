@@ -58,6 +58,33 @@ _GL_INLINE_HEADER_BEGIN
 #define WS_STR                    WS_ST "\r"  /* Space Tab Return */
 #define WS_STRN                   WS_STR "\n" /* Space Tab Return Newline */
 
+#ifdef __GNUC__
+
+/**
+ * Specifies that \a EXPR is \e very likely (as in 99.99% of the time) to be
+ * non-zero (true) allowing the compiler to better order code blocks for
+ * magrinally better performance.
+ *
+ * @see http://lwn.net/Articles/255364/
+ * @hideinitializer
+ */
+#define likely(EXPR)              __builtin_expect( !!(EXPR), 1 )
+
+/**
+ * Specifies that \a EXPR is \e very unlikely (as in .01% of the time) to be
+ * non-zero (true) allowing the compiler to better order code blocks for
+ * magrinally better performance.
+ *
+ * @see http://lwn.net/Articles/255364/
+ * @hideinitializer
+ */
+#define unlikely(EXPR)            __builtin_expect( !!(EXPR), 0 )
+
+#else
+# define likely(EXPR)             (EXPR)
+# define unlikely(EXPR)           (EXPR)
+#endif /* __GNUC__ */
+
 #define MALLOC(TYPE,N) \
   (TYPE*)check_realloc( NULL, sizeof(TYPE) * (N) )
 
@@ -67,26 +94,26 @@ _GL_INLINE_HEADER_BEGIN
 #define REALLOC(PTR,TYPE,N) \
   (PTR) = (TYPE*)check_realloc( (PTR), sizeof(TYPE) * (N) )
 
-#define W_DUP(FD) \
-  BLOCK( if ( dup( FD ) == -1 ) PERROR_EXIT( EX_OSERR ); )
+#define W_DUP(FD) BLOCK( \
+	if ( unlikely( dup( FD ) == -1 ) ) PERROR_EXIT( EX_OSERR ); )
 
-#define W_FERROR(STREAM) \
-  BLOCK( if ( ferror( STREAM ) ) PERROR_EXIT( EX_IOERR ); )
+#define W_FERROR(STREAM) BLOCK( \
+	if ( unlikely( ferror( STREAM ) ) ) PERROR_EXIT( EX_IOERR ); )
 
-#define W_FPRINTF(STREAM,...) \
-  BLOCK( if ( fprintf( (STREAM), __VA_ARGS__ ) < 0 ) PERROR_EXIT( EX_IOERR ); )
+#define W_FPRINTF(STREAM,...) BLOCK( \
+	if ( unlikely( fprintf( (STREAM), __VA_ARGS__ ) < 0 ) ) PERROR_EXIT( EX_IOERR ); )
 
-#define W_FPUTC(C,STREAM) \
-  BLOCK( if ( putc( (C), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
+#define W_FPUTC(C,STREAM) BLOCK( \
+	if ( unlikely( putc( (C), (STREAM) ) == EOF ) ) PERROR_EXIT( EX_IOERR ); )
 
-#define W_FPUTS(S,STREAM) \
-  BLOCK( if ( fputs( (S), (STREAM) ) == EOF ) PERROR_EXIT( EX_IOERR ); )
+#define W_FPUTS(S,STREAM) BLOCK( \
+	if ( unlikely( fputs( (S), (STREAM) ) == EOF ) ) PERROR_EXIT( EX_IOERR ); )
 
-#define W_FWRITE(BUF,SIZE,NITEMS,STREAM) \
-  BLOCK( if ( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS) ) PERROR_EXIT( EX_IOERR ); )
+#define W_FWRITE(BUF,SIZE,NITEMS,STREAM) BLOCK( \
+	if ( unlikely( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS) ) ) PERROR_EXIT( EX_IOERR ); )
 
-#define W_PIPE(FDS) \
-  BLOCK( if ( pipe( FDS ) == -1 ) PERROR_EXIT( EX_OSERR ); )
+#define W_PIPE(FDS) BLOCK( \
+	if ( unlikely( pipe( FDS ) == -1 ) ) PERROR_EXIT( EX_OSERR ); )
 
 // extern variable definitions
 extern char const  *me;                 // executable name

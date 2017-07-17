@@ -490,7 +490,7 @@ static int buf_getc( char const **ppc ) {
 
   while ( !**ppc ) {
 read_line:
-    if ( !buf_readline() )
+    if ( unlikely( !buf_readline() ) )
       return EOF;
     *ppc = input_buf;
     nonws_no_wrap_range[1] = 0;
@@ -578,16 +578,16 @@ read_line:
  * @return Returns said code-point or \c CP_EOF.
  */
 static codepoint_t buf_getcp( char const **ppc, utf8c_t utf8c ) {
-  if ( (utf8c[0] = buf_getc( ppc )) == EOF )
+  if ( unlikely( (utf8c[0] = buf_getc( ppc )) == EOF ) )
     return CP_EOF;
   size_t const len = utf8_len( utf8c[0] );
-  if ( !len )
+  if ( unlikely( !len ) )
     return CP_INVALID;
 
   for ( size_t i = 1; i < len; ++i ) {
-    if ( (utf8c[i] = buf_getc( ppc )) == EOF )
+    if ( unlikely( (utf8c[i] = buf_getc( ppc )) == EOF ) )
       return CP_EOF;
-    if ( !utf8_is_cont( utf8c[i] ) )
+    if ( unlikely( !utf8_is_cont( utf8c[i] ) ) )
       return CP_INVALID;
   } // for
 

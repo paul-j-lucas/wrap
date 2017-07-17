@@ -93,7 +93,7 @@ void* check_realloc( void *p, size_t size ) {
   if ( !size )
     size = 1;
   void *const r = p ? realloc( p, size ) : malloc( size );
-  if ( !r )
+  if ( unlikely( !r ) )
     PERROR_EXIT( EX_OSERR );
   return r;
 }
@@ -101,7 +101,7 @@ void* check_realloc( void *p, size_t size ) {
 char* check_strdup( char const *s ) {
   assert( s );
   char *const dup = strdup( s );
-  if ( !dup )
+  if ( unlikely( !dup ) )
     PERROR_EXIT( EX_OSERR );
   return dup;
 }
@@ -191,20 +191,20 @@ unsigned get_term_columns( void ) {
     char const *reason = NULL;
     int cterm_fd = -1;
 
+    char const *const term = getenv( "TERM" );
+    if ( unlikely( !term ) ) {
+      reason = "TERM environment variable not set";
+      goto error;
+    }
+
     char const *const cterm_path = ctermid( NULL );
-    if ( !cterm_path || !*cterm_path ) {
+    if ( unlikely( !cterm_path || !*cterm_path ) ) {
       reason = "ctermid(3) failed to get controlling terminal";
       goto error;
     }
 
-    if ( (cterm_fd = open( cterm_path, O_RDWR )) == -1 ) {
+    if ( unlikely( (cterm_fd = open( cterm_path, O_RDWR )) == -1 ) ) {
       reason = STRERROR;
-      goto error;
-    }
-
-    char const *const term = getenv( "TERM" );
-    if ( !term ) {
-      reason = "TERM environment variable not set";
       goto error;
     }
 
@@ -234,7 +234,7 @@ unsigned get_term_columns( void ) {
     }
 
     int const ti_cols = tigetnum( (char*)"cols" );
-    if ( ti_cols < 0 ) {
+    if ( unlikely( ti_cols < 0 ) ) {
       snprintf(
         reason_buf, sizeof reason_buf,
         "tigetnum(\"cols\") returned error code %d", ti_cols
@@ -245,7 +245,7 @@ unsigned get_term_columns( void ) {
     cols = (unsigned)ti_cols;
 
 error:
-    if ( cterm_fd != -1 )
+    if ( likely( cterm_fd != -1 ) )
       close( cterm_fd );
     if ( reason )
       PMESSAGE_EXIT( EX_UNAVAILABLE,
