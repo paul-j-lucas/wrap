@@ -187,11 +187,11 @@ codepoint_t utf8_decode_impl( char const *s ) {
   uint8_t const *u = (uint8_t const*)s;
 
   switch ( len ) {
-    case 6: cp += *u++; cp <<= 6;
-    case 5: cp += *u++; cp <<= 6;
-    case 4: cp += *u++; cp <<= 6;
-    case 3: cp += *u++; cp <<= 6;
-    case 2: cp += *u++; cp <<= 6;
+    case 6: cp += *u++; cp <<= 6; // FALLTHROUGH
+    case 5: cp += *u++; cp <<= 6; // FALLTHROUGH
+    case 4: cp += *u++; cp <<= 6; // FALLTHROUGH
+    case 3: cp += *u++; cp <<= 6; // FALLTHROUGH
+    case 2: cp += *u++; cp <<= 6; // FALLTHROUGH
     case 1: cp += *u;
   } // switch
 
