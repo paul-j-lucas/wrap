@@ -211,8 +211,8 @@ static struct option const *const LONG_OPTS[] = {
  * @param opts2 The second set of short options.
  */
 static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
-  assert( opts1 );
-  assert( opts2 );
+  assert( opts1 != NULL );
+  assert( opts2 != NULL );
 
   unsigned gave_count = 0;
   char const *opt = opts1;
@@ -266,8 +266,8 @@ static char const* get_long_opt( char short_opt ) {
  * @return Returns the alignment column.
  */
 static unsigned parse_align( char const *s, char *align_char ) {
-  assert( s );
-  assert( align_char );
+  assert( s != NULL );
+  assert( align_char != NULL );
 
   static char const *const AUTO  [] = { "a", "auto", NULL };
   static char const *const SPACES[] = { "s", "space", "spaces", NULL };
@@ -332,7 +332,7 @@ static eol_t parse_eol( char const *s ) {
     { NULL,       EOL_INPUT   }
   };
 
-  assert( s );
+  assert( s != NULL );
   size_t values_buf_size = 1;           // for trailing null
 
   for ( eol_map_t const *m = EOL_MAP; m->em_name; ++m ) {
@@ -379,7 +379,7 @@ static void parse_options( int argc, char const *argv[],
                            struct option const long_opts[],
                            char const cmdline_forbidden_opts[],
                            void (*usage)(void), unsigned line_no ) {
-  assert( usage );
+  assert( usage != NULL );
 
   optind = opterr = 1;
   bool print_version = false;
@@ -477,7 +477,7 @@ static unsigned parse_width( char const *s ) {
     NULL
   };
 
-  assert( s );
+  assert( s != NULL );
   if ( is_digits( s ) )
     return (unsigned)strtoul( s, NULL, 10 );
 
@@ -523,7 +523,7 @@ char* format_opt( char short_opt, char buf[], size_t size ) {
 }
 
 void options_init( int argc, char const *argv[], void (*usage)(void) ) {
-  assert( usage );
+  assert( usage != NULL );
   me = base_name( argv[0] );
   is_wrapc = strcmp( me, PACKAGE "c" ) == 0;
 

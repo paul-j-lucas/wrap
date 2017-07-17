@@ -79,7 +79,7 @@ static alias_t* alias_alloc( void ) {
  * @param line_no The line-number within \a conf_file.
  */
 static void alias_check_dup( char const *conf_file, unsigned line_no ) {
-  assert( conf_file );
+  assert( conf_file != NULL );
   if ( n_aliases > 1 ) {
     //
     // The number of aliases is assumed to be small, so linear search is good
@@ -103,7 +103,7 @@ static void alias_check_dup( char const *conf_file, unsigned line_no ) {
  * @param alias The alias to free.
  */
 static void alias_free( alias_t *alias ) {
-  assert( alias );
+  assert( alias != NULL );
   while ( alias->argc > 0 )
     FREE( alias->argv[ --alias->argc ] );
   FREE( alias->argv );
@@ -120,10 +120,10 @@ static void alias_free( alias_t *alias ) {
  */
 static void alias_import( alias_t *to_alias, char const **ps,
                           char const *conf_file, unsigned line_no ) {
-  assert( to_alias );
-  assert( ps );
+  assert( to_alias != NULL );
+  assert( ps != NULL );
   assert( **ps == '@' );
-  assert( conf_file );
+  assert( conf_file != NULL );
 
   char from_name[ 40 ];
 
@@ -147,7 +147,7 @@ static void alias_import( alias_t *to_alias, char const **ps,
  * @return Returns a pointer to the next argument.
  */
 static char* arg_dup( char const **ps ) {
-  assert( ps );
+  assert( ps != NULL );
 
   char const *s = *ps;
   char *const arg_buf = MALLOC( char, strlen( s ) + 1 );
@@ -197,9 +197,9 @@ done:
  */
 static size_t strcpy_set( char *dest, size_t dest_size, char const *set,
                           char const *src ) {
-  assert( dest );
-  assert( set );
-  assert( src );
+  assert( dest != NULL );
+  assert( set != NULL );
+  assert( src != NULL );
 
   char const *const dest_end = dest + dest_size - 1/*null*/;
   size_t n_copied = 0;
@@ -220,7 +220,7 @@ void alias_cleanup( void ) {
 }
 
 alias_t const* alias_find( char const *name ) {
-  assert( name );
+  assert( name != NULL );
   for ( size_t i = 0; i < n_aliases; ++i )
     if ( strcmp( aliases[i].argv[0], name ) == 0 )
       return &aliases[i];
@@ -242,8 +242,8 @@ void dump_aliases( void ) {
 #endif /* NDEBUG */
 
 void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
-  assert( line );
-  assert( conf_file );
+  assert( line != NULL );
+  assert( conf_file != NULL );
   assert( line_no );
 
   size_t n_argv_alloc = ALIAS_ARGV_ALLOC_DEFAULT;

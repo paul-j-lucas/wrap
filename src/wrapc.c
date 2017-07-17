@@ -526,7 +526,7 @@ done:
  * @param s The newline- and null-terminated string to adjust.
  */
 static void adjust_comment_width( char *s ) {
-  assert( s );
+  assert( s != NULL );
   size_t const delim_len = suffix_buf[0] ? suffix_len : 1 + !!close_cc[1];
   size_t const width = opt_line_width + prefix_len0 + suffix_len;
   size_t s_len = strlen_no_eol( s );
@@ -576,7 +576,7 @@ static void adjust_comment_width( char *s ) {
  * @param s The newline- and null-terminated string to chop.
  */
 static void chop_suffix( char *s ) {
-  assert( s );
+  assert( s != NULL );
   assert( suffix_buf[0] );
   char *cc = s;
 
@@ -659,7 +659,7 @@ static void init( int argc, char const *argv[] ) {
  * @return Returns \c true only if \a s is the beginning of a block comment.
  */
 static bool is_block_comment( char const *s ) {
-  assert( s );
+  assert( s != NULL );
   if ( (s = is_line_comment( s )) ) {
     for ( ++s; *s && *s != '\n' && !isalpha( *s ); ++s )
       /* empty */;
@@ -684,7 +684,7 @@ static bool is_block_comment( char const *s ) {
  * or null if it's not a terminated comment.
  */
 static char const* is_terminated_comment( char *s ) {
-  assert( s );
+  assert( s != NULL );
   char const *cc = NULL;
   char *tws = NULL;                     // trailing whitespace
 
@@ -789,7 +789,7 @@ static char const* is_terminated_comment( char *s ) {
  * @return Returns the length of the prototype.
  */
 static size_t prefix_span( char const *s ) {
-  assert( s );
+  assert( s != NULL );
   size_t ws_len = strspn( s, WS_ST );
   size_t const cc_len = strspn( s += ws_len, opt_comment_chars );
   if ( cc_len )
@@ -970,7 +970,7 @@ static void set_prefix( char const *prefix, size_t len ) {
  * occurrence of \a c.
  */
 static char* skip_c( char *s, char c ) {
-  assert( s );
+  assert( s != NULL );
   for ( ; *s == c; ++s )
     /* empty */;
   return s;
@@ -984,7 +984,7 @@ static char* skip_c( char *s, char c ) {
  * @return Returns either \a s+n or a pointer to an end-of-line character.
  */
 static char* skip_n( char *s, size_t n ) {
-  assert( s );
+  assert( s != NULL );
   for ( ; *s && !is_eol( *s ) && n > 0; ++s, --n )
     /* empty */;
   return s;
@@ -998,7 +998,7 @@ static char* skip_n( char *s, size_t n ) {
  * @return Returns said length.
  */
 static size_t strlen_no_eol( char const *s ) {
-  assert( s );
+  assert( s != NULL );
   size_t n = strlen( s );
   (void)(n && s[ n - 1 ] == '\n' &&
        --n && s[ n - 1 ] == '\r' &&
@@ -1038,7 +1038,7 @@ static char const* str_status( int status ) {
  * @return Returns said width.
  */
 static size_t str_width( char const *s ) {
-  assert( s );
+  assert( s != NULL );
   size_t width = 0;
   while ( *s )
     width += char_width( *s++, width );

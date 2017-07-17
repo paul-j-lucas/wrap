@@ -68,7 +68,7 @@ static free_node_t *free_head;          // linked list of stuff to free
 ////////// extern functions ///////////////////////////////////////////////////
 
 char const* base_name( char const *path_name ) {
-  assert( path_name );
+  assert( path_name != NULL );
   char const *const slash = strrchr( path_name, '/' );
   if ( slash )
     return slash[1] ? slash + 1 : slash;
@@ -76,7 +76,7 @@ char const* base_name( char const *path_name ) {
 }
 
 unsigned check_atou( char const *s ) {
-  assert( s );
+  assert( s != NULL );
   if ( !is_digits( s ) )
     PMESSAGE_EXIT( EX_USAGE, "\"%s\": invalid integer\n", s );
   return (unsigned)strtoul( s, NULL, 10 );
@@ -99,7 +99,7 @@ void* check_realloc( void *p, size_t size ) {
 }
 
 char* check_strdup( char const *s ) {
-  assert( s );
+  assert( s != NULL );
   char *const dup = strdup( s );
   if ( unlikely( !dup ) )
     PERROR_EXIT( EX_OSERR );
@@ -107,7 +107,7 @@ char* check_strdup( char const *s ) {
 }
 
 size_t chop_eol( char *s, size_t s_len ) {
-  assert( s );
+  assert( s != NULL );
   if ( s_len && s[ s_len-1 ] == '\n' ) {
     if ( --s_len && s[ s_len-1 ] == '\r' )
       --s_len;
@@ -127,8 +127,8 @@ char closing_char( char c ) {
 }
 
 void fcopy( FILE *ffrom, FILE *fto ) {
-  assert( ffrom );
-  assert( fto );
+  assert( ffrom != NULL );
+  assert( fto != NULL );
 
   char buf[ 8192 ];
   for ( size_t size; (size = fread( buf, 1, sizeof buf, ffrom )) > 0; )
@@ -137,9 +137,9 @@ void fcopy( FILE *ffrom, FILE *fto ) {
 }
 
 char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
-  assert( buf );
-  assert( size );
-  assert( ffrom );
+  assert( buf != NULL );
+  assert( size != NULL );
+  assert( ffrom != NULL );
   //
   // Based on the implementation given in:
   //
@@ -161,7 +161,7 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
 }
 
 void* free_later( void *p ) {
-  assert( p );
+  assert( p != NULL );
   free_node_t *const new_node = MALLOC( free_node_t, 1 );
   new_node->fn_ptr = p;
   new_node->fn_next = free_head;
@@ -311,8 +311,8 @@ void split_tws( char buf[], size_t buf_len, char tws[] ) {
 }
 
 size_t strcpy_len( char *dst, char const *src ) {
-  assert( dst );
-  assert( src );
+  assert( dst != NULL );
+  assert( src != NULL );
   char const *const dst0 = dst;
   while ( (*dst++ = *src++) )
     /* empty */;
@@ -320,8 +320,8 @@ size_t strcpy_len( char *dst, char const *src ) {
 }
 
 size_t strrspn( char const *s, char const *set ) {
-  assert( s );
-  assert( set );
+  assert( s != NULL );
+  assert( set != NULL );
 
   size_t n = 0;
   for ( char const *t = s + strlen( s ); t-- > s && strchr( set, *t ); ++n )
@@ -331,7 +331,7 @@ size_t strrspn( char const *s, char const *set ) {
 
 #ifndef NDEBUG
 void wait_for_debugger_attach( char const *env_var ) {
-  assert( env_var );
+  assert( env_var != NULL );
   if ( is_affirmative( getenv( env_var ) ) ) {
     PRINT_ERR( "pid=%u: waiting for debugger to attach...\n", getpid() );
     if ( raise( SIGSTOP ) == -1 )

@@ -291,7 +291,7 @@ static inline md_indent_t md_code_indent_min( void ) {
  * @return Returns \a true only if \s is in \a a.
  */
 static bool bin_search( char const *s, char const *const a[], size_t n ) {
-  assert( s );
+  assert( s != NULL );
   for ( ssize_t i = 0, j = (ssize_t)n - 1; i <= j; ) {
     size_t const m = (i + j) / 2;
     int const cmp = strcmp( a[m], s );
@@ -314,8 +314,8 @@ static bool bin_search( char const *s, char const *const a[], size_t n ) {
  * @return Returns a pointer to the first non-whitespace character.
  */
 static char* first_non_whitespace( char *s, md_indent_t *indent_left ) {
-  assert( s );
-  assert( indent_left );
+  assert( s != NULL );
+  assert( indent_left != NULL );
 
   *indent_left = 0;
   for ( size_t tab_pos = 0; *s; ++s, ++tab_pos ) {
@@ -351,7 +351,7 @@ done:
  * scheme or null otherwise.
  */
 static char const* is_uri_scheme( char const *s ) {
-  assert( s );
+  assert( s != NULL );
   if ( isalpha( *s ) ) {                // must be ^[a-zA-Z][a-zA-Z0-9.+-]*
     while ( *++s ) {
       if ( *s == ':' )
@@ -394,7 +394,7 @@ static md_indent_t md_indent_divisor( md_indent_t indent_left ) {
  * @return Returns \c true only if it is.
  */
 static bool md_is_atx_header( char const *s ) {
-  assert( s );
+  assert( s != NULL );
   assert( s[0] == '#' );
 
   size_t n_atx = 0;
@@ -417,8 +417,8 @@ static bool md_is_atx_header( char const *s ) {
  * @return Returns \c true only if it is.
  */
 static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
-  assert( s );
-  assert( fence );
+  assert( s != NULL );
+  assert( fence != NULL );
   assert( s[0] == '~' || s[0] == '`' );
   assert(
     (!fence->cf_c && !fence->cf_len) ||
@@ -453,7 +453,7 @@ static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
  * item.
  */
 static bool md_is_dl( char const *s, md_indent_t *indent_hang ) {
-  assert( s );
+  assert( s != NULL );
   assert( s[0] == ':' );
   return md_is_dl_ul_helper( s, indent_hang );
 }
@@ -469,7 +469,7 @@ static bool md_is_dl( char const *s, md_indent_t *indent_hang ) {
  * item.
  */
 static bool md_is_dl_ul_helper( char const *s, md_indent_t *indent_hang ) {
-  assert( indent_hang );
+  assert( indent_hang != NULL );
   if ( is_space( s[1] ) ) {
     if ( s[1] == '\t' )
       *indent_hang = MD_LIST_INDENT_MAX;
@@ -496,9 +496,9 @@ static bool md_is_dl_ul_helper( char const *s, md_indent_t *indent_hang ) {
  * definition.
  */
 static bool md_is_footnote_def( char const *s, bool *def_text ) {
-  assert( s );
+  assert( s != NULL );
   assert( s[0] == '[' );
-  assert( def_text );
+  assert( def_text != NULL );
 
   if ( *++s == '^' ) {
     while ( *++s ) {
@@ -524,7 +524,7 @@ static bool md_is_footnote_def( char const *s, bool *def_text ) {
  * @return Returns \c true only if it is.
  */
 static bool md_is_hr( char const *s ) {
-  assert( s );
+  assert( s != NULL );
   assert( s[0] == '*' || s[0] == '-' || s[0] == '_' );
 
   size_t n_hr = 0;
@@ -547,7 +547,7 @@ static bool md_is_hr( char const *s ) {
  * abbreviation.
  */
 static bool md_is_html_abbr( char const *s ) {
-  assert( s );
+  assert( s != NULL );
   assert( s[0] == '*' );
 
   if ( *++s == '[' ) {
@@ -588,7 +588,7 @@ static bool md_is_html_end( html_state_t html_state, char const *s ) {
   };
 
   assert( (size_t)html_state < ARRAY_SIZE( HTML_END_STR ) );
-  assert( s );
+  assert( s != NULL );
 
   if ( html_state == HTML_PRE ) {
     //
@@ -620,9 +620,9 @@ static bool md_is_html_end( html_state_t html_state, char const *s ) {
  * special markup or HTML_NONE if not.
  */
 static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
-  assert( s );
+  assert( s != NULL );
   assert( s[0] == '<' );
-  assert( is_end_tag );
+  assert( is_end_tag != NULL );
 
   if ( !*++s )
     return HTML_NONE;
@@ -705,9 +705,9 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
  * @return Returns \c true only if \a s is a Markdown link label.
  */
 static bool md_is_link_label( char const *s, bool *has_title ) {
-  assert( s );
+  assert( s != NULL );
   assert( s[0] == '[' );
-  assert( has_title );
+  assert( has_title != NULL );
 
   while ( *++s ) {
     if ( *s == ']' ) {
@@ -750,11 +750,11 @@ static bool md_is_link_label( char const *s, bool *has_title ) {
  */
 static bool md_is_ol( char const *s, md_ol_t *ol_num, char *ol_c,
                       md_indent_t *indent_hang ) {
-  assert( s );
+  assert( s != NULL );
   assert( isdigit( s[0] ) );
-  assert( ol_num );
-  assert( ol_c );
-  assert( indent_hang );
+  assert( ol_num != NULL );
+  assert( ol_c != NULL );
+  assert( indent_hang != NULL );
 
   *ol_num = 0;
   char const *d = s;
@@ -780,7 +780,7 @@ static bool md_is_ol( char const *s, md_ol_t *ol_num, char *ol_c,
  * @return Returns \c true only if \a s is a PHP Markdown Extra table line.
  */
 static bool md_is_table( char const *s ) {
-  assert( s );
+  assert( s != NULL );
   bool nws = false;                     // encountered non-whitespace?
 
   for ( ; *s; ++s ) {
@@ -815,7 +815,7 @@ static bool md_is_table( char const *s ) {
  * @return Returns \c true only if \a s is a Markdown unordered list item.
  */
 static bool md_is_ul( char const *s, md_indent_t *indent_hang ) {
-  assert( s );
+  assert( s != NULL );
   assert( s[0] == '*' || s[0] == '-' || s[0] == '+' );
   return md_is_dl_ul_helper( s, indent_hang );
 }
@@ -829,7 +829,7 @@ static bool md_is_ul( char const *s, md_indent_t *indent_hang ) {
  * @return Returns \c true onlt if it is.
  */
 static bool md_is_Setext_header( char const *s ) {
-  assert( s );
+  assert( s != NULL );
   assert( s[0] == '-' || s[0] == '=' );
 
   for ( char const c = *s; *s && !is_eol( *s ); ++s ) {
@@ -863,7 +863,7 @@ static md_line_t md_nested_within( void ) {
  * @param new_n The new number.
  */
 static void md_renumber_ol( char *s, md_ol_t old_n, md_ol_t new_n ) {
-  assert( s );
+  assert( s != NULL );
   if ( new_n != old_n ) {
     size_t const s_len = strlen( s );
     size_t const old_digits = 1 + (old_n > 9) + (old_n > 99);
@@ -894,8 +894,8 @@ static void md_renumber_ol( char *s, md_ol_t old_n, md_ol_t new_n ) {
  * pointer to an empty string if \a s is not an HTML (or XML) tag.
  */
 static char const* skip_html_tag( char const *s, bool *is_end_tag ) {
-  assert( s );
-  assert( is_end_tag );
+  assert( s != NULL );
+  assert( is_end_tag != NULL );
 
   if ( *s == '<' ) {
     //
@@ -992,7 +992,7 @@ void markdown_init( void ) {
 }
 
 md_state_t const* markdown_parse( char *s ) {
-  assert( s );
+  assert( s != NULL );
 
   static md_code_fence_t code_fence;
   md_indent_t indent_left;

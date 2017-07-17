@@ -62,8 +62,8 @@ static inline bool cp_is_word_char( codepoint_t cp ) {
  * of a word.
  */
 static bool is_begin_word_boundary( char const *s, char const *curr ) {
-  assert( s );
-  assert( curr );
+  assert( s != NULL );
+  assert( curr != NULL );
   assert( curr >= s );
 
   if ( curr == s )
@@ -86,7 +86,7 @@ static bool is_begin_word_boundary( char const *s, char const *curr ) {
  * @param err_code The error code.
  */
 static void regex_error( wregex_t *re, int err_code ) {
-  assert( re );
+  assert( re != NULL );
   char err_buf[ 128 ];
   regerror( err_code, re, err_buf, sizeof err_buf );
   PMESSAGE_EXIT( EX_SOFTWARE,
@@ -97,13 +97,13 @@ static void regex_error( wregex_t *re, int err_code ) {
 ////////// extern functions ///////////////////////////////////////////////////
 
 void regex_free( wregex_t *re ) {
-  assert( re );
+  assert( re != NULL );
   regfree( re );
 }
 
 void regex_init( wregex_t *re, char const *pattern ) {
-  assert( re );
-  assert( pattern );
+  assert( re != NULL );
+  assert( pattern != NULL );
 
   int const err_code = regcomp( re, pattern, WRAP_REGEX_COMPILE_FLAGS );
   if ( err_code != 0 )
@@ -112,8 +112,8 @@ void regex_init( wregex_t *re, char const *pattern ) {
 
 bool regex_match( wregex_t *re, char const *s, size_t offset,
                   size_t range[2] ) {
-  assert( re );
-  assert( s );
+  assert( re != NULL );
+  assert( s != NULL );
 
   char const *const so = s + offset;
   regmatch_t match[ re->re_nsub + 1 ];

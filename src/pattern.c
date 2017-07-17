@@ -70,7 +70,7 @@ static pattern_t* pattern_alloc( void ) {
  * @param pattern The pattern to free.
  */
 static void pattern_free( pattern_t *pattern ) {
-  assert( pattern );
+  assert( pattern != NULL );
   FREE( pattern->pattern );
 }
 
@@ -94,7 +94,7 @@ void pattern_cleanup( void ) {
 }
 
 alias_t const* pattern_find( char const *file_name ) {
-  assert( file_name );
+  assert( file_name != NULL );
   for ( size_t i = 0; i < n_patterns; ++i )
     if ( fnmatch( patterns[i].pattern, file_name, 0 ) == 0 )
       return patterns[i].alias;
@@ -103,9 +103,9 @@ alias_t const* pattern_find( char const *file_name ) {
 
 void pattern_parse( char const *line, char const *conf_file,
                     unsigned line_no ) {
-  assert( line );
-  assert( conf_file );
-  assert( line_no );
+  assert( line != NULL );
+  assert( conf_file != NULL );
+  assert( line_no > 0 );
 
   pattern_t *const pattern = pattern_alloc();
 

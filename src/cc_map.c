@@ -78,7 +78,7 @@ static unsigned cc_set_add( cc_set_t cc_set, char c ) {
 ////////// extern functions ///////////////////////////////////////////////////
 
 char const* cc_map_compile( char const *in_cc ) {
-  assert( in_cc );
+  assert( in_cc != NULL );
 
   cc_set_t cc_set = { false };
   unsigned distinct_cc = 0;             // distinct comment characters

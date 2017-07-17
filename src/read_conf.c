@@ -67,8 +67,8 @@ static char const* home_dir( void ) {
  * @param component The component to append.
  */
 static void path_append( char *path, char const *component ) {
-  assert( path );
-  assert( component );
+  assert( path != NULL );
+  assert( component != NULL );
 
   size_t const len = strlen( path );
   if ( len ) {
@@ -86,7 +86,7 @@ static void path_append( char *path, char const *component ) {
  * @return Returns \a s on success or NULL for an unclosed quote.
  */
 static char* strip_comment( char *s ) {
-  assert( s );
+  assert( s != NULL );
   char *const s0 = s;
   char quote = '\0';
 
@@ -120,7 +120,7 @@ static char* strip_comment( char *s ) {
  * @return Returns a pointer to within \a s having all whitespace trimmed.
  */
 static char* trim_ws( char *s ) {
-  assert( s );
+  assert( s != NULL );
   SKIP_CHARS( s, WS_STR );
   for ( size_t len = strlen( s ); len > 0 && isspace( s[ --len ] ); )
     s[ len ] = '\0';

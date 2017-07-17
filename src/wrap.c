@@ -30,7 +30,6 @@
 #include "wregex.h"
 
 // standard
-#include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
