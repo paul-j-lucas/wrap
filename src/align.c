@@ -228,8 +228,8 @@ void align_eol_comments( char input_buf[] ) {
             }
 
             //
-            // Copy the comment without the end-of-line so we can replace it
-            // by whatever the chosen line-ending is.
+            // Copy the comment without the end-of-line so we can replace it by
+            // whatever the chosen line-ending is.
             //
             output_len += strcpy_len( output_buf + output_len, s );
             output_len = chop_eol( output_buf, output_len );
