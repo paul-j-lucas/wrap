@@ -211,7 +211,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   pid_t const pid = fork();
   if ( unlikely( pid == -1 ) ) {        // we failed, so kill the first child
     kill( read_source_write_wrap_pid, SIGTERM );
-    PERROR_EXIT( EX_OSERR );
+    perror_exit( EX_OSERR );
   }
   if ( pid != 0 )                       // parent process
     return;
@@ -270,7 +270,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   REDIRECT( STDIN_FILENO, TO_WRAP );
   REDIRECT( STDOUT_FILENO, FROM_WRAP );
   execvp( PACKAGE, argv );
-  PERROR_EXIT( EX_OSERR );
+  perror_exit( EX_OSERR );
 #endif /* DEBUG_RSWW */
 }
 
@@ -285,7 +285,7 @@ static pid_t read_source_write_wrap( void ) {
 #ifndef DEBUG_RSWW
   pid_t const pid = fork();
   if ( unlikely( pid == -1 ) )
-    PERROR_EXIT( EX_OSERR );
+    perror_exit( EX_OSERR );
   if ( pid != 0 )                       // parent process
     return pid;
   //

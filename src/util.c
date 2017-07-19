@@ -94,7 +94,7 @@ void* check_realloc( void *p, size_t size ) {
     size = 1;
   void *const r = p ? realloc( p, size ) : malloc( size );
   if ( unlikely( !r ) )
-    PERROR_EXIT( EX_OSERR );
+    perror_exit( EX_OSERR );
   return r;
 }
 
@@ -102,7 +102,7 @@ char* check_strdup( char const *s ) {
   assert( s != NULL );
   char *const dup = strdup( s );
   if ( unlikely( !dup ) )
-    PERROR_EXIT( EX_OSERR );
+    perror_exit( EX_OSERR );
   return dup;
 }
 
@@ -282,6 +282,11 @@ bool is_any( char const *s, char const *const matches[] ) {
   return false;
 }
 
+void perror_exit( int status ) {
+  perror( me );
+  exit( status );
+}
+
 void setlocale_utf8( void ) {
   static char const *const UTF8_LOCALES[] = {
     "UTF-8", "UTF8",
@@ -335,7 +340,7 @@ void wait_for_debugger_attach( char const *env_var ) {
   if ( is_affirmative( getenv( env_var ) ) ) {
     PRINT_ERR( "pid=%u: waiting for debugger to attach...\n", getpid() );
     if ( raise( SIGSTOP ) == -1 )
-      PERROR_EXIT( EX_OSERR );
+      perror_exit( EX_OSERR );
   }
 }
 #endif /* NDEBUG */

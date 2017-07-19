@@ -50,7 +50,6 @@ _GL_INLINE_HEADER_BEGIN
 #define CONST_CAST(T,EXPR)        ((T)(EXPR))
 #define FREE(PTR)                 free( CONST_CAST( void*, (PTR) ) )
 #define NO_OP                     ((void)0)
-#define PERROR_EXIT(STATUS)       BLOCK( perror( me ); exit( STATUS ); )
 #define PRINT_ERR(...)            fprintf( stderr, __VA_ARGS__ )
 #define SKIP_CHARS(S,CHARS)       ((S) += strspn( (S), (CHARS) ))
 #define STRERROR                  strerror( errno )
@@ -95,25 +94,25 @@ _GL_INLINE_HEADER_BEGIN
   (PTR) = (TYPE*)check_realloc( (PTR), sizeof(TYPE) * (N) )
 
 #define W_DUP(FD) BLOCK( \
-	if ( unlikely( dup( FD ) == -1 ) ) PERROR_EXIT( EX_OSERR ); )
+	if ( unlikely( dup( FD ) == -1 ) ) perror_exit( EX_OSERR ); )
 
 #define W_FERROR(STREAM) BLOCK( \
-	if ( unlikely( ferror( STREAM ) ) ) PERROR_EXIT( EX_IOERR ); )
+	if ( unlikely( ferror( STREAM ) ) ) perror_exit( EX_IOERR ); )
 
 #define W_FPRINTF(STREAM,...) BLOCK( \
-	if ( unlikely( fprintf( (STREAM), __VA_ARGS__ ) < 0 ) ) PERROR_EXIT( EX_IOERR ); )
+	if ( unlikely( fprintf( (STREAM), __VA_ARGS__ ) < 0 ) ) perror_exit( EX_IOERR ); )
 
 #define W_FPUTC(C,STREAM) BLOCK( \
-	if ( unlikely( putc( (C), (STREAM) ) == EOF ) ) PERROR_EXIT( EX_IOERR ); )
+	if ( unlikely( putc( (C), (STREAM) ) == EOF ) ) perror_exit( EX_IOERR ); )
 
 #define W_FPUTS(S,STREAM) BLOCK( \
-	if ( unlikely( fputs( (S), (STREAM) ) == EOF ) ) PERROR_EXIT( EX_IOERR ); )
+	if ( unlikely( fputs( (S), (STREAM) ) == EOF ) ) perror_exit( EX_IOERR ); )
 
 #define W_FWRITE(BUF,SIZE,NITEMS,STREAM) BLOCK( \
-	if ( unlikely( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS) ) ) PERROR_EXIT( EX_IOERR ); )
+	if ( unlikely( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS) ) ) perror_exit( EX_IOERR ); )
 
 #define W_PIPE(FDS) BLOCK( \
-	if ( unlikely( pipe( FDS ) == -1 ) ) PERROR_EXIT( EX_OSERR ); )
+	if ( unlikely( pipe( FDS ) == -1 ) ) perror_exit( EX_OSERR ); )
 
 // extern variable definitions
 extern char const  *me;                 // executable name
@@ -297,6 +296,13 @@ WRAP_UTIL_INLINE bool is_space( char c ) {
 WRAP_UTIL_INLINE bool is_windows_eol( char const buf[], size_t buf_len ) {
   return buf_len >= 2 && buf[ buf_len - 2 ] == '\r';
 }
+
+/**
+ * Prints an error message for \c errno to standard error and exits.
+ *
+ * @param status The exit status code.
+ */
+void perror_exit( int status );
 
 /**
  * Sets the locale for the \c LC_COLLATE and \c LC_CTYPE categories to UTF-8.

@@ -956,7 +956,7 @@ static void stack_push( md_line_t line_type, md_indent_t indent_left,
     REALLOC( stack, md_state_t, stack_capacity );
   }
   if ( !stack )
-    PERROR_EXIT( EX_OSERR );
+    perror_exit( EX_OSERR );
 
   md_state_t *const top = &TOP;
   top->line_type   = line_type;

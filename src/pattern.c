@@ -60,7 +60,7 @@ static pattern_t* pattern_alloc( void ) {
     REALLOC( patterns, pattern_t, n_patterns_alloc );
   }
   if ( !patterns )
-    PERROR_EXIT( EX_OSERR );
+    perror_exit( EX_OSERR );
   return &patterns[ n_patterns++ ];
 }
 
