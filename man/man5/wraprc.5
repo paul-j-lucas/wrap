@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wraprc\fP 1 "December 4, 2017" "PJL TOOLS"
+.TH \f3wraprc\fP 1 "February 18, 2018" "PJL TOOLS"
 .SH NAME
 wraprc \- text reformatter runtime configuration file
 .SH DESCRIPTION
@@ -195,7 +195,7 @@ code   = --block-chars=@ --markdown
 c-like = @code --comment-chars=/*,//
 markup = --eos-delimit --para-chars=,:;
 man    = @markup --dot-ignore
-script = @code --comment-chars=#
+script = @code --comment-chars=\\#
 
 [PATTERNS]
 *.[chly]   = c-like
