@@ -217,16 +217,17 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
     return;
 
   typedef char arg_buf_t[ ARG_BUF_SIZE ];
+  typedef char path_buf_t[ PATH_MAX ];
 
-  arg_buf_t arg_opt_alias;
-  arg_buf_t arg_opt_conf_file;
-  arg_buf_t arg_opt_eol;
-  arg_buf_t arg_opt_eos_spaces;
-  char      arg_opt_fin_name[ PATH_MAX ];
-  arg_buf_t arg_opt_lead_para_delims;
-  arg_buf_t arg_opt_line_width;
-  arg_buf_t arg_opt_para_delims;
-  arg_buf_t arg_opt_tab_spaces;
+  arg_buf_t   arg_opt_alias;
+  arg_buf_t   arg_opt_conf_file;
+  arg_buf_t   arg_opt_eol;
+  arg_buf_t   arg_opt_eos_spaces;
+  path_buf_t  arg_opt_fin_name;
+  arg_buf_t   arg_opt_lead_para_delims;
+  arg_buf_t   arg_opt_line_width;
+  arg_buf_t   arg_opt_para_delims;
+  arg_buf_t   arg_opt_tab_spaces;
 
   int argc = 0;
   char *argv[16];                       // must be +1 of greatest arg below
