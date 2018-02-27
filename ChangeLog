@@ -1,3 +1,99 @@
+2018-02-20  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.1: Fixed English.
+   * wrap.1: s/--markdown/--no-hyphen/
+
+2018-02-18  Paul J. Lucas <paul@lucasmail.org>
+
+   * wraprc.5: Added missing backslash.
+   * wrapc.c: Added path_buf_t.
+
+2018-01-12  Paul J. Lucas <paul@lucasmail.org>
+
+   * test/Makefile.am: Cosmetic change.
+
+2017-12-04  Paul J. Lucas <paul@lucasmail.org>
+
+   * wraprc.5: Now correctly specify allowable characters in alias names.
+
+2017-08-26  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, flexmember.h, fnmatch.c, fnmatch_loop.c,
+     getopt-pfx-core.h, getopt-pfx-ext.h, getopt.c, gettext.h, intprops.h,
+     localcharset.c, mbrtowc.c, stdlib.in.h, string.in.h, sys_types.in.h,
+     unistd.in.h, wchar.in.h, wctype.in.h, extensions.m4, fcntl-o.m4,
+     include_next.m4, mbrtowc.m4, memchr.m4, stdlib_h.m4, strerror.m4,
+     string_h.m4, sys_types_h.m4, unistd_h.m4, wchar_h.m4, wctype_h.m4,
+     wint_t.m4: Updated gnulib.
+
+2017-07-19  Paul J. Lucas <paul@lucasmail.org>
+
+   * alias.c, markdown.c, pattern.c, util.c, util.h, wrapc.c: Made
+     perror_exit() a function.
+
+2017-07-16  Paul J. Lucas <paul@lucasmail.org>
+
+   * alias.c, cc_map.c, common.c, markdown.c, options.c, pattern.c,
+     read_conf.c, util.c, wrap.c, wrapc.c, wregex.c: Made assert conditions
+     explicit.
+   * options.c, read_conf.c, util.c, util.h, wrap.c, wrapc.c: Added likely()
+     and unlikely().
+   * unicode.c: Added FALLTHROUGH.
+   * align.c: Comment tweak.
+   * alias.c, cc_map.c, markdown.c, pattern.c, util.c, util.h: Now using
+     FREE().
+
+2017-04-27  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c, options.c: Changed "no break;" comment to "FALLTHROUGH" for
+     gcc >= 7.
+
+2017-04-22  Paul J. Lucas <paul@lucasmail.org>
+
+   * Makefile.am: Added README.md to EXTRA_DIST.
+   * lib/Makefile.am, arg-nonnull.h, c++defs.h, getopt-cdefs.in.h,
+     getopt-core.h, getopt-ext.h, getopt-pfx-core.h, getopt-pfx-ext.h,
+     getopt.c, getopt.in.h, getopt1.c, getopt_int.h, gettext.h, intprops.h,
+     localcharset.c, mbsinit.c, unistd.in.h, verify.h, warn-on-use.h,
+     flexmember.m4, getopt.m4, gnulib-common.m4, gnulib-comp.m4: Updated
+     GNUlib.
+   * src/Makefile.am: Added headers.
+
+2017-04-19  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS: Added missing .
+
+2017-04-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac: Fixed typo in comment.
+
+2017-03-11  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1, align.c, test/Makefile.am, wrapc-A-08c.c, wrapc-A-08c.txt,
+     wrapc-A-08c.test: Now special-casing # for align.
+   * wrapc.c: Comment tweak.
+
+2017-03-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, wrapc.1, align.c, test/Makefile.am, wrapc-A-08a.c, wrapc-A-08b.pas,
+     wrapc-A-09a.c, wrapc-A-08a.txt, wrapc-A-08b.txt, wrapc-A-09a.txt,
+     wrapc-A-08a.test, wrapc-A-08b.test, wrapc-A-09a.test: Now longer aligning
+     comments after single tokens.
+   * align.c, test/Makefile.am, wrapc-A-07.c, wrapc-A-07.txt, wrapc-A-07.test:
+     Fixed within-string comments.
+
+2017-03-05  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c, test/Makefile.am, hyphen-08.txt, wrap--hyphen-08.txt,
+     wrap--hyphen-08.test: Fixed hyphen wrapping bug.
+   * alias.h, cc_map.h, common.h, markdown.h, options.h, pattern.h,
+     read_conf.h, unicode.h, util.h, wregex.h: Added @file comments to header
+     files.
+
+2017-03-04  Paul J. Lucas <paul@lucasmail.org>
+
+   * util.h: Comment fix.
+
 2017-03-03  Paul J. Lucas <paul@lucasmail.org>
 
    * wrapc.c: Fixed typo in comment.
