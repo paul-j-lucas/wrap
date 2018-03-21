@@ -59,14 +59,14 @@ static size_t strcpy_set( char*, size_t, char const*, char const* );
 static alias_t* alias_alloc( void ) {
   static size_t n_aliases_alloc = 0;    // number of aliases allocated
 
-  if ( !n_aliases_alloc ) {
+  if ( n_aliases_alloc == 0 ) {
     n_aliases_alloc = ALIAS_ALLOC_DEFAULT;
     aliases = MALLOC( alias_t, n_aliases_alloc );
   } else if ( n_aliases > n_aliases_alloc ) {
     n_aliases_alloc += ALIAS_ALLOC_INCREMENT;
     REALLOC( aliases, alias_t, n_aliases_alloc );
   }
-  if ( !aliases )
+  if ( aliases == NULL )
     perror_exit( EX_OSERR );
   return &aliases[ n_aliases++ ];
 }
@@ -130,7 +130,7 @@ static void alias_import( alias_t *to_alias, char const **ps,
   ++*ps;                                // skip past '@'
   *ps += strcpy_set( from_name, sizeof from_name, ALIAS_NAME_CHARS, *ps );
   alias_t const *const from_alias = alias_find( from_name );
-  if ( !from_alias )
+  if ( from_alias == NULL )
     PMESSAGE_EXIT( EX_CONFIG,
       "%s:%u: \"@%s\": no such alias\n",
       conf_file, line_no, from_name
@@ -158,7 +158,7 @@ static char* arg_dup( char const **ps ) {
     switch ( *s ) {
       case ' ':
       case '\t':
-        if ( !quote )
+        if ( quote == '\0' )
           goto done;
         break;
       case '"':

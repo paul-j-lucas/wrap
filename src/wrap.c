@@ -409,7 +409,7 @@ int main( int argc, char const *argv[] ) {
     //  EXCEEDED LINE WIDTH; PRINT LINE OUT
     ///////////////////////////////////////////////////////////////////////////
 
-    if ( !wrap_pos ) {
+    if ( wrap_pos == 0 ) {
       //
       // We've exceeded the line width, but haven't encountered a whitespace
       // character at which to wrap; therefore, we've got a "long line."
@@ -489,7 +489,7 @@ static int buf_getc( char const **ppc ) {
 
   while ( !**ppc ) {
 read_line:
-    if ( unlikely( !buf_readline() ) )
+    if ( unlikely( buf_readline() == 0 ) )
       return EOF;
     *ppc = input_buf;
     nonws_no_wrap_range[1] = 0;
@@ -580,7 +580,7 @@ static codepoint_t buf_getcp( char const **ppc, utf8c_t utf8c ) {
   if ( unlikely( (utf8c[0] = buf_getc( ppc )) == EOF ) )
     return CP_EOF;
   size_t const len = utf8_len( utf8c[0] );
-  if ( unlikely( !len ) )
+  if ( unlikely( len == 0 ) )
     return CP_INVALID;
 
   for ( size_t i = 1; i < len; ++i ) {
@@ -607,7 +607,7 @@ static size_t buf_readline( void ) {
       break;
   } // while
 
-  if ( !bytes_read )
+  if ( bytes_read == 0 )
     MD_DEBUG( "====================\n" );
   return bytes_read;
 }
@@ -678,7 +678,7 @@ static void init( int argc, char const *argv[] ) {
     regex_init( &nonws_no_wrap_regex, WRAP_RE );
 
   size_t const bytes_read = buf_readline();
-  if ( !bytes_read )
+  if ( bytes_read == 0 )
     exit( EX_OK );
 
   if ( opt_eol == EOL_INPUT ) {
@@ -822,7 +822,7 @@ static bool markdown_adjust( void ) {
         print_lead_chars();
         print_line( output_len, true );
         prev_seq_num = md->seq_num;
-      } else if ( !output_len && !is_blank_line( input_buf ) ) {
+      } else if ( output_len == 0 && !is_blank_line( input_buf ) ) {
         //
         // Same line type, but new line: hang indent.
         //

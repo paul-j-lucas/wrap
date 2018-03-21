@@ -54,7 +54,7 @@ int main( int argc, char const *argv[] ) {
 
   char const *const test_path = argv[1];
   FILE *const fin = fopen( test_path, "r" );
-  if ( !fin )
+  if ( fin == NULL )
     PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", test_path, STRERROR );
 
   setlocale_utf8();
@@ -72,7 +72,7 @@ int main( int argc, char const *argv[] ) {
       continue;
 
     char *const sep = strchr( line_buf, TEST_SEP );
-    if ( !sep )
+    if ( sep == NULL )
       PMESSAGE_EXIT( EX_DATAERR,
         "%s:%u: missing separator '%c'\n",
         test_path, line_no, TEST_SEP
@@ -103,7 +103,7 @@ int main( int argc, char const *argv[] ) {
     strncpy( match, match_begin, match_len );
     match[ match_len ] = '\0';
 
-    if ( !expected_len ) {
+    if ( expected_len == 0 ) {
       PRINT_ERR(
         "%s:%u: <%s> matched when it shouldn't have\n",
         test_path, line_no, match

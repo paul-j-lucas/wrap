@@ -35,7 +35,7 @@
 size_t check_readline( line_buf_t line, FILE *ffrom ) {
   assert( ffrom != NULL );
   size_t size = sizeof( line_buf_t );
-  if ( !fgetsz( line, &size, ffrom ) )
+  if ( fgetsz( line, &size, ffrom ) == NULL )
     W_FERROR( ffrom );
   return size;
 }

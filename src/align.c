@@ -42,7 +42,7 @@
  */
 static bool is_eol_comment( char const *s ) {
   char const *const cc = cc_map_get( *s );
-  if ( !cc )
+  if ( cc == NULL )
     return false;
 
   char closing = closing_char( *s );
@@ -51,7 +51,7 @@ static bool is_eol_comment( char const *s ) {
     //
     // Single-character comment delimiter, e.g., '#' (Python) or '{' (Pascal).
     //
-    if ( !closing ) {
+    if ( closing == '\0' ) {
       //
       // A single-character comment delimiter that has no closing character,
       // e.g., '#', invariably is a comment to the end of the line.
@@ -97,7 +97,7 @@ static bool is_eol_comment( char const *s ) {
     return false;
   }
 
-  if ( !closing ) {
+  if ( closing == '\0' ) {
     //
     // If the first character in a two-character comment delimiter doesn't
     // have a closing character, then it's its own closing character, e.g.,
@@ -145,7 +145,7 @@ void align_eol_comments( char input_buf[] ) {
       switch ( *s ) {
         case '"':
         case '\'':
-          if ( !quote ) {
+          if ( quote == '\0' ) {
             quote = *s;
           }
           else if ( !was_backslash && *s == quote ) {
@@ -188,7 +188,7 @@ void align_eol_comments( char input_buf[] ) {
             // by whatever the chosen line-ending is).
             //
             if ( token_count > 1 ) {
-              if ( !opt_align_char ) {
+              if ( opt_align_char == '\0' ) {
                 //
                 // The user hasn't specified an alignment character: use
                 // whatever the first character is after the last non-
@@ -256,7 +256,7 @@ void align_eol_comments( char input_buf[] ) {
       col += char_width( *s, col );
       output_buf[ output_len++ ] = *s;
 
-      if ( !quote ) {
+      if ( quote == '\0' ) {
         //
         // Keep track of the last whitespace character and non-whitespace
         // column & position.

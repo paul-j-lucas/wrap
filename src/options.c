@@ -235,7 +235,7 @@ static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
         break;
       }
     } // for
-    if ( !gave_count )
+    if ( gave_count == 0 )
       break;
     opt = opts2;
   } // for
@@ -443,7 +443,7 @@ static void parse_options( int argc, char const *argv[],
     } // switch
   } // for
 
-  if ( !line_no ) {
+  if ( line_no == 0 ) {
     //
     // Check for mutually exclusive options only when parsing the command-line.
     //
@@ -559,9 +559,9 @@ void options_init( int argc, char const *argv[], void (*usage)(void) ) {
   if ( opt_fout && !(fout = fopen( opt_fout, "w" )) )
     PMESSAGE_EXIT( EX_CANTCREAT, "\"%s\": %s\n", opt_fout, STRERROR );
 
-  if ( !fin )
+  if ( fin == NULL )
     fin = stdin;
-  if ( !fout )
+  if ( fout == NULL )
     fout = stdout;
 }
 

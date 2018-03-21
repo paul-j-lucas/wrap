@@ -421,8 +421,8 @@ static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
   assert( fence != NULL );
   assert( s[0] == '~' || s[0] == '`' );
   assert(
-    (!fence->cf_c && !fence->cf_len) ||
-    ( fence->cf_c &&  fence->cf_len >= MD_CODE_FENCE_CHAR_MIN)
+    (fence->cf_c == '\0' && fence->cf_len == 0) ||
+    (fence->cf_c != '\0' && fence->cf_len >= MD_CODE_FENCE_CHAR_MIN)
   );
 
   char const c = fence->cf_c ? fence->cf_c : s[0];
@@ -955,7 +955,7 @@ static void stack_push( md_line_t line_type, md_indent_t indent_left,
     stack_capacity += STATE_ALLOC_INCREMENT;
     REALLOC( stack, md_state_t, stack_capacity );
   }
-  if ( !stack )
+  if ( stack == NULL )
     perror_exit( EX_OSERR );
 
   md_state_t *const top = &TOP;
@@ -1076,7 +1076,7 @@ md_state_t const* markdown_parse( char *s ) {
   //    have a text line before it) and a horizontal rule (that doesn't).
   //
   PREV_BOOL( blank_line );
-  if ( !nws[0] ) {                      // blank line
+  if ( nws[0] == '\0' ) {               // blank line
     prev_blank_line = true;
     return &TOP;
   }

@@ -52,14 +52,14 @@ static pattern_t   *patterns = NULL;    // global list of patterns
 static pattern_t* pattern_alloc( void ) {
   static size_t n_patterns_alloc = 0;   // number of patterns allocated
 
-  if ( !n_patterns_alloc ) {
+  if ( n_patterns_alloc == 0 ) {
     n_patterns_alloc = PATTERN_ALLOC_DEFAULT;
     patterns = MALLOC( pattern_t, n_patterns_alloc );
   } else if ( n_patterns > n_patterns_alloc ) {
     n_patterns_alloc += PATTERN_ALLOC_INCREMENT;
     REALLOC( patterns, pattern_t, n_patterns_alloc );
   }
-  if ( !patterns )
+  if ( patterns == NULL )
     perror_exit( EX_OSERR );
   return &patterns[ n_patterns++ ];
 }
@@ -140,7 +140,7 @@ void pattern_parse( char const *line, char const *conf_file,
 
   // part 5: alias
   alias_t const *const alias = alias_find( line );
-  if ( !alias )
+  if ( alias == NULL )
     PMESSAGE_EXIT( EX_CONFIG,
       "%s:%u: \"%s\": no such alias\n", conf_file, line_no, line
     );

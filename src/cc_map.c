@@ -108,12 +108,12 @@ char const* cc_map_compile( char const *in_cc ) {
 
     unsigned char const *const ucc = (unsigned char*)cc;
     char *cc_map_entry = (char*)cc_map[ ucc[0] ];
-    if ( !cc_map_entry ) {
+    if ( cc_map_entry == '\0' ) {
       cc_map_entry = MALLOC( char, 1 + 1/*null*/ );
       cc_map_entry[0] = cc1;
       cc_map_entry[1] = '\0';
     }
-    else if ( !strchr( cc_map_entry, cc1 ) ) {
+    else if ( strchr( cc_map_entry, cc1 ) == NULL ) {
       //
       // Add the second comment delimiter character only if it's not already
       // there.
@@ -132,7 +132,7 @@ char const* cc_map_compile( char const *in_cc ) {
     }
   } // for
 
-  if ( !distinct_cc )
+  if ( distinct_cc == 0 )
     PMESSAGE_EXIT( EX_USAGE,
       "value for %s must not be only whitespace or commas\n",
       format_opt( 'D', opt_buf, sizeof opt_buf )

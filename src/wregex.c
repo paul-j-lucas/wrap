@@ -69,7 +69,7 @@ static bool is_begin_word_boundary( char const *s, char const *curr ) {
   if ( curr == s )
     return true;
   char const *const prev = utf8_rsync( s, curr - 1 );
-  if ( !prev )
+  if ( prev == NULL )
     return true;
 
   codepoint_t const cp_curr = utf8_decode( curr );

@@ -47,7 +47,7 @@
  * @param input_buf The input buffer to use.  It must contain the first line of
  * text read.
  */
-void align_eol_comments( char[] );
+void align_eol_comments( char input_buf[] );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -73,13 +73,9 @@ typedef enum delim delim_t;
 # define W_PIPE(P) NO_OP
 #endif /* DEBUG_RSWW */
 
-// Closes both ends of pipe P.
-#define CLOSE_PIPES(P) \
-  BLOCK( close( pipes[P][ STDIN_FILENO ] ); close( pipes[P][ STDOUT_FILENO ] ); )
-
 // Redirects file-descriptor FD to/from pipe P.
 #define REDIRECT(FD,P) \
-  BLOCK( close( FD ); W_DUP( pipes[P][FD] ); CLOSE_PIPES( P ); )
+  BLOCK( close( FD ); W_DUP( pipes[P][FD] ); close_pipe( pipes[P] ); )
 
 /**
  * Contains the current and next lines of input so the next line can be peeked
@@ -144,6 +140,14 @@ static void         wait_for_child_processes( void );
 static void         wrapc_cleanup( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
+
+/**
+ * Closes both ends of a pipe.
+ */
+static inline void close_pipe( int pipe[2] ) {
+  close( pipe[ STDIN_FILENO ] );
+  close( pipe[ STDOUT_FILENO ] );
+}
 
 /**
  * Gets whether \a c is a comment delimiter character.
@@ -292,13 +296,13 @@ static pid_t read_source_write_wrap( void ) {
   //
   // We don't use these here.
   //
-  CLOSE_PIPES( FROM_WRAP );
+  close_pipe( pipes[ FROM_WRAP ] );
   close( pipes[ TO_WRAP ][ STDIN_FILENO ] );
   //
   // Read from fin and write to pipes[TO_WRAP] (wrap).
   //
   FILE *const fwrap = fdopen( pipes[ TO_WRAP ][ STDOUT_FILENO ], "w" );
-  if ( unlikely( !fwrap ) )
+  if ( unlikely( fwrap == NULL ) )
     PMESSAGE_EXIT( EX_OSERR,
       "child can't open pipe for writing: %s\n", STRERROR
     );
@@ -424,13 +428,13 @@ static void read_wrap( void ) {
   //
   // We don't use these here.
   //
-  CLOSE_PIPES( TO_WRAP );
+  close_pipe( pipes[ TO_WRAP ] );
   close( pipes[ FROM_WRAP ][ STDOUT_FILENO ] );
   //
   // Read from pipes[FROM_WRAP] (wrap) and write to fout.
   //
   FILE *const fwrap = fdopen( pipes[ FROM_WRAP ][ STDIN_FILENO ], "r" );
-  if ( unlikely( !fwrap ) )
+  if ( unlikely( fwrap == NULL ) )
     PMESSAGE_EXIT( EX_OSERR,
       "parent can't open pipe for reading: %s\n", STRERROR
     );
@@ -457,7 +461,7 @@ static void read_wrap( void ) {
 
   for ( ;; ) {
     size_t line_size = sizeof line_buf;
-    if ( unlikely( !fgetsz( line_buf, &line_size, fwrap ) ) )
+    if ( unlikely( fgetsz( line_buf, &line_size, fwrap ) == NULL ) )
       break;
     line_size = chop_eol( line_buf, line_size );
     char *line = line_buf;
@@ -604,7 +608,7 @@ static void chop_suffix( char *s ) {
         // character on the line.
         //
         char *const after_cc = skip_c( cc, suffix_buf[0] );
-        if ( !after_cc[ strspn( after_cc, WS_STRN ) ] )
+        if ( after_cc[ strspn( after_cc, WS_STRN ) ] == '\0' )
           goto done;
         cc = after_cc - 1;
         break;
@@ -640,7 +644,7 @@ static void init( int argc, char const *argv[] ) {
   NEXT = input_buf.dl_line[1];
 
   size_t const size = check_readline( CURR, fin );
-  if ( !size )
+  if ( size == 0 )
     exit( EX_OK );
 
   if ( opt_eol == EOL_INPUT && is_windows_eol( CURR, size ) ) {
@@ -700,7 +704,7 @@ static char const* is_terminated_comment( char *s ) {
 
         for ( ; *s; ++s ) {
           if ( isspace( *s ) ) {
-            if ( !tws )
+            if ( tws == NULL )
               tws = s;
             continue;
           }
@@ -716,7 +720,7 @@ static char const* is_terminated_comment( char *s ) {
             //
             //      # This is a comment. # #
             //
-            if ( !cc || is_space( s[-1] ) )
+            if ( cc == NULL || is_space( s[-1] ) )
               cc = s;
           } else {
             //
@@ -732,7 +736,7 @@ static char const* is_terminated_comment( char *s ) {
 
       case DELIM_SINGLE:
         while ( *++s ) {
-          if ( !cc ) {
+          if ( cc == NULL ) {
             if ( *s == close_cc[0] ) {
               //
               // We've found the first occurrence of the comment delimiter
@@ -754,7 +758,7 @@ static char const* is_terminated_comment( char *s ) {
 
       case DELIM_DOUBLE:
         while ( *++s ) {
-          if ( !cc ) {
+          if ( cc == NULL ) {
             if ( *s == close_cc[0] ) {
               //
               // We've found the first occurrence of the comment delimiter

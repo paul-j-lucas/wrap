@@ -50,7 +50,7 @@
 static char const* home_dir( void ) {
   char const *home = getenv( "HOME" );
 #if HAVE_GETEUID && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR
-  if ( !home ) {
+  if ( home == NULL ) {
     struct passwd *const pw = getpwuid( geteuid() );
     if ( pw )
       home = pw->pw_dir;
@@ -99,7 +99,7 @@ static char* strip_comment( char *s ) {
         return s0;
       case '"':
       case '\'':
-        if ( !quote )
+        if ( quote == '\0' )
           quote = *s;
         else if ( *s == quote )
           quote = '\0';
@@ -137,9 +137,9 @@ char const* read_conf( char const *conf_file ) {
   enum section section = NONE;          // section we're in
 
   // locate default configuration file
-  if ( !conf_file ) {
+  if ( conf_file == NULL ) {
     char const *const home = home_dir();
-    if ( !home )
+    if ( home == NULL )
       return NULL;
     strcpy( conf_path_buf, home );
     path_append( conf_path_buf, CONF_FILE_NAME );
@@ -148,7 +148,7 @@ char const* read_conf( char const *conf_file ) {
 
   // open configuration file
   FILE *const fconf = fopen( conf_file, "r" );
-  if ( !fconf ) {
+  if ( fconf == NULL ) {
     if ( explicit_conf_file )
       PMESSAGE_EXIT( EX_NOINPUT, "%s: %s\n", conf_file, STRERROR );
     return NULL;
@@ -160,7 +160,7 @@ char const* read_conf( char const *conf_file ) {
   while ( fgets( line_buf, sizeof line_buf, fconf ) ) {
     ++line_no;
     char *line = strip_comment( line_buf );
-    if ( !line )
+    if ( line == NULL )
       PMESSAGE_EXIT( EX_CONFIG,
         "%s:%u: \"%s\": unclosed quote\n",
         conf_file, line_no, trim_ws( line_buf )

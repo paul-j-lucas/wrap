@@ -90,10 +90,10 @@ void* check_realloc( void *p, size_t size ) {
   //    The C standard says a call realloc(NULL, size) is equivalent to
   //    malloc(size), but some old systems don't support this (e.g., NextStep).
   //
-  if ( !size )
+  if ( size == 0 )
     size = 1;
   void *const r = p ? realloc( p, size ) : malloc( size );
-  if ( unlikely( !r ) )
+  if ( unlikely( r == NULL ) )
     perror_exit( EX_OSERR );
   return r;
 }
@@ -101,7 +101,7 @@ void* check_realloc( void *p, size_t size ) {
 char* check_strdup( char const *s ) {
   assert( s != NULL );
   char *const dup = strdup( s );
-  if ( unlikely( !dup ) )
+  if ( unlikely( dup == NULL ) )
     perror_exit( EX_OSERR );
   return dup;
 }
@@ -192,13 +192,13 @@ unsigned get_term_columns( void ) {
     int cterm_fd = -1;
 
     char const *const term = getenv( "TERM" );
-    if ( unlikely( !term ) ) {
+    if ( unlikely( term == NULL ) ) {
       reason = "TERM environment variable not set";
       goto error;
     }
 
     char const *const cterm_path = ctermid( NULL );
-    if ( unlikely( !cterm_path || !*cterm_path ) ) {
+    if ( unlikely( cterm_path == NULL || !*cterm_path ) ) {
       reason = "ctermid(3) failed to get controlling terminal";
       goto error;
     }
