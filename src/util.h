@@ -251,7 +251,7 @@ bool is_any( char const *s, char const *const matches[] );
  */
 WRAP_UTIL_INLINE bool is_blank_line( char const *s ) {
   SKIP_CHARS( s, WS_STRN );
-  return !*s;
+  return *s == '\0';
 }
 
 /**
@@ -261,7 +261,7 @@ WRAP_UTIL_INLINE bool is_blank_line( char const *s ) {
  * @return Returns \c true only if \a s contains only digits.
  */
 WRAP_UTIL_INLINE bool is_digits( char const *s ) {
-  return !s[ strspn( s, "0123456789" ) ];
+  return s[ strspn( s, "0123456789" ) ] == '\0';
 }
 
 /**
