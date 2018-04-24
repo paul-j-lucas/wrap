@@ -1075,7 +1075,7 @@ static void usage( void ) {
 "  -s number  Specify tab-spaces equivalence [default: %d].\n"
 "  -T         Treat paragraph first line as title.\n"
 "  -u         Format Markdown.\n"
-"  -v         Print version an exit.\n"
+"  -v         Print version and exit.\n"
 "  -w number  Specify line width [default: %d].\n"
 "  -y         Suppress wrapping at hyphen characters.\n"
     , me, me,

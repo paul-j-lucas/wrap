@@ -929,7 +929,7 @@ static void usage( void ) {
 "  -t number  Prepend leading tabs to each line.\n"
 "  -T         Treat paragraph first line as title.\n"
 "  -u         Format Markdown.\n"
-"  -v         Print version an exit.\n"
+"  -v         Print version and exit.\n"
 "  -w number  Specify line width [default: %d].\n"
 "  -W         Treat line beginning with whitespace as paragraph delimiter.\n"
 "  -y         Suppress wrapping at hyphen characters.\n"
