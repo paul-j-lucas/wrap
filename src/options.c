@@ -44,7 +44,7 @@
 
 // local constants
 static char const   COMMENT_CHARS_DEFAULT[] =
-  "!"  ","  // Fortran
+  "!"  ","  // Fortran, Simula
   "#"  ","  // AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell, Tcl
   "#=" ","  // Julia
   "#|" ","  // Lisp, Racket, Scheme

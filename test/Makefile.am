@@ -358,6 +358,13 @@ TESTS+= tests/utf8-w77.test \
 	tests/wrapc--Pascal-01.test \
 	tests/wrapc--Pascal-02.test \
 	tests/wrapc--Pascal-03.test \
+	tests/wrapc--Simula-00.test \
+	tests/wrapc--Simula-01.test \
+	tests/wrapc--Simula-02.test \
+	tests/wrapc--Simula-03.test \
+	tests/wrapc--Simula-04.test \
+	tests/wrapc--Simula-05.test \
+	tests/wrapc--Simula-06.test \
 	tests/wrapc--single_line-01.test \
 	tests/wrapc--trailing-ws-01.test \
 	tests/wrapc--XQuery-01.test \

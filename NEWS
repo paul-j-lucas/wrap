@@ -3,9 +3,14 @@ Wrap NEWS -- history of user-visible changes.
 Copyright (C) 1996-2017 Paul J. Lucas.
 See the end of the file for license conditions.
 
+* Changes in Wrap 5.2
+
+** Added support for Simula comments
+Wrapc can now automatically recognize and properly wrap Simula comments.
+
 * Changes in Wrap 5.1
 
-** End‐of‐Line Comment Aligning Improvement
+** End‐of‐Line Comment Aligning Improvement.
 Now aligns only comments that are really at the end of the line (as opposed to
 within a line).  It also does not align comments unless there is more than one
 "token" on the line.

@@ -853,15 +853,15 @@ static void read_prototype( void ) {
     // Get the closing comment delimiter character corresponding to the first,
     // if any.
     //
-    char const closing = closing_char( cc[0] );
+    char closing = closing_char( cc[0] );
 
-    //
-    // We also have to recognize the second character of two-character comment
-    // delimiters, but only if it's not the same as the first character (to
-    // exclude delimiters like "//") and among the originally specified set of
-    // delimiter characters.
-    //
     switch ( cc[0] ) {
+      //
+      // We also have to recognize the second character of two-character
+      // comment delimiters, but only if it's not the same as the first
+      // character (to exclude delimiters like "//") and among the originally
+      // specified set of delimiter characters.
+      //
       case '#': // "#|": Lisp, Racket, Scheme
       case '(': // "(*": AppleScript, Delphi, ML, OCaml, Pascal; "(:": XQuery
       case '/': // "/*": C, Objective C, C++, C#, D, Go, Java, Rust, Swift
@@ -875,6 +875,18 @@ static void read_prototype( void ) {
       case '*': // "*>": COBOL 2002
         if ( cc[1] == '>' && is_comment_char( '>' ) )
           *s++ = '>';
+        break;
+      //
+      // Special case for Simula, the only supported language that has two
+      // single-character open/close comment delimiter characters where the
+      // closing character is not a "conventional" closing character of the
+      // opening character, i.e., not one of ")>]}".
+      //
+      case '!': // "! ... ;": Simula
+        if ( is_comment_char( ';' ) &&
+             cc[1] != '!' && !is_comment_char( cc[1] ) ) {
+          closing = ';';
+        }
         break;
     } // switch
 
