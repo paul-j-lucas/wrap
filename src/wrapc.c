@@ -873,10 +873,8 @@ static void read_prototype( void ) {
         }
         break;
       case '*': // "*>": COBOL 2002
-        if ( cc[1] == '>' && is_comment_char( '>' ) ) {
+        if ( cc[1] == '>' && is_comment_char( '>' ) )
           *s++ = '>';
-          delim = DELIM_EOL;
-        }
         break;
     } // switch
 
