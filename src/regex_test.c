@@ -66,7 +66,7 @@ int main( int argc, char const *argv[] ) {
   unsigned line_no = 0;
   unsigned mismatches = 0;
 
-  while ( fgets( line_buf, sizeof line_buf, fin ) ) {
+  while ( fgets( line_buf, sizeof line_buf, fin ) != NULL ) {
     ++line_no;
     if ( line_buf[0] == '#' || is_blank_line( line_buf ) )
       continue;
@@ -87,7 +87,7 @@ int main( int argc, char const *argv[] ) {
     bool const matched = regex_match( &re, subject, 0, match_range );
 
     if ( !matched ) {
-      if ( expected_len ) {
+      if ( expected_len > 0 ) {
         PRINT_ERR(
           "%s:%u: <%s> wasn't matched when it should have been\n",
           test_path, line_no, expected
@@ -127,7 +127,7 @@ int main( int argc, char const *argv[] ) {
   fclose( fin );
 
   printf( "%u mismatches\n", mismatches );
-  exit( mismatches ? EX_SOFTWARE : EX_OK );
+  exit( mismatches > 0 ? EX_SOFTWARE : EX_OK );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

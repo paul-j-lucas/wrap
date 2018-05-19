@@ -89,7 +89,7 @@ static bool is_eol_comment( char const *s ) {
   }
 
   char const d1 = *s;                   // save first delimiter character
-  if ( !(*++s && strchr( cc, *s )) ) {
+  if ( !(*++s != '\0' && strchr( cc, *s ) != NULL) ) {
     //
     // If the next character isn't the second character in a two-character
     // comment delimiter, then it's not a comment.
@@ -110,7 +110,7 @@ static bool is_eol_comment( char const *s ) {
   // Attempt to find the closing comment delimiter characters.
   //
   char const d2 = *s;                   // save second delimiter character
-  for ( char c_prev = '\0'; *++s; c_prev = *s ) {
+  for ( char c_prev = '\0'; *++s != '\0'; c_prev = *s ) {
     if ( c_prev == d2 && *s == closing ) {
       //
       // We found the closing comment delimiter characters: now it's just like
@@ -138,7 +138,7 @@ void align_eol_comments( char input_buf[] ) {
     char        quote = '\0';           // between quotes?
     unsigned    token_count = 0;
 
-    for ( char const *s = input_buf; *s && !is_eol( *s ); ++s ) {
+    for ( char const *s = input_buf; *s != '\0' && !is_eol( *s ); ++s ) {
       bool const was_backslash = true_reset( &is_backslash );
       bool const was_word = true_reset( &is_word );
 
@@ -158,7 +158,7 @@ void align_eol_comments( char input_buf[] ) {
           break;
 
         default:
-          if ( quote )                  // do nothing else while between quotes
+          if ( quote != '\0' )          // do nothing else while between quotes
             break;
 
           if ( is_eol_comment( s ) ) {

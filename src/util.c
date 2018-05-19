@@ -70,7 +70,7 @@ static free_node_t *free_head;          // linked list of stuff to free
 char const* base_name( char const *path_name ) {
   assert( path_name != NULL );
   char const *const slash = strrchr( path_name, '/' );
-  if ( slash )
+  if ( slash != NULL )
     return slash[1] ? slash + 1 : slash;
   return path_name;
 }
@@ -92,7 +92,7 @@ void* check_realloc( void *p, size_t size ) {
   //
   if ( size == 0 )
     size = 1;
-  void *const r = p ? realloc( p, size ) : malloc( size );
+  void *const r = p != NULL ? realloc( p, size ) : malloc( size );
   if ( unlikely( r == NULL ) )
     perror_exit( EX_OSERR );
   return r;
@@ -108,8 +108,8 @@ char* check_strdup( char const *s ) {
 
 size_t chop_eol( char *s, size_t s_len ) {
   assert( s != NULL );
-  if ( s_len && s[ s_len-1 ] == '\n' ) {
-    if ( --s_len && s[ s_len-1 ] == '\r' )
+  if ( s_len > 0 && s[ s_len-1 ] == '\n' ) {
+    if ( --s_len > 0 && s[ s_len-1 ] == '\r' )
       --s_len;
     s[ s_len ] = '\0';
   }
@@ -170,7 +170,7 @@ void* free_later( void *p ) {
 }
 
 void free_now( void ) {
-  for ( free_node_t *p = free_head; p; ) {
+  for ( free_node_t *p = free_head; p != NULL; ) {
     free_node_t *const next = p->fn_next;
     FREE( p->fn_ptr );
     FREE( p );
@@ -198,7 +198,7 @@ unsigned get_term_columns( void ) {
     }
 
     char const *const cterm_path = ctermid( NULL );
-    if ( unlikely( cterm_path == NULL || !*cterm_path ) ) {
+    if ( unlikely( cterm_path == NULL || *cterm_path == '\0' ) ) {
       reason = "ctermid(3) failed to get controlling terminal";
       goto error;
     }
@@ -273,8 +273,8 @@ bool is_affirmative( char const *s ) {
 #endif /* NDEBUG */
 
 bool is_any( char const *s, char const *const matches[] ) {
-  if ( s ) {
-    for ( char const *const *match = matches; *match; ++match ) {
+  if ( s != NULL ) {
+    for ( char const *const *match = matches; *match != '\0'; ++match ) {
       if ( strcasecmp( s, *match ) == 0 )
         return true;
     } // for
@@ -293,14 +293,14 @@ void setlocale_utf8( void ) {
     "en_US.UTF-8", "en_US.UTF8",
     NULL
   };
-  for ( char const *const *loc = UTF8_LOCALES; *loc; ++loc ) {
+  for ( char const *const *loc = UTF8_LOCALES; *loc != '\0'; ++loc ) {
     if ( setlocale( LC_COLLATE, *loc ) && setlocale( LC_CTYPE, *loc ) )
       return;
   } // for
 
   PRINT_ERR( "%s: could not set locale to UTF-8; tried: ", me );
   bool comma = false;
-  for ( char const *const *loc = UTF8_LOCALES; *loc; ++loc ) {
+  for ( char const *const *loc = UTF8_LOCALES; *loc != '\0'; ++loc ) {
     PRINT_ERR( "%s%s", (comma ? ", " : ""), *loc );
     comma = true;
   } // for
@@ -319,7 +319,7 @@ size_t strcpy_len( char *dst, char const *src ) {
   assert( dst != NULL );
   assert( src != NULL );
   char const *const dst0 = dst;
-  while ( (*dst++ = *src++) )
+  while ( (*dst++ = *src++) != '\0' )
     /* empty */;
   return dst - dst0 - 1;
 }
@@ -329,8 +329,11 @@ size_t strrspn( char const *s, char const *set ) {
   assert( set != NULL );
 
   size_t n = 0;
-  for ( char const *t = s + strlen( s ); t-- > s && strchr( set, *t ); ++n )
-    /* empty */;
+  for ( char const *t = s + strlen( s );
+        t-- > s && strchr( set, *t ) != NULL;
+        ++n ) {
+    // empty
+  } // for
   return n;
 }
 

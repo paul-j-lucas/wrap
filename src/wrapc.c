@@ -328,7 +328,7 @@ static pid_t read_source_write_wrap( void ) {
   //
   bool const proto_is_comment = is_line_comment( CURR );
 
-  while ( CURR[0] ) {
+  while ( CURR[0] != '\0' ) {
     //
     // In order to know when a comment ends, we have to peek at the next line.
     //
@@ -401,7 +401,7 @@ static pid_t read_source_write_wrap( void ) {
 
     // Skip over the prefix and chop off the suffix.
     char *const line = skip_n( CURR, prefix_len );
-    if ( suffix_buf[0] )
+    if ( suffix_buf[0] != '\0' )
       chop_suffix( line );
 
     W_FPUTS( line, fwrap );
@@ -459,7 +459,7 @@ static void read_wrap( void ) {
 
   line_buf_t line_buf;
 
-  for ( ;; ) {
+  for (;;) {
     size_t line_size = sizeof line_buf;
     if ( unlikely( fgetsz( line_buf, &line_size, fwrap ) == NULL ) )
       break;
@@ -499,7 +499,7 @@ static void read_wrap( void ) {
       } // switch
     }
 
-    if ( suffix_buf[0] ) {
+    if ( suffix_buf[0] != '\0' ) {
       //
       // Pad the width with spaces in order to append the terminating comment
       // character(s) back.
@@ -548,7 +548,7 @@ static void adjust_comment_width( char *s ) {
     );
     strcpy( s + width, eol() );
   }
-  else if ( suffix_buf[0] && s_len < width ) {
+  else if ( suffix_buf[0] != '\0' && s_len < width ) {
     //
     // If we're doing terminated comments, lengthen the comment line by
     // "inserting" a multiple of the first comment delimiter character.
@@ -582,10 +582,10 @@ static void adjust_comment_width( char *s ) {
  */
 static void chop_suffix( char *s ) {
   assert( s != NULL );
-  assert( suffix_buf[0] );
+  assert( suffix_buf[0] != '\0' );
   char *cc = s;
 
-  for ( ; (cc = strchr( cc, suffix_buf[0] )); ++cc ) {
+  for ( ; (cc = strchr( cc, suffix_buf[0] )) != NULL; ++cc ) {
     switch ( delim ) {
       case DELIM_NONE:
         break;
@@ -623,7 +623,7 @@ static void chop_suffix( char *s ) {
   } // for
 
 done:
-  if ( cc )
+  if ( cc != NULL )
     *cc = '\0';
 }
 
@@ -665,7 +665,7 @@ static void init( int argc, char const *argv[] ) {
  */
 static bool is_block_comment( char const *s ) {
   assert( s != NULL );
-  if ( (s = is_line_comment( s )) ) {
+  if ( (s = is_line_comment( s )) != NULL ) {
     for ( ++s; *s && *s != '\n' && !isalpha( *s ); ++s )
       /* empty */;
     return *s == '\n';
@@ -693,16 +693,16 @@ static char const* is_terminated_comment( char *s ) {
   char const *cc = NULL;
   char *tws = NULL;                     // trailing whitespace
 
-  if ( (s = (char*)is_line_comment( s )) ) {
+  if ( (s = (char*)is_line_comment( s )) != NULL ) {
     switch ( delim ) {
       case DELIM_NONE:
         break;
 
       case DELIM_EOL:
-        while ( *++s && *s == close_cc[0] )
+        while ( *++s != '\0' && *s == close_cc[0] )
           /* empty */;
 
-        for ( ; *s; ++s ) {
+        for ( ; *s != '\0'; ++s ) {
           if ( isspace( *s ) ) {
             if ( tws == NULL )
               tws = s;
@@ -735,7 +735,7 @@ static char const* is_terminated_comment( char *s ) {
         break;
 
       case DELIM_SINGLE:
-        while ( *++s ) {
+        while ( *++s != '\0' ) {
           if ( cc == NULL ) {
             if ( *s == close_cc[0] ) {
               //
@@ -757,7 +757,7 @@ static char const* is_terminated_comment( char *s ) {
         break;
 
       case DELIM_DOUBLE:
-        while ( *++s ) {
+        while ( *++s != '\0' ) {
           if ( cc == NULL ) {
             if ( *s == close_cc[0] ) {
               //
@@ -770,7 +770,7 @@ static char const* is_terminated_comment( char *s ) {
             if ( *s == close_cc[1] && s[-1] == close_cc[0] ) {
               tws = s + 1;
             } else if ( !isspace( *s ) ) {
-              if ( tws )
+              if ( tws != NULL )
                 return NULL;
               cc = NULL;
             }
@@ -780,7 +780,7 @@ static char const* is_terminated_comment( char *s ) {
     } // switch
   }
 
-  if ( tws && cc )
+  if ( tws != NULL && cc != NULL )
     strcpy( tws, eol() );
   return cc;
 }
@@ -797,7 +797,7 @@ static size_t prefix_span( char const *s ) {
   assert( s != NULL );
   size_t ws_len = strspn( s, WS_ST );
   size_t const cc_len = strspn( s += ws_len, opt_comment_chars );
-  if ( cc_len )
+  if ( cc_len > 0 )
     ws_len += strspn( s + cc_len, WS_ST );
   return ws_len + cc_len;
 }
@@ -809,7 +809,7 @@ static size_t prefix_span( char const *s ) {
  */
 static void read_prototype( void ) {
   char const *const cc = is_line_comment( CURR );
-  if ( cc ) {
+  if ( cc != NULL ) {
     //
     // From now on, recognize only the comment delimiter character(s) found as
     // comment delimiters.  This handles cases like:
@@ -883,7 +883,7 @@ static void read_prototype( void ) {
     //
     // We also have to recognize the closing delimiter character, if any.
     //
-    if ( closing ) {
+    if ( closing != '\0' ) {
       *s++ = closing;
       if ( delim == DELIM_EOL )
         delim = DELIM_SINGLE;           // e.g., "}" (Pascal)
@@ -904,7 +904,7 @@ static void read_prototype( void ) {
         break;
       case DELIM_DOUBLE:
         close_cc[0] = cc_buf[1];
-        close_cc[1] = cc_buf[2] ?
+        close_cc[1] = cc_buf[2] != '\0' ?
           cc_buf[2]                     // e.g., "(*)" (Pascal)
         : cc_buf[0];                    // e.g., "/*"  (C)
     } // switch
@@ -941,7 +941,7 @@ static void read_prototype( void ) {
   // Initialize the suffix, if any, and adjust the line width accordingly.
   //
   char const *const tc = is_terminated_comment( proto );
-  if ( tc ) {
+  if ( tc != NULL ) {
     suffix_len = chop_eol( suffix_buf, strcpy_len( suffix_buf, tc ) );
     line_width -= 1/*space*/ + suffix_len;
   }
@@ -990,7 +990,7 @@ static char* skip_c( char *s, char c ) {
  */
 static char* skip_n( char *s, size_t n ) {
   assert( s != NULL );
-  for ( ; *s && !is_eol( *s ) && n > 0; ++s, --n )
+  for ( ; *s != '\0' && !is_eol( *s ) && n > 0; ++s, --n )
     /* empty */;
   return s;
 }
@@ -1045,7 +1045,7 @@ static char const* str_status( int status ) {
 static size_t str_width( char const *s ) {
   assert( s != NULL );
   size_t width = 0;
-  while ( *s )
+  while ( *s != '\0' )
     width += char_width( *s++, width );
   return width;
 }

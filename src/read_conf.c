@@ -71,7 +71,7 @@ static void path_append( char *path, char const *component ) {
   assert( component != NULL );
 
   size_t const len = strlen( path );
-  if ( len ) {
+  if ( len > 0 ) {
     path += len - 1;
     if ( *path != '/' )
       *++path = '/';
@@ -90,10 +90,10 @@ static char* strip_comment( char *s ) {
   char *const s0 = s;
   char quote = '\0';
 
-  for ( ; *s; ++s ) {
+  for ( ; *s != '\0'; ++s ) {
     switch ( *s ) {
       case '#':
-        if ( quote )
+        if ( quote != '\0' )
           break;
         *s = '\0';
         return s0;
@@ -110,7 +110,7 @@ static char* strip_comment( char *s ) {
     } // switch
   } // for
 
-  return quote ? NULL : s0;
+  return quote != '\0' ? NULL : s0;
 }
 
 /**
@@ -157,7 +157,7 @@ char const* read_conf( char const *conf_file ) {
   // parse configuration file
   line_buf_t line_buf;
   unsigned line_no = 0;
-  while ( fgets( line_buf, sizeof line_buf, fconf ) ) {
+  while ( fgets( line_buf, sizeof line_buf, fconf ) != NULL ) {
     ++line_no;
     char *line = strip_comment( line_buf );
     if ( line == NULL )
@@ -166,7 +166,7 @@ char const* read_conf( char const *conf_file ) {
         conf_file, line_no, trim_ws( line_buf )
       );
     line = trim_ws( line );
-    if ( !*line )
+    if ( *line == '\0' )
       continue;
 
     // parse section line

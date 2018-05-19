@@ -88,7 +88,7 @@ void dump_patterns( void ) {
 #endif /* NDEBUG */
 
 void pattern_cleanup( void ) {
-  while ( n_patterns )
+  while ( n_patterns > 0 )
     pattern_free( &patterns[ --n_patterns ] );
   FREE( patterns );
 }
@@ -119,7 +119,7 @@ void pattern_parse( char const *line, char const *conf_file,
 
   // part 2: whitespace
   SKIP_CHARS( line, WS_STR );
-  if ( !*line )
+  if ( *line == '\0' )
     PMESSAGE_EXIT( EX_CONFIG, "%s:%u: '=' expected\n", conf_file, line_no );
 
   // part 3: =
@@ -132,7 +132,7 @@ void pattern_parse( char const *line, char const *conf_file,
 
   // part 4: whitespace
   SKIP_CHARS( line, WS_STR );
-  if ( !*line )
+  if ( *line == '\0' )
     PMESSAGE_EXIT( EX_CONFIG,
       "%s:%u: alias name expected after '='\n",
       conf_file, line_no

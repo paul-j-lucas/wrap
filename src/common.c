@@ -44,9 +44,9 @@ void common_cleanup( void ) {
   alias_cleanup();
   free_now();
   pattern_cleanup();
-  if ( fin )
+  if ( fin != NULL )
     fclose( fin );
-  if ( fout )
+  if ( fout != NULL )
     fclose( fout );
 }
 

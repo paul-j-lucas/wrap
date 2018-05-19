@@ -251,7 +251,8 @@ static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
  * @return Returns the said option or the empty string if none.
  */
 static char const* get_long_opt( char short_opt ) {
-  for ( struct option const *long_opt = LONG_OPTS[ is_wrapc ]; long_opt->name;
+  for ( struct option const *long_opt = LONG_OPTS[ is_wrapc ];
+        long_opt->name != NULL;
         ++long_opt ) {
     if ( long_opt->val == short_opt )
       return long_opt->name;
@@ -281,7 +282,7 @@ static unsigned parse_align( char const *s, char *align_char ) {
   unsigned const col = strtoul( s, &end, 10 );
   if ( unlikely( errno || end == s ) )
     goto error;
-  if ( *end ) {
+  if ( *end != '\0' ) {
     if ( *end == ',' )
       ++end;
     if ( is_any( end, AUTO ) )
@@ -338,7 +339,7 @@ static eol_t parse_eol( char const *s ) {
   assert( s != NULL );
   size_t values_buf_size = 1;           // for trailing null
 
-  for ( eol_map_t const *m = EOL_MAP; m->em_name; ++m ) {
+  for ( eol_map_t const *m = EOL_MAP; m->em_name != NULL; ++m ) {
     if ( strcasecmp( s, m->em_name ) == 0 )
       return m->em_eol;
     // sum sizes of names in case we need to construct an error message
@@ -348,7 +349,7 @@ static eol_t parse_eol( char const *s ) {
   // name not found: construct valid name list for an error message
   char *const values_buf = (char*)free_later( MALLOC( char, values_buf_size ) );
   char *pvalues = values_buf;
-  for ( eol_map_t const *m = EOL_MAP; m->em_name; ++m ) {
+  for ( eol_map_t const *m = EOL_MAP; m->em_name != NULL; ++m ) {
     if ( pvalues > values_buf ) {
       strcpy( pvalues, ", " );
       pvalues += 2;
@@ -394,14 +395,14 @@ static void parse_options( int argc, char const *argv[],
       break;
     SET_OPTION( opt );
 
-    if ( line_no ) {                    // we're parsing a conf file
+    if ( line_no > 0 ) {                // we're parsing a conf file
       if ( strchr( CONF_FORBIDDEN_OPTS, opt ) )
         PMESSAGE_EXIT( EX_CONFIG,
           "%s:%u: '%c': option not allowed in configuration file\n",
           opt_conf_file, line_no, opt
         );
     }
-    else if ( strchr( cmdline_forbidden_opts, opt ) ) {
+    else if ( strchr( cmdline_forbidden_opts, opt ) != NULL ) {
       PRINT_ERR( "%s: invalid option -- '%c'\n", me, opt );
       usage();
     }
@@ -485,7 +486,7 @@ static unsigned parse_width( char const *s ) {
     return (unsigned)strtoul( s, NULL, 10 );
 
   size_t values_buf_size = 1;           // for trailing null
-  for ( char const *const *t = TERM; *t; ++t ) {
+  for ( char const *const *t = TERM; *t != NULL; ++t ) {
     if ( strcasecmp( s, *t ) == 0 )
       return get_term_columns();
     // sum sizes of values in case we need to construct an error message
@@ -495,7 +496,7 @@ static unsigned parse_width( char const *s ) {
   // value not found: construct valid value list for an error message
   char *const values_buf = (char*)free_later( MALLOC( char, values_buf_size ) );
   char *pvalues = values_buf;
-  for ( char const *const *t = TERM; *t; ++t ) {
+  for ( char const *const *t = TERM; *t != NULL; ++t ) {
     if ( pvalues > values_buf ) {
       strcpy( pvalues, ", " );
       pvalues += 2;
@@ -520,7 +521,8 @@ char* format_opt( char short_opt, char buf[], size_t size ) {
   char const *const long_opt = get_long_opt( short_opt );
   snprintf(
     buf, size, "%s%s%s-%c",
-    *long_opt ? "--" : "", long_opt, *long_opt ? "/" : "", short_opt
+    *long_opt != '\0' ? "--" : "", long_opt,
+    *long_opt != '\0' ? "/"  : "", short_opt
   );
   return buf;
 }
@@ -535,31 +537,31 @@ void options_init( int argc, char const *argv[], void (*usage)(void) ) {
     CMDLINE_FORBIDDEN_OPTS[ is_wrapc ], usage, 0
   );
   argc -= optind, argv += optind;
-  if ( argc )
+  if ( argc > 0 )
     usage();
 
-  if ( !opt_no_conf && (opt_alias || opt_fin_name) ) {
+  if ( !opt_no_conf && (opt_alias || opt_fin_name != NULL) ) {
     alias_t const *alias = NULL;
     opt_conf_file = read_conf( opt_conf_file );
     if ( opt_alias ) {
-      if ( !(alias = alias_find( opt_alias )) )
+      if ( (alias = alias_find( opt_alias )) == NULL )
         PMESSAGE_EXIT( EX_USAGE,
           "\"%s\": no such alias in %s\n",
           opt_alias, opt_conf_file
         );
     }
-    else if ( opt_fin_name )
+    else if ( opt_fin_name != NULL )
       alias = pattern_find( opt_fin_name );
-    if ( alias )
+    if ( alias != NULL )
       parse_options(
         alias->argc, alias->argv, SHORT_OPTS[0], LONG_OPTS[0], "", usage,
         alias->line_no
       );
   }
 
-  if ( opt_fin && !(fin = fopen( opt_fin, "r" )) )
+  if ( opt_fin != NULL && (fin = fopen( opt_fin, "r" )) == NULL )
     PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", opt_fin, STRERROR );
-  if ( opt_fout && !(fout = fopen( opt_fout, "w" )) )
+  if ( opt_fout != NULL && (fout = fopen( opt_fout, "w" )) == NULL )
     PMESSAGE_EXIT( EX_CANTCREAT, "\"%s\": %s\n", opt_fout, STRERROR );
 
   if ( fin == NULL )

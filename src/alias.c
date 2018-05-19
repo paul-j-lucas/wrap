@@ -154,7 +154,7 @@ static char* arg_dup( char const **ps ) {
   char *arg = arg_buf;
   char quote = '\0';
 
-  for ( ; *s; ++s ) {
+  for ( ; *s != '\0'; ++s ) {
     switch ( *s ) {
       case ' ':
       case '\t':
@@ -163,7 +163,7 @@ static char* arg_dup( char const **ps ) {
         break;
       case '"':
       case '\'':
-        if ( quote ) {
+        if ( quote != '\0' ) {
           if ( *s == quote ) {
             quote = '\0';
             continue;
@@ -204,7 +204,7 @@ static size_t strcpy_set( char *dest, size_t dest_size, char const *set,
   char const *const dest_end = dest + dest_size - 1/*null*/;
   size_t n_copied = 0;
 
-  while ( dest < dest_end && *src && strchr( set, *src ) )
+  while ( dest < dest_end && *src != '\0' && strchr( set, *src ) != NULL )
     *dest++ = *src++, ++n_copied;
 
   *dest = '\0';
@@ -214,7 +214,7 @@ static size_t strcpy_set( char *dest, size_t dest_size, char const *set,
 ////////// extern functions ///////////////////////////////////////////////////
 
 void alias_cleanup( void ) {
-  while ( n_aliases )
+  while ( n_aliases > 0 )
     alias_free( &aliases[ --n_aliases ] );
   FREE( aliases );
 }
@@ -244,7 +244,7 @@ void dump_aliases( void ) {
 void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
   assert( line != NULL );
   assert( conf_file != NULL );
-  assert( line_no );
+  assert( line_no > 0 );
 
   size_t n_argv_alloc = ALIAS_ARGV_ALLOC_DEFAULT;
   alias_t *const alias = alias_alloc();
@@ -263,7 +263,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
 
   // part 2: whitespace
   SKIP_CHARS( line, WS_STR );
-  if ( !*line )
+  if ( *line == '\0' )
     PMESSAGE_EXIT( EX_CONFIG, "%s:%u: '=' expected\n", conf_file, line_no );
 
   // part 3: =
@@ -275,9 +275,9 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
   ++line;                               // skip '='
 
   // parts 4 & 5: whitespace, options
-  for ( ;; ) {
+  for (;;) {
     SKIP_CHARS( line, WS_STR );
-    if ( !*line ) {
+    if ( *line == '\0' ) {
       if ( alias->argc == 1 )
         PMESSAGE_EXIT( EX_CONFIG,
           "%s:%u: option(s) expected after '='\n",

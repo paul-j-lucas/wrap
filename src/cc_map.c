@@ -87,7 +87,7 @@ char const* cc_map_compile( char const *in_cc ) {
   cc_map_free();
   cc_map_init();
 
-  for ( char const *cc = in_cc; *cc; ++cc ) {
+  for ( char const *cc = in_cc; *cc != '\0'; ++cc ) {
     if ( isspace( *cc ) || *cc == ',' )
       continue;
     if ( !ispunct( *cc ) )

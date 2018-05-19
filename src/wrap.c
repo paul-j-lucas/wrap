@@ -178,7 +178,7 @@ int main( int argc, char const *argv[] ) {
         delimit_paragraph();
         continue;
       }
-      if ( output_len && true_reset( &next_line_is_title ) ) {
+      if ( output_len > 0 && true_reset( &next_line_is_title ) ) {
         //
         // The first line of the next paragraph is title line and the buffer
         // isn't empty (there is a title): print the title.
@@ -264,7 +264,7 @@ int main( int argc, char const *argv[] ) {
         // word can potentially be rejoined to the next word when wrapped.
         //
       }
-      else if ( output_len &&
+      else if ( output_len > 0 &&
                 put_spaces < (was_eos_char ? opt_eos_spaces : 1) ) {
         //
         // We are not at the beginning of a line: remember to insert 1 space
@@ -322,7 +322,7 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     if ( put_spaces ) {
-      if ( output_len ) {
+      if ( output_len > 0 ) {
         //
         // Mark position at a space to perform a wrap if necessary.
         //
@@ -330,7 +330,7 @@ int main( int argc, char const *argv[] ) {
         output_width += put_spaces;
         do {
           output_buf[ output_len++ ] = ' ';
-        } while ( --put_spaces );
+        } while ( --put_spaces > 0 );
       } else {
         //
         // Never put spaces at the beginning of a line.
@@ -468,7 +468,7 @@ int main( int argc, char const *argv[] ) {
   /////////////////////////////////////////////////////////////////////////////
 
   W_FERROR( fin );
-  if ( output_len ) {                   // print left-over text
+  if ( output_len > 0 ) {               // print left-over text
     if ( !is_long_line )
       print_lead_chars();
     print_line( output_len, true );
@@ -487,7 +487,7 @@ int main( int argc, char const *argv[] ) {
 static int buf_getc( char const **ppc ) {
   static bool check_for_nonws_no_wrap_match = true;
 
-  while ( !**ppc ) {
+  while ( **ppc == '\0' ) {
 read_line:
     if ( unlikely( buf_readline() == 0 ) )
       return EOF;
@@ -498,7 +498,7 @@ read_line:
     // When wrapping Markdown, we have to strip leading whitespace from lines
     // since it interferes with indenting.
     //
-    if ( !opt_markdown || *SKIP_CHARS( *ppc, WS_STR ) )
+    if ( !opt_markdown || *SKIP_CHARS( *ppc, WS_STR ) != '\0' )
       break;
   } // while
 
@@ -544,7 +544,7 @@ read_line:
         //
         char *sep;
         size_t const new_line_width = strtoul( *ppc, &sep, 10 );
-        if ( output_len ) {
+        if ( output_len > 0 ) {
           WIPC_DEFERF(
             ipc_buf, sizeof ipc_buf, WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
             new_line_width, sep + 1
@@ -601,7 +601,7 @@ static codepoint_t buf_getcp( char const **ppc, utf8c_t utf8c ) {
 static size_t buf_readline( void ) {
   size_t bytes_read;
 
-  while ( (bytes_read = check_readline( input_buf, fin )) ) {
+  while ( (bytes_read = check_readline( input_buf, fin )) > 0 ) {
     // Don't pass IPC lines through the Markdown parser.
     if ( !opt_markdown || input_buf[0] == WIPC_HELLO || markdown_adjust() )
       break;
@@ -616,7 +616,7 @@ static size_t buf_readline( void ) {
  * Delimits a paragraph.
  */
 static void delimit_paragraph( void ) {
-  if ( output_len ) {
+  if ( output_len > 0 ) {
     //
     // Print what's in the buffer before delimiting the paragraph.  If we've
     // been handling a "long line," it's now finally ended; otherwise, print
@@ -701,7 +701,8 @@ static void init( int argc, char const *argv[] ) {
   if ( opt_lead_string || opt_prototype ) {
     size_t proto_len = 0;
     size_t proto_width = 0;
-    for ( char const *s = opt_lead_string ? opt_lead_string : input_buf; *s;
+    for ( char const *s = opt_lead_string ? opt_lead_string : input_buf;
+          *s != '\0';
           ++s, ++proto_len ) {
       if ( opt_prototype && !is_space( *s ) )
         break;
@@ -851,9 +852,9 @@ static void markdown_reset( void ) {
  * Prints the leading characters for lines.
  */
 static void print_lead_chars( void ) {
-  if ( proto_buf[0] ) {
+  if ( proto_buf[0] != '\0' ) {
     W_FPRINTF( fout, "%s%s", proto_buf, output_len ? proto_tws : "" );
-  } else if ( output_len ) {
+  } else if ( output_len > 0 ) {
     for ( size_t i = 0; i < opt_lead_tabs; ++i )
       W_FPUTC( '\t', fout );
     for ( size_t i = 0; i < opt_lead_spaces; ++i )
@@ -870,7 +871,7 @@ static void print_lead_chars( void ) {
  */
 static void print_line( size_t len, bool do_eol ) {
   output_buf[ len ] = '\0';
-  if ( len ) {
+  if ( len > 0 ) {
     W_FPUTS( output_buf, fout );
     if ( do_eol )
       print_eol();

@@ -318,7 +318,7 @@ static char* first_non_whitespace( char *s, md_indent_t *indent_left ) {
   assert( indent_left != NULL );
 
   *indent_left = 0;
-  for ( size_t tab_pos = 0; *s; ++s, ++tab_pos ) {
+  for ( size_t tab_pos = 0; *s != '\0'; ++s, ++tab_pos ) {
     switch ( *s ) {
       case '\t':
         *indent_left += TAB_SPACES_MARKDOWN - tab_pos % TAB_SPACES_MARKDOWN;
@@ -353,7 +353,7 @@ done:
 static char const* is_uri_scheme( char const *s ) {
   assert( s != NULL );
   if ( isalpha( *s ) ) {                // must be ^[a-zA-Z][a-zA-Z0-9.+-]*
-    while ( *++s ) {
+    while ( *++s != '\0' ) {
       if ( *s == ':' )
         return s + 1;
       if ( !(isalnum( *s ) || *s == '.' || *s == '+' || *s == '-') )
@@ -501,7 +501,7 @@ static bool md_is_footnote_def( char const *s, bool *def_text ) {
   assert( def_text != NULL );
 
   if ( *++s == '^' ) {
-    while ( *++s ) {
+    while ( *++s != '\0' ) {
       if ( *s == ']' ) {
         if ( !(*++s == ':' && isspace( *++s )) )
           break;
@@ -528,7 +528,7 @@ static bool md_is_hr( char const *s ) {
   assert( s[0] == '*' || s[0] == '-' || s[0] == '_' );
 
   size_t n_hr = 0;
-  for ( char const hr = *s; *s; ++s ) {
+  for ( char const hr = *s; *s != '\0'; ++s ) {
     if ( !isspace( *s ) ) {
       if ( *s != hr )
         return false;
@@ -551,7 +551,7 @@ static bool md_is_html_abbr( char const *s ) {
   assert( s[0] == '*' );
 
   if ( *++s == '[' ) {
-    while ( *++s ) {
+    while ( *++s != '\0' ) {
       switch ( *s ) {
         case '\\':
           ++s;
@@ -594,8 +594,8 @@ static bool md_is_html_end( html_state_t html_state, char const *s ) {
     //
     // Does the line contain an end HTML_PRE tag?
     //
-    for ( ;; ) {
-      if ( !(s = strchr( s, '<' )) )
+    for (;;) {
+      if ( (s = strchr( s, '<' )) == NULL )
         return false;
       bool is_end_tag;
       if ( md_is_html_tag( s, &is_end_tag ) == HTML_PRE && is_end_tag )
@@ -624,7 +624,7 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
   assert( s[0] == '<' );
   assert( is_end_tag != NULL );
 
-  if ( !*++s )
+  if ( *++s == '\0' )
     return HTML_NONE;
 
   html_state_t html_state = HTML_NONE;
@@ -693,7 +693,7 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
   // a line by itself.
   //
   s = skip_html_tag( s, is_end_tag );
-  return s && is_blank_line( s ) ? HTML_ELEMENT : HTML_NONE;
+  return s != NULL && is_blank_line( s ) ? HTML_ELEMENT : HTML_NONE;
 }
 
 /**
@@ -709,7 +709,7 @@ static bool md_is_link_label( char const *s, bool *has_title ) {
   assert( s[0] == '[' );
   assert( has_title != NULL );
 
-  while ( *++s ) {
+  while ( *++s != '\0' ) {
     if ( *s == ']' ) {
       if ( !(*++s == ':' && is_space( *++s )) )
         break;
@@ -720,7 +720,7 @@ static bool md_is_link_label( char const *s, bool *has_title ) {
       // We only check whether the URI scheme is valid and, if it is, that's
       // good enough and we don't bother validating the syntax of the URI.
       //
-      if ( !(s = is_uri_scheme( s )) )
+      if ( (s = is_uri_scheme( s )) == NULL )
         break;
       s += strcspn( s, " \t\r\n" );
       *has_title = false;
@@ -783,7 +783,7 @@ static bool md_is_table( char const *s ) {
   assert( s != NULL );
   bool nws = false;                     // encountered non-whitespace?
 
-  for ( ; *s; ++s ) {
+  for ( ; *s != '\0'; ++s ) {
     switch ( *s ) {
       case '\\':
         ++s;
@@ -832,7 +832,7 @@ static bool md_is_Setext_header( char const *s ) {
   assert( s != NULL );
   assert( s[0] == '-' || s[0] == '=' );
 
-  for ( char const c = *s; *s && !is_eol( *s ); ++s ) {
+  for ( char const c = *s; *s != '\0' && !is_eol( *s ); ++s ) {
     if ( *s != c )
       return is_blank_line( s );
   } // for
@@ -906,8 +906,8 @@ static char const* skip_html_tag( char const *s, bool *is_end_tag ) {
   }
 
   char quote = '\0';
-  for ( ; *s; ++s ) {
-    if ( quote ) {                      // ignore everything ...
+  for ( ; *s != '\0'; ++s ) {
+    if ( quote != '\0' ) {              // ignore everything ...
       if ( *s == quote )                // ... until matching quote
         quote = '\0';
     } else {
@@ -948,7 +948,7 @@ static void stack_push( md_line_t line_type, md_indent_t indent_left,
   );
 
   ++stack_top;
-  if ( !stack_capacity ) {
+  if ( stack_capacity == 0 ) {
     stack_capacity = STATE_ALLOC_DEFAULT;
     stack = MALLOC( md_state_t, stack_capacity );
   } else if ( (size_t)stack_top >= stack_capacity ) {
@@ -1011,7 +1011,7 @@ md_state_t const* markdown_parse( char *s ) {
       //
       if ( code_fence_end )
         stack_pop();
-      else if ( code_fence.cf_c ) {
+      else if ( code_fence.cf_c != '\0' ) {
         //
         // If code_fence.cf_c is set, that distinguishes a code fence from
         // indented code.
@@ -1171,7 +1171,7 @@ md_state_t const* markdown_parse( char *s ) {
     case '<': {
       bool is_end_tag;
       html_state = md_is_html_tag( nws, &is_end_tag );
-      if ( html_state ) {
+      if ( html_state != HTML_NONE ) {
         if ( is_end_tag )               // HTML ends on same line as it begins
           html_state = HTML_END;
         stack_push( MD_HTML_BLOCK, indent_left, 0 );
