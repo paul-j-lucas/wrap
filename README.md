@@ -65,7 +65,7 @@ Rust,
 Scala,
 Scheme,
 Shell,
-SQL
+SQL,
 Swift,
 Tcl,
 TeX,
