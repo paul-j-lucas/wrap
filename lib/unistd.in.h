@@ -1,5 +1,5 @@
 /* Substitute for and wrapper around <unistd.h>.
-   Copyright (C) 2003-2017 Free Software Foundation, Inc.
+   Copyright (C) 2003-2018 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, see <http://www.gnu.org/licenses/>.  */
+   along with this program; if not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef _@GUARD_PREFIX@_UNISTD_H
 
@@ -61,7 +61,7 @@
 /* But avoid namespace pollution on glibc systems.  */
 #if (!(defined SEEK_CUR && defined SEEK_END && defined SEEK_SET) \
      || ((@GNULIB_UNLINK@ || defined GNULIB_POSIXCHECK) \
-         && ((defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__)) \
+         && (defined _WIN32 && ! defined __CYGWIN__)) \
      || ((@GNULIB_SYMLINKAT@ || defined GNULIB_POSIXCHECK) \
          && defined __CYGWIN__)) \
     && ! defined __GLIBC__
@@ -94,13 +94,13 @@
    lseek(), read(), unlink(), write() in <io.h>.  */
 #if ((@GNULIB_CHDIR@ || @GNULIB_GETCWD@ || @GNULIB_RMDIR@ \
       || defined GNULIB_POSIXCHECK) \
-     && ((defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__))
+     && (defined _WIN32 && ! defined __CYGWIN__))
 # include <io.h>     /* mingw32, mingw64 */
 # include <direct.h> /* mingw64, MSVC 9 */
 #elif (@GNULIB_CLOSE@ || @GNULIB_DUP@ || @GNULIB_DUP2@ || @GNULIB_ISATTY@ \
        || @GNULIB_LSEEK@ || @GNULIB_READ@ || @GNULIB_UNLINK@ || @GNULIB_WRITE@ \
        || defined GNULIB_POSIXCHECK) \
-      && ((defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__)
+      && (defined _WIN32 && ! defined __CYGWIN__)
 # include <io.h>
 #endif
 
@@ -134,9 +134,8 @@
 /* The definition of _GL_WARN_ON_USE is copied here.  */
 
 
-/* Get getopt(), optarg, optind, opterr, optopt.
-   But avoid namespace pollution on glibc systems.  */
-#if @GNULIB_UNISTD_H_GETOPT@ && !defined __GLIBC__ && !defined _GL_SYSTEM_GETOPT
+/* Get getopt(), optarg, optind, opterr, optopt.  */
+#if @GNULIB_UNISTD_H_GETOPT@ && !defined _GL_SYSTEM_GETOPT
 # include <getopt-cdefs.h>
 # include <getopt-pfx-core.h>
 #endif
@@ -379,7 +378,7 @@ _GL_WARN_ON_USE (dup2, "dup2 is unportable - "
    Close NEWFD first if it is open.
    Return newfd if successful, otherwise -1 and errno set.
    See the Linux man page at
-   <http://www.kernel.org/doc/man-pages/online/pages/man2/dup3.2.html>.  */
+   <https://www.kernel.org/doc/man-pages/online/pages/man2/dup3.2.html>.  */
 # if @HAVE_DUP3@
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   define dup3 rpl_dup3
@@ -401,6 +400,13 @@ _GL_WARN_ON_USE (dup3, "dup3 is unportable - "
 
 
 #if @GNULIB_ENVIRON@
+# if defined __CYGWIN__ && !defined __i386__
+/* The 'environ' variable is defined in a DLL. Therefore its declaration needs
+   the '__declspec(dllimport)' attribute, but the system's <unistd.h> lacks it.
+   This leads to a link error on 64-bit Cygwin when the option
+   -Wl,--disable-auto-import is in use.  */
+_GL_EXTERN_C __declspec(dllimport) char **environ;
+# endif
 # if !@HAVE_DECL_ENVIRON@
 /* Set of environment variables and values.  An array of strings of the form
    "VARIABLE=VALUE", terminated with a NULL.  */
@@ -462,13 +468,25 @@ _GL_WARN_ON_USE (euidaccess, "euidaccess is unportable - "
 
 
 #if @GNULIB_FACCESSAT@
-# if !@HAVE_FACCESSAT@
+# if @REPLACE_FACCESSAT@
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef faccessat
+#   define faccessat rpl_faccessat
+#  endif
+_GL_FUNCDECL_RPL (faccessat, int,
+                  (int fd, char const *name, int mode, int flag)
+                  _GL_ARG_NONNULL ((2)));
+_GL_CXXALIAS_RPL (faccessat, int,
+                  (int fd, char const *name, int mode, int flag));
+# else
+#  if !@HAVE_FACCESSAT@
 _GL_FUNCDECL_SYS (faccessat, int,
                   (int fd, char const *file, int mode, int flag)
                   _GL_ARG_NONNULL ((2)));
-# endif
+#  endif
 _GL_CXXALIAS_SYS (faccessat, int,
                   (int fd, char const *file, int mode, int flag));
+# endif
 _GL_CXXALIASWARN (faccessat);
 #elif defined GNULIB_POSIXCHECK
 # undef faccessat
@@ -1149,7 +1167,7 @@ _GL_WARN_ON_USE (pipe, "pipe is unportable - "
    Store the read-end as fd[0] and the write-end as fd[1].
    Return 0 upon success, or -1 with errno set upon failure.
    See also the Linux man page at
-   <http://www.kernel.org/doc/man-pages/online/pages/man2/pipe2.2.html>.  */
+   <https://www.kernel.org/doc/man-pages/online/pages/man2/pipe2.2.html>.  */
 # if @HAVE_PIPE2@
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   define pipe2 rpl_pipe2
@@ -1471,7 +1489,7 @@ _GL_FUNCDECL_RPL (truncate, int, (const char *filename, off_t length)
                                  _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL (truncate, int, (const char *filename, off_t length));
 # else
-#  if !@HAVE_TRUNCATE@
+#  if !@HAVE_DECL_TRUNCATE@
 _GL_FUNCDECL_SYS (truncate, int, (const char *filename, off_t length)
                                  _GL_ARG_NONNULL ((1)));
 #  endif
