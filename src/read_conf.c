@@ -52,7 +52,7 @@ static char const* home_dir( void ) {
 #if HAVE_GETEUID && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR
   if ( home == NULL ) {
     struct passwd *const pw = getpwuid( geteuid() );
-    if ( pw )
+    if ( pw != NULL )
       home = pw->pw_dir;
   }
 #endif /* HAVE_GETEUID && && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR */

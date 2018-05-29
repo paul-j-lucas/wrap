@@ -156,7 +156,7 @@ static inline void close_pipe( int pipe[2] ) {
  * @return Returns \c true only if it is.
  */
 static inline bool is_comment_char( char c ) {
-  return c && strchr( opt_comment_chars, c ) != NULL;
+  return c != '\0' && strchr( opt_comment_chars, c ) != NULL;
 }
 
 /**
@@ -1015,9 +1015,9 @@ static char* skip_n( char *s, size_t n ) {
 static size_t strlen_no_eol( char const *s ) {
   assert( s != NULL );
   size_t n = strlen( s );
-  (void)(n && s[ n - 1 ] == '\n' &&
-       --n && s[ n - 1 ] == '\r' &&
-       --n);
+  (void)(n > 0 && s[ n - 1 ] == '\n' &&
+       --n > 0 && s[ n - 1 ] == '\r' &&
+       --n > 0);
   return n;
 }
 

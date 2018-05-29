@@ -947,10 +947,10 @@ static void usage( void ) {
  * @param msg The message to send.  If sent, the buffer is truncated.
  */
 static void wipc_send( char *msg ) {
-  if ( msg[0] ) {
+  if ( msg[0] != '\0' ) {
     WIPC_SENDF( fout, /*IPC_code=*/msg[0], "%s", msg + 1 );
     msg[0] = '\0';
-    if ( ipc_width ) {
+    if ( ipc_width > 0 ) {
       line_width = opt_line_width = ipc_width;
       ipc_width = 0;
     }

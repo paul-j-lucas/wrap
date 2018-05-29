@@ -607,7 +607,7 @@ static bool md_is_html_end( html_state_t html_state, char const *s ) {
   // Does the line contain the end string?
   //
   char const *const end = HTML_END_STR[ html_state ];
-  return end ? strstr( s, end ) != NULL : is_blank_line( s );
+  return end != NULL ? strstr( s, end ) != NULL : is_blank_line( s );
 }
 
 /**
@@ -645,7 +645,7 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
       return HTML_NONE;
   }
 
-  if ( html_state ) {
+  if ( html_state != HTML_NONE ) {
     //
     // Does the HTML block end on the same line as it starts?
     //

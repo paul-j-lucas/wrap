@@ -222,7 +222,7 @@ static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
   char gave_opt1 = '\0';
 
   for ( unsigned i = 0; i < 2; ++i ) {
-    for ( ; *opt; ++opt ) {
+    for ( ; *opt != '\0'; ++opt ) {
       if ( GAVE_OPTION( *opt ) ) {
         if ( ++gave_count > 1 ) {
           char const gave_opt2 = *opt;
@@ -540,10 +540,10 @@ void options_init( int argc, char const *argv[], void (*usage)(void) ) {
   if ( argc > 0 )
     usage();
 
-  if ( !opt_no_conf && (opt_alias || opt_fin_name != NULL) ) {
+  if ( !opt_no_conf && (opt_alias != NULL || opt_fin_name != NULL) ) {
     alias_t const *alias = NULL;
     opt_conf_file = read_conf( opt_conf_file );
-    if ( opt_alias ) {
+    if ( opt_alias != NULL ) {
       if ( (alias = alias_find( opt_alias )) == NULL )
         PMESSAGE_EXIT( EX_USAGE,
           "\"%s\": no such alias in %s\n",
