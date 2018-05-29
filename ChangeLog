@@ -1,3 +1,73 @@
+2018-05-28  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c, options.c, read_conf.c, wrap.c, wrapc.c: Made more checks
+     explicit.
+
+2018-05-19  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, alloca.in.h, arg-nonnull.h, c++defs.h, config.charset,
+     errno.in.h, flexmember.h, fnmatch.c, fnmatch.in.h, fnmatch_loop.c,
+     getopt-cdefs.in.h, getopt-core.h, getopt-ext.h, getopt-pfx-core.h,
+     getopt-pfx-ext.h, getopt.c, getopt.in.h, getopt1.c, getopt_int.h,
+     gettext.h, hard-locale.c, hard-locale.h, intprops.h, localcharset.c,
+     localcharset.h, malloc.c, mbrtowc.c, mbsinit.c, mbsrtowcs-impl.h,
+     mbsrtowcs-state.c, mbsrtowcs.c, memchr.c, ref-add.sin, ref-del.sin,
+     stdbool.in.h, stddef.in.h, stdlib.in.h, strdup.c, streq.h,
+     strerror-override.c, strerror-override.h, strerror.c, string.in.h,
+     strndup.c, strnlen.c, strnlen1.c, strnlen1.h, sys_types.in.h,
+     sysexits.in.h, unistd.in.h, verify.h, warn-on-use.h, wchar.in.h,
+     wctype.in.h, 00gnulib.m4, absolute-header.m4, alloca.m4,
+     builtin-expect.m4, configmake.m4, errno_h.m4, extensions.m4,
+     extern-inline.m4, fcntl-o.m4, flexmember.m4, fnmatch.m4, getopt.m4,
+     glibc21.m4, gnulib-cache.m4, gnulib-common.m4, gnulib-comp.m4,
+     gnulib-tool.m4, hard-locale.m4, include_next.m4, localcharset.m4,
+     locale-fr.m4, locale-ja.m4, locale-zh.m4, malloc.m4, mbrtowc.m4,
+     mbsinit.m4, mbsrtowcs.m4, mbstate_t.m4, memchr.m4, mmap-anon.m4,
+     nocrash.m4, off_t.m4, onceonly.m4, ssize_t.m4, stdbool.m4, stddef_h.m4,
+     stdlib_h.m4, strdup.m4, strerror.m4, string_h.m4, strndup.m4, strnlen.m4,
+     sys_socket_h.m4, sys_types_h.m4, sysexits.m4, unistd_h.m4, warn-on-use.m4,
+     wchar_h.m4, wchar_t.m4, wctype_h.m4, wint_t.m4: Updated GNUlib.
+   * NEWS, configure.ac, wrapc.1, options.c, wrapc.c, test/Makefile.am,
+     hello_00.sim, hello_01.sim, hello_02.sim, hello_03.sim, hello_04.sim,
+     hello_05.sim, hello_06.sim, wrapc--Simula-00.txt, wrapc--Simula-01.txt,
+     wrapc--Simula-02.txt, wrapc--Simula-03.txt, wrapc--Simula-04.txt,
+     wrapc--Simula-05.txt, wrapc--Simula-06.txt, wrapc--Simula-00.test,
+     wrapc--Simula-01.test, wrapc--Simula-02.test, wrapc--Simula-03.test,
+     wrapc--Simula-04.test, wrapc--Simula-05.test, wrapc--Simula-06.test: Added
+     support for Simula comments in wrapc.
+   * wrapc.c: Simplification for COBOL.
+   * wrapc.c: Simplification.
+   * alias.c, align.c, cc_map.c, common.c, markdown.c, options.c, pattern.c,
+     read_conf.c, regex_test.c, util.c, wrap.c, wrapc.c: Made comparisons more
+     explicit.
+
+2018-05-18  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1, options.c: Added more languages that are covered by wrapc: C#,
+     F#, Mathematica, PL/I, Pure, SQL, and Tcl.
+
+2018-04-24  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c, wrapc.c: s/an/and/ in usage messages.
+
+2018-04-07  Paul J. Lucas <paul@lucasmail.org>
+
+   * run_test.sh: Made color output match standard test-driver.
+
+2018-03-24  Paul J. Lucas <paul@lucasmail.org>
+
+   * util.h: Now doing explicit comparison == '\0'.
+
+2018-03-21  Paul J. Lucas <paul@lucasmail.org>
+
+   * alias.c, align.c, cc_map.c, common.c, markdown.c, options.c, pattern.c,
+     read_conf.c, regex_test.c, util.c, wrap.c, wrapc.c, wregex.c: Added
+     close_pipe(); made non-bool tests not use !.
+
+2018-03-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * wraprc.5: Added *.go
+
 2018-02-20  Paul J. Lucas <paul@lucasmail.org>
 
    * wrap.1: Fixed English.
