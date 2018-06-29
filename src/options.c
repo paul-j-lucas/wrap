@@ -54,11 +54,11 @@ static char const   COMMENT_CHARS_DEFAULT[] =
   "(:" ","  // XQuery
   "*>" ","  // COBOL 2002
   "--" ","  // Ada, AppleScript, Eiffel, Haskell, Lua, SQL
-  "/*" ","  // C, Objective C, C#, C++, D, Go, Java, PL/I, Pure, Rust, Scala,
-            //   SQL, Swift
+  "/*" ","  // C, Objective C, C#, C++, D, Go, Kotlin, Java, PL/I, Pure, Rust,
+            //   Scala, SQL, Swift
   "/+" ","  // D
-  "//" ","  // C, Objective C, C#, C++, D, F#, Go, Java, Pure, Rust, Scala,
-            //   Swift
+  "//" ","  // C, Objective C, C#, C++, D, F#, Go, Kotlin, Java, Pure, Rust,
+            //   Scala, Swift
   ";"  ","  // Assembly, Clojure, Lisp, Scheme
   "<#" ","  // PowerShell
   ">"  ","  // Quoted e-mail
