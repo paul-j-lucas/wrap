@@ -370,7 +370,7 @@ static pid_t read_source_write_wrap( void ) {
         // When wrapping Markdown, we can't strip all whitespace after the
         // comment delimiter characters because Markdown relies on indentation;
         // hence we strip only the length of the initial prototype -- but only
-        // if its less.
+        // if it's less.
         //
         prefix_len = prefix_len0;
       }
