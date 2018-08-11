@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wraprc\fP 1 "March 10, 2018" "PJL TOOLS"
+.TH \f3wraprc\fP 1 "August 11, 2018" "PJL TOOLS"
 .SH NAME
 wraprc \- text reformatter runtime configuration file
 .SH DESCRIPTION
@@ -56,10 +56,10 @@ Configuration lines.
 .P
 Additionally,
 all leading and trailing whitespace characters
-as well as all characters starting with
-.B #
+as well as all characters starting with \f(CW#\fP
 to the end of the line (which are comments)
 are ignored.
+(A backslash \f(CW\\\fP can be used to escape a \f(CW#\fP character.)
 .P
 The file is broken down into sections
 where each section is started by a line of the form:
