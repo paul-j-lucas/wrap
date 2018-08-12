@@ -45,20 +45,21 @@
 // local constants
 static char const   COMMENT_CHARS_DEFAULT[] =
   "!"  ","  // Fortran, Simula
-  "#"  ","  // AWK, CMake, Julia, Make, Perl, Python, R, Ruby, Shell, Tcl
+  "#"  ","  // AWK, CMake, Julia, Make, Octave, Perl, Python, R, Ruby, Shell,
+            //    Tcl
   "#=" ","  // Julia
   "#|" ","  // Lisp, Racket, Scheme
-  "%"  ","  // Erlang, PostScript, Prolog, TeX
+  "%"  ","  // Erlang, Matlab, Metafont, Octave, PostScript, Prolog, TeX
   "(*" ","  // AppleScript, Delphi, Mathematica, ML, Modula-[23], Oberon,
-            //   OCaml, Pascal
+            //    OCaml, Pascal
   "(:" ","  // XQuery
   "*>" ","  // COBOL 2002
-  "--" ","  // Ada, AppleScript, Eiffel, Haskell, Lua, SQL
-  "/*" ","  // C, Objective C, C#, C++, D, Go, Kotlin, Java, PL/I, Pure, Rust,
-            //   Scala, SQL, Swift
+  "--" ","  // Ada, AppleScript, Eiffel, Haskell, Lua, SQL, VHDL
+  "/*" ","  // C, Objective C, C#, C++, D, Go, Kotlin, Java, Maxima, Pike,
+            //    PL/I, Pure, Rust, Scala, SQL, Swift
   "/+" ","  // D
-  "//" ","  // C, Objective C, C#, C++, D, F#, Go, Kotlin, Java, Pure, Rust,
-            //   Scala, Swift
+  "//" ","  // C, Objective C, C#, C++, D, F#, Go, Kotlin, Java, Pike, Pure,
+            //    Rust, Scala, Swift
   ";"  ","  // Assembly, Clojure, Lisp, Scheme
   "<#" ","  // PowerShell
   ">"  ","  // Quoted e-mail
