@@ -157,7 +157,7 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
   *s = '\0';
   *size = s - buf;
 
-  return c == EOF && !*size ? NULL : buf;
+  return c == EOF && *size == 0 ? NULL : buf;
 }
 
 void* free_later( void *p ) {
