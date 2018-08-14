@@ -46,12 +46,12 @@ AC_DEFUN([gl_EARLY],
   # Code from module alloca:
   # Code from module alloca-opt:
   # Code from module builtin-expect:
-  # Code from module configmake:
   # Code from module errno:
   # Code from module extensions:
   # Code from module extern-inline:
   # Code from module flexmember:
   # Code from module fnmatch:
+  # Code from module fnmatch-h:
   # Code from module getopt-gnu:
   # Code from module getopt-posix:
   # Code from module gettext-h:
@@ -107,15 +107,16 @@ AC_DEFUN([gl_INIT],
   gl_source_base='lib'
   gl_FUNC_ALLOCA
   gl___BUILTIN_EXPECT
-  gl_CONFIGMAKE_PREP
   gl_HEADER_ERRNO_H
   AC_REQUIRE([gl_EXTERN_INLINE])
   AC_C_FLEXIBLE_ARRAY_MEMBER
   gl_FUNC_FNMATCH_POSIX
-  if test -n "$FNMATCH_H"; then
+  if test $HAVE_FNMATCH = 0 || test $REPLACE_FNMATCH = 1; then
     AC_LIBOBJ([fnmatch])
     gl_PREREQ_FNMATCH
   fi
+  gl_FNMATCH_MODULE_INDICATOR([fnmatch])
+  gl_FNMATCH_H
   gl_FUNC_GETOPT_GNU
   dnl Because of the way gl_FUNC_GETOPT_GNU is implemented (the gl_getopt_required
   dnl mechanism), there is no need to do any AC_LIBOBJ or AC_SUBST here; they are
@@ -130,9 +131,9 @@ AC_DEFUN([gl_INIT],
   AC_SUBST([GNULIB_GL_UNISTD_H_GETOPT])
   AC_SUBST([LIBINTL])
   AC_SUBST([LTLIBINTL])
-  gl_HARD_LOCALE
   gl_LOCALCHARSET
-  LOCALCHARSET_TESTS_ENVIRONMENT="CHARSETALIASDIR=\"\$(abs_top_builddir)/$gl_source_base\""
+  dnl For backward compatibility. Some packages still use this.
+  LOCALCHARSET_TESTS_ENVIRONMENT=
   AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
   gl_FUNC_MALLOC_POSIX
   if test $REPLACE_MALLOC = 1; then
@@ -349,7 +350,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/alloca.in.h
   lib/arg-nonnull.h
   lib/c++defs.h
-  lib/config.charset
   lib/errno.in.h
   lib/flexmember.h
   lib/fnmatch.c
@@ -378,8 +378,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/mbsrtowcs.c
   lib/memchr.c
   lib/memchr.valgrind
-  lib/ref-add.sin
-  lib/ref-del.sin
   lib/stdbool.in.h
   lib/stddef.in.h
   lib/stdlib.in.h
@@ -407,17 +405,14 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/alloca.m4
   m4/builtin-expect.m4
   m4/codeset.m4
-  m4/configmake.m4
   m4/errno_h.m4
   m4/extensions.m4
   m4/extern-inline.m4
-  m4/fcntl-o.m4
   m4/flexmember.m4
   m4/fnmatch.m4
+  m4/fnmatch_h.m4
   m4/getopt.m4
-  m4/glibc21.m4
   m4/gnulib-common.m4
-  m4/hard-locale.m4
   m4/include_next.m4
   m4/localcharset.m4
   m4/locale-fr.m4

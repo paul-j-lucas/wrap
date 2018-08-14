@@ -27,7 +27,24 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=. --no-conditional-dependencies --no-libtool --macro-prefix=gl extern-inline fnmatch getopt-gnu stdbool strdup-posix strerror strndup sysexits
+# gnulib-tool --import \
+#  --lib=libgnu \
+#  --source-base=lib \
+#  --m4-base=m4 \
+#  --doc-base=doc \
+#  --tests-base=tests \
+#  --aux-dir=. \
+#  --no-conditional-dependencies \
+#  --no-libtool \
+#  --macro-prefix=gl \
+#  extern-inline \
+#  fnmatch \
+#  getopt-gnu \
+#  stdbool \
+#  strdup-posix \
+#  strerror \
+#  strndup \
+#  sysexits
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
