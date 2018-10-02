@@ -295,7 +295,7 @@ static unsigned parse_align( char const *s, char *align_char ) {
     else
       goto error;
   }
-  return (unsigned)col;
+  return col;
 
 error:
   NO_OP;
