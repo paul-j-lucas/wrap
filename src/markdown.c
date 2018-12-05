@@ -425,13 +425,13 @@ static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
     (fence->cf_c != '\0' && fence->cf_len >= MD_CODE_FENCE_CHAR_MIN)
   );
 
-  char const c = fence->cf_c ? fence->cf_c : s[0];
+  char const c = fence->cf_c != '\0' ? fence->cf_c : s[0];
   size_t len = 0;
 
   for ( ; *s == c; ++s, ++len )
     /* empty */;
 
-  if ( fence->cf_len )                  // closing code fence
+  if ( fence->cf_len > 0 )              // closing code fence
     return len >= fence->cf_len && is_blank_line( s );
 
   if ( len >= MD_CODE_FENCE_CHAR_MIN ) {
