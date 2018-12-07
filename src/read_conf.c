@@ -19,7 +19,7 @@
 */
 
 // local
-#include "config.h"                     /* must go first */
+#include "wrap.h"                       /* must go first */
 #include "alias.h"
 #include "common.h"
 #include "pattern.h"
@@ -142,7 +142,7 @@ char const* read_conf( char const *conf_file ) {
     if ( home == NULL )
       return NULL;
     strcpy( conf_path_buf, home );
-    path_append( conf_path_buf, CONF_FILE_NAME );
+    path_append( conf_path_buf, CONF_FILE_NAME_DEFAULT );
     conf_file = conf_path_buf;
   }
 

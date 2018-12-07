@@ -30,7 +30,8 @@ COMMON_SOURCES = \
 	options.c options.h \
 	pattern.c pattern.h \
 	read_conf.c read_conf.h \
-	util.c util.h
+	util.c util.h \
+	wrap.h
 
 wrap_SOURCES = $(COMMON_SOURCES) \
 	markdown.c markdown.h \
@@ -47,6 +48,7 @@ regex_test_SOURCES = \
 	regex_test.c \
 	unicode.c unicode.h \
 	util.c util.h \
+	wrap.h \
 	wregex.c wregex.h
 
 # vim:set noet sw=8 ts=8:

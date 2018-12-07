@@ -27,7 +27,7 @@
  */
 
 // local
-#include "config.h"
+#include "wrap.h"                       /* must go first */
 
 // standard
 #include <errno.h>
@@ -115,7 +115,7 @@ _GL_INLINE_HEADER_BEGIN
 	if ( unlikely( pipe( FDS ) == -1 ) ) perror_exit( EX_OSERR ); )
 
 // extern variable definitions
-extern char const  *me;                 // executable name
+extern char const  *me;                 ///< Program name.
 
 ////////// extern functions ///////////////////////////////////////////////////
 

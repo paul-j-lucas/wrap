@@ -28,7 +28,7 @@
  */
 
 // local
-#include "config.h"
+#include "wrap.h"                       /* must go first */
 
 // standard
 #include <regex.h>

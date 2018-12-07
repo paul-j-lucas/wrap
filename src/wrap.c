@@ -19,7 +19,7 @@
 */
 
 // local
-#include "config.h"                     /* must go first */
+#include "wrap.h"                       /* must go first */
 #include "alias.h"
 #include "common.h"
 #include "markdown.h"
@@ -935,7 +935,10 @@ static void usage( void ) {
 "  -W         Treat line beginning with whitespace as paragraph delimiter.\n"
 "  -y         Suppress wrapping at hyphen characters.\n"
     , me, me,
-    CONF_FILE_NAME, EOS_SPACES_DEFAULT, TAB_SPACES_DEFAULT, LINE_WIDTH_DEFAULT
+    CONF_FILE_NAME_DEFAULT,
+    EOS_SPACES_DEFAULT,
+    TAB_SPACES_DEFAULT,
+    LINE_WIDTH_DEFAULT
   );
   exit( EX_USAGE );
 }

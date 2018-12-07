@@ -19,7 +19,7 @@
 */
 
 // local
-#include "config.h"                     /* must go first */
+#include "wrap.h"                       /* must go first */
 #include "util.h"
 #include "wregex.h"
 
@@ -36,7 +36,7 @@
 static char const TEST_SEP = ' ';
 
 // extern variable definitions
-char const       *me;                   // executable name
+char const       *me;                   ///< Program name.
 
 ////////// local functions ////////////////////////////////////////////////////
 

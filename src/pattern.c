@@ -19,7 +19,7 @@
 */
 
 // local
-#include "config.h"                     /* must go first */
+#include "wrap.h"                       /* must go first */
 #include "pattern.h"
 #include "common.h"
 #include "util.h"

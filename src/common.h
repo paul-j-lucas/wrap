@@ -28,7 +28,7 @@
  */
 
 // local
-#include "config.h"                     /* must go first */
+#include "wrap.h"                       /* must go first */
 #include "options.h"                    /* for opt_eol */
 
 // standard
@@ -42,7 +42,7 @@ _GL_INLINE_HEADER_BEGIN
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define CONF_FILE_NAME            "." PACKAGE "rc"
+#define CONF_FILE_NAME_DEFAULT    "." PACKAGE "rc"
 #define EOS_SPACES_DEFAULT        2     /* # spaces after end-of-sentence */
 #define LINE_BUF_SIZE             8192  /* hopefully, no one will exceed this */
 #define LINE_WIDTH_DEFAULT        80    /* wrap text to this line width */

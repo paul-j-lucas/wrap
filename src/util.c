@@ -19,7 +19,7 @@
 */
 
 // local
-#include "config.h"                     /* must go first */
+#include "wrap.h"                       /* must go first */
 #define WRAP_UTIL_INLINE _GL_EXTERN_INLINE
 #include "util.h"
 
