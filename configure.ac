@@ -4,7 +4,7 @@
 #       wrap -- text reformatter
 #       configure.ac
 #
-#       Copyright (C) 2013-2017  Paul J. Lucas
+#       Copyright (C) 2013-2018  Paul J. Lucas
 #
 #       This program is free software: you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #       along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-AC_INIT([wrap], [5.2], [paul@lucasmail.org],,[https://github.com/paul-j-lucas/wrap])
+AC_INIT([wrap], [5.2.1], [paul@lucasmail.org],,[https://github.com/paul-j-lucas/wrap])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
