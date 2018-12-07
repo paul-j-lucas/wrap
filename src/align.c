@@ -1,6 +1,6 @@
 /*
 **      wrapc -- comment reformatter
-**      align.c
+**      src/align.c
 **
 **      Copyright (C) 2017  Paul J. Lucas
 **

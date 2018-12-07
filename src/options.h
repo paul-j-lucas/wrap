@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      options.h
+**      src/options.h
 **
 **      Copyright (C) 1996-2017  Paul J. Lucas
 **
@@ -43,50 +43,50 @@
  * End-of-Line formats.
  */
 enum eol {
-  EOL_INPUT   = 'i',                    // do whatever the input does
-  EOL_UNIX    = 'u',                    // \n
-  EOL_WINDOWS = 'w'                     // \r\n
+  EOL_INPUT   = 'i',                    ///< Do whatever the input does.
+  EOL_UNIX    = 'u',                    ///< \\n
+  EOL_WINDOWS = 'w'                     ///< \\r\\n
 };
 typedef enum eol eol_t;
 
 // extern option variables
 extern char const  *opt_alias;
-extern char         opt_align_char;     // use this to pad comment alignment
-extern size_t       opt_align_column;   // align comment on given column
+extern char         opt_align_char;     ///< Use this to pad comment alignment.
+extern size_t       opt_align_column;   ///< Align comment on given column.
 extern char const  *opt_comment_chars;
 extern char const  *opt_conf_file;
-extern bool         opt_data_link_esc;  // respond to in-band control
+extern bool         opt_data_link_esc;  ///< Respond to in-band control.
 extern eol_t        opt_eol;
-extern bool         opt_eos_delimit;    // end-of-sentence delimits para's?
-extern size_t       opt_eos_spaces;     // spaces after end-of-sentence
-extern char const  *opt_fin;            // file in path
-extern char const  *opt_fin_name;       // file in name (only)
-extern char const  *opt_fout;           // file out path
-extern size_t       opt_hang_spaces;    // hanging-indent spaces
-extern size_t       opt_hang_tabs;      // hanging-indent tabs
-extern size_t       opt_indt_spaces;    // indent spaces
-extern size_t       opt_indt_tabs;      // indent tabs
-extern bool         opt_lead_dot_ignore;// ignore lines starting with '.'?
+extern bool         opt_eos_delimit;    ///< End-of-sentence delimits para's?
+extern size_t       opt_eos_spaces;     ///< Spaces after end-of-sentence.
+extern char const  *opt_fin;            ///< File in path.
+extern char const  *opt_fin_name;       ///< File in name (only).
+extern char const  *opt_fout;           ///< File out path.
+extern size_t       opt_hang_spaces;    ///< Hanging-indent spaces.
+extern size_t       opt_hang_tabs;      ///< Hanging-indent tabs.
+extern size_t       opt_indt_spaces;    ///< Indent spaces.
+extern size_t       opt_indt_tabs;      ///< Indent tabs.
+extern bool         opt_lead_dot_ignore;///< Ignore lines starting with '.'?
 extern char const  *opt_lead_para_delims;
 extern size_t       opt_lead_spaces;
 extern char const  *opt_lead_string;
 extern size_t       opt_lead_tabs;
-extern bool         opt_lead_ws_delimit;// leading whitespace delimit para's?
+extern bool         opt_lead_ws_delimit;///< Leading whitespace delimit para's?
 extern size_t       opt_line_width;
 extern bool         opt_markdown;
 extern size_t       opt_mirror_spaces;
 extern size_t       opt_mirror_tabs;
 extern size_t       opt_newlines_delimit;
-extern bool         opt_no_conf;        // do not read conf file
-extern bool         opt_no_hyphen;      // do not treat hyphens specially
-extern char const  *opt_para_delims;    // additional para delimiter chars
-extern bool         opt_prototype;      // first line whitespace is prototype?
+extern bool         opt_no_conf;        ///< Do not read conf file.
+extern bool         opt_no_hyphen;      ///< Do not treat hyphens specially.
+extern char const  *opt_para_delims;    ///< Additional para delimiter chars.
+extern bool         opt_prototype;      ///< First line whitespace is prototype?
 extern size_t       opt_tab_spaces;
-extern bool         opt_title_line;     // 1st para line is title?
+extern bool         opt_title_line;     ///< 1st para line is title?
 
 // other extern variables
-extern FILE        *fin;                // file in
-extern FILE        *fout;               // file out
+extern FILE        *fin;                ///< File in.
+extern FILE        *fout;               ///< File out.
 
 ////////// extern functions ///////////////////////////////////////////////////
 

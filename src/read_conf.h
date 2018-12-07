@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      read_conf.h
+**      src/read_conf.h
 **
 **      Copyright (C) 2013-2017  Paul J. Lucas
 **

@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      util.h
+**      src/util.h
 **
 **      Copyright (C) 1996-2017  Paul J. Lucas
 **
@@ -53,9 +53,9 @@ _GL_INLINE_HEADER_BEGIN
 #define PRINT_ERR(...)            fprintf( stderr, __VA_ARGS__ )
 #define SKIP_CHARS(S,CHARS)       ((S) += strspn( (S), (CHARS) ))
 #define STRERROR                  strerror( errno )
-#define WS_ST                     " \t"       /* Space Tab */
-#define WS_STR                    WS_ST "\r"  /* Space Tab Return */
-#define WS_STRN                   WS_STR "\n" /* Space Tab Return Newline */
+#define WS_ST                     " \t"       /**< Space Tab. */
+#define WS_STR                    WS_ST "\r"  /**< Space Tab Return. */
+#define WS_STRN                   WS_STR "\n" /**< Space Tab Return Newline. */
 
 #ifdef __GNUC__
 

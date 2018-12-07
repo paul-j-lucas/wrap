@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      markdown.c
+**      src/markdown.c
 **
 **      Copyright (C) 2016-2017  Paul J. Lucas
 **

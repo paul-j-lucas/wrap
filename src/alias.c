@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      alias.c
+**      src/alias.c
 **
 **      Copyright (C) 2013-2017  Paul J. Lucas
 **

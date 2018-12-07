@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      common.c
+**      src/common.c
 **
 **      Copyright (C) 2016-2017  Paul J. Lucas
 **

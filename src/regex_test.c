@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      regex_test.c
+**      src/regex_test.c
 **
 **      Copyright (C) 2017  Paul J. Lucas
 **

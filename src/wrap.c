@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      wrap.c
+**      src/wrap.c
 **
 **      Copyright (C) 1996-2017  Paul J. Lucas
 **

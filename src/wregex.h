@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      wregex.h
+**      src/wregex.h
 **
 **      Copyright (C) 2017  Paul J. Lucas
 **

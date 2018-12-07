@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      unicode.c
+**      src/unicode.c
 **
 **      Copyright (C) 1996-2017  Paul J. Lucas
 **

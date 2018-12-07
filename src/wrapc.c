@@ -1,6 +1,6 @@
 /*
 **      wrapc -- comment reformatter
-**      wrapc.c
+**      src/wrapc.c
 **
 **      Copyright (C) 1996-2017  Paul J. Lucas
 **

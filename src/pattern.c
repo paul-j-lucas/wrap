@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      pattern.c
+**      src/pattern.c
 **
 **      Copyright (C) 2013-2017  Paul J. Lucas
 **

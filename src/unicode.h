@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      unicode.h
+**      src/unicode.h
 **
 **      Copyright (C) 1996-2017  Paul J. Lucas
 **
@@ -52,7 +52,7 @@ typedef uint32_t codepoint_t;
 #define CP_BYTE_ORDER_MARK        0x00FEFFu
 #define CP_EOF                    ((codepoint_t)EOF)
 #define CP_INVALID                0x1FFFFFu
-#define UTF8_CHAR_SIZE_MAX        6     /* max bytes needed for UTF-8 char */
+#define UTF8_CHAR_SIZE_MAX        6     /**< Max bytes needed for UTF-8 char. */
 
 /**
  * UTF-8 character.

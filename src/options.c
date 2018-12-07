@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      options.c
+**      src/options.c
 **
 **      Copyright (C) 1996-2017  Paul J. Lucas
 **

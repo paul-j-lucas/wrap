@@ -1,6 +1,6 @@
 /*
 **      wrapc -- comment reformatter
-**      cc_map.h
+**      src/cc_map.h
 **
 **      Copyright (C) 2017  Paul J. Lucas
 **

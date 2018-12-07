@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      markdown.h
+**      src/markdown.h
 **
 **      Copyright (C) 2016-2017  Paul J. Lucas
 **
@@ -35,8 +35,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define MD_SEQ_NUM_INIT           1     /* first Markdown state seq number */
-#define TAB_SPACES_MARKDOWN       4     /* number of spaces a tab equals */
+#define MD_SEQ_NUM_INIT           1     /**< First Markdown state seq number. */
+#define TAB_SPACES_MARKDOWN       4     /**< Number of spaces a tab equals. */
 
 /**
  * Markdown line types.
@@ -46,25 +46,25 @@
 enum md_line {
   MD_NONE         = '0',
   MD_CODE         = 'C',
-  MD_DL           = ':',                // definition list
-  MD_FOOTNOTE_DEF = '^',                // [^id]: footnote definition
-  MD_HEADER_ATX   = '#',                // # to ######
-  MD_HEADER_LINE  = '=',                // ===== or -----
-  MD_HR           = '_',                // ***, ---, or ___
-  MD_HTML_ABBR    = 'A',                // *[abbr]: abbreviation
+  MD_DL           = ':',                ///< Definition list.
+  MD_FOOTNOTE_DEF = '^',                ///< [^id]: footnote definition.
+  MD_HEADER_ATX   = '#',                ///< # to ######
+  MD_HEADER_LINE  = '=',                ///< ===== or -----
+  MD_HR           = '_',                ///< ***, ---, or ___
+  MD_HTML_ABBR    = 'A',                ///< *[abbr]: abbreviation.
   MD_HTML_BLOCK   = '<',
-  MD_LINK_LABEL   = '[',                // [id]: <URI>
-  MD_OL           = '1',                // ordered list: 1., 2., ....
+  MD_LINK_LABEL   = '[',                ///< [id]: <URI>
+  MD_OL           = '1',                ///< Ordered list: 1., 2., ....
   MD_TABLE        = '|',
-  MD_TEXT         = 'T',                // plain text
-  MD_UL           = '*',                // unordered list: *, +, or -
+  MD_TEXT         = 'T',                ///< Plain text.
+  MD_UL           = '*',                ///< Unordered list: *, +, or -.
 };
 typedef enum md_line md_line_t;
 
-typedef unsigned md_depth_t;            // how nested we are
-typedef unsigned md_seq_t;              // parser state sequence number
-typedef unsigned md_indent_t;           // indentation amount (in spaces)
-typedef unsigned md_ol_t;               // ordered list number
+typedef unsigned md_depth_t;            ///< How nested we are.
+typedef unsigned md_seq_t;              ///< Parser state sequence number.
+typedef unsigned md_indent_t;           ///< Indentation amount (in spaces).
+typedef unsigned md_ol_t;               ///< Ordered list number.
 
 /**
  * Markdown parser state.
