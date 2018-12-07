@@ -1,12 +1,15 @@
 Wrap NEWS -- history of user-visible changes.
 
-Copyright (C) 1996-2017 Paul J. Lucas.
+Copyright (C) 1996-2018 Paul J. Lucas.
 See the end of the file for license conditions.
+
+-------------------------------------------------------------------------------
 
 * Changes in Wrap 5.2
 
 ** Added support for Simula comments
 Wrapc can now automatically recognize and properly wrap Simula comments.
+
 
 * Changes in Wrap 5.1
 
@@ -14,6 +17,7 @@ Wrapc can now automatically recognize and properly wrap Simula comments.
 Now aligns only comments that are really at the end of the line (as opposed to
 within a line).  It also does not align comments unless there is more than one
 "token" on the line.
+
 
 * Changes in Wrap 5.0
 
@@ -27,6 +31,7 @@ Aliases in configuration files can now import other aliases.
 In addition to alphanumeric and the underscore character, alias names may now
 also use any of the +-.: characters.
 
+
 * Changes in Wrap 4.11
 
 ** Better handling of --comment-chars/-D value.
@@ -39,10 +44,12 @@ Wrap and wrapc now accept one of "t", "term", or "terminal" as an argument to
 either the --width or -w option to set the line width to the width of the
 terminal in which either wrap or wrapc is running.
 
+
 * Changes in Wrap 4.10
 
 ** Long command-line options.
 Both wrap and wrapc now additionally accept long command-line options.
+
 
 * Changes in Wrap 4.9
 
@@ -52,11 +59,13 @@ that URIs containing hyphens are also wrapped which isn't what is usually
 wanted.  Wrap and wrapc no longer wrap at hyphen characters within file, FTP,
 HTTP, or HTTPS URIs, or within e-mail addresses.
 
+
 * Changes in Wrap 4.8
 
 ** Added ability to specify number of spaces after an end-of-sentence.
 Wrap and wrapc now have a -E option that allows the number of spaces after an
 end-of-sentence to be specified.
+
 
 * Changes in Wrap 4.7
 
@@ -65,10 +74,12 @@ Wrap now supports all Unicode question and exclamation marks, right quotation
 parentheses, and brackets (for end-of-sentence characters) as well as space
 characters.
 
+
 * Changes in Wrap 4.6
 
 ** Added ability to wrap as hyphen characters.
 Wrap and wrapc can now wrap at hyphen characters.
+
 
 * Changes in Wrap 4.5
 
@@ -80,15 +91,18 @@ embeded HTML is handled.
 ** Now allowing ')' for Markdown ordered lists.
 Wrap and wrapc now allow ')' as the delimiter for ordered lists.
 
+
 * Changes in Wrap 4.4
 
 ** Added support for COBOL 2002 comments.
 Wrapc can now automatically recognize and properly wrap COBOL comments.
 
+
 * Changes in Wrap 4.3
 
 ** Added support for boxed comments.
 Wrapc can now automatically recognize and properly wrap boxed comments.
+
 
 * Changes in Wrap 4.2
 
@@ -101,10 +115,12 @@ Wrap and wrapc now support PHP Markdown Extra definition lists.
 ** Added PHP Markdown Extra footnote support.
 Wrap and wrapc now support PHP Markdown Extra footnotes.
 
+
 * Changes in Wrap 4.1
 
 ** Added PHP Markdown Extra table support.
 Wrap and wrapc now support (pass through) PHP Markdown Extra tables.
+
 
 * Changes in Wrap 4.0
 
@@ -114,6 +130,7 @@ Wrap and wrapc now have a -u option that enables wrapping of Markdown text.
 ** Added leading string option.
 Wrap now has a -L option that allows a leading string to be prepended to every
 line.
+
 
 * Changes in Wrap 3.3
 
@@ -138,6 +155,7 @@ In wrapc, blocks of text started by certain characters can now delimit
 paragraphs via a new -b command-line option.  This allows things like Javadoc
 or Doxygen @ characters, e.g., @param, to remain on their own lines.
 
+
 * Changes in Wrap 3.2
 
 ** Improved leader handling.
@@ -148,6 +166,7 @@ with comments like " // * Bullet"; hence the leader is now defined as
 
 ** Now using standard sysexits exit codes.
 Exit codes are now those specified by sysexits(3).
+
 
 * Changes in Wrap 3.1
 
@@ -160,16 +179,19 @@ If a line is encountered that does not start with whitespace followed by
 comment delimiters, it signals the end of the comment and all remaining lines
 are passed through verbatim.
 
+
 * Changes in Wrap 3.0.3
 
 ** Now using C99.
 Now using C99 as the minimum required C version.
+
 
 * Changes in Wrap 3.0.2
 
 ** Changed wrapc algorithm.
 Wrapc now strips leading characters anew for each line preventing the loss of
 characters for subsequent lines that are indented less than the first.
+
 
 * Changes in Wrap 3.0.1
 
@@ -179,6 +201,7 @@ Lines longer than line-width are now handled correctly.
 ** Fixed handling of ragged lines in wrapc.
 Comment lines that don't all start with the same number of delimiters are now
 handled better.
+
 
 * Changes in Wrap 3.0
 
@@ -231,6 +254,7 @@ has been deprecated in favor of the new -w option.
 A bug whereby reading a comment line that has fewer characters than the number
 of leading characters of the first line resulted in lines being incorrectly
 folded has been fixed.
+
 
 * Changes in Wrap 1.0
 
