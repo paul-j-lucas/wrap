@@ -20,6 +20,9 @@
 
 // local
 #include "wrap.h"                       /* must go first */
+/// @cond DOXYGEN_IGNORE
+#define WRAP_CC_MAP_INLINE _GL_EXTERN_INLINE
+/// @endcond
 #include "cc_map.h"
 #include "options.h"
 #include "util.h"
