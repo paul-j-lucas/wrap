@@ -71,6 +71,7 @@ static char const   COMMENT_CHARS_DEFAULT[] =
 char const         *opt_alias;
 char                opt_align_char;
 size_t              opt_align_column;
+char const         *opt_block_chars;
 char const         *opt_comment_chars = COMMENT_CHARS_DEFAULT;
 char const         *opt_conf_file;
 bool                opt_eos_delimit;
@@ -85,7 +86,6 @@ size_t              opt_hang_tabs;
 size_t              opt_indt_spaces;
 size_t              opt_indt_tabs;
 bool                opt_lead_dot_ignore;
-char const         *opt_lead_para_delims;
 size_t              opt_lead_spaces;
 char const         *opt_lead_string;
 size_t              opt_lead_tabs;
@@ -412,7 +412,7 @@ static void parse_options( int argc, char const *argv[],
       case 'a': opt_alias             = optarg;                 break;
       case 'A': opt_align_column      = parse_align( optarg, &opt_align_char );
                                                                 break;
-      case 'b': opt_lead_para_delims  = optarg;                 break;
+      case 'b': opt_block_chars       = optarg;                 break;
       case 'c': opt_conf_file         = optarg;                 break;
       case 'C': opt_no_conf           = true;                   break;
       case 'd': opt_lead_dot_ignore   = true;                   break;

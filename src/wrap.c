@@ -105,15 +105,14 @@ static void         wrap_cleanup( void );
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
- * Checks whether \a cp is a leading paragraph delimiter Unicode character.
+ * Checks whether \a cp is a "block" Unicode code-point.
  *
  * @param cp The Unicode code-point to check.
- * @return Returns \c true only if \a cp is a leading paragraph delimiter code-
- * point.
+ * @return Returns \c true only if \a cp is a "block" code-point.
  */
-static inline bool cp_is_lead_para_delim( codepoint_t cp ) {
-  return  opt_lead_para_delims && cp_is_ascii( cp ) &&
-          strchr( opt_lead_para_delims, (int)cp ) != NULL;
+static inline bool cp_is_block_char( codepoint_t cp ) {
+  return  opt_block_chars && cp_is_ascii( cp ) &&
+          strchr( opt_block_chars, (int)cp ) != NULL;
 }
 
 /**
@@ -296,7 +295,7 @@ int main( int argc, char const *argv[] ) {
         pc = input_buf;
         continue;
       }
-      if ( cp_is_lead_para_delim( cp ) ) {
+      if ( cp_is_block_char( cp ) ) {
         delimit_paragraph();
         if ( opt_markdown ) {
           markdown_init();

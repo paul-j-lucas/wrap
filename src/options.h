@@ -53,10 +53,11 @@ typedef enum eol eol_t;
 extern char const  *opt_alias;
 extern char         opt_align_char;     ///< Use this to pad comment alignment.
 extern size_t       opt_align_column;   ///< Align comment on given column.
-extern char const  *opt_comment_chars;
-extern char const  *opt_conf_file;
+extern char const  *opt_block_chars;    ///< Chars that delimit para's.
+extern char const  *opt_comment_chars;  ///< Chars that delimit comments.
+extern char const  *opt_conf_file;      ///< Configuration file path.
 extern bool         opt_data_link_esc;  ///< Respond to in-band control.
-extern eol_t        opt_eol;
+extern eol_t        opt_eol;            ///< End-of-line treatment.
 extern bool         opt_eos_delimit;    ///< End-of-sentence delimits para's?
 extern size_t       opt_eos_spaces;     ///< Spaces after end-of-sentence.
 extern char const  *opt_fin;            ///< File in path.
@@ -67,7 +68,6 @@ extern size_t       opt_hang_tabs;      ///< Hanging-indent tabs.
 extern size_t       opt_indt_spaces;    ///< Indent spaces.
 extern size_t       opt_indt_tabs;      ///< Indent tabs.
 extern bool         opt_lead_dot_ignore;///< Ignore lines starting with '.'?
-extern char const  *opt_lead_para_delims;
 extern size_t       opt_lead_spaces;
 extern char const  *opt_lead_string;
 extern size_t       opt_lead_tabs;
