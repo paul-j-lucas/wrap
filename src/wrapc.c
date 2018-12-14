@@ -224,7 +224,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   typedef char path_buf_t[ PATH_MAX ];
 
   arg_buf_t   arg_opt_alias;
-  arg_buf_t   arg_opt_block_chars;
+  arg_buf_t   arg_opt_block_delims;
   arg_buf_t   arg_opt_conf_file;
   arg_buf_t   arg_opt_eol;
   arg_buf_t   arg_opt_eos_spaces;
@@ -252,7 +252,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 
   /*  0 */    ARG_DUP(                       PACKAGE );
   /*  1 */ IF_ARG_FMT( opt_alias           , "-a%s"  );
-  /*  2 */ IF_ARG_FMT( opt_block_chars     , "-b%s"  );
+  /*  2 */ IF_ARG_FMT( opt_block_delims    , "-b%s"  );
   /*  3 */ IF_ARG_FMT( opt_conf_file       , "-c%s"  );
   /*  4 */ IF_ARG_DUP( opt_no_conf         , "-C"    );
   /*  5 */ IF_ARG_DUP( opt_eos_delimit     , "-e"    );

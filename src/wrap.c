@@ -111,8 +111,8 @@ static void         wrap_cleanup( void );
  * @return Returns \c true only if \a cp is a "block" code-point.
  */
 static inline bool cp_is_block_char( codepoint_t cp ) {
-  return  opt_block_chars != NULL && cp_is_ascii( cp ) &&
-          strchr( opt_block_chars, (int)cp ) != NULL;
+  return  opt_block_delims != NULL && cp_is_ascii( cp ) &&
+          strchr( opt_block_delims, (int)cp ) != NULL;
 }
 
 /**
