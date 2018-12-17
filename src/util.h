@@ -45,14 +45,42 @@ _GL_INLINE_HEADER_BEGIN
 
 ///////////////////////////////////////////////////////////////////////////////
 
+/** Gets the number of elements of the given array. */
 #define ARRAY_SIZE(A)             (sizeof(A) / sizeof(A[0]))
+
+/** Embeds the given statements into a compount statement block. */
 #define BLOCK(...)                do { __VA_ARGS__ } while (0)
+
+/** Explicit C version of C++'s `const_cast`. */
 #define CONST_CAST(T,EXPR)        ((T)(EXPR))
+
+/** Frees the given memory. */
 #define FREE(PTR)                 free( CONST_CAST( void*, (PTR) ) )
+
+/** Frees the newly allocated C string later. */
+#define FREE_STRBUF_LATER(SIZE)   FREE_STR_LATER( MALLOC( char, (SIZE) ) )
+
+/** Frees the given C string later. */
+#define FREE_STR_LATER(PTR)       REINTERPRET_CAST( char*, free_later( PTR ) )
+
+/** Frees the duplicated C string later. */
+#define FREE_STRDUP_LATER(PTR)    FREE_STR_LATER( check_strdup( PTR ) )
+
+/** No-operation statement.  (Useful for a `goto` target.) */
 #define NO_OP                     ((void)0)
+
+/** Shorthand for printing to standard error. */
 #define PRINT_ERR(...)            fprintf( stderr, __VA_ARGS__ )
+
+/** Explicit C version of C++'s `reinterpret_cast`. */
+#define REINTERPRET_CAST(T,EXPR)  ((T)(uintptr_t)(EXPR))
+
+/** Advances \a S over all \a CHARS. */
 #define SKIP_CHARS(S,CHARS)       ((S) += strspn( (S), (CHARS) ))
+
+/** Shorthand for calling **strerror**(3). */
 #define STRERROR                  strerror( errno )
+
 #define WS_ST                     " \t"       /**< Space Tab. */
 #define WS_STR                    WS_ST "\r"  /**< Space Tab Return. */
 #define WS_STRN                   WS_STR "\n" /**< Space Tab Return Newline. */

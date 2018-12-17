@@ -141,8 +141,7 @@ char const* cc_map_compile( char const *in_cc ) {
       format_opt( 'D', opt_buf, sizeof opt_buf )
     );
 
-  char *const out_cc =
-    (char*)free_later( MALLOC( char, distinct_cc + 1/*null*/ ) );
+  char *const out_cc = FREE_STRBUF_LATER( distinct_cc + 1/*null*/ );
   char *s = out_cc;
   for ( size_t i = 0; i < ARRAY_SIZE( cc_set ); ++i ) {
     if ( cc_set[i] )
