@@ -147,7 +147,7 @@ int main( int argc, char const *argv[] ) {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  for ( codepoint_t cp, cp_prev = 0;    // current and previous codepoints
+  for ( codepoint_t cp, cp_prev = '\n'; // current and previous codepoints
         (cp = buf_getcp( &pc, utf8c )) != CP_EOF; cp_prev = cp ) {
 
     if ( cp == CP_BYTE_ORDER_MARK || cp == CP_INVALID )
@@ -291,8 +291,12 @@ int main( int argc, char const *argv[] ) {
         consec_newlines = 0;
         delimit_paragraph();
         W_FPUTS( input_buf, fout );     // print the line as-is
+        //
+        // Make state as if line never happened.
+        //
         (void)buf_readline();
         pc = input_buf;
+        cp = '\n';
         continue;
       }
       if ( cp_is_block_char( cp ) ) {
