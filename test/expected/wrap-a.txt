@@ -4,6 +4,7 @@ is a filter for reformatting text by wrapping and filling lines to a given
 .IR line-length ,
 the default for which is 80 characters.
 .P
+.P
 All whitespace characters are folded into a single space with the following
 exceptions:
 .IP "1." 3

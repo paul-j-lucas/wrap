@@ -147,7 +147,7 @@ int main( int argc, char const *argv[] ) {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  for ( codepoint_t cp, cp_prev = 0;    // current and previous codepoints
+  for ( codepoint_t cp, cp_prev = '\n'; // current and previous codepoints
         (cp = buf_getcp( &pc, utf8c )) != CP_EOF; cp_prev = cp ) {
 
     if ( cp == CP_BYTE_ORDER_MARK || cp == CP_INVALID )
@@ -183,7 +183,7 @@ int main( int argc, char const *argv[] ) {
         // isn't empty (there is a title): print the title.
         //
         print_lead_chars();
-        print_line( output_len, true );
+        print_line( output_len, /*do_eol=*/true );
         indent = INDENT_HANG;
         continue;
       }
@@ -291,8 +291,12 @@ int main( int argc, char const *argv[] ) {
         consec_newlines = 0;
         delimit_paragraph();
         W_FPUTS( input_buf, fout );     // print the line as-is
+        //
+        // Make state as if line never happened.
+        //
         (void)buf_readline();
         pc = input_buf;
+        cp = '\n';
         continue;
       }
       if ( cp_is_block_char( cp ) ) {
@@ -415,7 +419,7 @@ int main( int argc, char const *argv[] ) {
       //
       if ( !is_long_line )
         print_lead_chars();
-      print_line( output_len, false );
+      print_line( output_len, /*do_eol=*/false );
       is_long_line = true;
       continue;
     }
@@ -431,7 +435,7 @@ int main( int argc, char const *argv[] ) {
 
     print_lead_chars();
     size_t const prev_output_len = output_len;
-    print_line( wrap_pos, true );
+    print_line( wrap_pos, /*do_eol=*/true );
 
     if ( hyphen != HYPHEN_NO ) {
       //
@@ -470,7 +474,7 @@ int main( int argc, char const *argv[] ) {
   if ( output_len > 0 ) {               // print left-over text
     if ( !is_long_line )
       print_lead_chars();
-    print_line( output_len, true );
+    print_line( output_len, /*do_eol=*/true );
   }
   exit( EX_OK );
 }
@@ -526,7 +530,7 @@ read_line:
         // verbatim.
         //
         print_lead_chars();
-        print_line( output_len, true );
+        print_line( output_len, /*do_eol=*/true );
         WIPC_SENDF( fout, WIPC_END_WRAP, "%s", *ppc );
         fcopy( fin, fout );
         exit( EX_OK );
@@ -623,7 +627,7 @@ static void delimit_paragraph( void ) {
     //
     if ( !true_reset( &is_long_line ) )
       print_lead_chars();
-    print_line( output_len, true );
+    print_line( output_len, /*do_eol=*/true );
   } else if ( is_long_line )
     print_eol();                      // delimit the "long line"
 
@@ -807,7 +811,7 @@ static bool markdown_adjust( void ) {
       // back" because these line types are never wrapped.
       //
       print_lead_chars();
-      print_line( output_len, true );
+      print_line( output_len, /*do_eol=*/true );
       W_FPUTS( input_buf, fout );
       return false;
 
@@ -820,7 +824,7 @@ static bool markdown_adjust( void ) {
         // We're changing line types: flush output_buf.
         //
         print_lead_chars();
-        print_line( output_len, true );
+        print_line( output_len, /*do_eol=*/true );
         prev_seq_num = md->seq_num;
       } else if ( output_len == 0 && !is_blank_line( input_buf ) ) {
         //
