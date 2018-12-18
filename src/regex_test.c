@@ -60,7 +60,7 @@ int main( int argc, char const *argv[] ) {
   setlocale_utf8();
 
   wregex_t re;
-  regex_init( &re, WRAP_RE );
+  regex_compile( &re, WRAP_RE );
 
   char line_buf[ 128 ];
   unsigned line_no = 0;

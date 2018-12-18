@@ -296,7 +296,7 @@ int main( int argc, char const *argv[] ) {
         //
         (void)buf_readline();
         pc = input_buf;
-        cp = '\n';
+        cp = '\n';                      // so cp_prev will become this (again)
         continue;
       }
       if ( cp_is_block_char( cp ) ) {
@@ -677,8 +677,14 @@ static void init( int argc, char const *argv[] ) {
   opt_lead_tabs   += opt_mirror_tabs;
   opt_lead_spaces += opt_mirror_spaces;
 
-  if ( !opt_no_hyphen )
-    regex_init( &nonws_no_wrap_regex, WRAP_RE );
+  if ( !opt_no_hyphen ) {
+    int const regex_err_code = regex_compile( &nonws_no_wrap_regex, WRAP_RE );
+    if ( regex_err_code != 0 )
+      PMESSAGE_EXIT( EX_SOFTWARE,
+        "internal regular expression error (%d): %s\n",
+        regex_err_code, regex_error( &nonws_no_wrap_regex, regex_err_code )
+      );
+  }
 
   size_t const bytes_read = buf_readline();
   if ( bytes_read == 0 )
@@ -968,8 +974,7 @@ static void wipc_send( char *msg ) {
  */
 static void wrap_cleanup( void ) {
   markdown_cleanup();
-  if ( !opt_no_hyphen )
-    regex_free( &nonws_no_wrap_regex );
+  regex_free( &nonws_no_wrap_regex );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
