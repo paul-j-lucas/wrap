@@ -37,7 +37,7 @@ wrap_SOURCES = $(COMMON_SOURCES) \
 	markdown.c markdown.h \
 	unicode.c unicode.h \
 	wrap.c \
-	wregex.c
+	wregex.c wregex.h
 
 wrapc_SOURCES = $(COMMON_SOURCES) \
 	align.c \
