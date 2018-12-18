@@ -79,39 +79,27 @@ static bool is_begin_word_boundary( char const *s, char const *curr ) {
       || (cp_is_space( cp_curr ) ^ cp_is_space( cp_prev ));
 }
 
-/**
- * Prints a regular expression error to standard error and exits.
- *
- * @param re The wregex_t involved in the error.
- * @param err_code The error code.
- */
-static void regex_error( wregex_t *re, int err_code ) {
+////////// extern functions ///////////////////////////////////////////////////
+
+int regex_compile( wregex_t *re, char const *pattern ) {
   assert( re != NULL );
-  char err_buf[ 128 ];
-  regerror( err_code, re, err_buf, sizeof err_buf );
-  PMESSAGE_EXIT( EX_SOFTWARE,
-    "regular expression error (%d): %s\n", err_code, err_buf
-  );
+  assert( pattern != NULL );
+  return regcomp( re, pattern, WRAP_REGEX_COMPILE_FLAGS );
 }
 
-////////// extern functions ///////////////////////////////////////////////////
+char const* regex_error( wregex_t *re, int err_code ) {
+  assert( re != NULL );
+  static char err_buf[ 128 ];
+  (void)regerror( err_code, re, err_buf, sizeof err_buf );
+  return err_buf;
+}
 
 void regex_free( wregex_t *re ) {
   assert( re != NULL );
   regfree( re );
 }
 
-void regex_init( wregex_t *re, char const *pattern ) {
-  assert( re != NULL );
-  assert( pattern != NULL );
-
-  int const err_code = regcomp( re, pattern, WRAP_REGEX_COMPILE_FLAGS );
-  if ( err_code != 0 )
-    regex_error( re, err_code );
-}
-
-bool regex_match( wregex_t *re, char const *s, size_t offset,
-                  size_t range[2] ) {
+bool regex_match( wregex_t *re, char const *s, size_t offset, size_t *range ) {
   assert( re != NULL );
   assert( s != NULL );
 
@@ -123,12 +111,17 @@ bool regex_match( wregex_t *re, char const *s, size_t offset,
   if ( err_code == REG_NOMATCH )
     return false;
   if ( err_code < 0 )
-    regex_error( re, err_code );
+    PMESSAGE_EXIT( EX_SOFTWARE,
+      "regular expression error (%d): %s\n",
+      err_code, regex_error( re, err_code )
+    );
   if ( !is_begin_word_boundary( so, so + match[0].rm_so ) )
     return false;
 
-  range[0] = (size_t)match[0].rm_so + offset;
-  range[1] = (size_t)match[0].rm_eo + offset;
+  if ( range != NULL ) {
+    range[0] = (size_t)match[0].rm_so + offset;
+    range[1] = (size_t)match[0].rm_eo + offset;
+  }
   return true;
 }
 

@@ -122,9 +122,27 @@
   "(" WRAP_RE_FTP_URI ")"   "|"   \
   "(" WRAP_RE_HTTP_URI ")"
 
-typedef regex_t wregex_t;               // wrapper type
+typedef regex_t wregex_t;
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Compiles a regular expression pattern.
+ *
+ * @param re A pointer to the wregex_t to compile to.
+ * @param pattern The regular expression pattern to compile.
+ * @return Returns 0 on success or non-zero for an invalid \a pattern.
+ */
+int regex_compile( wregex_t *re, char const *pattern );
+
+/**
+ * Gets the regular expression error message corresponding to \a err_code.
+ *
+ * @param re The wregex_t involved in the error.
+ * @param err_code The error code.
+ * @return Returns a pointer to a static buffer containing the error message.
+ */
+char const* regex_error( wregex_t *re, int err_code );
 
 /**
  * Frees all memory used by a wregex_t.
@@ -134,26 +152,19 @@ typedef regex_t wregex_t;               // wrapper type
 void regex_free( wregex_t *re );
 
 /**
- * Initializes a wregex_t.
- *
- * @param re A pointer to the wregex_t to initialize.
- * @param pattern The regular expression pattern to compile.
- */
-void regex_init( wregex_t *re, char const *pattern );
-
-/**
  * Attempts to match \a s against the previously compiled regular expression
  * pattern in \a re.
  *
  * @param re A pointer to the wregex_t to match against.
  * @param s The string to match.
  * @param offset The offset into \a s to start.
- * @param range An array of size 2 to receive the beginning position and one
- * past the end position of the match -- set only if there was a match.
+ * @param range A pointer to an array of size 2 to receive the beginning
+ * position and one past the end position of the match -- set only if not NULL
+ * and there was a match.
  * @return Returns \c true only if there was a match.
  */
 bool regex_match( wregex_t *re, char const *s, size_t offset,
-                  size_t range[2] );
+                  size_t *range );
 
 ///////////////////////////////////////////////////////////////////////////////
 
