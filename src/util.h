@@ -162,6 +162,28 @@ extern char const  *me;                 ///< Program name.
 char const* base_name( char const *path_name );
 
 /**
+ * Performs a binary search looking for \a key.
+ *
+ * @param key The key to search for.
+ * @param elt_base A pointer to the base address of the elements to search.
+ * The elements must be sorted ascendingly according to \a elt_cmp.
+ * @param elt_count The number of elements.
+ * @param elt_size The size in bytes of each element.
+ * @param elt_cmp A pointer to a comparison function that must return an
+ * integer less than zero, zero, or greater thatn zero if the key is less than,
+ * equal to, or greater than a particular element, respectively.
+ * @return Returns a pointer to the element matching \a key or null if not
+ * found.
+ *
+ * @note \a key need not have the same type as the elements in the array, e.g.,
+ * \a key could be a string and \a elt_cmp could compare the string with a
+ * struct's field.
+ */
+void const* bin_search( void const *key, void const *elt_base,
+                        size_t elt_count, size_t elt_size,
+                        int (*elt_cmp)( void const *key, void const *elt ) );
+
+/**
  * Converts an ASCII string to an unsigned integer.
  * Unlike \c atoi(3), insists that all characters in \a s are digits.
  * If conversion fails, prints an error message and exits.

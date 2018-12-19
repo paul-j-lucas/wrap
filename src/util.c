@@ -75,6 +75,28 @@ char const* base_name( char const *path_name ) {
   return path_name;
 }
 
+void const* bin_search( void const *key, void const *elt_base,
+                        size_t elt_count, size_t elt_size,
+                        int (*elt_cmp)( void const*, void const* ) ) {
+  assert( key != NULL );
+  assert( elt_base != NULL );
+  assert( elt_size != 0 );
+  assert( elt_cmp != NULL );
+
+  while ( elt_count > 0 ) {
+    void const *const elt_curr = elt_base + (elt_count >> 1) * elt_size;
+    int const cmp = (*elt_cmp)( key, elt_curr );
+    if ( cmp == 0 )
+      return elt_curr;
+    if ( cmp > 0 ) {
+      elt_base = elt_curr + elt_size;
+      --elt_count;
+    }
+    elt_count >>= 1;
+  } // while
+  return NULL;
+}
+
 unsigned check_atou( char const *s ) {
   assert( s != NULL );
   if ( !is_digits( s ) )

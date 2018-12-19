@@ -122,7 +122,6 @@ static md_state_t  *stack;              // global stack of states
 static stack_pos_t  stack_top;          // index of the top of the stack
 
 // local functions
-static bool         bin_search( char const*, char const *const[], size_t );
 static bool         md_is_code_fence( char const*, md_code_fence_t* );
 static bool         md_is_dl_ul_helper( char const*, md_indent_t* );
 static html_state_t md_is_html_tag( char const*, bool* );
@@ -132,6 +131,22 @@ static char const*  skip_html_tag( char const*, bool* );
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
+ * Comparison function for bin_search that compares a string key against an
+ * element.
+ *
+ * @param key A pointer to the string being searched for.
+ * @param elt A pointer to the pointer to the string of the current element to
+ * compare againset.
+ * @return Returns an integer less than zero, zero, or greater thatn zero if
+ * the key is less than, equal to, or greater than the element, respectively.
+ */
+static int bin_search_str_strptr_cmp( void const *key, void const *elt ) {
+  char const *const s_key = REINTERPRET_CAST( char const*, key );
+  char const *const s_elt = *REINTERPRET_CAST( char const**, elt );
+  return strcmp( s_key, s_elt );
+}
+
+/**
  * Checks whether \a s is an HTML block-level element.
  *
  * @param s The null-terminated string to check. It is assumed to have been
@@ -139,7 +154,10 @@ static char const*  skip_html_tag( char const*, bool* );
  * @return Returns \c true only if \a s is an HTML block-level element.
  */
 static inline bool is_html_block_element( char const *s ) {
-  return bin_search( s, HTML_BLOCK_ELEMENT, ARRAY_SIZE( HTML_BLOCK_ELEMENT ) );
+  return NULL != bin_search(
+    s, HTML_BLOCK_ELEMENT, ARRAY_SIZE( HTML_BLOCK_ELEMENT ),
+    sizeof(char const*), &bin_search_str_strptr_cmp
+  );
 }
 
 /**
@@ -281,29 +299,6 @@ static inline md_indent_t md_code_indent_min( void ) {
 }
 
 ////////// local functions ////////////////////////////////////////////////////
-
-/**
- * Performs a binary search looking for \a s in \a a.
- *
- * @param s The null-terminated string to search for.
- * @param a The sorted array of null-terminated strings to search.
- * @param n The number of elements in \a a.
- * @return Returns \a true only if \s is in \a a.
- */
-static bool bin_search( char const *s, char const *const a[], size_t n ) {
-  assert( s != NULL );
-  for ( ssize_t i = 0, j = (ssize_t)n - 1; i <= j; ) {
-    size_t const m = (i + j) / 2;
-    int const cmp = strcmp( a[m], s );
-    if ( cmp < 0 )
-      i = m + 1;
-    else if ( cmp > 0 )
-      j = m - 1;
-    else
-      return true;
-  } // for
-  return false;
-}
 
 /**
  * Gets a pointer to the first non-whitespace character in \a s.
