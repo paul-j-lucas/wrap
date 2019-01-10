@@ -40,6 +40,16 @@
 #include <string.h>
 #include <unistd.h>                     /* for geteuid() */
 
+/** 
+ * Configuration file section.
+ */
+enum section {
+  SECTION_NONE,
+  SECTION_ALIASES,
+  SECTION_PATTERNS
+};
+typedef enum section section_t;
+
 ////////// local functions ////////////////////////////////////////////////////
 
 /**
@@ -57,6 +67,20 @@ static char const* home_dir( void ) {
   }
 #endif /* HAVE_GETEUID && && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR */
   return home;
+}
+
+/**
+ * Parses a section name.
+ *
+ * @param s The line containing the section name to parse.
+ * @return Returns the corresponding section name or SECTION_NONE.
+ */
+static section_t parse_section( char const *s ) {
+  if ( strcmp( s, "[ALIASES]" ) == 0 )
+    return SECTION_ALIASES;
+  if ( strcmp( s, "[PATTERNS]" ) == 0 )
+    return SECTION_PATTERNS;
+  return SECTION_NONE;
 }
 
 /**
@@ -133,8 +157,7 @@ char const* read_conf( char const *conf_file ) {
   static char conf_path_buf[ PATH_MAX ];
   bool const explicit_conf_file = (conf_file != NULL);
 
-  enum section { NONE, ALIASES, PATTERNS };
-  enum section section = NONE;          // section we're in
+  section_t section = SECTION_NONE;     // section we're in
 
   // locate default configuration file
   if ( conf_file == NULL ) {
@@ -171,11 +194,8 @@ char const* read_conf( char const *conf_file ) {
 
     // parse section line
     if ( line[0] == '[' ) {
-      if ( strcmp( line, "[ALIASES]" ) == 0 )
-        section = ALIASES;
-      else if ( strcmp( line, "[PATTERNS]" ) == 0 )
-        section = PATTERNS;
-      else
+      section = parse_section( line );
+      if ( section == SECTION_NONE )
         PMESSAGE_EXIT( EX_CONFIG,
           "%s:%u: \"%s\": invalid section\n",
           conf_file, line_no, line
@@ -185,15 +205,15 @@ char const* read_conf( char const *conf_file ) {
 
     // parse line within section
     switch ( section ) {
-      case NONE:
+      case SECTION_NONE:
         PMESSAGE_EXIT( EX_CONFIG,
           "%s:%u: \"%s\": line not within any section\n",
           conf_file, line_no, line
         );
-      case ALIASES:
+      case SECTION_ALIASES:
         alias_parse( line, conf_file, line_no );
         break;
-      case PATTERNS:
+      case SECTION_PATTERNS:
         pattern_parse( line, conf_file, line_no );
         break;
     } // switch
