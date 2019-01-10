@@ -339,8 +339,8 @@ static pid_t read_source_write_wrap( void ) {
       //
       // This handles cases like:
       //
-      //      proto   ->  # This is a comment.
-      //      cur_buf ->  not_a_comment();
+      //      proto     ->  # This is a comment.
+      //      curr_buf  ->  not_a_comment();
       //
       goto verbatim;
     }
@@ -350,14 +350,14 @@ static pid_t read_source_write_wrap( void ) {
       //
       // This handles cases like:
       //
-      //                  /*
-      //      proto   ->  This is a comment.
-      //      cur_buf ->  */
+      //                    /*
+      //      proto     ->  This is a comment.
+      //      curr_buf  ->  */
       //
       // or:
       //                    /*
       //                     * This is a comment.
-      //      cur_buf   ->   */
+      //      curr_buf  ->   */
       //      next_buf  ->  [empty]
       //
       adjust_comment_width( CURR );
