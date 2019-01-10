@@ -33,6 +33,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
+#include <stdint.h>                     /* for uintptr_t */
 #include <stdio.h>                      /* for FILE */
 #include <stdlib.h>                     /* for exit(3) */
 #include <string.h>                     /* for strspn(3) */
