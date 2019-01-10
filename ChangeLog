@@ -1,3 +1,96 @@
+2019-01-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrap.1, wrapc.1, wraprc.5, src/Makefile.am, common.h,
+     doxygen.c, doxygen.h, markdown.c, options.c, options.h, util.c, util.h,
+     wrap.c, wrapc.c, test/Makefile.am, data-01.doxy, wrapc-x-01.txt,
+     wrapc-x-01.txt, wrapc-x-02.txt, wrapc-x-01.test, wrapc-x-02.test: Added
+     full Doxygen support.
+
+2018-12-19  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c: Reordered bin_search_str_strptr_cmp().
+   * markdown.c, util.c, util.h: Make bin_search() generic.
+   * options.c: Fixed sorting of opt_eol.
+
+2018-12-18  Paul J. Lucas <paul@lucasmail.org>
+
+   * src/Makefile.am: Added missing wregex.h.
+   * regex_test.c, wrap.c, wregex.c, wregex.h: regex clean-up.
+
+2018-12-17  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c, data-01.1, wrap-a.txt, wrap-d.txt, wrap-dep.txt: Fixed bug with
+     two consecutive . lines.
+   * wrap.c: Added comment for bool args.
+   * cc_map.c, options.c, util.h: Added FREE_* macros and more comments.
+
+2018-12-14  Paul J. Lucas <paul@lucasmail.org>
+
+   * cc_map.c: Fixed inline.
+   * options.c, options.h, wrap.c, wrapc.c: s/opt_block_chars/opt_block_delims/
+   * wrap.c: Made comparisons explicit.
+   * options.c, options.h, wrap.c, wrapc.c:
+     s/opt_lead_para_delims/opt_block_chars/
+
+2018-12-07  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac: Upped version to 5.2.1.
+   * NEWS: Added blank lines.
+   * lib/Makefile.am, _Noreturn.h, intprops.h, stdlib.in.h, unistd.in.h,
+     errno_h.m4, fnmatch.m4, fnmatch_h.m4, gnulib-common.m4, gnulib-comp.m4,
+     stddef_h.m4, unistd_h.m4: Updated GNUlib.
+   * alias.c, alias.h, align.c, cc_map.c, cc_map.h, common.c, common.h,
+     markdown.c, markdown.h, options.c, options.h, pattern.c, pattern.h,
+     read_conf.c, read_conf.h, regex_test.c, unicode.c, unicode.h, util.c,
+     util.h, wrap.c, wrapc.c, wregex.c, wregex.h: Comment clean-up.
+   * src/Makefile.am, alias.c, align.c, cc_map.c, cc_map.h, common.c, common.h,
+     markdown.c, markdown.h, options.c, options.h, pattern.c, read_conf.c,
+     regex_test.c, unicode.c, unicode.h, util.c, util.h, wrap.c, wrap.h,
+     wrapc.c, wregex.c, wregex.h: Now handling "inline" correctly on Mac OS X.
+
+2018-12-05  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c: More explicit checks.
+
+2018-10-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.c: Removed unnecessary cast.
+
+2018-09-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1: s/then the/the/
+
+2018-08-29  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1, options.c: Now mentioning Crystal.
+
+2018-08-14  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, fnmatch.in.h, localcharset.c, localcharset.h, mbrtowc.c,
+     unistd.in.h, verify.h, warn-on-use.h, extern-inline.m4, fnmatch.m4,
+     fnmatch_h.m4, gnulib-cache.m4, gnulib-common.m4, gnulib-comp.m4,
+     localcharset.m4, mbrtowc.m4, warn-on-use.m4, wchar_h.m4: Updated Gnulib.
+
+2018-08-13  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1, options.c: Added mention of Nim.
+
+2018-08-11  Paul J. Lucas <paul@lucasmail.org>
+
+   * util.c: Made comparison more explicit.
+   * wrapc.1, options.c: Added mention of more programming languages.
+   * wraprc.5: Added mention that \ can be used to escape #.
+
+2018-07-27  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: s/its/it's/
+
+2018-06-28  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1: s/c/s/ for --align-column.
+   * wrapc.1: s/comprised/composed/
+   * wrapc.1, options.c: Added mention of Kotlin.
+
 2018-05-28  Paul J. Lucas <paul@lucasmail.org>
 
    * markdown.c, options.c, read_conf.c, wrap.c, wrapc.c: Made more checks
