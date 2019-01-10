@@ -70,20 +70,6 @@ static char const* home_dir( void ) {
 }
 
 /**
- * Parses a section name.
- *
- * @param s The line containing the section name to parse.
- * @return Returns the corresponding section name or SECTION_NONE.
- */
-static section_t parse_section( char const *s ) {
-  if ( strcmp( s, "[ALIASES]" ) == 0 )
-    return SECTION_ALIASES;
-  if ( strcmp( s, "[PATTERNS]" ) == 0 )
-    return SECTION_PATTERNS;
-  return SECTION_NONE;
-}
-
-/**
  * Appends a component to a path ensuring that exactly one \c / separates them.
  *
  * @param path The path to append to.
@@ -101,6 +87,20 @@ static void path_append( char *path, char const *component ) {
       *++path = '/';
     strcpy( ++path, component );
   }
+}
+
+/**
+ * Parses a section name.
+ *
+ * @param s The line containing the section name to parse.
+ * @return Returns the corresponding section name or SECTION_NONE.
+ */
+static section_t section_parse( char const *s ) {
+  if ( strcmp( s, "[ALIASES]" ) == 0 )
+    return SECTION_ALIASES;
+  if ( strcmp( s, "[PATTERNS]" ) == 0 )
+    return SECTION_PATTERNS;
+  return SECTION_NONE;
 }
 
 /**
@@ -194,7 +194,7 @@ char const* read_conf( char const *conf_file ) {
 
     // parse section line
     if ( line[0] == '[' ) {
-      section = parse_section( line );
+      section = section_parse( line );
       if ( section == SECTION_NONE )
         PMESSAGE_EXIT( EX_CONFIG,
           "%s:%u: \"%s\": invalid section\n",
