@@ -1,8 +1,9 @@
+'\" t
 .\"
 .\"     wrapc -- comment reformatter
 .\"     wrapc.1: manual page
 .\"
-.\"     Copyright (C) 1996-2017  Paul J. Lucas
+.\"     Copyright (C) 1996-2019  Paul J. Lucas
 .\"
 .\"     This program is free software: you can redistribute it and/or modify
 .\"     it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\fP 1 "September 10, 2018" "PJL TOOLS"
+.TH \f3wrapc\fP 1 "January 3, 2019" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -247,6 +248,225 @@ option).
 The trailing comment delimiter characters on every line
 are all vertically aligned at
 .IR line-width .
+.SS Doxygen Commands
+If either the
+.B \-\-doxygen
+or
+.B \-x
+option is specified,
+exceptions are made
+in order to pretty-print Doxygen commands within comments.
+A Doxygen command
+is either a \f(CW\\\fP or \f(CW@\fP character
+followed by one of the following:
+.PD
+.RS 5
+.TS
+tab(|) ;
+l l l
+l l l .
+\f(CWa\fP|I|
+\f(CWaddindex\fP|E|
+\f(CWaddtogroup\fP|E|
+\f(CWanchor\fP|I|
+\f(CWarg\fP|P|
+\f(CWattention\fP|P|
+\f(CWauthor\fP|P|
+\f(CWauthors\fP|P|
+\f(CWb\fP|I|
+\f(CWbrief\fP|P|
+\f(CWbug\fP|P|
+\f(CWc\fP|I|
+\f(CWcallergraph\fP|E|
+\f(CWcallgraph\fP|E|
+\f(CWcategory\fP|E|
+\f(CWcite\fP|E|
+\f(CWclass\fP|E|
+\f(CWcode\fP|V|\f(CWendcode\fP
+\f(CWcond\fP|P|\f(CWendcond\fP
+\f(CWcopybrief\fP|B|
+\f(CWcopydetails\fP|B|
+\f(CWcopydoc\fP|B|
+\f(CWcopyright\fP|P|
+\f(CWdate\fP|P|
+\f(CWdef\fP|E|
+\f(CWdefgroup\fP|E|
+\f(CWdeprecated\fP|P|
+\f(CWdetails\fP|P|
+\f(CWdiafile\fP|E|
+\f(CWdir\fP|E|
+\f(CWdocbookonly\fP|V|\f(CWenddocbookonly\fP
+\f(CWdontinclude\fP|E|
+\f(CWdot\fP|V|\f(CWenddot\fP
+\f(CWdotfile\fP|E|
+\f(CWe\fP|I|
+\f(CWelse\fP|E|
+\f(CWelseif\fP|E|
+\f(CWem\fP|I|
+\f(CWendcode\fP|E|
+\f(CWendcond\fP|E|
+\f(CWenddocbookonly\fP|E|
+\f(CWenddot\fP|E|
+\f(CWendhtmlonly\fP|E|
+\f(CWendif\fP|E|
+\f(CWendinternal\fP|E|
+\f(CWendlatexonly\fP|E|
+\f(CWendlink\fP|E|
+\f(CWendmanonly\fP|E|
+\f(CWendmsc\fP|E|
+\f(CWendparblock\fP|E|
+\f(CWendrtfonly\fP|E|
+\f(CWendsecreflist\fP|E|
+\f(CWenduml\fP|E|
+\f(CWendverbatim\fP|E|
+\f(CWendxmlonly\fP|E|
+\f(CWenum\fP|I|
+\f(CWexample\fP|E|
+\f(CWexception\fP|P|
+\f(CWextends\fP|I|
+\f(CWf$\fP|I|
+\f(CWf[\fP|V|\f(CWf]\fP
+\f(CWf]\fP|E|
+\f(CWfile\fP|E|
+\f(CWfn\fP|E|
+\f(CWf{\fP|V|\f(CWf}\fP
+\f(CWf}\fP|E|
+\f(CWheaderfile\fP|E|
+\f(CWhidecallergraph\fP|E|
+\f(CWhidecallgraph\fP|E|
+\f(CWhideinitializer\fP|E|
+\f(CWhiderefby\fP|E|
+\f(CWhiderefs\fP|E|
+\f(CWhtmlinclude\fP|E|
+\f(CWhtmlonly\fP|P|\f(CWendhtmlonly\fP
+\f(CWidlexcept\fP|E|
+\f(CWif\fP|E|
+\f(CWifnot\fP|E|
+\f(CWimage\fP|E|
+\f(CWimplements\fP|E|
+\f(CWinclude\fP|E|
+\f(CWincludedoc\fP|E|
+\f(CWincludelineno\fP|E|
+\f(CWingroup\fP|E|
+\f(CWinterface\fP|E|
+\f(CWinternal\fP|E|
+\f(CWinvariant\fP|P|
+\f(CWlatexinclude\fP|E|
+\f(CWlatexonly\fP|V|\f(CWendlatexonly\fP
+\f(CWli\fP|P|
+\f(CWline\fP|E|
+\f(CWlink\fP|I|
+\f(CWmainpage\fP|E|
+\f(CWmanonly\fP|V|\f(CWmanonly\fP
+\f(CWmemberof\fP|E|
+\f(CWmsc\fP|V|\f(CWendmsc\fP
+\f(CWmscfile\fP|E|
+\f(CWn\fP|E|
+\f(CWname\fP|E|
+\f(CWnamespace\fP|E|
+\f(CWnosubgrouping\fP|E|
+\f(CWnote\fP|E|
+\f(CWoverload\fP|E|
+\f(CWp\fP|I|
+\f(CWpackage\fP|E|
+\f(CWpage\fP|E|
+\f(CWpar\fP|E|
+\f(CWparagraph\fP|E|
+\f(CWparam\fP|P|
+\f(CWparblock\fP|E|\f(CWendparblock\fP
+\f(CWpost\fP|P|
+\f(CWpre\fP|P|
+\f(CWprivate\fP|E|
+\f(CWprivatesection\fP|E|
+\f(CWproperty\fP|E|
+\f(CWprotected\fP|E|
+\f(CWprotectedsection\fP|E|
+\f(CWprotocol\fP|E|
+\f(CWpublic\fP|E|
+\f(CWpublicsection\fP|E|
+\f(CWpure\fP|B|
+\f(CWref\fP|I|
+\f(CWrefitem\fP|I|
+\f(CWrelated\fP|E|
+\f(CWrelatedalso\fP|E|
+\f(CWrelates\fP|E|
+\f(CWrelatesalso\fP|E|
+\f(CWremark\fP|P|
+\f(CWremarks\fP|P|
+\f(CWresult\fP|P|
+\f(CWreturn\fP|P|
+\f(CWreturns\fP|P|
+\f(CWretval\fP|P|
+\f(CWrtfonly\fP|P|\f(CWendrtfonly\fP
+\f(CWsa\fP|E|
+\f(CWsecreflist\fP|E|
+\f(CWsection\fP|E|
+\f(CWsee\fP|P|
+\f(CWshort\fP|P|
+\f(CWshowinitializer\fP|E|
+\f(CWshowrefby\fP|E|
+\f(CWshowrefs\fP|E|
+\f(CWsince\fP|P|
+\f(CWskip\fP|E|
+\f(CWskipline\fP|E|
+\f(CWsnippet\fP|E|
+\f(CWsnippetdoc\fP|E|
+\f(CWsnippetlineno\fP|E|
+\f(CWstartuml\fP|V|\f(CWenduml\fP
+\f(CWstruct\fP|I|
+\f(CWsubpage\fP|E|
+\f(CWsubsection\fP|E|
+\f(CWsubsubsection\fP|E|
+\f(CWtableofcontents\fP|E|
+\f(CWtest\fP|P|
+\f(CWthrow\fP|P|
+\f(CWthrows\fP|P|
+\f(CWtodo\fP|P|
+\f(CWtparam\fP|P|
+\f(CWtypedef\fP|E|
+\f(CWunion\fP|E|
+\f(CWuntil\fP|E|
+\f(CWvar\fP|E|
+\f(CWverbatim\fP|V|\f(CWendverbatim\fP
+\f(CWverbinclude\fP|E|
+\f(CWversion\fP|P|
+\f(CWvhdlflow\fP|E|
+\f(CWwarning\fP|E|
+\f(CWweakgroup\fP|E|
+\f(CWxmlonly\fP|V|\f(CWendxml\fP
+\f(CWxrefitem\fP|P|
+\f(CW{\fP|E|
+\f(CW}\fP|E|
+.TE
+.RE
+.P
+The second column specifies how the command is formatted:
+.P
+.PD 0
+.RS 5
+.IP "\f3B\fP" 5
+Force the command to the beginning of the line.
+Text wraps normally immediately after the command name.
+.IP "\f3E\fP"
+Same as
+.BR B ,
+but the command goes to the end of the line.
+Text wraps normally starting on the next line.
+.IP "\f3I\fP"
+The command is inline.
+Text wraps normally.
+.IP "\f3P\fP"
+Same as
+.BR B .
+.IP "\f3V\fP"
+Same as
+.BR P ,
+but begins passing preformatted text through verbatim
+until the command's corresponding end command
+(given in the third column)
+is encountered.
+.RE
+.PD
 .SS Markdown Text
 If either the
 .B \-\-markdown
@@ -346,7 +566,7 @@ and
 .I s
 means
 .IR string .
-.TP
+.TP 5
 .BI \-\-alias \f1=\fPs "\f1 | \fP" "" \-a " s"
 Specifies the alias name
 .I s
@@ -437,12 +657,14 @@ or
 .B \-D
 options.
 .TP
-.BI \-\-block-chars \f1=\fPs "\f1 | \fP" "" \-b " s"
-Specifies the set of ``block'' characters
+.BI \-\-block-regex \f1=\fPs "\f1 | \fP" "" \-b " s"
+Specifies a ``block'' regular expression
 .I s
 that,
-when the first non-whitespace character on a line,
+when the first non-whitespace character on a line
+matches the regular expression,
 delimits a paragraph.
+(The regular expression effectively has \f(CW^[ \\t]*\fP prepended.)
 .TP
 .BI \-\-comment-chars \f1=\fPs "\f1 | \fP" "" \-D " s"
 Specifies the set of comment delimiter characters
@@ -482,6 +704,14 @@ even one explicitly specified via either
 .BR \-\-config
 or
 .BR \-c .
+.TP
+.BR \-\-doxygen " | " \-x
+Formats text containing Doxygen commands.
+(May be combined with either the
+.B \-\-markdown
+or
+.B \-u
+option.)
 .TP
 .BR \-\-eos-delimit " | " \-e
 Treats whitespace after an end-of-sentence character as a paragraph delimiter.
@@ -532,6 +762,11 @@ all case-insensitive.
 .TP
 .BR \-\-markdown " | " \-u
 Formats Markdown text.
+(May be combined with either the
+.B \-\-doxygen
+or
+.B \-x
+option.)
 .TP
 .BR \-\-no-hyphen " | "  \-y
 Suppresses special treatment of hyphens.

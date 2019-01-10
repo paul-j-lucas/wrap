@@ -25,6 +25,9 @@ TESTS =	tests/e-mail.regex \
 	tests/ftp.regex \
 	tests/http.regex
 
+#
+# wrap tests
+#
 TESTS+= tests/utf8-w77.test \
 	tests/utf8-w78.test \
 	tests/utf8-w79.test \
@@ -207,8 +210,12 @@ TESTS+= tests/utf8-w77.test \
 	tests/crlf-01.test \
 	tests/crlf-ld-01.test \
 	tests/crlf-li-01.test \
-	tests/crlf-lw-01.test \
-	tests/wrapc-01.test \
+	tests/crlf-lw-01.test
+
+#
+# wrapc tests
+#
+TESTS+=	tests/wrapc-01.test \
 	tests/wrapc-02.test \
 	tests/wrapc-A-01a.test \
 	tests/wrapc-A-01b.test \
@@ -239,9 +246,11 @@ TESTS+= tests/utf8-w77.test \
 	tests/wrapc-A-19.test \
 	tests/wrapc-Ax-01.test \
 	tests/wrapc-Ax-02.test \
-	tests/wrapc-b.test \
 	tests/wrapc-D-01.test \
 	tests/wrapc-D-02.test \
+	tests/wrapc-b.test \
+	tests/wrapc-x-01.test \
+	tests/wrapc-x-02.test \
 	tests/wrapc--block-01.test \
 	tests/wrapc--block-02.test \
 	tests/wrapc--block-03.test \

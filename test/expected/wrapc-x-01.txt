@@ -1,0 +1,18 @@
+/**
+ * @brief Brief description.
+ *
+ * Detailed description.
+ * @code
+ * size_t example = foo( s, strlen( s ) );
+ * if ( example > 0 ) {
+ *     // ...
+ * }
+ * @endcode
+ * Some other line 1.  Some other line 2.
+ * @copydoc bar()
+ *
+ * @param s The null-terminated string to do something with.
+ * @param s_len The length of \a s.
+ * @return Returns the new length of \a s.
+ */
+size_t foo( char *s, size_t s_len );

@@ -55,6 +55,21 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
 ////////// Interprocess Communication (IPC) ///////////////////////////////////
 
 /**
+ * Device Control code #1.
+ */
+#define ASCII_DC1                 '\x11'
+
+/**
+ * Device control code #2.
+ */
+#define ASCII_DC2                 '\x12'
+
+/**
+ * Device Control code #3.
+ */
+#define ASCII_DC3                 '\x13'
+
+/**
  * From Wikipedia: The data link escape character (DLE) was intended to be a
  * signal to the other end of a data link that the following character is a
  * control character such as STX or ETX. For example a packet may be structured
@@ -77,22 +92,48 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
 #define ASCII_SOH                 '\x01'
 
 /**
- * IPC code to in-band signal the start of an IPC message.  It \e must be
+ * IPC code to in-band signal the start of an IPC message.  It _must_ be
  * immediately followed by another IPC code that indicates the type of message.
+ * All IPC messages _must_ be terminated by a newline.
  */
 #define WIPC_HELLO                ASCII_DLE
+
+/**
+ * IPC code to trigger the delimiting of a paragraph.
+ */
+#define WIPC_DELIMIT_PARAGRAPH    ASCII_DC2
+
+/**
+ * IPC code to signal a change in the leading comment characters and/or
+ * whitespace.  Its parameters are:
+ *
+ *      <line_width>|<line_prefix>
+ */
+#define WIPC_NEW_LEADER           ASCII_SOH
+
+/**
+ * IPC code to suspend wrapping and begin sending preformatted text through
+ * verbatim.
+ */
+#define WIPC_PREFORMATTED_BEGIN   ASCII_DC3
+
+/**
+ * IPC code to end sending preformatted text through verbatim and resume
+ * wrapping normally.
+ */
+#define WIPC_PREFORMATTED_END     ASCII_DC1
 
 /**
  * IPC code to signal the end of the block of text to be wrapped.  Any text
  * sent after this is passed through verbatim.
  */
-#define WIPC_END_WRAP             ASCII_ETB
+#define WIPC_WRAP_END             ASCII_ETB
 
 /**
- * IPC code to signal a change in the leading comment characters and/or
- * whitespace.  It \e must be terminated by a newline.
+ * Sends a no-argument Interprocess Communication (IPC) message.
+ * @hideinitializer
  */
-#define WIPC_NEW_LEADER           ASCII_SOH
+#define WIPC_SEND(STREAM,CODE)    WIPC_SENDF( STREAM, CODE, "%c", '\n' )
 
 /**
  * Formats and sends an Interprocess Communication (IPC) message.
@@ -102,7 +143,7 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
   W_FPRINTF( (STREAM), ("%c%c" FORMAT), WIPC_HELLO, (CODE), __VA_ARGS__ )
 
 /**
- * Character used to separate fields in an Interprocess Communication (IPC)
+ * Character used to separate parameters in an Interprocess Communication (IPC)
  * message.
  */
 #define WIPC_SEP                  "|"

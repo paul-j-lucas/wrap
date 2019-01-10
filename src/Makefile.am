@@ -42,6 +42,7 @@ wrap_SOURCES = $(COMMON_SOURCES) \
 wrapc_SOURCES = $(COMMON_SOURCES) \
 	align.c \
 	cc_map.c cc_map.h \
+	doxygen.c doxygen.h \
 	wrapc.c
 
 regex_test_SOURCES = \

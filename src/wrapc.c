@@ -23,6 +23,7 @@
 #include "alias.h"
 #include "cc_map.h"
 #include "common.h"
+#include "doxygen.h"
 #include "markdown.h"
 #include "options.h"
 #include "pattern.h"
@@ -224,7 +225,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   typedef char path_buf_t[ PATH_MAX ];
 
   arg_buf_t   arg_opt_alias;
-  arg_buf_t   arg_opt_block_delims;
+  arg_buf_t   arg_opt_block_regex;
   arg_buf_t   arg_opt_conf_file;
   arg_buf_t   arg_opt_eol;
   arg_buf_t   arg_opt_eos_spaces;
@@ -250,22 +251,22 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 
   // Quoting string arguments is unnecessary since no shell is involved.
 
-  /*  0 */    ARG_DUP(                       PACKAGE );
-  /*  1 */ IF_ARG_FMT( opt_alias           , "-a%s"  );
-  /*  2 */ IF_ARG_FMT( opt_block_delims    , "-b%s"  );
-  /*  3 */ IF_ARG_FMT( opt_conf_file       , "-c%s"  );
-  /*  4 */ IF_ARG_DUP( opt_no_conf         , "-C"    );
-  /*  5 */ IF_ARG_DUP( opt_eos_delimit     , "-e"    );
-  /*  6 */ IF_ARG_FMT( opt_eos_spaces      , "-E%zu" );
-  /*  7 */ IF_ARG_FMT( opt_fin_name        , "-F%s"  );
-  /*  8 */    ARG_FMT( opt_eol             , "-l%c"  );
-  /*  9 */ IF_ARG_FMT( opt_para_delims     , "-p%s"  );
-  /* 10 */ IF_ARG_DUP( opt_markdown        , "-u"    );
-         else ARG_FMT( opt_tab_spaces      , "-s%zu" );
-  /* 11 */ IF_ARG_DUP( opt_title_line      , "-T"    );
-  /* 12 */    ARG_FMT( opt_line_width      , "-w%zu" );
-  /* 13 */ IF_ARG_DUP( opt_no_hyphen       , "-y"    );
-  /* 14 */    ARG_DUP(                       "-Z"    );
+  /*  0 */    ARG_DUP(                  PACKAGE );
+  /*  1 */ IF_ARG_FMT( opt_alias      , "-a%s"  );
+  /*  2 */ IF_ARG_FMT( opt_block_regex, "-b%s"  );
+  /*  3 */ IF_ARG_FMT( opt_conf_file  , "-c%s"  );
+  /*  4 */ IF_ARG_DUP( opt_no_conf    , "-C"    );
+  /*  5 */ IF_ARG_DUP( opt_eos_delimit, "-e"    );
+  /*  6 */ IF_ARG_FMT( opt_eos_spaces , "-E%zu" );
+  /*  7 */ IF_ARG_FMT( opt_fin_name   , "-F%s"  );
+  /*  8 */    ARG_FMT( opt_eol        , "-l%c"  );
+  /*  9 */ IF_ARG_FMT( opt_para_delims, "-p%s"  );
+  /* 10 */ IF_ARG_DUP( opt_markdown   , "-u"    );
+         else ARG_FMT( opt_tab_spaces , "-s%zu" );
+  /* 11 */ IF_ARG_DUP( opt_title_line , "-T"    );
+  /* 12 */    ARG_FMT( opt_line_width , "-w%zu" );
+  /* 13 */ IF_ARG_DUP( opt_no_hyphen  , "-y"    );
+  /* 14 */    ARG_DUP(                  "-Z"    );
   /* 15 */    ARG_END;
 
   //
@@ -328,7 +329,7 @@ static pid_t read_source_write_wrap( void ) {
   //
   bool const proto_is_comment = is_line_comment( CURR );
 
-  while ( CURR[0] != '\0' ) {
+  for ( ; CURR[0] != '\0'; swap_line_bufs() ) {
     //
     // In order to know when a comment ends, we have to peek at the next line.
     //
@@ -364,12 +365,16 @@ static pid_t read_source_write_wrap( void ) {
     }
 
     size_t prefix_len = prefix_span( CURR );
-    if ( opt_markdown ) {
+    if ( opt_doxygen || opt_markdown ) {
       if ( prefix_len > prefix_len0 ) {
         //
-        // When wrapping Markdown, we can't strip all whitespace after the
-        // comment delimiter characters because Markdown relies on indentation;
-        // hence we strip only the length of the initial prototype -- but only
+        // We can't strip all whitespace after the comment delimiter characters
+        // because:
+        //
+        // 1. Doxygen needs the whitespace when doing preformatted text.
+        // 2. Markdown relies on indentation for state changes.
+        //
+        // Hence we strip only the length of the initial prototype -- but only
         // if it's less.
         //
         prefix_len = prefix_len0;
@@ -404,17 +409,74 @@ static pid_t read_source_write_wrap( void ) {
     if ( suffix_buf[0] != '\0' )
       chop_suffix( line );
 
+    if ( opt_doxygen ) {
+      char dox_cmd_name[ DOX_CMD_NAME_SIZE_MAX + 1 ];
+      if ( dox_parse_cmd_name( line, dox_cmd_name ) ) {
+        static dox_cmd_t const *pre_dox_cmd;
+        if ( pre_dox_cmd == NULL ) {
+          //
+          // See if it's a known Doxygen command.
+          //
+          dox_cmd_t const *const dox_cmd = dox_find_cmd( dox_cmd_name );
+          if ( dox_cmd != NULL ) {
+            if ( (dox_cmd->type & DOX_BOL) != 0 )
+              WIPC_SEND( fwrap, WIPC_DELIMIT_PARAGRAPH );
+            W_FPUTS( line, fwrap );
+            if ( (dox_cmd->type & DOX_EOL) != 0 )
+              WIPC_SEND( fwrap, WIPC_DELIMIT_PARAGRAPH );
+            if ( (dox_cmd->type & DOX_PRE) != 0 ) {
+              //
+              // The Doxygen command is for a block of preformatted text (e.g.,
+              // @code, @dot, @verbatim, etc.): tell wrap to suspend wrapping
+              // and begin sending preformatted text through verbatim until we
+              // encounter the command's corresponding end command.
+              //
+              WIPC_SEND( fwrap, WIPC_PREFORMATTED_BEGIN );
+              pre_dox_cmd = dox_cmd;
+            }
+            continue;
+          }
+          else {
+            //
+            // It's a Doxygen command we know nothing about (or something that
+            // looks like a Doxgen command, e.g., "\t"): just pass it along to
+            // wrap as-is and hope for the best.
+            //
+          }
+        }
+        else if ( strcmp( dox_cmd_name, pre_dox_cmd->end_name ) == 0 ) {
+          //
+          // We've encountered the previous Doxygen command's corresponding end
+          // command: put that line, then tell wrap to resume wrapping.
+          //
+          W_FPUTS( line, fwrap );
+          WIPC_SEND( fwrap, WIPC_PREFORMATTED_END );
+          pre_dox_cmd = NULL;
+          continue;
+        }
+        else {
+          //
+          // It's not the corresponding end command for the previous Doxygen
+          // command that copies preformatted text: just pass it along to wrap
+          // as-is.
+          //
+        }
+      }
+    }
+
     W_FPUTS( line, fwrap );
-    swap_line_bufs();
-  } // while
+  } // for
   exit( EX_OK );
 
 verbatim:
   //
   // We've reached the end of the comment: signal wrap(1) that we're now
-  // passing text through verbatim and do so.
+  // ending wrapping, write any remaining lines, then just copy text through
+  // verbatim.
   //
-  WIPC_SENDF( fwrap, WIPC_END_WRAP, "%s%s", CURR, NEXT );
+  WIPC_SEND( fwrap, WIPC_WRAP_END );
+  W_FPUTS( CURR, fwrap );
+  W_FPUTS( NEXT, fwrap );
   fcopy( fin, fwrap );
   exit( EX_OK );
 }
@@ -465,18 +527,9 @@ static void read_wrap( void ) {
       break;
     line_size = chop_eol( line_buf, line_size );
     char *line = line_buf;
+
     if ( line[0] == WIPC_HELLO ) {
       switch ( line[1] ) {
-        case WIPC_END_WRAP:
-          //
-          // We've been told by child 1 (read_source_write_wrap(), via child 2,
-          // wrap) that we've reached the end of the comment: dump any
-          // remaining buffer and pass text through verbatim.
-          //
-          W_FPRINTF( fout, "%s%s", line + 2, eol() );
-          fcopy( fwrap, fout );
-          goto done;
-
         case WIPC_NEW_LEADER: {
           //
           // We've been told by child 1 (read_source_write_wrap(), via child 2,
@@ -490,12 +543,30 @@ static void read_wrap( void ) {
           continue;
         }
 
+        case WIPC_DELIMIT_PARAGRAPH:
+        case WIPC_PREFORMATTED_BEGIN:
+        case WIPC_PREFORMATTED_END:
+          //
+          // We only have to "eat" these and do nothing else.
+          //
+          continue;
+
+        case WIPC_WRAP_END:
+          //
+          // We've been told by child 1 (read_source_write_wrap(), via child 2,
+          // wrap) that we've reached the end of the comment: dump any
+          // remaining buffer and pass text through verbatim.
+          //
+          fcopy( fwrap, fout );
+          goto done;
+
         default:
           //
           // We got a DLE followed by an unexpected character: skip over the
           // DLE and format the remaining buffer.
           //
           ++line;
+          --line_size;
       } // switch
     }
 
@@ -1071,7 +1142,7 @@ static void usage( void ) {
 "options:\n"
 "  -a alias   Use alias from configuration file.\n"
 "  -A number  Specify column to align end-of-line comments on.\n"
-"  -b chars   Specify block leading delimiter characters.\n"
+"  -b regex   Specify block leading regular expression.\n"
 "  -c file    Specify the configuration file [default: ~/%s].\n"
 "  -C         Suppress reading configuration file.\n"
 "  -D chars   Specify comment delimiter characters.\n"
@@ -1087,6 +1158,7 @@ static void usage( void ) {
 "  -u         Format Markdown.\n"
 "  -v         Print version and exit.\n"
 "  -w number  Specify line width [default: %d].\n"
+"  -x         Format Doxygen.\n"
 "  -y         Suppress wrapping at hyphen characters.\n"
     , me, me,
     CONF_FILE_NAME_DEFAULT,

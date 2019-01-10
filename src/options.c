@@ -71,9 +71,10 @@ static char const   COMMENT_CHARS_DEFAULT[] =
 char const         *opt_alias;
 char                opt_align_char;
 size_t              opt_align_column;
-char const         *opt_block_delims;
+char const         *opt_block_regex;
 char const         *opt_comment_chars = COMMENT_CHARS_DEFAULT;
 char const         *opt_conf_file;
+bool                opt_doxygen;
 eol_t               opt_eol = EOL_INPUT;
 bool                opt_eos_delimit;
 size_t              opt_eos_spaces = EOS_SPACES_DEFAULT;
@@ -118,7 +119,7 @@ static unsigned     parse_width( char const* );
 #define COMMON_OPTS         "a:b:c:CeE:f:F:l:o:p:s:Tuvw:y"
 #define CONF_FORBIDDEN_OPTS "acCfFov"
 #define WRAP_SPECIFIC_OPTS  "dh:H:i:I:L:m:M:nNPS:t:WZ"
-#define WRAPC_SPECIFIC_OPTS "A:D:"
+#define WRAPC_SPECIFIC_OPTS "A:D:x"
 
 //
 // Each command forbids the others' specific options, but only on the command-
@@ -134,14 +135,14 @@ static char const *const SHORT_OPTS[] = {
   // wrap's options have to include wrapc's specific options so they're
   // accepted (but ignored) in conf files.
   //
-  COMMON_OPTS WRAP_SPECIFIC_OPTS WRAPC_SPECIFIC_OPTS,
-  COMMON_OPTS WRAPC_SPECIFIC_OPTS
+  COMMON_OPTS WRAP_SPECIFIC_OPTS WRAPC_SPECIFIC_OPTS, // wrap
+  COMMON_OPTS WRAPC_SPECIFIC_OPTS                     // wrapc
 };
 
 static struct option const WRAP_LONG_OPTS[] = {
   { "alias",                required_argument,  NULL, 'a' },
   { "align-column",         required_argument,  NULL, 'A' },  // conf ignored
-  { "block-chars",          required_argument,  NULL, 'b' },
+  { "block-regex",          required_argument,  NULL, 'b' },
   { "config",               required_argument,  NULL, 'c' },
   { "no-config",            no_argument,        NULL, 'C' },
   { "dot-ignore",           no_argument,        NULL, 'd' },
@@ -171,15 +172,16 @@ static struct option const WRAP_LONG_OPTS[] = {
   { "version",              no_argument,        NULL, 'v' },
   { "width",                required_argument,  NULL, 'w' },
   { "whitespace-delimit",   no_argument,        NULL, 'W' },
+  { "doxygen",              no_argument,        NULL, 'x' },  // conf ignored
   { "no-hyphen",            no_argument,        NULL, 'y' },
-  { "_INTERNAL-DLE",        no_argument,        NULL, 'Z' },
+  { "_ENABLE-IPC",          no_argument,        NULL, 'Z' },
   { NULL,                   0,                  NULL, 0   }
 };
 
 static struct option const WRAPC_LONG_OPTS[] = {
   { "alias",                required_argument,  NULL, 'a' },
   { "align-column",         required_argument,  NULL, 'A' },  // not in wrap
-  { "block-chars",          required_argument,  NULL, 'b' },
+  { "block-regex",          required_argument,  NULL, 'b' },
   { "config",               required_argument,  NULL, 'c' },
   { "no-config",            no_argument,        NULL, 'C' },
   { "comment-chars",        required_argument,  NULL, 'D' },  // not in wrap
@@ -195,6 +197,7 @@ static struct option const WRAPC_LONG_OPTS[] = {
   { "markdown",             no_argument,        NULL, 'u' },
   { "version",              no_argument,        NULL, 'v' },
   { "width",                required_argument,  NULL, 'w' },
+  { "doxygen",              no_argument,        NULL, 'x' },
   { "no-hyphen",            no_argument,        NULL, 'y' },
   { NULL,                   0,                  NULL, 0   }
 };
@@ -412,7 +415,7 @@ static void parse_options( int argc, char const *argv[],
       case 'a': opt_alias             = optarg;                 break;
       case 'A': opt_align_column      = parse_align( optarg, &opt_align_char );
                                                                 break;
-      case 'b': opt_block_delims      = optarg;                 break;
+      case 'b': opt_block_regex       = optarg;                 break;
       case 'c': opt_conf_file         = optarg;                 break;
       case 'C': opt_no_conf           = true;                   break;
       case 'd': opt_lead_dot_ignore   = true;                   break;
@@ -442,6 +445,7 @@ static void parse_options( int argc, char const *argv[],
       case 'v': print_version         = true;                   break;
       case 'w': opt_line_width        = parse_width( optarg );  break;
       case 'W': opt_lead_ws_delimit   = true;                   break;
+      case 'x': opt_doxygen           = true;                   break;
       case 'y': opt_no_hyphen         = true;                   break;
       case 'Z': opt_data_link_esc     = true;                   break;
       default : usage();
@@ -452,12 +456,12 @@ static void parse_options( int argc, char const *argv[],
     //
     // Check for mutually exclusive options only when parsing the command-line.
     //
-    check_mutually_exclusive( "A", "abdeEhHiILmMnNpPTuwWy" );
+    check_mutually_exclusive( "A", "abdeEhHiILmMnNpPTuwWxy" );
     check_mutually_exclusive( "f", "F" );
     check_mutually_exclusive( "n", "N" );
     check_mutually_exclusive( "Pu", "dhHiILmMStW" );
     check_mutually_exclusive( "u", "sT" );
-    check_mutually_exclusive( "v", "aAbcCdeEfFhHiIlmMnNopsStTuwWy" );
+    check_mutually_exclusive( "v", "aAbcCdeEfFhHiIlmMnNopsStTuwWxy" );
   }
 
   if ( print_version ) {

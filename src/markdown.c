@@ -122,7 +122,6 @@ static md_state_t  *stack;              // global stack of states
 static stack_pos_t  stack_top;          // index of the top of the stack
 
 // local functions
-static int          bin_search_str_strptr_cmp( void const*, void const* );
 static bool         md_is_code_fence( char const*, md_code_fence_t* );
 static bool         md_is_dl_ul_helper( char const*, md_indent_t* );
 static html_state_t md_is_html_tag( char const*, bool* );
@@ -284,22 +283,6 @@ static inline md_indent_t md_code_indent_min( void ) {
 }
 
 ////////// local functions ////////////////////////////////////////////////////
-
-/**
- * Comparison function for bin_search that compares a string key against an
- * element.
- *
- * @param key A pointer to the string being searched for.
- * @param elt A pointer to the pointer to the string of the current element to
- * compare againset.
- * @return Returns an integer less than zero, zero, or greater thatn zero if
- * the key is less than, equal to, or greater than the element, respectively.
- */
-static int bin_search_str_strptr_cmp( void const *key, void const *elt ) {
-  char const *const s_key = REINTERPRET_CAST( char const*, key );
-  char const *const s_elt = *REINTERPRET_CAST( char const**, elt );
-  return strcmp( s_key, s_elt );
-}
 
 /**
  * Gets a pointer to the first non-whitespace character in \a s.

@@ -2,7 +2,7 @@
 .\"     wrap -- text reformatter
 .\"     wrap.1: manual page
 .\"
-.\"     Copyright (C) 1996-2017  Paul J. Lucas
+.\"     Copyright (C) 1996-2018  Paul J. Lucas
 .\"
 .\"     This program is free software: you can redistribute it and/or modify
 .\"     it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\fP 1 "February 20, 2017" "PJL TOOLS"
+.TH \f3wrap\fP 1 "December 26, 2018" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -187,7 +187,7 @@ and
 .I s
 means
 .IR string .
-.TP
+.TP 5
 .BI \-\-alias \f1=\fPs "\f1 | \fP" "" \-a " s"
 Specifies the alias name
 .I s
@@ -200,12 +200,14 @@ or
 .B \-F
 options.
 .TP
-.BI \-\-block-chars \f1=\fPs "\f1 | \fP" "" \-b " s"
-Specifies the set of ``block'' characters
+.BI \-\-block-regex \f1=\fPs "\f1 | \fP" "" \-b " s"
+Specifies a ``block'' regular expression
 .I s
 that,
-when the first non-whitespace character on a line,
+when the first non-whitespace character on a line
+matches the regular expression,
 delimits a paragraph.
+(The regular expression effectively has \f(CW^[ \\t]*\fP prepended.)
 .TP
 .BI \-\-config \f1=\fPf "\f1 | \fP" "" \-c " f"
 Specifies the configuration file

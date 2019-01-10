@@ -97,6 +97,12 @@ void const* bin_search( void const *key, void const *elt_base,
   return NULL;
 }
 
+int bin_search_str_strptr_cmp( void const *key, void const *str_ptr ) {
+  char const *const s_key = REINTERPRET_CAST( char const*, key );
+  char const *const s_elt = *REINTERPRET_CAST( char const**, str_ptr );
+  return strcmp( s_key, s_elt );
+}
+
 unsigned check_atou( char const *s ) {
   assert( s != NULL );
   if ( !is_digits( s ) )

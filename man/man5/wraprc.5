@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wraprc\fP 1 "August 11, 2018" "PJL TOOLS"
+.TH \f3wraprc\fP 1 "December 26, 2018" "PJL TOOLS"
 .SH NAME
 wraprc \- text reformatter runtime configuration file
 .SH DESCRIPTION
@@ -87,10 +87,10 @@ for command-line options
 that are frequently used together.
 For example:
 .cS
-code = --block-chars=@ --markdown
+c-like = --comment-chars=/*,// --doxygen --markdown
 .cE
 creates an alias named
-\f(CWcode\fP
+\f(CWc-like\fP
 for the options shown.
 (Arguments need not be shell-escaped since no shell is involved.)
 Once specified,
@@ -105,11 +105,11 @@ or
 .BR wrapc .
 For example:
 .cS
-wrap --alias code
+wrap --alias c-like
 .cE
 would be the same as:
 .cS
-wrap --block-chars=@ --markdown
+wrap --comment-chars=/*,// --doxygen --markdown
 .cE
 An option of the form
 .RI \f(CW@\fP name
@@ -117,11 +117,12 @@ imports the options of the previously defined alias
 .IR name .
 For example:
 .cS
-c-like = @code --comment-chars=/*,//
+code   = --markdown
+c-like = @code --comment-chars=/*,// --doxygen
 .cE
 would be the same as:
 .cS
-c-like = --block-chars=@ --markdown --comment-chars=/*,//
+c-like = --markdown --comment-chars=/*,// --doxygen
 .cE
 Note that some options don't make sense
 in a configuration file
@@ -191,8 +192,8 @@ The default configuration file.
 .nf
 .ft CW
 [ALIASES]
-code   = --block-chars=@ --markdown
-c-like = @code --comment-chars=/*,//
+code   = --markdown
+c-like = @code --comment-chars=/*,// --doxygen
 markup = --eos-delimit --para-chars=,:;
 man    = @markup --dot-ignore
 script = @code --comment-chars=\\#
@@ -200,6 +201,7 @@ script = @code --comment-chars=\\#
 [PATTERNS]
 *.[chly]   = c-like
 *.[chly]pp = c-like
+*.doxy     = c-like
 *.go       = c-like
 *.htm      = markup
 *.html     = markup

@@ -184,6 +184,18 @@ void const* bin_search( void const *key, void const *elt_base,
                         int (*elt_cmp)( void const *key, void const *elt ) );
 
 /**
+ * Comparison function for bin_search that compares a string key against an
+ * element of array of constant pointer to constant char.
+ *
+ * @param key A pointer to the string being searched for.
+ * @param str_ptr A pointer to the pointer to the string of the current element
+ * to compare against.
+ * @return Returns an integer less than zero, zero, or greater thatn zero if
+ * the key is less than, equal to, or greater than the element, respectively.
+ */
+int bin_search_str_strptr_cmp( void const *key, void const *str_ptr );
+
+/**
  * Converts an ASCII string to an unsigned integer.
  * Unlike \c atoi(3), insists that all characters in \a s are digits.
  * If conversion fails, prints an error message and exits.

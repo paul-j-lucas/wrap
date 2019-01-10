@@ -40,6 +40,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+#define WIPC_DEFER(BUF,SIZE,CODE) WPIC_DEFERF( BUF, SIZE, CODE, "%c", '\n' )
+
 #define WIPC_DEFERF(BUF,SIZE,CODE,FORMAT,...) \
   snprintf( (BUF), (SIZE), ("%c" FORMAT), (CODE), __VA_ARGS__ )
 
@@ -67,6 +69,7 @@ typedef enum indent indent_t;
 char const         *me;                 // executable name
 
 // local variable definitions
+static wregex_t     block_regex;        // compiled from opt_block_regex
 static line_buf_t   input_buf;
 static line_buf_t   ipc_buf;            // deferred IPC message
 static size_t       ipc_width;          // deferred IPC line width
@@ -83,6 +86,7 @@ static bool         encountered_nonws;  // encountered a non-whitespace char?
 static hyphen_t     hyphen;
 static indent_t     indent = INDENT_LINE;
 static bool         is_long_line;       // line longer than line_width?
+static bool         is_preformatted;    // passing through preformatted text?
 static size_t       nonws_no_wrap_range[2];
 static wregex_t     nonws_no_wrap_regex;
 static unsigned     put_spaces;         // number of spaces to put between words
@@ -105,14 +109,13 @@ static void         wrap_cleanup( void );
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
- * Checks whether \a cp is a "block" Unicode code-point.
+ * Checks whether the "block" regular expression matches the input buffer.
  *
- * @param cp The Unicode code-point to check.
- * @return Returns \c true only if \a cp is a "block" code-point.
+ * @return Returns `true` only if it does.
  */
-static inline bool cp_is_block_char( codepoint_t cp ) {
-  return  opt_block_delims != NULL && cp_is_ascii( cp ) &&
-          strchr( opt_block_delims, (int)cp ) != NULL;
+static inline bool block_regex_matches( void ) {
+  return  opt_block_regex != NULL &&
+          regex_match( &block_regex, input_buf, 0, NULL );
 }
 
 /**
@@ -182,8 +185,7 @@ int main( int argc, char const *argv[] ) {
         // The first line of the next paragraph is title line and the buffer
         // isn't empty (there is a title): print the title.
         //
-        print_lead_chars();
-        print_line( output_len, /*do_eol=*/true );
+        delimit_paragraph();
         indent = INDENT_HANG;
         continue;
       }
@@ -299,7 +301,7 @@ int main( int argc, char const *argv[] ) {
         cp = '\n';                      // so cp_prev will become this (again)
         continue;
       }
-      if ( cp_is_block_char( cp ) ) {
+      if ( block_regex_matches() ) {
         delimit_paragraph();
         if ( opt_markdown ) {
           markdown_init();
@@ -433,8 +435,8 @@ int main( int argc, char const *argv[] ) {
     //
     char const c_past_hyphen = output_buf[ wrap_pos ];
 
-    print_lead_chars();
     size_t const prev_output_len = output_len;
+    print_lead_chars();
     print_line( wrap_pos, /*do_eol=*/true );
 
     if ( hyphen != HYPHEN_NO ) {
@@ -520,52 +522,77 @@ read_line:
 
   int c = *(*ppc)++;
 
-  if ( opt_data_link_esc && c == WIPC_HELLO ) {
-    switch ( c = *(*ppc)++ ) {
-      case WIPC_END_WRAP:
-        //
-        // We've been told by wrapc (child 1) that we've reached the end of
-        // the comment: dump any remaining buffer, propagate the interprocess
-        // message to the other wrapc process (parent), and pass text through
-        // verbatim.
-        //
-        print_lead_chars();
-        print_line( output_len, /*do_eol=*/true );
-        WIPC_SENDF( fout, WIPC_END_WRAP, "%s", *ppc );
-        fcopy( fin, fout );
-        exit( EX_OK );
+  if ( opt_data_link_esc ) {
+    if ( c == WIPC_HELLO ) {
+      switch ( c = *(*ppc)++ ) {
+        case WIPC_DELIMIT_PARAGRAPH:
+          consec_newlines = 0;
+          delimit_paragraph();
+          WIPC_SEND( fout, WIPC_DELIMIT_PARAGRAPH );
+          goto read_line;
 
-      case WIPC_NEW_LEADER: {
-        //
-        // We've been told by wrapc (child 1) that the comment characters
-        // and/or leading whitespace has changed: we have to echo it back to
-        // the other wrapc process (parent).
-        //
-        // If an output line has already been started, we have to defer the IPC
-        // until just after the line is sent; otherwise, we must send it
-        // immediately.
-        //
-        char *sep;
-        size_t const new_line_width = strtoul( *ppc, &sep, 10 );
-        if ( output_len > 0 ) {
-          WIPC_DEFERF(
-            ipc_buf, sizeof ipc_buf, WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
-            new_line_width, sep + 1
-          );
-          ipc_width = new_line_width;
-        } else {
-          WIPC_SENDF(
-            fout, WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
-            new_line_width, sep + 1
-          );
-          line_width = opt_line_width = new_line_width;
+        case WIPC_NEW_LEADER: {
+          //
+          // We've been told by wrapc (child 1) that the comment characters
+          // and/or leading whitespace has changed: we have to echo it back to
+          // the other wrapc process (parent).
+          //
+          // If an output line has already been started, we have to defer the
+          // IPC until just after the line is sent; otherwise, we must send it
+          // immediately.
+          //
+          char *sep;
+          size_t const new_line_width = strtoul( *ppc, &sep, 10 );
+          if ( output_len > 0 ) {
+            WIPC_DEFERF(
+              ipc_buf, sizeof ipc_buf,
+              WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
+              new_line_width, sep + 1
+            );
+            ipc_width = new_line_width;
+          } else {
+            WIPC_SENDF(
+              fout,
+              WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
+              new_line_width, sep + 1
+            );
+            line_width = opt_line_width = new_line_width;
+          }
+          goto read_line;
         }
-        goto read_line;
-      }
 
-      case '\0':
-        return EOF;
-    } // switch
+        case WIPC_PREFORMATTED_BEGIN:
+          delimit_paragraph();
+          WIPC_SEND( fout, WIPC_PREFORMATTED_BEGIN );
+          is_preformatted = true;
+          goto read_line;
+
+        case WIPC_PREFORMATTED_END:
+          WIPC_SEND( fout, WIPC_PREFORMATTED_END );
+          is_preformatted = false;
+          goto read_line;
+
+        case WIPC_WRAP_END:
+          //
+          // We've been told by wrapc (child 1) that we've reached the end of
+          // the comment: dump any remaining buffer, propagate the interprocess
+          // message to the other wrapc process (parent), and pass text through
+          // verbatim.
+          //
+          delimit_paragraph();
+          WIPC_SEND( fout, WIPC_WRAP_END );
+          fcopy( fin, fout );
+          exit( EX_OK );
+
+        case '\0':
+          return EOF;
+      } // switch
+    }
+
+    if ( is_preformatted ) {
+      W_FPUTS( input_buf, fout );
+      goto read_line;
+    }
   }
 
   return c;
@@ -605,8 +632,19 @@ static size_t buf_readline( void ) {
   size_t bytes_read;
 
   while ( (bytes_read = check_readline( input_buf, fin )) > 0 ) {
-    // Don't pass IPC lines through the Markdown parser.
-    if ( !opt_markdown || input_buf[0] == WIPC_HELLO || markdown_adjust() )
+    if ( !opt_markdown )
+      break;
+    //
+    // We're doing Markdown: we might have to adjust wrap's indent, hang-
+    // indent, and line-width for each Markdown line.
+    //
+    // However, don't pass either IPC lines or any lines while is_preformatted
+    // is true through the Markdown parser.
+    //
+    if ( input_buf[0] == WIPC_HELLO || is_preformatted )
+      break;
+
+    if ( markdown_adjust() )
       break;
   } // while
 
@@ -683,6 +721,22 @@ static void init( int argc, char const *argv[] ) {
       PMESSAGE_EXIT( EX_SOFTWARE,
         "internal regular expression error (%d): %s\n",
         regex_err_code, regex_error( &nonws_no_wrap_regex, regex_err_code )
+      );
+  }
+
+  if ( opt_block_regex != NULL ) {
+    if ( opt_block_regex[0] != '^' ) {
+      char *const temp = FREE_STRBUF_LATER( strlen( opt_block_regex ) + 1 );
+      temp[0] = '^';
+      strcpy( temp + 1, opt_block_regex );
+      opt_block_regex = temp;
+    }
+    int const regex_err_code = regex_compile( &block_regex, opt_block_regex );
+    if ( regex_err_code != 0 )
+      PMESSAGE_EXIT( EX_USAGE,
+        "\"%s\": regular expression error (%d): %s\n",
+        opt_block_regex, regex_err_code,
+        regex_error( &block_regex, regex_err_code )
       );
   }
 
@@ -862,7 +916,7 @@ static void markdown_reset( void ) {
  */
 static void print_lead_chars( void ) {
   if ( proto_buf[0] != '\0' ) {
-    W_FPRINTF( fout, "%s%s", proto_buf, output_len ? proto_tws : "" );
+    W_FPRINTF( fout, "%s%s", proto_buf, output_len > 0 ? proto_tws : "" );
   } else if ( output_len > 0 ) {
     for ( size_t i = 0; i < opt_lead_tabs; ++i )
       W_FPUTC( '\t', fout );
@@ -913,7 +967,7 @@ static void usage( void ) {
 "\n"
 "options:\n"
 "  -a alias   Use alias from configuration file.\n"
-"  -b chars   Specify block leading delimiter characters.\n"
+"  -b regex   Specify block leading regular expression.\n"
 "  -c file    Specify the configuration file [default: ~/%s].\n"
 "  -C         Suppress reading configuration file.\n"
 "  -d         Do not alter lines that begin with '.' (dot).\n"
@@ -974,6 +1028,7 @@ static void wipc_send( char *msg ) {
  */
 static void wrap_cleanup( void ) {
   markdown_cleanup();
+  regex_free( &block_regex );
   regex_free( &nonws_no_wrap_regex );
 }
 

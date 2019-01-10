@@ -1,0 +1,9 @@
+/// + For conditions,
+///   wrap the lines at the `&&` or `||`:
+///   @code
+///   if ( (http_status_code >= /*100*/ HTTPSTATUS_CONTINUE &&
+///         http_status_code <  /*200*/ HTTPSTATUS_OK) ||
+///         http_status_code >= /*500*/ HTTPSTATUS_INTERNAL_ERROR ) {
+///       return STATUS_RETRY;
+///   }
+///   @endcode
