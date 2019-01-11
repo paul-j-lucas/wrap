@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      src/markdown.h
 **
-**      Copyright (C) 2016-2017  Paul J. Lucas
+**      Copyright (C) 2016-2019  Paul J. Lucas
 **
 **      This program is free software: you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by

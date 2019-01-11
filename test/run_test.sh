@@ -3,7 +3,7 @@
 #       wrap -- text reformatter
 #       test/run_test.sh
 #
-#       Copyright (C) 2013-2017  Paul J. Lucas
+#       Copyright (C) 2013-2019  Paul J. Lucas
 #
 #       This program is free software: you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
