@@ -189,7 +189,7 @@ char const* read_conf( char const *conf_file ) {
         conf_file, line_no, trim_ws( line_buf )
       );
     line = trim_ws( line );
-    if ( *line == '\0' )
+    if ( *line == '\0' )                // line was entirely whitespace
       continue;
 
     // parse section line
