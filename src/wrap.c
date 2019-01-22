@@ -666,8 +666,9 @@ static void delimit_paragraph( void ) {
     if ( !true_reset( &is_long_line ) )
       print_lead_chars();
     print_line( output_len, /*do_eol=*/true );
-  } else if ( is_long_line )
+  } else if ( is_long_line ) {
     print_eol();                      // delimit the "long line"
+  }
 
   encountered_nonws = false;
   hyphen = HYPHEN_NO;
