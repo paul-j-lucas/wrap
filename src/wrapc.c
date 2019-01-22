@@ -312,7 +312,7 @@ static pid_t read_source_write_wrap( void ) {
   FILE *const fwrap = stdout;
 #endif /* DEBUG_RSWW */
 
-  if ( NEXT[0] ) {
+  if ( NEXT[0] != '\0' ) {
     //
     // For block comments, write the first line directly to the output.
     //
