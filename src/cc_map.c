@@ -70,7 +70,7 @@ static unsigned cc_set_add( cc_set_t cc_set, char c ) {
     cc_set[ (unsigned char)c ] = true;
     ++added;
     char const closing = closing_char( c );
-    if ( closing && !cc_set[ (unsigned char)closing ] ) {
+    if ( closing != '\0' && !cc_set[ (unsigned char)closing ] ) {
       cc_set[ (unsigned char)closing ] = true;
       ++added;
     }
