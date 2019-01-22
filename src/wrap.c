@@ -60,8 +60,8 @@ typedef enum hyphen hyphen_t;
  */
 enum indent {
   INDENT_NONE,
-  INDENT_LINE,                          // Indent only first line of paragraph.
-  INDENT_HANG                           // Indent all lines but first.
+  INDENT_LINE,                          // indent only first line of paragraph
+  INDENT_HANG                           // indent all lines but first
 };
 typedef enum indent indent_t;
 
