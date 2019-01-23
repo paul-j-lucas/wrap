@@ -327,7 +327,7 @@ static pid_t read_source_write_wrap( void ) {
   // all subsequent lines, i.e., do NOT ever tell wrap(1) to pass text through
   // verbatim (below).
   //
-  bool const proto_is_comment = is_line_comment( CURR );
+  bool const proto_is_comment = is_line_comment( CURR ) != NULL;
 
   for ( ; CURR[0] != '\0'; swap_line_bufs() ) {
     //
@@ -335,7 +335,7 @@ static pid_t read_source_write_wrap( void ) {
     //
     (void)check_readline( NEXT, fin );
 
-    if ( proto_is_comment && !is_line_comment( CURR ) ) {
+    if ( proto_is_comment && is_line_comment( CURR ) == NULL ) {
       //
       // This handles cases like:
       //
@@ -345,7 +345,7 @@ static pid_t read_source_write_wrap( void ) {
       goto verbatim;
     }
 
-    if ( !(proto_is_comment && is_line_comment( NEXT )) &&
+    if ( !(proto_is_comment && is_line_comment( NEXT ) != NULL) &&
          is_block_comment( CURR ) ) {
       //
       // This handles cases like:
