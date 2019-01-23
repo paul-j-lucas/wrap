@@ -60,7 +60,12 @@ int main( int argc, char const *argv[] ) {
   setlocale_utf8();
 
   wregex_t re;
-  regex_compile( &re, WRAP_RE );
+  int const regex_err_code = regex_compile( &re, WRAP_RE );
+  if ( regex_err_code != 0 )
+    PMESSAGE_EXIT( EX_SOFTWARE,
+      "internal regular expression error (%d): %s\n",
+      regex_err_code, regex_error( &re, regex_err_code )
+    );
 
   char line_buf[ 128 ];
   unsigned line_no = 0;
