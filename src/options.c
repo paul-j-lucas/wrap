@@ -555,8 +555,9 @@ void options_init( int argc, char const *argv[], void (*usage)(void) ) {
           opt_alias, opt_conf_file
         );
     }
-    else if ( opt_fin_name != NULL )
+    else if ( opt_fin_name != NULL ) {
       alias = pattern_find( opt_fin_name );
+    }
     if ( alias != NULL )
       parse_options(
         alias->argc, alias->argv, SHORT_OPTS[0], LONG_OPTS[0], "", usage,
