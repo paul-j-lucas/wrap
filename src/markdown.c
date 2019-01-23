@@ -43,7 +43,19 @@
 #define STRN_EQ_LIT(S,STRLIT) \
   (strncmp( (S), (STRLIT), sizeof( STRLIT ) - 1 ) == 0)
 
+/**
+ * Gets the Nth Markdown state down from the top of the stack.
+ *
+ * @param N The Nth item to get (0 = top of stack).
+ * @return Returns the Nth Markdown state.
+ */
 #define STACK(N)            (stack[ stack_top - (N) ])
+
+/**
+ * Gets the top Markdown state from the stack.
+ *
+ * @return Returns the top Markdown state.
+ */
 #define TOP                 STACK(0)
 
 /**
@@ -201,24 +213,6 @@ static inline bool md_is_link_title( char const *s ) {
 }
 
 /**
- * Checks whether \a line_type can nest.
- *
- * @param line_type The line type to check.
- * @return Returns \c true only if \a line_type can nest.
- */
-static inline bool md_is_nestable( md_line_t line_type ) {
-  switch ( line_type ) {
-    case MD_DL:
-    case MD_FOOTNOTE_DEF:
-    case MD_OL:
-    case MD_UL:
-      return true;
-    default:
-      return false;
-  } // switch
-}
-
-/**
  * Checks whether \a c is a Markdown ordered list delimiter character.
  *
  * @param c The character to check.
@@ -242,15 +236,6 @@ static inline void stack_clear( void ) {
  */
 static inline bool stack_empty( void ) {
   return stack_top < 0;
-}
-
-/**
- * Pops a Markdown state from the stack.
- */
-static inline void stack_pop( void ) {
-  MD_DEBUG( "%s()\n", __func__ );
-  assert( !stack_empty() );
-  --stack_top;
 }
 
 /**
@@ -717,6 +702,24 @@ static bool md_is_link_label( char const *s, bool *has_title ) {
 }
 
 /**
+ * Checks whether \a line_type can nest.
+ *
+ * @param line_type The line type to check.
+ * @return Returns \c true only if \a line_type can nest.
+ */
+static bool md_is_nestable( md_line_t line_type ) {
+  switch ( line_type ) {
+    case MD_DL:
+    case MD_FOOTNOTE_DEF:
+    case MD_OL:
+    case MD_UL:
+      return true;
+    default:
+      return false;
+  } // switch
+}
+
+/**
  * Checks whether the line is a Markdown ordered list item: a sequence of
  * digits followed by either \c '.' or \c ')' and whitespace.
  *
@@ -760,7 +763,7 @@ static bool md_is_ol( char const *s, md_ol_t *ol_num, char *ol_c,
  */
 static bool md_is_table( char const *s ) {
   assert( s != NULL );
-  bool nws = false;                     // encountered non-whitespace?
+  bool found_nws = false;               // encountered non-whitespace?
 
   for ( ; *s != '\0'; ++s ) {
     switch ( *s ) {
@@ -768,7 +771,7 @@ static bool md_is_table( char const *s ) {
         ++s;
         break;
       case '|':
-        if ( nws ) {
+        if ( found_nws ) {
           //
           // Insist on encountering at least one non-whitespace character on
           // the line before returning that it's a table.
@@ -778,7 +781,7 @@ static bool md_is_table( char const *s ) {
         break;
       default:
         if ( !isspace( *s ) )
-          nws = true;
+          found_nws = true;
     } // switch
   } // for
   return false;
@@ -911,6 +914,15 @@ static char const* skip_html_tag( char const *s, bool *is_end_tag ) {
 }
 
 /**
+ * Pops a Markdown state from the stack.
+ */
+static void stack_pop( void ) {
+  MD_DEBUG( "%s()\n", __func__ );
+  assert( !stack_empty() );
+  --stack_top;
+}
+
+/**
  * Pushes a new Markdown state onto the stack.
  *
  * @param line_type The type of line.
@@ -940,7 +952,7 @@ static void stack_push( md_line_t line_type, md_indent_t indent_left,
   md_state_t *const top = &TOP;
   top->line_type   = line_type;
   top->seq_num     = ++next_seq_num;
-  top->depth       = stack_size() ? stack_size() - 1 : 0;
+  top->depth       = stack_size() > 0 ? stack_size() - 1 : 0;
   top->indent_left = indent_left;
   top->indent_hang = indent_hang;
   top->ol_c        = '\0';
