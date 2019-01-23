@@ -326,7 +326,7 @@ int main( int argc, char const *argv[] ) {
     //  INSERT SPACES
     ///////////////////////////////////////////////////////////////////////////
 
-    if ( put_spaces ) {
+    if ( put_spaces > 0 ) {
       if ( output_len > 0 ) {
         //
         // Mark position at a space to perform a wrap if necessary.
@@ -762,10 +762,10 @@ static void init( int argc, char const *argv[] ) {
   //
   // Copy the prototype and calculate its width.
   //
-  if ( opt_lead_string || opt_prototype ) {
+  if ( opt_lead_string != NULL || opt_prototype ) {
     size_t proto_len = 0;
     size_t proto_width = 0;
-    for ( char const *s = opt_lead_string ? opt_lead_string : input_buf;
+    for ( char const *s = opt_lead_string != NULL ? opt_lead_string : input_buf;
           *s != '\0';
           ++s, ++proto_len ) {
       if ( opt_prototype && !is_space( *s ) )
@@ -777,7 +777,7 @@ static void init( int argc, char const *argv[] ) {
         (opt_tab_spaces - proto_len % opt_tab_spaces) : 1;
     } // for
     line_width = opt_line_width - proto_width;
-    if ( opt_lead_string ) {
+    if ( opt_lead_string != NULL ) {
       //
       // Split off the trailing whitespace (tws) from the prototype so that if
       // we read a line that's empty, we won't emit trailing whitespace when we
@@ -887,7 +887,8 @@ static bool markdown_adjust( void ) {
         print_lead_chars();
         print_line( output_len, /*do_eol=*/true );
         prev_seq_num = md->seq_num;
-      } else if ( output_len == 0 && !is_blank_line( input_buf ) ) {
+      }
+      else if ( output_len == 0 && !is_blank_line( input_buf ) ) {
         //
         // Same line type, but new line: hang indent.
         //
@@ -918,7 +919,8 @@ static void markdown_reset( void ) {
 static void print_lead_chars( void ) {
   if ( proto_buf[0] != '\0' ) {
     W_FPRINTF( fout, "%s%s", proto_buf, output_len > 0 ? proto_tws : "" );
-  } else if ( output_len > 0 ) {
+  }
+  else if ( output_len > 0 ) {
     for ( size_t i = 0; i < opt_lead_tabs; ++i )
       W_FPUTC( '\t', fout );
     for ( size_t i = 0; i < opt_lead_spaces; ++i )
