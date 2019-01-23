@@ -400,7 +400,7 @@ static void parse_options( int argc, char const *argv[],
     SET_OPTION( opt );
 
     if ( line_no > 0 ) {                // we're parsing a conf file
-      if ( strchr( CONF_FORBIDDEN_OPTS, opt ) )
+      if ( strchr( CONF_FORBIDDEN_OPTS, opt ) != NULL )
         PMESSAGE_EXIT( EX_CONFIG,
           "%s:%u: '%c': option not allowed in configuration file\n",
           opt_conf_file, line_no, opt
