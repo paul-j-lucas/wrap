@@ -110,7 +110,7 @@ char const* cc_map_compile( char const *in_cc ) {
     char const cc1 = is_double_cc ? cc[1] : CC_SINGLE_CHAR;
 
     unsigned char const *const ucc = (unsigned char*)cc;
-    char *cc_map_entry = (char*)cc_map[ ucc[0] ];
+    char *cc_map_entry = cc_map[ ucc[0] ];
     if ( cc_map_entry == '\0' ) {
       cc_map_entry = MALLOC( char, 1 + 1/*null*/ );
       cc_map_entry[0] = cc1;

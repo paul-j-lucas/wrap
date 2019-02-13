@@ -79,6 +79,9 @@ _GL_INLINE_HEADER_BEGIN
 /** Advances \a S over all \a CHARS. */
 #define SKIP_CHARS(S,CHARS)       ((S) += strspn( (S), (CHARS) ))
 
+/** Explicit C version of C++'s `static_cast`. */
+#define STATIC_CAST(T,EXPR)       ((T)(EXPR))
+
 /** Shorthand for calling **strerror**(3). */
 #define STRERROR                  strerror( errno )
 
@@ -114,13 +117,13 @@ _GL_INLINE_HEADER_BEGIN
 #endif /* __GNUC__ */
 
 #define MALLOC(TYPE,N) \
-  (TYPE*)check_realloc( NULL, sizeof(TYPE) * (N) )
+  STATIC_CAST(TYPE*, check_realloc( NULL, sizeof(TYPE) * (N) ))
 
 #define PMESSAGE_EXIT(STATUS,FORMAT,...) \
   BLOCK( PRINT_ERR( "%s: " FORMAT, me, __VA_ARGS__ ); exit( STATUS ); )
 
 #define REALLOC(PTR,TYPE,N) \
-  (PTR) = (TYPE*)check_realloc( (PTR), sizeof(TYPE) * (N) )
+  (PTR) = STATIC_CAST(TYPE*, check_realloc( (PTR), sizeof(TYPE) * (N) ))
 
 #define W_DUP(FD) BLOCK( \
 	if ( unlikely( dup( FD ) == -1 ) ) perror_exit( EX_OSERR ); )

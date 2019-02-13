@@ -764,7 +764,7 @@ static char const* is_terminated_comment( char *s ) {
   char const *cc = NULL;
   char *tws = NULL;                     // trailing whitespace
 
-  if ( (s = (char*)is_line_comment( s )) != NULL ) {
+  if ( (s = CONST_CAST(char*, is_line_comment( s ))) != NULL ) {
     switch ( delim ) {
       case DELIM_NONE:
         break;
