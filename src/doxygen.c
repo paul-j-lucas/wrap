@@ -238,7 +238,7 @@ static dox_cmd_t const DOX_COMMANDS[] = {
  * element of array of dox_cmd_t.
  *
  * @param key A pointer to the string being searched for.
- * @param str_ptr A pointer to the current element to compare against.
+ * @param elt A pointer to the current element to compare against.
  * @return Returns an integer less than zero, zero, or greater thatn zero if
  * the key is less than, equal to, or greater than the element's name,
  * respectively.
