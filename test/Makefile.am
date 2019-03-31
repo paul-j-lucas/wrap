@@ -177,6 +177,7 @@ TESTS+= tests/utf8-w77.test \
 	tests/wrap--Markdown-ol-08s.test \
 	tests/wrap--Markdown-ol-09s.test \
 	tests/wrap--Markdown-ol-11s.test \
+	tests/wrap--Markdown-ol-12s.test \
 	tests/wrap--Markdown-ol-ol-01s.test \
 	tests/wrap--Markdown-ol-ol-02s.test \
 	tests/wrap--Markdown-ol-ol-03s.test \

@@ -749,7 +749,15 @@ static bool md_is_ol( char const *s, md_ol_t *ol_num, char *ol_c,
     *ol_c = d[0];
     *indent_hang = d[1] == '\t' ?
       MD_LIST_INDENT_MAX :
-      MD_OL_INDENT_MIN + is_space( d[2] );
+      MD_OL_INDENT_MIN + is_space( d[2] ) +
+      (*ol_num >=        10 ? 1 : 0) +
+      (*ol_num >=       100 ? 1 : 0) +
+      (*ol_num >=      1000 ? 1 : 0) +
+      (*ol_num >=     10000 ? 1 : 0) +
+      (*ol_num >=    100000 ? 1 : 0) +
+      (*ol_num >=   1000000 ? 1 : 0) +
+      (*ol_num >=  10000000 ? 1 : 0) +
+      (*ol_num >= 100000000 ? 1 : 0);
     return true;
   }
   return false;
@@ -1257,13 +1265,13 @@ md_state_t const* markdown_parse( char *s ) {
       if ( is_same_type_not_nested && ol_same_char ) {
         TOP.seq_num = ++next_seq_num;   // reuse current state
         md_ol_t const next_ol_num = ++TOP.ol_num;
-        if ( next_ol_num == 10       ||
-             next_ol_num == 100      ||
-             next_ol_num == 1000     ||
-             next_ol_num == 10000    ||
-             next_ol_num == 100000   ||
-             next_ol_num == 1000000  ||
-             next_ol_num == 10000000 ||
+        if ( next_ol_num ==        10 ||
+             next_ol_num ==       100 ||
+             next_ol_num ==      1000 ||
+             next_ol_num ==     10000 ||
+             next_ol_num ==    100000 ||
+             next_ol_num ==   1000000 ||
+             next_ol_num ==  10000000 ||
              next_ol_num == 100000000 ) {
           ++TOP.indent_hang;            // digits just got 1 wider
         }
