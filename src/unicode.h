@@ -210,7 +210,7 @@ WRAP_UNICODE_INLINE size_t utf8_copy_char( char *dest, char const *src ) {
  * pointer is pointing within.  (This inline version is optimized for the
  * common case of ASCII.)
  *
- * @param bug A pointer to the beginning of the buffer.
+ * @param buf A pointer to the beginning of the buffer.
  * @param pos A pointer to any byte with the buffer.
  * @return Returns a pointer less than or equal to \a buf that points to the
  * first byte of a UTF-8 encoded character byte sequence or NULL if there is
