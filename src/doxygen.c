@@ -23,6 +23,9 @@
 #include "doxygen.h"
 #include "util.h"
 
+// standard
+#include <assert.h>
+
 /**
  * Valid characters comprising a Doxygen command.
  */
@@ -259,6 +262,9 @@ dox_cmd_t const* dox_find_cmd( char const *s ) {
 }
 
 bool dox_parse_cmd_name( char const *s, char *dox_cmd_name ) {
+  assert( s != NULL );
+  assert( dox_cmd_name != NULL );
+
   SKIP_CHARS( s, WS_ST );
   if ( s[0] == '@' || s[0] == '\\' ) {
     size_t const dox_cmd_name_len = strspn( s + 1, DOX_CMD_CHARS );

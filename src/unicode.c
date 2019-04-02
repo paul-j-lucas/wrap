@@ -180,6 +180,7 @@ bool cp_is_hyphen( codepoint_t cp ) {
 }
 
 codepoint_t utf8_decode_impl( char const *s ) {
+  assert( s != NULL );
   size_t const len = utf8_len( *s );
   assert( len >= 1 );
 

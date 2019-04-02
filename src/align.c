@@ -26,6 +26,7 @@
 #include "util.h"
 
 // standard
+#include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
@@ -41,6 +42,7 @@
  * @return Returns \c true only if \a s starts an end-of-line comment.
  */
 static bool is_eol_comment( char const *s ) {
+  assert( s != NULL );
   char const *const cc = cc_map_get( *s );
   if ( cc == NULL )
     return false;

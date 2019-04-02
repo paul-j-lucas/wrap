@@ -1042,6 +1042,7 @@ static void read_prototype( void ) {
  * @param len The number of characters of \a prefix to use.
  */
 static void set_prefix( char const *prefix, size_t len ) {
+  assert( prefix != NULL );
   strncpy( prefix_buf, prefix, len );
   prefix_buf[ len ] = '\0';
   prefix_len0 = len;

@@ -30,6 +30,7 @@
 #include "wregex.h"
 
 // standard
+#include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
@@ -490,6 +491,8 @@ int main( int argc, char const *argv[] ) {
  * @return Returns said character or \c EOF.
  */
 static int buf_getc( char const **ppc ) {
+  assert( ppc != NULL );
+  assert( *ppc != NULL );
   static bool check_for_nonws_no_wrap_match = true;
 
   while ( **ppc == '\0' ) {
@@ -1016,6 +1019,7 @@ static void usage( void ) {
  * @param msg The message to send.  If sent, the buffer is truncated.
  */
 static void wipc_send( char *msg ) {
+  assert( msg != NULL );
   if ( msg[0] != '\0' ) {
     WIPC_SENDF( fout, /*IPC_code=*/msg[0], "%s", msg + 1 );
     msg[0] = '\0';
