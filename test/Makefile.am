@@ -286,6 +286,7 @@ TESTS+=	tests/wrapc-01.test \
 	tests/wrapc--C-05.test \
 	tests/wrapc--C-06.test \
 	tests/wrapc--C-07.test \
+	tests/wrapc--C-08.test \
 	tests/wrapc--C++-00.test \
 	tests/wrapc--C++-01.test \
 	tests/wrapc--COBOL-01.test \

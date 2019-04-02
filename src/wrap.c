@@ -582,6 +582,7 @@ read_line:
           // message to the other wrapc process (parent), and pass text through
           // verbatim.
           //
+          consec_newlines = 0;
           delimit_paragraph();
           WIPC_SEND( fout, WIPC_WRAP_END );
           fcopy( fin, fout );

@@ -7,6 +7,10 @@ See the end of the file for license conditions.
 
 * Changes in Wrap 5.3.1
 
+** Fixed additional blank comment line
+If a comment ended in two consecutive newlines, an additional one was added
+incorrectly.  This has been fixed.
+
 ** Fixed ordered list hang indent
 Fixed hang-indent for ordered lists >= 10.
 
