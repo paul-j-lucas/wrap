@@ -276,7 +276,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   //
   REDIRECT( STDIN_FILENO, TO_WRAP );
   REDIRECT( STDOUT_FILENO, FROM_WRAP );
-  execvp( PACKAGE, argv );
+  execvp( PACKAGE, argv );              // should not return
   perror_exit( EX_OSERR );
 #endif /* DEBUG_RSWW */
 }
