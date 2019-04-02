@@ -1,5 +1,96 @@
+2019-04-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, wrap.c, test/Makefile.am, test_08.c, wrapc--C-08.txt,
+     wrapc--C-08.test: Fixed additional blank comment line.
+   * wrapc.c: Added comment.
+   * wrapc.c: Added comment.
+   * util.c: Added unlikely().
+   * align.c, doxygen.c, unicode.c, wrap.c, wrapc.c: Added asserts.
+
+2019-04-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * unicode.h: Fixed comment.
+   * unicode.h: FIxed typo.
+   * lib/Makefile.am, _Noreturn.h, alloca.c, alloca.in.h, gettext.h,
+     stdlib.in.h, unistd.in.h, alloca.m4, fnmatch.m4, gnulib-common.m4,
+     malloc.m4, memchr.m4, stdlib_h.m4, strerror.m4: Updated Gnulib.
+
+2019-03-30  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS: Updated.
+   * configure.ac, markdown.c, test/Makefile.am, md-ol-12s.md,
+     wrap--Markdown-ol-12s.txt, wrap--Markdown-ol-12s.test: Fixed hang-indent
+     for ordered lists >= 10.
+
+2019-02-13  Paul J. Lucas <paul@lucasmail.org>
+
+   * cc_map.c, util.c, util.h, wrapc.c: Added STATIC_CAST; using CONST_CAST
+     more.
+   * doxygen.c: Fixed @param.
+
+2019-02-05  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.c: Now using C99 VLAs.
+
+2019-01-23  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: More explicit checks.
+   * wrap.c: Made some checks explicit; clean-up.
+   * regex_test.c: Added regex_compile() error checking.
+   * options.c: Added braces.
+   * options.c: Made more explicit.
+   * markdown.c: Clean-up.
+
+2019-01-22  Paul J. Lucas <paul@lucasmail.org>
+
+   * cc_map.c: Made test explicit.
+   * wrap.c: Added {}.
+   * wrap.c: Tweak comments.
+   * wrap.c: Added comments.
+   * wrapc.c: More explicit about condition.
+
+2019-01-17  Paul J. Lucas <paul@lucasmail.org>
+
+   * doxygen.c: Added in missing Doxygen end* commands (though it doesn't
+     really matter).
+
+2019-01-11  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, alloca.in.h, arg-nonnull.h, c++defs.h, errno.in.h,
+     flexmember.h, fnmatch.c, fnmatch.in.h, fnmatch_loop.c, getopt-cdefs.in.h,
+     getopt-core.h, getopt-ext.h, getopt-pfx-core.h, getopt-pfx-ext.h,
+     getopt.c, getopt.in.h, getopt1.c, getopt_int.h, gettext.h, hard-locale.c,
+     hard-locale.h, intprops.h, localcharset.c, localcharset.h, malloc.c,
+     mbrtowc.c, mbsinit.c, mbsrtowcs-impl.h, mbsrtowcs-state.c, mbsrtowcs.c,
+     memchr.c, stdbool.in.h, stddef.in.h, stdlib.in.h, strdup.c, streq.h,
+     strerror-override.c, strerror-override.h, strerror.c, string.in.h,
+     strndup.c, strnlen.c, strnlen1.c, strnlen1.h, sys_types.in.h,
+     sysexits.in.h, unistd.in.h, verify.h, warn-on-use.h, wchar.in.h,
+     wctype.in.h, 00gnulib.m4, absolute-header.m4, alloca.m4,
+     builtin-expect.m4, codeset.m4, errno_h.m4, extensions.m4,
+     extern-inline.m4, flexmember.m4, fnmatch.m4, fnmatch_h.m4, getopt.m4,
+     gnulib-cache.m4, gnulib-common.m4, gnulib-comp.m4, gnulib-tool.m4,
+     include_next.m4, localcharset.m4, locale-fr.m4, locale-ja.m4,
+     locale-zh.m4, malloc.m4, mbrtowc.m4, mbsinit.m4, mbsrtowcs.m4,
+     mbstate_t.m4, memchr.m4, mmap-anon.m4, nocrash.m4, off_t.m4, ssize_t.m4,
+     stdbool.m4, stddef_h.m4, stdlib_h.m4, strdup.m4, strerror.m4, string_h.m4,
+     strndup.m4, strnlen.m4, sys_socket_h.m4, sys_types_h.m4, sysexits.m4,
+     unistd_h.m4, warn-on-use.m4, wchar_h.m4, wchar_t.m4, wctype_h.m4,
+     wint_t.m4: Updated Gnulib.
+   * doxygen.c, doxygen.h, wrap.h: Updated copyright year to 2019, part 2.
+   * Makefile.am, NEWS, configure.ac, man/Makefile.am, man/man1/Makefile.am,
+     wrap.1, man/man5/Makefile.am, wraprc.5, src/Makefile.am, alias.c, alias.h,
+     common.c, common.h, markdown.c, markdown.h, options.c, options.h,
+     pattern.c, pattern.h, read_conf.c, read_conf.h, unicode.h, util.c, util.h,
+     wrap.c, wrapc.c, test/Makefile.am, run_test.sh: Updated copyright year to
+     2019.
+   * read_conf.c: Added comment.
+
 2019-01-10  Paul J. Lucas <paul@lucasmail.org>
 
+   * read_conf.c: s/parse_section/section_parse/
+   * read_conf.c: Added parse_section().
+   * util.h: Added needed #include <stdint.h>.
    * NEWS, configure.ac, wrap.1, wrapc.1, wraprc.5, src/Makefile.am, common.h,
      doxygen.c, doxygen.h, markdown.c, options.c, options.h, util.c, util.h,
      wrap.c, wrapc.c, test/Makefile.am, data-01.doxy, wrapc-x-01.txt,
