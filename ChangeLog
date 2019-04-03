@@ -1,5 +1,14 @@
+2019-04-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrap.1, markdown.c, options.c, wrapc.c,
+     test/Makefile.am, data-02.doxy, wrapc-ux-02.txt, wrapc-ux-02.test: Added
+     support for Doxygen ordered lists -#.
+   * wrapc.1: s/B/BR/
+   * wrap.c: s/pc/pb/
+
 2019-04-02  Paul J. Lucas <paul@lucasmail.org>
 
+   * wrap.1: Typo: s/treaded/treated/
    * NEWS, wrap.c, test/Makefile.am, test_08.c, wrapc--C-08.txt,
      wrapc--C-08.test: Fixed additional blank comment line.
    * wrapc.c: Added comment.
