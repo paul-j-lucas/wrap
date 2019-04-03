@@ -11,11 +11,13 @@ Makefile
 /ar-lib
 /autom4te.cache
 /compile
+/confdefs.h
 /config.guess
 /config.log
 /config.status
 /config.sub
 /configure
+/conftest*
 /depcomp
 /install-sh
 /missing
