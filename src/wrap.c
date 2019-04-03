@@ -145,14 +145,14 @@ int main( int argc, char const *argv[] ) {
   init( argc, argv );
 
   bool        next_line_is_title = opt_title_line;
-  char const *pc = input_buf;           // pointer to current character
+  char const *pb = input_buf;           // pointer to current byte
   utf8c_t     utf8c;                    // current character's UTF-8 byte(s)
   size_t      wrap_pos = 0;             // position at which we can wrap
 
   /////////////////////////////////////////////////////////////////////////////
 
   for ( codepoint_t cp, cp_prev = '\n'; // current and previous codepoints
-        (cp = buf_getcp( &pc, utf8c )) != CP_EOF; cp_prev = cp ) {
+        (cp = buf_getcp( &pb, utf8c )) != CP_EOF; cp_prev = cp ) {
 
     if ( cp == CP_BYTE_ORDER_MARK || cp == CP_INVALID )
       continue;
@@ -298,7 +298,7 @@ int main( int argc, char const *argv[] ) {
         // Make state as if line never happened.
         //
         (void)buf_readline();
-        pc = input_buf;
+        pb = input_buf;
         cp = '\n';                      // so cp_prev will become this (again)
         continue;
       }
@@ -368,7 +368,7 @@ int main( int argc, char const *argv[] ) {
     encountered_nonws = true;
 
     if ( !opt_no_hyphen ) {
-      size_t const pos = pc - input_buf;
+      size_t const pos = pb - input_buf;
       if ( pos >= nonws_no_wrap_range[1] || pos < nonws_no_wrap_range[0] ) {
         //
         // We're outside the non-whitespace-no-wrap range.
