@@ -20,6 +20,7 @@
 
 // local
 #include "wrap.h"                       /* must go first */
+#include "options.h"
 #include "markdown.h"
 #include "common.h"
 #include "util.h"
@@ -445,6 +446,27 @@ static bool md_is_dl_ul_helper( char const *s, md_indent_t *indent_hang ) {
           ++*indent_hang;
       }
     }
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Checks whether the line is a Doxygen ordered list item: a \c "-#" followed
+ * by whitespace.
+ *
+ * @param s The null-terminated line to check.
+ * @param indent_hang A pointer to the variable to receive the relative hang
+ * indent (in spaces).
+ * @return Returns \c true only if \a s is a Doxygen ordered list item.
+ */
+static bool md_is_doxy_ol( char const *s, md_indent_t *indent_hang ) {
+  assert( s != NULL );
+  assert( s[0] == '-' );
+  if ( s[1] == '#' && s[2] == ' ' ) {
+    *indent_hang = MD_OL_INDENT_MIN;
+    if ( is_space( s[3] ) )
+      ++*indent_hang;
     return true;
   }
   return false;
@@ -1213,10 +1235,21 @@ md_state_t const* markdown_parse( char *s ) {
         curr_line_type = MD_OL;
       break;
 
+    // Doxygen ordered lists.
+    case '-':
+      if ( opt_doxygen && md_is_doxy_ol( nws, &indent_hang ) ) {
+        //
+        // Even though it's a Doxygen ordered list, we treat is as unordered
+        // since we leave the list marker alone, i.e., we don't renumber it.
+        //
+        curr_line_type = MD_UL;
+        break;
+      }
+      // FALLTHROUGH
+
     // Unordered lists.
     case '*':
     case '+':
-    case '-':
       if ( md_is_ul( nws, &indent_hang ) )
         curr_line_type = MD_UL;
       break;

@@ -116,10 +116,10 @@ static unsigned     parse_width( char const* );
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define COMMON_OPTS         "a:b:c:CeE:f:F:l:o:p:s:Tuvw:y"
+#define COMMON_OPTS         "a:b:c:CeE:f:F:l:o:p:s:Tuvw:xy"
 #define CONF_FORBIDDEN_OPTS "acCfFov"
 #define WRAP_SPECIFIC_OPTS  "dh:H:i:I:L:m:M:nNPS:t:WZ"
-#define WRAPC_SPECIFIC_OPTS "A:D:x"
+#define WRAPC_SPECIFIC_OPTS "A:D:"
 
 //
 // Each command forbids the others' specific options, but only on the command-

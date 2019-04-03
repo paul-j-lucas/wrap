@@ -235,7 +235,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   arg_buf_t   arg_opt_tab_spaces;
 
   int argc = 0;
-  char *argv[16];                       // must be +1 of greatest arg below
+  char *argv[17];                       // must be +1 of greatest arg below
 
 #define ARG_SET(ARG)          argv[ argc++ ] = (ARG)
 #define ARG_DUP(FMT)          ARG_SET( check_strdup( FMT ) )
@@ -266,9 +266,10 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
          else ARG_FMT( opt_tab_spaces , "-s%zu" );
   /* 11 */ IF_ARG_DUP( opt_title_line , "-T"    );
   /* 12 */    ARG_FMT( opt_line_width , "-w%zu" );
-  /* 13 */ IF_ARG_DUP( opt_no_hyphen  , "-y"    );
-  /* 14 */    ARG_DUP(                  "-Z"    );
-  /* 15 */    ARG_END;
+  /* 13 */ IF_ARG_DUP( opt_doxygen    , "-x"    );
+  /* 14 */ IF_ARG_DUP( opt_no_hyphen  , "-y"    );
+  /* 15 */    ARG_DUP(                  "-Z"    );
+  /* 16 */    ARG_END;
 
   //
   // Read from pipes[TO_WRAP] (read_source_write_wrap() in child 1) and write

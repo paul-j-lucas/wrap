@@ -1,0 +1,16 @@
+    //  -# A single character, e.g., '#', that is a to-end-of-line comment.
+    //     This is the DELIM_EOL delimiter type.
+    //
+    //  -# Two characters:
+    //      * E.g., "/*", the characters of both the opening and closing
+    //        comment delimiters where the closing delimiter shares a character
+    //        with the opening delimiter (hence the final '/' in "*/" isn't
+    //        repeated).  This is the DELIM_DOUBLE delimiter type.
+    //      * E.g., "{}" (Pascal), two single-character open/close comment
+    //        delimiter characters.  This is the DELIM_SINGLE delimiter type.
+    //
+    //  -# Three characters, e.g., "(*)", the characters of both the opening
+    //     and closing comment delimiters where the closing delimiter is
+    //     different from the opening delimiter (hence, the opening delimiter
+    //     is "(*" and the closing is "*)").  This is also the DELIM_DOUBLE
+    //     delimiter type.

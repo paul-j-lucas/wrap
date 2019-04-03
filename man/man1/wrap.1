@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\fP 1 "April 2, 2018" "PJL TOOLS"
+.TH \f3wrap\fP 1 "April 3, 2018" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -230,6 +230,17 @@ Does not alter lines that begin with a
 (dot) presumed to be
 .RB [ nt ] roff (1)
 control lines.
+.TP
+.BR \-\-doxygen " | " \-x
+If either the
+.B \-\-markdown
+or
+.B \-u
+option is also specified,
+then \f(CW-#\fP is recognized as a Doxygen ordered list item
+(see
+.B MARKDOWN FORMATTING
+below).
 .TP
 .BI \-\-eol \f1=\fPs "\f1 | \fP" "" \-l " s"
 Specifies the line-endings to use
@@ -543,6 +554,17 @@ starts a new list:
 Aside from using numbers as list item markers,
 everything else about unordered lists
 also applies to ordered lists.
+.P
+When either the
+.B \-\-markdown
+or
+.B \-u
+option is specified,
+Doxygen ordered list items,
+that is a \f(CW-#\fP followed by a space,
+are also recognized.
+However,
+the \f(CW-#\fP characters are left as-is.
 .SS Definition Lists
 Definition lists are term lines
 preceded by a blank line

@@ -250,8 +250,9 @@ TESTS+=	tests/wrapc-01.test \
 	tests/wrapc-D-01.test \
 	tests/wrapc-D-02.test \
 	tests/wrapc-b.test \
+	tests/wrapc-ux-01.test \
+	tests/wrapc-ux-02.test \
 	tests/wrapc-x-01.test \
-	tests/wrapc-x-02.test \
 	tests/wrapc--block-01.test \
 	tests/wrapc--block-02.test \
 	tests/wrapc--block-03.test \
