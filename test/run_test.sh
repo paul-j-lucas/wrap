@@ -230,6 +230,14 @@ run_wrap_file() {
 ##
 PATH=$BUILD_SRC:$PATH
 
+##
+# Must ensure these are unset so neither process will wait for a debugger.
+##
+unset WRAP_DEBUG
+unset WRAPC_DEBUG
+unset WRAPC_DEBUG_RSRW
+unset WRAPC_DEBUG_RW
+
 trap "x=$?; rm -f /tmp/*_$$_* 2>/dev/null; exit $x" EXIT HUP INT TERM
 
 case $TEST in
