@@ -460,7 +460,7 @@ static bool md_is_dl_ul_helper( char const *s, md_indent_t *indent_hang ) {
  * indent (in spaces).
  * @return Returns \c true only if \a s is a Doxygen ordered list item.
  */
-static bool md_is_doxy_ol( char const *s, md_indent_t *indent_hang ) {
+static bool md_is_dox_ol( char const *s, md_indent_t *indent_hang ) {
   assert( s != NULL );
   assert( s[0] == '-' );
   if ( s[1] == '#' && s[2] == ' ' ) {
@@ -1237,7 +1237,7 @@ md_state_t const* markdown_parse( char *s ) {
 
     // Doxygen ordered lists.
     case '-':
-      if ( opt_doxygen && md_is_doxy_ol( nws, &indent_hang ) ) {
+      if ( opt_doxygen && md_is_dox_ol( nws, &indent_hang ) ) {
         //
         // Even though it's a Doxygen ordered list, we treat is as unordered
         // since we leave the list marker alone, i.e., we don't renumber it.
