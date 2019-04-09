@@ -38,27 +38,27 @@
 
 /**
  * Doxygen command should be at the beginning of a line.  Examples include \c
- * \\copybrief, \c \\copydetails, \c \\copydoc,
+ * \\copybrief, \c \\copydetails, and \c \\copydoc,
  */
 #define DOX_BOL     (1u << 1)
 
 /**
  * Doxygen command continues until the end of the line.  Examples include \c
- * \\def, \c \\hideinitializer, \c \\mainpage.
+ * \\def, \c \\hideinitializer, and \c \\mainpage.
  */
 #define DOX_EOL     (1u << 2)
 
 /**
  * Doxygen command continues until either the end of the paragraph; or, if it
  * has a corresponding end command, until said command.  Examples include \c
- * \\brief, \c \\details, \c \\param,
+ * \\brief, \c \\details, and \c \\param.
  */
 #define DOX_PAR     (1u << 3)
 
 /**
  * Doxygen command continues until its corresponding end command and all text
  * in between shall be considered preformatted and passed through verbatim.
- * Examples include \c \\code, \c \\latexonly, \c \\verbatim.
+ * Examples include \c \\code, \c \\latexonly, and \c \\verbatim.
  */
 #define DOX_PRE     (1u << 4)
 
