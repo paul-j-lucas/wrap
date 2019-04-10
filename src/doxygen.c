@@ -151,13 +151,13 @@ static dox_cmd_t const DOX_COMMANDS[] = {
   { "name",             DOX_INIT_EOL,     NULL },
   { "namespace",        DOX_INIT_EOL,     NULL },
   { "nosubgrouping",    DOX_INIT_EOL,     NULL },
-  { "note",             DOX_INIT_EOL,     NULL },
+  { "note",             DOX_INIT_PAR,     NULL },
   { "overload",         DOX_INIT_EOL,     NULL },
 
   { "p",                DOX_INIT_INLINE,  NULL },
   { "package",          DOX_INIT_EOL,     NULL },
   { "page",             DOX_INIT_EOL,     NULL },
-  { "par",              DOX_INIT_EOL,     NULL },
+  { "par",              DOX_INIT_PAR,     NULL },
   { "paragraph",        DOX_INIT_EOL,     NULL },
   { "param",            DOX_INIT_PAR,     NULL },
   { "parblock",         DOX_INIT_EOL,     "endparblock" },
@@ -224,7 +224,7 @@ static dox_cmd_t const DOX_COMMANDS[] = {
   { "version",          DOX_INIT_PAR,     NULL },
   { "vhdlflow",         DOX_INIT_EOL,     NULL },
 
-  { "warning",          DOX_INIT_EOL,     NULL },
+  { "warning",          DOX_INIT_PAR,     NULL },
   { "weakgroup",        DOX_INIT_EOL,     NULL },
 
   { "xmlonly",          DOX_INIT_PRE,     "endxml" },
