@@ -5,6 +5,12 @@ See the end of the file for license conditions.
 
 -------------------------------------------------------------------------------
 
+* Changes in Wrap 5.4.1
+
+Changed Doxygen's @note, @par, and @warning wrapping to go to the end of the
+paragraph rather than the end of the line.
+
+
 * Changes in Wrap 5.4
 
 ** Added support for Doxygen ordered lists
