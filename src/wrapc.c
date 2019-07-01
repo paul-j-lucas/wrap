@@ -1139,35 +1139,38 @@ static size_t str_width( char const *s ) {
  */
 static void usage( void ) {
   PRINT_ERR(
-"usage: %s [options]\n"
-"       %s -v\n"
-"\n"
+"usage: " PACKAGE "c [options]\n"
+"       " PACKAGE "c -v\n"
 "options:\n"
-"  -a alias   Use alias from configuration file.\n"
-"  -A number  Specify column to align end-of-line comments on.\n"
-"  -b regex   Specify block leading regular expression.\n"
-"  -c file    Specify the configuration file [default: ~/%s].\n"
-"  -C         Suppress reading configuration file.\n"
-"  -D chars   Specify comment delimiter characters.\n"
-"  -e         Treat whitespace after end-of-sentence as new paragraph.\n"
-"  -E number  Specify number of spaces after an end-of-sentence [default: %d].\n"
-"  -f file    Read from this file [default: stdin].\n"
-"  -F string  Specify filename for stdin.\n"
-"  -l char    Specify line-endings as input/Unix/Windows [default: input].\n"
-"  -o file    Write to this file [default: stdout].\n"
-"  -p chars   Specify additional paragraph delimiter characters.\n"
-"  -s number  Specify tab-spaces equivalence [default: %d].\n"
-"  -T         Treat paragraph first line as title.\n"
-"  -u         Format Markdown.\n"
-"  -v         Print version and exit.\n"
-"  -w number  Specify line width [default: %d].\n"
-"  -x         Format Doxygen.\n"
-"  -y         Suppress wrapping at hyphen characters.\n"
-    , me, me,
-    CONF_FILE_NAME_DEFAULT,
-    EOS_SPACES_DEFAULT,
-    TAB_SPACES_DEFAULT,
-    LINE_WIDTH_DEFAULT
+"  --alias=NAME           (-a)  Use alias from configuration file.\n"
+"  --align-column=NUM[,S] (-A)  Column to align end-of-line comments on.\n"
+"  --block-regex=REGEX    (-b)  Block leading regular expression.\n"
+"  --comment-chars=STR    (-D ) Comment delimiter characters.\n"
+"  --config=FILE          (-c)  The configuration file [default: ~/%s].\n"
+"  --doxygen              (-x)  Format Doxygen.\n"
+"  --eol=CHAR             (-l)\n"
+"      Set line-endings as input/Unix/Windows [default: input].\n"
+"  --eos-delimit          (-e)\n"
+"      Treat whitespace after end-of-sentence as a paragraph delimiter.\n"
+"  --eos-spaces=NUM       (-E)  Spaces after end-of-sentence [default: %d].\n"
+"  --file=FILE            (-f)  Read from this file [default: stdin].\n"
+"  --file-name=NAME       (-F)  Filename for stdin.\n"
+"  --markdown             (-u)  Format Markdown.\n"
+"  --no-config            (-C)  Suppress reading configuration file.\n"
+"  --no-hyphen            (-y)  Suppress wrapping at hyphen characters.\n"
+"  --output=FILE          (-o)  Write to this file [default: stdout].\n"
+"  --para-chars=STR       (-p)  Additional paragraph delimiter characters.\n"
+"  --tab-spaces=NUM       (-s)  Tab-spaces equivalence [default: %d].\n"
+"  --title                (-T)  Treat paragraph's first line as title.\n"
+"  --version              (-v)  Print version and exit.\n"
+"  --width=NUM|terminal   (-w)  Line width [default: %d].\n"
+"\n"
+"Report bugs to: " PACKAGE_BUGREPORT "\n"
+PACKAGE_NAME " home page: " PACKAGE_URL "\n"
+    , CONF_FILE_NAME_DEFAULT
+    , EOS_SPACES_DEFAULT
+    , TAB_SPACES_DEFAULT
+    , LINE_WIDTH_DEFAULT
   );
   exit( EX_USAGE );
 }
