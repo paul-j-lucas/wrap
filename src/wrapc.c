@@ -1145,7 +1145,7 @@ static void usage( void ) {
 "  --alias=NAME           (-a)  Use alias from configuration file.\n"
 "  --align-column=NUM[,S] (-A)  Column to align end-of-line comments on.\n"
 "  --block-regex=REGEX    (-b)  Block leading regular expression.\n"
-"  --comment-chars=STR    (-D ) Comment delimiter characters.\n"
+"  --comment-chars=STR    (-D)  Comment delimiter characters.\n"
 "  --config=FILE          (-c)  The configuration file [default: ~/%s].\n"
 "  --doxygen              (-x)  Format Doxygen.\n"
 "  --eol=CHAR             (-l)\n"
