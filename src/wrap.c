@@ -968,7 +968,7 @@ static void put_tabs_spaces( size_t tabs, size_t spaces ) {
  * Prints the usage message to standard error and exits.
  */
 static void usage( void ) {
-  PRINT_ERR(
+  printf(
 "usage: " PACKAGE " [options]\n"
 "       " PACKAGE " -v\n"
 "options:\n"

@@ -1138,7 +1138,7 @@ static size_t str_width( char const *s ) {
  * Prints the usage message to standard error and exits.
  */
 static void usage( void ) {
-  PRINT_ERR(
+  printf(
 "usage: " PACKAGE "c [options]\n"
 "       " PACKAGE "c -v\n"
 "options:\n"
