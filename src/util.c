@@ -302,7 +302,7 @@ bool is_affirmative( char const *s ) {
 
 bool is_any( char const *s, char const *const matches[] ) {
   if ( s != NULL ) {
-    for ( char const *const *match = matches; *match != '\0'; ++match ) {
+    for ( char const *const *match = matches; *match != NULL; ++match ) {
       if ( strcasecmp( s, *match ) == 0 )
         return true;
     } // for
@@ -321,14 +321,14 @@ void setlocale_utf8( void ) {
     "en_US.UTF-8", "en_US.UTF8",
     NULL
   };
-  for ( char const *const *loc = UTF8_LOCALES; *loc != '\0'; ++loc ) {
+  for ( char const *const *loc = UTF8_LOCALES; *loc != NULL; ++loc ) {
     if ( setlocale( LC_COLLATE, *loc ) && setlocale( LC_CTYPE, *loc ) )
       return;
   } // for
 
   PRINT_ERR( "%s: could not set locale to UTF-8; tried: ", me );
   bool comma = false;
-  for ( char const *const *loc = UTF8_LOCALES; *loc != '\0'; ++loc ) {
+  for ( char const *const *loc = UTF8_LOCALES; *loc != NULL; ++loc ) {
     PRINT_ERR( "%s%s", (comma ? ", " : ""), *loc );
     comma = true;
   } // for
