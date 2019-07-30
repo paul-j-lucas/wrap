@@ -52,10 +52,10 @@ enum md_line {
   MD_HEADER_LINE  = '=',                ///< ===== or -----
   MD_HR           = '_',                ///< ***, ---, or ___
   MD_HTML_ABBR    = 'A',                ///< *[abbr]: abbreviation.
-  MD_HTML_BLOCK   = '<',
+  MD_HTML_BLOCK   = '<',                ///< HTML block.
   MD_LINK_LABEL   = '[',                ///< [id]: <URI>
   MD_OL           = '1',                ///< Ordered list: 1., 2., ....
-  MD_TABLE        = '|',
+  MD_TABLE        = '|',                ///< Markdown table.
   MD_TEXT         = 'T',                ///< Plain text.
   MD_UL           = '*',                ///< Unordered list: *, +, or -.
 };
