@@ -29,9 +29,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static codepoint_t const CP_SURROGATE_HIGH_START  = 0x00D800u;
-static codepoint_t const CP_SURROGATE_LOW_END     = 0x00DFFFu;
-static codepoint_t const CP_VALID_MAX             = 0x10FFFFu;
+static char32_t const CP_SURROGATE_HIGH_START = 0x00D800u;
+static char32_t const CP_SURROGATE_LOW_END    = 0x00DFFFu;
+static char32_t const CP_VALID_MAX            = 0x10FFFFu;
 
 uint8_t const UTF8_LEN_TABLE[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
@@ -61,14 +61,14 @@ uint8_t const UTF8_LEN_TABLE[] = {
  * @param cp The Unicode code-point to check.
  * @return Returns \c true only if valid.
  */
-static inline bool cp_is_valid( codepoint_t cp ) {
+static inline bool cp_is_valid( char32_t cp ) {
   return  cp < CP_SURROGATE_HIGH_START
       || (cp > CP_SURROGATE_LOW_END && cp <= CP_VALID_MAX);
 }
 
 ////////// extern functions ///////////////////////////////////////////////////
 
-bool cp_is_eos( codepoint_t cp ) {
+bool cp_is_eos( char32_t cp ) {
   switch ( cp ) {
     case '.'   :  // FULL STOP
     case 0xFF0E:  // FULLWIDTH FULL STOP
@@ -105,7 +105,7 @@ bool cp_is_eos( codepoint_t cp ) {
   } // switch
 }
 
-bool cp_is_eos_ext( codepoint_t cp ) {
+bool cp_is_eos_ext( char32_t cp ) {
   switch ( cp ) {
     case '\''  :  // APOSTROPHE
     case 0x2019:  // RIGHT SINGLE QUOTATION MARK
@@ -145,7 +145,7 @@ bool cp_is_eos_ext( codepoint_t cp ) {
   } // switch
 }
 
-bool cp_is_hyphen( codepoint_t cp ) {
+bool cp_is_hyphen( char32_t cp ) {
   switch ( cp ) {
     case '-'   :  // HYPHEN-MINUS
     case 0x00AD:  // SOFT HYPHEN
@@ -179,12 +179,12 @@ bool cp_is_hyphen( codepoint_t cp ) {
   } // switch
 }
 
-codepoint_t utf8_decode_impl( char const *s ) {
+char32_t utf8_decode_impl( char const *s ) {
   assert( s != NULL );
   size_t const len = utf8_len( *s );
   assert( len >= 1 );
 
-  codepoint_t cp = 0;
+  char32_t cp = 0;
   uint8_t const *u = (uint8_t const*)s;
 
   switch ( len ) {
@@ -196,7 +196,7 @@ codepoint_t utf8_decode_impl( char const *s ) {
     case 1: cp += *u;
   } // switch
 
-  static codepoint_t const OFFSET_TABLE[] = {
+  static char32_t const OFFSET_TABLE[] = {
     0, // unused
     0x0, 0x3080, 0xE2080, 0x3C82080, 0xFA082080, 0x82082080
   };

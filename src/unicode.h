@@ -37,6 +37,10 @@
 #include <string.h>                     /* for memmove(3) */
 #include <wctype.h>
 
+#if !HAVE_CHAR32_T
+typedef uint32_t char32_t;
+#endif /* !HAVE_CHAR32_T */
+
 _GL_INLINE_HEADER_BEGIN
 #ifndef WRAP_UNICODE_INLINE
 # define WRAP_UNICODE_INLINE _GL_INLINE
@@ -44,13 +48,8 @@ _GL_INLINE_HEADER_BEGIN
 
 ///////////////////////////////////////////////////////////////////////////////
 
-/**
- * Unicode code-point.
- */
-typedef uint32_t codepoint_t;
-
 #define CP_BYTE_ORDER_MARK        0x00FEFFu
-#define CP_EOF                    ((codepoint_t)EOF)
+#define CP_EOF                    ((char32_t)EOF)
 #define CP_INVALID                0x1FFFFFu
 #define UTF8_CHAR_SIZE_MAX        6     /**< Max bytes needed for UTF-8 char. */
 
@@ -67,7 +66,7 @@ typedef char utf8c_t[ UTF8_CHAR_SIZE_MAX ];
  * @param cp The Unicode code-point to check.
  * @return Returns \c true only if \a cp is an alphabetic character.
  */
-WRAP_UNICODE_INLINE bool cp_is_alpha( codepoint_t cp ) {
+WRAP_UNICODE_INLINE bool cp_is_alpha( char32_t cp ) {
   return iswalpha( cp );
 }
 
@@ -77,7 +76,7 @@ WRAP_UNICODE_INLINE bool cp_is_alpha( codepoint_t cp ) {
  * @param cp The Unicode code-point to check.
  * @return Returns \c true only if \a cp is an ASCII character.
  */
-WRAP_UNICODE_INLINE bool cp_is_ascii( codepoint_t cp ) {
+WRAP_UNICODE_INLINE bool cp_is_ascii( char32_t cp ) {
   return cp <= 0x7F;
 }
 
@@ -87,7 +86,7 @@ WRAP_UNICODE_INLINE bool cp_is_ascii( codepoint_t cp ) {
  * @param cp The Unicode code-point to check.
  * @return Returns \c true only if \a cp is a control character.
  */
-WRAP_UNICODE_INLINE bool cp_is_control( codepoint_t cp ) {
+WRAP_UNICODE_INLINE bool cp_is_control( char32_t cp ) {
   return iswcntrl( cp );
 }
 
@@ -97,7 +96,7 @@ WRAP_UNICODE_INLINE bool cp_is_control( codepoint_t cp ) {
  * @param cp The Unicode code-point to check.
  * @return Returns \cp true only if \a cp is an end-of-sentence character.
  */
-bool cp_is_eos( codepoint_t cp );
+bool cp_is_eos( char32_t cp );
 
 /**
  * Checks whether \a cp is an "end-of-sentence-extender" Unicode character,
@@ -108,7 +107,7 @@ bool cp_is_eos( codepoint_t cp );
  * @return Returns \c true only if \a cp is an end-of-sentence-extender
  * character.
  */
-bool cp_is_eos_ext( codepoint_t cp );
+bool cp_is_eos_ext( char32_t cp );
 
 /**
  * Checks whether the given Unicode code-point is a hyphen-like character.
@@ -116,7 +115,7 @@ bool cp_is_eos_ext( codepoint_t cp );
  * @param cp The Unicode code-point to check.
  * @return Returns \c true only if \a cp is a Unicode hyphen-like character.
  */
-bool cp_is_hyphen( codepoint_t cp );
+bool cp_is_hyphen( char32_t cp );
 
 /**
  * Checks whether \a cp is a "hyphen adjacent" Unicode character, that is a
@@ -125,7 +124,7 @@ bool cp_is_hyphen( codepoint_t cp );
  * @param cp The Unicode code-point to check.
  * @return Returns \c true only if \a cp can appear on either side of a hyphen.
  */
-WRAP_UNICODE_INLINE bool cp_is_hyphen_adjacent( codepoint_t cp ) {
+WRAP_UNICODE_INLINE bool cp_is_hyphen_adjacent( char32_t cp ) {
   return cp_is_alpha( cp );
 }
 
@@ -135,7 +134,7 @@ WRAP_UNICODE_INLINE bool cp_is_hyphen_adjacent( codepoint_t cp ) {
  * @param cp The Unicode code-point to check.
  * @return Returns \a true only if \a cp is a space character.
  */
-WRAP_UNICODE_INLINE bool cp_is_space( codepoint_t cp ) {
+WRAP_UNICODE_INLINE bool cp_is_space( char32_t cp ) {
   return iswspace( cp );
 }
 
@@ -147,9 +146,9 @@ WRAP_UNICODE_INLINE bool cp_is_space( codepoint_t cp ) {
  * @return Returns said code-point or \c CP_INVALID if the UTF-8 byte sequence
  * is invalid.
  */
-WRAP_UNICODE_INLINE codepoint_t utf8_decode( char const *s ) {
-  extern codepoint_t utf8_decode_impl( char const* );
-  codepoint_t const cp = (uint8_t)*s;
+WRAP_UNICODE_INLINE char32_t utf8_decode( char const *s ) {
+  extern char32_t utf8_decode_impl( char const* );
+  char32_t const cp = (uint8_t)*s;
   return cp_is_ascii( cp ) ? cp : utf8_decode_impl( s );
 }
 
@@ -218,7 +217,7 @@ WRAP_UNICODE_INLINE size_t utf8_copy_char( char *dest, char const *src ) {
  */
 WRAP_UNICODE_INLINE char const* utf8_rsync( char const *buf, char const *pos ) {
   extern char const* utf8_rsync_impl( char const*, char const* );
-  codepoint_t const cp = (uint8_t)*pos;
+  char32_t const cp = (uint8_t)*pos;
   return cp_is_ascii( cp ) ? pos : utf8_rsync_impl( buf, pos );
 }
 

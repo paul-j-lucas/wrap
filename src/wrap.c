@@ -94,7 +94,7 @@ static unsigned     put_spaces;         // number of spaces to put between words
 static bool         was_eos_char;       // prev char an end-of-sentence char?
 
 // local functions
-static codepoint_t  buf_getcp( char const**, utf8c_t );
+static char32_t     buf_getcp( char const**, utf8c_t );
 static size_t       buf_readline( void );
 static void         delimit_paragraph( void );
 static void         init( int, char const*[] );
@@ -125,7 +125,7 @@ static inline bool block_regex_matches( void ) {
  * @param cp The Unicode code-point to check.
  * @return Returns \c true only if \a cp is a paragraph delimiter character.
  */
-static inline bool cp_is_para_delim( codepoint_t cp ) {
+static inline bool cp_is_para_delim( char32_t cp ) {
   return  opt_para_delims != NULL && cp_is_ascii( cp ) &&
           strchr( opt_para_delims, (int)cp ) != NULL;
 }
@@ -151,7 +151,7 @@ int main( int argc, char const *argv[] ) {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  for ( codepoint_t cp, cp_prev = '\n'; // current and previous codepoints
+  for ( char32_t cp, cp_prev = '\n';    // current and previous codepoints
         (cp = buf_getcp( &pb, utf8c )) != CP_EOF; cp_prev = cp ) {
 
     if ( cp == CP_BYTE_ORDER_MARK || cp == CP_INVALID )
@@ -610,7 +610,7 @@ read_line:
  * @param utf8c The buffer to put the UTF-8 bytes into.
  * @return Returns said code-point or \c CP_EOF.
  */
-static codepoint_t buf_getcp( char const **ppc, utf8c_t utf8c ) {
+static char32_t buf_getcp( char const **ppc, utf8c_t utf8c ) {
   if ( unlikely( (utf8c[0] = buf_getc( ppc )) == EOF ) )
     return CP_EOF;
   size_t const len = utf8_len( utf8c[0] );

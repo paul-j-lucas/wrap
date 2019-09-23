@@ -44,7 +44,7 @@ static int const    WRAP_REGEX_COMPILE_FLAGS = REG_EXTENDED;
  * @param cp The code-point to check.
  * @return Returns \c true only if \a cp is a word code-point.
  */
-static inline bool cp_is_word_char( codepoint_t cp ) {
+static inline bool cp_is_word_char( char32_t cp ) {
   return iswalnum( cp ) || cp == '_';
 }
 
@@ -72,8 +72,8 @@ static bool is_begin_word_boundary( char const *s, char const *curr ) {
   if ( prev == NULL )
     return true;
 
-  codepoint_t const cp_curr = utf8_decode( curr );
-  codepoint_t const cp_prev = utf8_decode( prev );
+  char32_t const cp_curr = utf8_decode( curr );
+  char32_t const cp_prev = utf8_decode( prev );
 
   return (cp_is_word_char( cp_curr ) ^ cp_is_word_char( cp_prev ))
       || (cp_is_space( cp_curr ) ^ cp_is_space( cp_prev ));
