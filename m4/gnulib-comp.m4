@@ -42,6 +42,7 @@ AC_DEFUN([gl_EARLY],
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   AC_REQUIRE([gl_PROG_AR_RANLIB])
 
+  AC_REQUIRE([AM_PROG_CC_C_O])
   # Code from module absolute-header:
   # Code from module alloca:
   # Code from module alloca-opt:
@@ -56,9 +57,11 @@ AC_DEFUN([gl_EARLY],
   # Code from module getopt-posix:
   # Code from module gettext-h:
   # Code from module hard-locale:
+  # Code from module havelib:
   # Code from module include_next:
   # Code from module intprops:
   # Code from module localcharset:
+  # Code from module lock:
   # Code from module malloc-posix:
   # Code from module mbrtowc:
   # Code from module mbsinit:
@@ -83,10 +86,16 @@ AC_DEFUN([gl_EARLY],
   # Code from module strnlen1:
   # Code from module sys_types:
   # Code from module sysexits:
+  # Code from module threadlib:
+  gl_THREADLIB_EARLY
   # Code from module unistd:
   # Code from module verify:
   # Code from module wchar:
   # Code from module wctype-h:
+  # Code from module windows-mutex:
+  # Code from module windows-once:
+  # Code from module windows-recmutex:
+  # Code from module windows-rwlock:
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -135,6 +144,8 @@ AC_DEFUN([gl_INIT],
   dnl For backward compatibility. Some packages still use this.
   LOCALCHARSET_TESTS_ENVIRONMENT=
   AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
+  gl_LOCK
+  gl_MODULE_INDICATOR([lock])
   gl_FUNC_MALLOC_POSIX
   if test $REPLACE_MALLOC = 1; then
     AC_LIBOBJ([malloc])
@@ -202,9 +213,34 @@ AC_DEFUN([gl_INIT],
   gl_SYS_TYPES_H
   AC_PROG_MKDIR_P
   gl_SYSEXITS
+  AC_REQUIRE([gl_THREADLIB])
   gl_UNISTD_H
   gl_WCHAR_H
   gl_WCTYPE_H
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  case "$host_os" in
+    mingw*)
+      AC_LIBOBJ([windows-mutex])
+      ;;
+  esac
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  case "$host_os" in
+    mingw*)
+      AC_LIBOBJ([windows-once])
+      ;;
+  esac
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  case "$host_os" in
+    mingw*)
+      AC_LIBOBJ([windows-recmutex])
+      ;;
+  esac
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  case "$host_os" in
+    mingw*)
+      AC_LIBOBJ([windows-rwlock])
+      ;;
+  esac
   # End of code from modules
   m4_ifval(gl_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl_LIBSOURCES_DIR])[ ||
@@ -345,6 +381,7 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
+  build-aux/config.rpath
   lib/_Noreturn.h
   lib/alloca.c
   lib/alloca.in.h
@@ -365,6 +402,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getopt1.c
   lib/getopt_int.h
   lib/gettext.h
+  lib/glthread/lock.c
+  lib/glthread/lock.h
+  lib/glthread/threadlib.c
   lib/hard-locale.c
   lib/hard-locale.h
   lib/intprops.h
@@ -400,6 +440,15 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/wchar.in.h
   lib/wctype-h.c
   lib/wctype.in.h
+  lib/windows-initguard.h
+  lib/windows-mutex.c
+  lib/windows-mutex.h
+  lib/windows-once.c
+  lib/windows-once.h
+  lib/windows-recmutex.c
+  lib/windows-recmutex.h
+  lib/windows-rwlock.c
+  lib/windows-rwlock.h
   m4/00gnulib.m4
   m4/absolute-header.m4
   m4/alloca.m4
@@ -413,11 +462,16 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fnmatch_h.m4
   m4/getopt.m4
   m4/gnulib-common.m4
+  m4/host-cpu-c-abi.m4
   m4/include_next.m4
+  m4/lib-ld.m4
+  m4/lib-link.m4
+  m4/lib-prefix.m4
   m4/localcharset.m4
   m4/locale-fr.m4
   m4/locale-ja.m4
   m4/locale-zh.m4
+  m4/lock.m4
   m4/malloc.m4
   m4/mbrtowc.m4
   m4/mbsinit.m4
@@ -427,6 +481,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mmap-anon.m4
   m4/nocrash.m4
   m4/off_t.m4
+  m4/pthread_rwlock_rdlock.m4
   m4/ssize_t.m4
   m4/stdbool.m4
   m4/stddef_h.m4
@@ -439,6 +494,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/sys_socket_h.m4
   m4/sys_types_h.m4
   m4/sysexits.m4
+  m4/threadlib.m4
   m4/unistd_h.m4
   m4/warn-on-use.m4
   m4/wchar_h.m4
