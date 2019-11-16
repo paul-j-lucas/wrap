@@ -31,13 +31,15 @@
 #include "wrap.h"                       /* must go first */
 
 // standard
-#include <inttypes.h>                   /* for uint32_t */
+#include <inttypes.h>                   /* for uint8_t */
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
 #include <string.h>                     /* for memmove(3) */
 #include <wctype.h>
 
-#if !HAVE_CHAR32_T
+#if HAVE_CHAR32_T
+#include <uchar.h>
+#else
 typedef uint32_t char32_t;
 #endif /* !HAVE_CHAR32_T */
 
