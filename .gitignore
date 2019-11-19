@@ -3,14 +3,14 @@
 *.o
 *~
 .*.swp
-.deps
+.deps/
 .dirstamp
 .DS_Store
 Makefile
 
 /aclocal.m4
 /ar-lib
-/autom4te.cache
+/autom4te.cache/
 /compile
 /confdefs.h
 /config.guess
