@@ -95,8 +95,14 @@ AS_IF([test x$enable_width_term != xno -a x$ac_cv_search_endwin = xno],
 AC_LANG(C)
 AX_CFLAGS_WARN_ALL
 AX_CFLAGS_GCC_OPTION([-Wcast-align])
+AX_CFLAGS_GCC_OPTION([-Wconversion])
 AX_CFLAGS_GCC_OPTION([-Wextra])
+AX_CFLAGS_GCC_OPTION([-Wimplicit-fallthrough=4])
+AX_CFLAGS_GCC_OPTION([-Wlogical-op])
 AX_CFLAGS_GCC_OPTION([-Wredundant-decls])
+AX_CFLAGS_GCC_OPTION([-Wshadow])
+AX_CFLAGS_GCC_OPTION([-Wuninitialized])
+AX_CFLAGS_GCC_OPTION([-Wunused])
 AX_CFLAGS_GCC_OPTION([-Wwrite-strings])
 
 # Generate files.

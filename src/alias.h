@@ -32,7 +32,7 @@
  * Contains a configuration file alias and its associated command-line options.
  */
 struct alias {
-  unsigned      argc;                   ///< Number of arguments + 1.
+  int           argc;                   ///< Number of arguments + 1.
   char const  **argv;                   ///< argv[0] = alias name.
   unsigned      line_no;                ///< Line in conf. file defined on.
 };

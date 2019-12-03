@@ -69,7 +69,7 @@ typedef char utf8c_t[ UTF8_CHAR_SIZE_MAX ];
  * @return Returns \c true only if \a cp is an alphabetic character.
  */
 WRAP_UNICODE_INLINE bool cp_is_alpha( char32_t cp ) {
-  return iswalpha( cp );
+  return iswalpha( (wint_t)cp );
 }
 
 /**
@@ -89,7 +89,7 @@ WRAP_UNICODE_INLINE bool cp_is_ascii( char32_t cp ) {
  * @return Returns \c true only if \a cp is a control character.
  */
 WRAP_UNICODE_INLINE bool cp_is_control( char32_t cp ) {
-  return iswcntrl( cp );
+  return iswcntrl( (wint_t)cp );
 }
 
 /**
@@ -137,7 +137,7 @@ WRAP_UNICODE_INLINE bool cp_is_hyphen_adjacent( char32_t cp ) {
  * @return Returns \a true only if \a cp is a space character.
  */
 WRAP_UNICODE_INLINE bool cp_is_space( char32_t cp ) {
-  return iswspace( cp );
+  return iswspace( (wint_t)cp );
 }
 
 /**

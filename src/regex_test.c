@@ -85,7 +85,7 @@ int main( int argc, char const *argv[] ) {
 
     *sep = '\0';
     char const *const expected = line_buf;
-    size_t const expected_len = sep - expected;
+    size_t const expected_len = (size_t)(sep - expected);
     char const *const subject = sep + 1;
 
     size_t match_range[2];

@@ -179,11 +179,11 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
   char *s = buf;
 
   for ( size_t n = *size; n > 0 && (c = getc( ffrom )) != EOF; --n )
-    if ( (*s++ = c) == '\n' )
+    if ( (*s++ = (char)c) == '\n' )
       break;
 
   *s = '\0';
-  *size = s - buf;
+  *size = (size_t)(s - buf);
 
   return c == EOF && *size == 0 ? NULL : buf;
 }
@@ -349,7 +349,7 @@ size_t strcpy_len( char *dst, char const *src ) {
   char const *const dst0 = dst;
   while ( (*dst++ = *src++) != '\0' )
     /* empty */;
-  return dst - dst0 - 1;
+  return (size_t)(dst - dst0 - 1);
 }
 
 size_t strrspn( char const *s, char const *set ) {

@@ -1019,14 +1019,14 @@ static void read_prototype( void ) {
   // Initialize the prefix and adjust the line width accordingly.
   //
   set_prefix( proto, prefix_span( proto ) );
-  line_width -= str_width( prefix_buf );
+  line_width -= (int)str_width( prefix_buf );
   //
   // Initialize the suffix, if any, and adjust the line width accordingly.
   //
   char const *const tc = is_terminated_comment( proto );
   if ( tc != NULL ) {
     suffix_len = chop_eol( suffix_buf, strcpy_len( suffix_buf, tc ) );
-    line_width -= 1/*space*/ + suffix_len;
+    line_width -= 1/*space*/ + (int)suffix_len;
   }
 
   if ( line_width < LINE_WIDTH_MINIMUM )
@@ -1034,7 +1034,7 @@ static void read_prototype( void ) {
       "line-width (%d) is too small (<%d)\n",
       line_width, LINE_WIDTH_MINIMUM
     );
-  opt_line_width = line_width;
+  opt_line_width = (size_t)line_width;
 }
 
 /**

@@ -61,9 +61,9 @@ enum md_line {
 };
 typedef enum md_line md_line_t;
 
-typedef unsigned md_depth_t;            ///< How nested we are.
+typedef size_t   md_depth_t;            ///< How nested we are.
 typedef unsigned md_seq_t;              ///< Parser state sequence number.
-typedef unsigned md_indent_t;           ///< Indentation amount (in spaces).
+typedef size_t   md_indent_t;           ///< Indentation amount (in spaces).
 typedef unsigned md_ol_t;               ///< Ordered list number.
 
 /**

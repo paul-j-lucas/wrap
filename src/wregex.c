@@ -45,7 +45,7 @@ static int const    WRAP_REGEX_COMPILE_FLAGS = REG_EXTENDED;
  * @return Returns \c true only if \a cp is a word code-point.
  */
 static inline bool cp_is_word_char( char32_t cp ) {
-  return iswalnum( cp ) || cp == '_';
+  return iswalnum( (wint_t)cp ) || cp == '_';
 }
 
 ////////// local functions ////////////////////////////////////////////////////

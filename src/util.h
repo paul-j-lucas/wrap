@@ -123,7 +123,7 @@ _GL_INLINE_HEADER_BEGIN
   BLOCK( PRINT_ERR( "%s: " FORMAT, me, __VA_ARGS__ ); exit( STATUS ); )
 
 #define REALLOC(PTR,TYPE,N) \
-  (PTR) = STATIC_CAST(TYPE*, check_realloc( (PTR), sizeof(TYPE) * (N) ))
+  (PTR) = STATIC_CAST(TYPE*, check_realloc( (PTR), sizeof(TYPE) * (size_t)(N) ))
 
 #define W_DUP(FD) BLOCK( \
 	if ( unlikely( dup( FD ) == -1 ) ) perror_exit( EX_OSERR ); )

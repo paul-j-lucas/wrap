@@ -126,7 +126,7 @@ static char const *const HTML_BLOCK_ELEMENT[] = {
 };
 
 // local variable definitions
-static html_state_t html_state;
+static html_state_t cur_html_state;
 static md_seq_t     next_seq_num;
 static bool         prev_blank_line;
 static bool         prev_code_fence_end;
@@ -658,7 +658,7 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
       element[ len ] = '\0';
       break;
     }
-    element[ len++ ] = tolower( *s++ );
+    element[ len++ ] = (char)tolower( *s++ );
   } // for
 
   if ( is_html_pre_element( element ) ) {
@@ -763,9 +763,9 @@ static bool md_is_ol( char const *s, md_ol_t *ol_num, char *ol_c,
   *ol_num = 0;
   char const *d = s;
   for ( ; isdigit( *d ); ++d )
-    *ol_num = *ol_num * 10 + (*d - '0');
+    *ol_num = *ol_num * 10 + (unsigned)(*d - '0');
 
-  size_t const len = d - s;
+  size_t const len = (size_t)(d - s);
   if ( len >= 1 && len <= MD_OL_CHAR_MAX && md_is_ol_sep_char( d[0] ) &&
        is_space( d[1] ) ) {
     *ol_c = d[0];
@@ -878,7 +878,7 @@ static void md_renumber_ol( char *s, md_ol_t old_n, md_ol_t new_n ) {
   assert( s != NULL );
   if ( new_n != old_n ) {
     size_t const s_len = strlen( s );
-    size_t const old_digits = 1 + (old_n > 9) + (old_n > 99);
+    size_t const old_digits = (size_t)(1 + (old_n > 9) + (old_n > 99));
 
     // convert new_n to a string
     char new_buf[11];                   // enough for sizeof(md_ol_t) == 4
@@ -996,7 +996,7 @@ void markdown_cleanup( void ) {
 }
 
 void markdown_init( void ) {
-  html_state = HTML_NONE;
+  cur_html_state = HTML_NONE;
   prev_code_fence_end = false;
   prev_link_label_has_title = false;
   //
@@ -1108,7 +1108,7 @@ md_state_t const* markdown_parse( char *s ) {
     //
     // HTML blocks.
     //
-    switch ( html_state ) {
+    switch ( cur_html_state ) {
       case HTML_ELEMENT:
         if ( blank_line )
           stack_pop();
@@ -1117,8 +1117,8 @@ md_state_t const* markdown_parse( char *s ) {
         stack_pop();
         break;
       default:
-        if ( md_is_html_end( html_state, s ) )
-          html_state = HTML_END;
+        if ( md_is_html_end( cur_html_state, s ) )
+          cur_html_state = HTML_END;
         //
         // As long as we're in the MD_HTML_BLOCK state, we can just return
         // without further checks.
@@ -1191,10 +1191,10 @@ md_state_t const* markdown_parse( char *s ) {
     // Block-level HTML.
     case '<': {
       bool is_end_tag;
-      html_state = md_is_html_tag( nws, &is_end_tag );
-      if ( html_state != HTML_NONE ) {
+      cur_html_state = md_is_html_tag( nws, &is_end_tag );
+      if ( cur_html_state != HTML_NONE ) {
         if ( is_end_tag )               // HTML ends on same line as it begins
-          html_state = HTML_END;
+          cur_html_state = HTML_END;
         stack_push( MD_HTML_BLOCK, indent_left, 0 );
         return &TOP;
       }

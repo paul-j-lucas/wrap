@@ -135,7 +135,7 @@ static void alias_import( alias_t *to_alias, char const **ps,
       "%s:%u: \"@%s\": no such alias\n",
       conf_file, line_no, from_name
     );
-  for ( size_t i = 1; i < from_alias->argc; ++i )
+  for ( int i = 1; i < from_alias->argc; ++i )
     to_alias->argv[ to_alias->argc++ ] = check_strdup( from_alias->argv[ i ] );
 }
 
@@ -234,7 +234,7 @@ void dump_aliases( void ) {
       printf( "[ALIASES]\n" );
     alias_t const *const alias = &aliases[i];
     printf( "%s =", alias->argv[0] );
-    for ( size_t arg = 1; arg < alias->argc; ++arg )
+    for ( int arg = 1; arg < alias->argc; ++arg )
       printf( " %s", alias->argv[ arg ] );
     fputc( '\n', stdout );
   } // for
@@ -286,7 +286,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
       break;
     }
 
-    if ( alias->argc == n_argv_alloc ) {
+    if ( (size_t)alias->argc == n_argv_alloc ) {
       n_argv_alloc += ALIAS_ARGV_ALLOC_INCREMENT;
       REALLOC( alias->argv, char const*, n_argv_alloc );
     }
@@ -297,7 +297,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
       alias->argv[ alias->argc++ ] = arg_dup( &line );
   } // for
 
-  if ( n_argv_alloc > alias->argc + 1 )
+  if ( n_argv_alloc > (size_t)alias->argc + 1 )
     REALLOC( alias->argv, char const*, alias->argc + 1 );
   alias->argv[ alias->argc ] = NULL;
 }

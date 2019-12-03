@@ -38,9 +38,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define CLEAR_OPTIONS()           memset( opts_given, 0, sizeof opts_given )
-#define GAVE_OPTION(OPT)          (opts_given[ (unsigned char)(OPT) ])
-#define SET_OPTION(OPT)           (opts_given[ (unsigned char)(OPT) ] = (OPT))
+#define CLEAR_OPTIONS()     memset( opts_given, 0, sizeof opts_given )
+#define GAVE_OPTION(OPT)    (opts_given[ (unsigned char)(OPT) ])
+#define SET_OPTION(OPT)     (opts_given[ (unsigned char)(OPT) ] = (char)(OPT))
 
 // local constants
 static char const   COMMENT_CHARS_DEFAULT[] =
@@ -283,7 +283,7 @@ static unsigned parse_align( char const *s, char *align_char ) {
 
   char *end = NULL;
   errno = 0;
-  unsigned const col = strtoul( s, &end, 10 );
+  unsigned const col = (unsigned)strtoul( s, &end, 10 );
   if ( unlikely( errno || end == s ) )
     goto error;
   if ( *end != '\0' ) {

@@ -82,7 +82,7 @@ static line_buf_t   proto_buf;
 static line_buf_t   proto_tws;          // prototype trailing whitespace, if any
 
 // local variable definitions specific to wrap state
-static unsigned     consec_newlines;    // number of consecutive newlines
+static size_t       consec_newlines;    // number of consecutive newlines
 static bool         encountered_nonws;  // encountered a non-whitespace char?
 static hyphen_t     hyphen;
 static indent_t     indent = INDENT_LINE;
@@ -90,7 +90,7 @@ static bool         is_long_line;       // line longer than line_width?
 static bool         is_preformatted;    // passing through preformatted text?
 static size_t       nonws_no_wrap_range[2];
 static wregex_t     nonws_no_wrap_regex;
-static unsigned     put_spaces;         // number of spaces to put between words
+static size_t       put_spaces;         // number of spaces to put between words
 static bool         was_eos_char;       // prev char an end-of-sentence char?
 
 // local functions
@@ -368,7 +368,7 @@ int main( int argc, char const *argv[] ) {
     encountered_nonws = true;
 
     if ( !opt_no_hyphen ) {
-      size_t const pos = pb - input_buf;
+      size_t const pos = (size_t)(pb - input_buf);
       if ( pos >= nonws_no_wrap_range[1] || pos < nonws_no_wrap_range[0] ) {
         //
         // We're outside the non-whitespace-no-wrap range.
@@ -511,7 +511,7 @@ read_line:
   } // while
 
   if ( !opt_no_hyphen && check_for_nonws_no_wrap_match ) {
-    size_t const pos = *ppc - input_buf;
+    size_t const pos = (size_t)(*ppc - input_buf);
     //
     // If there was a previous non-whitespace-no-wrap range and we're past it,
     // see if there is another match on the same line.
@@ -611,17 +611,19 @@ read_line:
  * @return Returns said code-point or \c CP_EOF.
  */
 static char32_t buf_getcp( char const **ppc, utf8c_t utf8c ) {
-  if ( unlikely( (utf8c[0] = buf_getc( ppc )) == EOF ) )
+  int c;
+  if ( unlikely( (c = buf_getc( ppc )) == EOF ) )
     return CP_EOF;
-  size_t const len = utf8_len( utf8c[0] );
+  size_t const len = utf8_len( (char)c );
   if ( unlikely( len == 0 ) )
     return CP_INVALID;
-
+  utf8c[0] = (char)c;
   for ( size_t i = 1; i < len; ++i ) {
-    if ( unlikely( (utf8c[i] = buf_getc( ppc )) == EOF ) )
+    if ( unlikely( (c = buf_getc( ppc )) == EOF ) )
       return CP_EOF;
-    if ( unlikely( !utf8_is_cont( utf8c[i] ) ) )
+    if ( unlikely( !utf8_is_cont( (char)c ) ) )
       return CP_INVALID;
+    utf8c[i] = (char)c;
   } // for
 
   return utf8_decode( utf8c );
@@ -715,7 +717,7 @@ static void init( int argc, char const *argv[] ) {
       "line-width (%d) is too small (<%d)\n",
       temp_width, LINE_WIDTH_MINIMUM
     );
-  opt_line_width = line_width = temp_width;
+  opt_line_width = line_width = (size_t)temp_width;
 
   opt_lead_tabs   += opt_mirror_tabs;
   opt_lead_spaces += opt_mirror_spaces;
