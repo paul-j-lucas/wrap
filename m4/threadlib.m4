@@ -1,4 +1,4 @@
-# threadlib.m4 serial 20
+# threadlib.m4 serial 22
 dnl Copyright (C) 2005-2019 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
@@ -8,6 +8,17 @@ dnl From Bruno Haible.
 
 AC_PREREQ([2.60])
 
+dnl gl_PTHREADLIB
+dnl -------------
+dnl Tests for the libraries needs for using the POSIX threads API.
+dnl Sets the variable LIBPTHREAD to the linker options for use in a Makefile.
+dnl Sets the variable LIBPMULTITHREAD, for programs that really need
+dnl multithread functionality. The difference between LIBPTHREAD and
+dnl LIBPMULTITHREAD is that on platforms supporting weak symbols, typically
+dnl LIBPTHREAD is empty whereas LIBPMULTITHREAD is not.
+dnl Adds to CPPFLAGS the flag -D_REENTRANT or -D_THREAD_SAFE if needed for
+dnl multithread-safe programs.
+
 dnl gl_THREADLIB
 dnl ------------
 dnl Tests for a multithreading library to be used.
@@ -16,7 +27,13 @@ dnl (it must be placed before the invocation of gl_THREADLIB_EARLY!), then the
 dnl default is 'no', otherwise it is system dependent. In both cases, the user
 dnl can change the choice through the options --enable-threads=choice or
 dnl --disable-threads.
-dnl Defines at most one of the macros USE_POSIX_THREADS, USE_WINDOWS_THREADS.
+dnl Defines at most one of the macros USE_ISOC_THREADS, USE_POSIX_THREADS,
+dnl USE_ISOC_AND_POSIX_THREADS, USE_WINDOWS_THREADS.
+dnl The choice --enable-threads=isoc+posix is available only on platforms that
+dnl have both the ISO C and the POSIX threads APIs. It has the effect of using
+dnl the ISO C API for most things and the POSIX API only for creating and
+dnl controlling threads (because there is no equivalent to pthread_atfork in
+dnl the ISO C API).
 dnl Sets the variables LIBTHREAD and LTLIBTHREAD to the linker options for use
 dnl in a Makefile (LIBTHREAD for use without libtool, LTLIBTHREAD for use with
 dnl libtool).
@@ -29,6 +46,32 @@ dnl multithread-safe programs.
 dnl Since support for GNU pth was removed, $LTLIBTHREAD and $LIBTHREAD have the
 dnl same value, and similarly $LTLIBMULTITHREAD and $LIBMULTITHREAD have the
 dnl same value. Only system libraries are needed.
+
+AC_DEFUN([gl_ANYTHREADLIB_EARLY],
+[
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  if test -z "$gl_anythreadlib_early_done"; then
+    case "$host_os" in
+      osf*)
+        # On OSF/1, the compiler needs the flag -D_REENTRANT so that it
+        # groks <pthread.h>. cc also understands the flag -pthread, but
+        # we don't use it because 1. gcc-2.95 doesn't understand -pthread,
+        # 2. putting a flag into CPPFLAGS that has an effect on the linker
+        # causes the AC_LINK_IFELSE test below to succeed unexpectedly,
+        # leading to wrong values of LIBTHREAD and LTLIBTHREAD.
+        CPPFLAGS="$CPPFLAGS -D_REENTRANT"
+        ;;
+    esac
+    # Some systems optimize for single-threaded programs by default, and
+    # need special flags to disable these optimizations. For example, the
+    # definition of 'errno' in <errno.h>.
+    case "$host_os" in
+      aix* | freebsd*) CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE" ;;
+      solaris*) CPPFLAGS="$CPPFLAGS -D_REENTRANT" ;;
+    esac
+    gl_anythreadlib_early_done=done
+  fi
+])
 
 AC_DEFUN([gl_THREADLIB_EARLY],
 [
@@ -54,7 +97,7 @@ AC_DEFUN([gl_THREADLIB_EARLY_BODY],
     [m4_divert_text([DEFAULTS], [gl_use_threads_default=])])
   m4_divert_text([DEFAULTS], [gl_use_winpthreads_default=])
   AC_ARG_ENABLE([threads],
-AC_HELP_STRING([--enable-threads={posix|windows}], [specify multithreading API])m4_ifdef([gl_THREADLIB_DEFAULT_NO], [], [
+AC_HELP_STRING([--enable-threads={isoc|posix|isoc+posix|windows}], [specify multithreading API])m4_ifdef([gl_THREADLIB_DEFAULT_NO], [], [
 AC_HELP_STRING([--disable-threads], [build without multithread safety])]),
     [gl_use_threads=$enableval],
     [if test -n "$gl_use_threads_default"; then
@@ -88,26 +131,96 @@ changequote(,)dnl
 changequote([,])dnl
      fi
     ])
-  if test "$gl_use_threads" = yes || test "$gl_use_threads" = posix; then
-    # For using <pthread.h>:
-    case "$host_os" in
-      osf*)
-        # On OSF/1, the compiler needs the flag -D_REENTRANT so that it
-        # groks <pthread.h>. cc also understands the flag -pthread, but
-        # we don't use it because 1. gcc-2.95 doesn't understand -pthread,
-        # 2. putting a flag into CPPFLAGS that has an effect on the linker
-        # causes the AC_LINK_IFELSE test below to succeed unexpectedly,
-        # leading to wrong values of LIBTHREAD and LTLIBTHREAD.
-        CPPFLAGS="$CPPFLAGS -D_REENTRANT"
-        ;;
-    esac
-    # Some systems optimize for single-threaded programs by default, and
-    # need special flags to disable these optimizations. For example, the
-    # definition of 'errno' in <errno.h>.
-    case "$host_os" in
-      aix* | freebsd*) CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE" ;;
-      solaris*) CPPFLAGS="$CPPFLAGS -D_REENTRANT" ;;
-    esac
+  if test "$gl_use_threads" = yes \
+     || test "$gl_use_threads" = isoc \
+     || test "$gl_use_threads" = posix \
+     || test "$gl_use_threads" = isoc+posix; then
+    # For using <threads.h> or <pthread.h>:
+    gl_ANYTHREADLIB_EARLY
+  fi
+])
+
+dnl The guts of gl_PTHREADLIB. Needs to be expanded only once.
+
+AC_DEFUN([gl_PTHREADLIB_BODY],
+[
+  AC_REQUIRE([gl_ANYTHREADLIB_EARLY])
+  if test -z "$gl_threadlib_body_done"; then
+    gl_pthread_api=no
+    LIBPTHREAD=
+    LIBPMULTITHREAD=
+    # On OSF/1, the compiler needs the flag -pthread or -D_REENTRANT so that
+    # it groks <pthread.h>. It's added above, in gl_ANYTHREADLIB_EARLY.
+    AC_CHECK_HEADER([pthread.h],
+      [gl_have_pthread_h=yes], [gl_have_pthread_h=no])
+    if test "$gl_have_pthread_h" = yes; then
+      # Other possible tests:
+      #   -lpthreads (FSU threads, PCthreads)
+      #   -lgthreads
+      # Test whether both pthread_mutex_lock and pthread_mutexattr_init exist
+      # in libc. IRIX 6.5 has the first one in both libc and libpthread, but
+      # the second one only in libpthread, and lock.c needs it.
+      #
+      # If -pthread works, prefer it to -lpthread, since Ubuntu 14.04
+      # needs -pthread for some reason.  See:
+      # https://lists.gnu.org/r/bug-gnulib/2014-09/msg00023.html
+      save_LIBS=$LIBS
+      for gl_pthread in '' '-pthread'; do
+        LIBS="$LIBS $gl_pthread"
+        AC_LINK_IFELSE(
+          [AC_LANG_PROGRAM(
+             [[#include <pthread.h>
+               pthread_mutex_t m;
+               pthread_mutexattr_t ma;
+             ]],
+             [[pthread_mutex_lock (&m);
+               pthread_mutexattr_init (&ma);]])],
+          [gl_pthread_api=yes
+           LIBPTHREAD=$gl_pthread
+           LIBPMULTITHREAD=$gl_pthread])
+        LIBS=$save_LIBS
+        test $gl_pthread_api = yes && break
+      done
+
+      # Test for libpthread by looking for pthread_kill. (Not pthread_self,
+      # since it is defined as a macro on OSF/1.)
+      if test $gl_pthread_api = yes && test -z "$LIBPTHREAD"; then
+        # The program links fine without libpthread. But it may actually
+        # need to link with libpthread in order to create multiple threads.
+        AC_CHECK_LIB([pthread], [pthread_kill],
+          [LIBPMULTITHREAD=-lpthread
+           # On Solaris and HP-UX, most pthread functions exist also in libc.
+           # Therefore pthread_in_use() needs to actually try to create a
+           # thread: pthread_create from libc will fail, whereas
+           # pthread_create will actually create a thread.
+           # On Solaris 10 or newer, this test is no longer needed, because
+           # libc contains the fully functional pthread functions.
+           case "$host_os" in
+             solaris | solaris2.[1-9] | solaris2.[1-9].* | hpux*)
+               AC_DEFINE([PTHREAD_IN_USE_DETECTION_HARD], [1],
+                 [Define if the pthread_in_use() detection is hard.])
+           esac
+          ])
+      elif test $gl_pthread_api != yes; then
+        # Some library is needed. Try libpthread and libc_r.
+        AC_CHECK_LIB([pthread], [pthread_kill],
+          [gl_pthread_api=yes
+           LIBPTHREAD=-lpthread
+           LIBPMULTITHREAD=-lpthread])
+        if test $gl_pthread_api != yes; then
+          # For FreeBSD 4.
+          AC_CHECK_LIB([c_r], [pthread_kill],
+            [gl_pthread_api=yes
+             LIBPTHREAD=-lc_r
+             LIBPMULTITHREAD=-lc_r])
+        fi
+      fi
+    fi
+    AC_MSG_CHECKING([whether POSIX threads API is available])
+    AC_MSG_RESULT([$gl_pthread_api])
+    AC_SUBST([LIBPTHREAD])
+    AC_SUBST([LIBPMULTITHREAD])
+    gl_threadlib_body_done=done
   fi
 ])
 
@@ -169,75 +282,36 @@ int main ()
       AC_CHECK_HEADERS_ONCE([threads.h])
       :
     fi
-    if test "$gl_use_threads" = yes || test "$gl_use_threads" = posix; then
-      # On OSF/1, the compiler needs the flag -pthread or -D_REENTRANT so that
-      # it groks <pthread.h>. It's added above, in gl_THREADLIB_EARLY_BODY.
-      AC_CHECK_HEADER([pthread.h],
-        [gl_have_pthread_h=yes], [gl_have_pthread_h=no])
-      if test "$gl_have_pthread_h" = yes; then
-        # Other possible tests:
-        #   -lpthreads (FSU threads, PCthreads)
-        #   -lgthreads
-        gl_have_pthread=
-        # Test whether both pthread_mutex_lock and pthread_mutexattr_init exist
-        # in libc. IRIX 6.5 has the first one in both libc and libpthread, but
-        # the second one only in libpthread, and lock.c needs it.
-        #
-        # If -pthread works, prefer it to -lpthread, since Ubuntu 14.04
-        # needs -pthread for some reason.  See:
-        # https://lists.gnu.org/r/bug-gnulib/2014-09/msg00023.html
-        save_LIBS=$LIBS
-        for gl_pthread in '' '-pthread'; do
-          LIBS="$LIBS $gl_pthread"
-          AC_LINK_IFELSE(
-            [AC_LANG_PROGRAM(
-               [[#include <pthread.h>
-                 pthread_mutex_t m;
-                 pthread_mutexattr_t ma;
-               ]],
-               [[pthread_mutex_lock (&m);
-                 pthread_mutexattr_init (&ma);]])],
-            [gl_have_pthread=yes
-             LIBTHREAD=$gl_pthread LTLIBTHREAD=$gl_pthread
-             LIBMULTITHREAD=$gl_pthread LTLIBMULTITHREAD=$gl_pthread])
-          LIBS=$save_LIBS
-          test -n "$gl_have_pthread" && break
-        done
-
-        # Test for libpthread by looking for pthread_kill. (Not pthread_self,
-        # since it is defined as a macro on OSF/1.)
-        if test -n "$gl_have_pthread" && test -z "$LIBTHREAD"; then
-          # The program links fine without libpthread. But it may actually
-          # need to link with libpthread in order to create multiple threads.
-          AC_CHECK_LIB([pthread], [pthread_kill],
-            [LIBMULTITHREAD=-lpthread LTLIBMULTITHREAD=-lpthread
-             # On Solaris and HP-UX, most pthread functions exist also in libc.
-             # Therefore pthread_in_use() needs to actually try to create a
-             # thread: pthread_create from libc will fail, whereas
-             # pthread_create will actually create a thread.
-             # On Solaris 10 or newer, this test is no longer needed, because
-             # libc contains the fully functional pthread functions.
-             case "$host_os" in
-               solaris | solaris2.[1-9] | solaris2.[1-9].* | hpux*)
-                 AC_DEFINE([PTHREAD_IN_USE_DETECTION_HARD], [1],
-                   [Define if the pthread_in_use() detection is hard.])
-             esac
-            ])
-        elif test -z "$gl_have_pthread"; then
-          # Some library is needed. Try libpthread and libc_r.
-          AC_CHECK_LIB([pthread], [pthread_kill],
-            [gl_have_pthread=yes
-             LIBTHREAD=-lpthread LTLIBTHREAD=-lpthread
-             LIBMULTITHREAD=-lpthread LTLIBMULTITHREAD=-lpthread])
-          if test -z "$gl_have_pthread"; then
-            # For FreeBSD 4.
-            AC_CHECK_LIB([c_r], [pthread_kill],
-              [gl_have_pthread=yes
-               LIBTHREAD=-lc_r LTLIBTHREAD=-lc_r
-               LIBMULTITHREAD=-lc_r LTLIBMULTITHREAD=-lc_r])
-          fi
-        fi
-        if test -n "$gl_have_pthread"; then
+    if test "$gl_use_threads" = isoc || test "$gl_use_threads" = isoc+posix; then
+      AC_CHECK_HEADERS_ONCE([threads.h])
+      if test $ac_cv_header_threads_h = yes; then
+        gl_have_isoc_threads=
+        # Test whether both mtx_lock and cnd_timedwait exist in libc.
+        AC_LINK_IFELSE(
+          [AC_LANG_PROGRAM(
+             [[#include <threads.h>
+               #include <stddef.h>
+               mtx_t m;
+               cnd_t c;
+             ]],
+             [[mtx_lock (&m);
+               cnd_timedwait (&c, &m, NULL);]])],
+          [gl_have_isoc_threads=yes])
+      fi
+    fi
+    if test "$gl_use_threads" = yes \
+       || test "$gl_use_threads" = posix \
+       || test "$gl_use_threads" = isoc+posix; then
+      gl_PTHREADLIB_BODY
+      LIBTHREAD=$LIBPTHREAD LTLIBTHREAD=$LIBPTHREAD
+      LIBMULTITHREAD=$LIBPMULTITHREAD LTLIBMULTITHREAD=$LIBPMULTITHREAD
+      if test $gl_pthread_api = yes; then
+        if test "$gl_use_threads" = isoc+posix && test "$gl_have_isoc_threads" = yes; then
+          gl_threads_api='isoc+posix'
+          AC_DEFINE([USE_ISOC_AND_POSIX_THREADS], [1],
+            [Define if the combination of the ISO C and POSIX multithreading APIs can be used.])
+          LIBTHREAD= LTLIBTHREAD=
+        else
           gl_threads_api=posix
           AC_DEFINE([USE_POSIX_THREADS], [1],
             [Define if the POSIX multithreading library can be used.])
@@ -245,14 +319,20 @@ int main ()
             if case "$gl_cv_have_weak" in *yes) true;; *) false;; esac; then
               AC_DEFINE([USE_POSIX_THREADS_WEAK], [1],
                 [Define if references to the POSIX multithreading library should be made weak.])
-              LIBTHREAD=
-              LTLIBTHREAD=
+              LIBTHREAD= LTLIBTHREAD=
             fi
           fi
         fi
       fi
     fi
-    if test -z "$gl_have_pthread"; then
+    if test $gl_threads_api = none; then
+      if test "$gl_use_threads" = isoc && test "$gl_have_isoc_threads" = yes; then
+        gl_threads_api=isoc
+        AC_DEFINE([USE_ISOC_THREADS], [1],
+          [Define if the ISO C multithreading library can be used.])
+      fi
+    fi
+    if test $gl_threads_api = none; then
       case "$gl_use_threads" in
         yes | windows | win32) # The 'win32' is for backward compatibility.
           if { case "$host_os" in
@@ -274,6 +354,12 @@ int main ()
   AC_SUBST([LTLIBTHREAD])
   AC_SUBST([LIBMULTITHREAD])
   AC_SUBST([LTLIBMULTITHREAD])
+])
+
+AC_DEFUN([gl_PTHREADLIB],
+[
+  AC_REQUIRE([gl_ANYTHREADLIB_EARLY])
+  gl_PTHREADLIB_BODY
 ])
 
 AC_DEFUN([gl_THREADLIB],
