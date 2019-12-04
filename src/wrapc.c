@@ -146,8 +146,8 @@ static void         wrapc_cleanup( void );
  * Closes both ends of a pipe.
  */
 static inline void close_pipe( int pipe[2] ) {
-  close( pipe[ STDIN_FILENO ] );
-  close( pipe[ STDOUT_FILENO ] );
+  (void)close( pipe[ STDIN_FILENO ] );
+  (void)close( pipe[ STDOUT_FILENO ] );
 }
 
 /**
