@@ -67,6 +67,15 @@ _GL_INLINE_HEADER_BEGIN
 /** Frees the duplicated C string later. */
 #define FREE_STRDUP_LATER(PTR)    FREE_STR_LATER( check_strdup( PTR ) )
 
+/**
+ * Evaluates \a EXPR: if it returns `true`, calls perror_exit() with \a ERR.
+ *
+ * @param EXPR The expression to evaluate.
+ * @param ERR The exit status code to use.
+ */
+#define IF_EXIT(EXPR,ERR) \
+  BLOCK( if ( unlikely( EXPR ) ) perror_exit( ERR ); )
+
 /** No-operation statement.  (Useful for a `goto` target.) */
 #define NO_OP                     ((void)0)
 
@@ -125,26 +134,23 @@ _GL_INLINE_HEADER_BEGIN
 #define REALLOC(PTR,TYPE,N) \
   (PTR) = STATIC_CAST(TYPE*, check_realloc( (PTR), sizeof(TYPE) * (size_t)(N) ))
 
-#define W_DUP(FD) BLOCK( \
-	if ( unlikely( dup( FD ) == -1 ) ) perror_exit( EX_OSERR ); )
+#define W_DUP(FD)                 IF_EXIT( dup( FD ) == -1, EX_OSERR )
 
-#define W_FERROR(STREAM) BLOCK( \
-	if ( unlikely( ferror( STREAM ) ) ) perror_exit( EX_IOERR ); )
+#define W_FERROR(STREAM)          IF_EXIT( ferror( STREAM ), EX_IOERR )
 
-#define W_FPRINTF(STREAM,...) BLOCK( \
-	if ( unlikely( fprintf( (STREAM), __VA_ARGS__ ) < 0 ) ) perror_exit( EX_IOERR ); )
+#define W_FPRINTF(STREAM,...) \
+	IF_EXIT( fprintf( (STREAM), __VA_ARGS__ ) < 0, EX_IOERR )
 
-#define W_FPUTC(C,STREAM) BLOCK( \
-	if ( unlikely( putc( (C), (STREAM) ) == EOF ) ) perror_exit( EX_IOERR ); )
+#define W_FPUTC(C,STREAM) \
+	IF_EXIT( putc( (C), (STREAM) ) == EOF, EX_IOERR )
 
-#define W_FPUTS(S,STREAM) BLOCK( \
-	if ( unlikely( fputs( (S), (STREAM) ) == EOF ) ) perror_exit( EX_IOERR ); )
+#define W_FPUTS(S,STREAM) \
+	IF_EXIT( fputs( (S), (STREAM) ) == EOF, EX_IOERR )
 
-#define W_FWRITE(BUF,SIZE,NITEMS,STREAM) BLOCK( \
-	if ( unlikely( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS) ) ) perror_exit( EX_IOERR ); )
+#define W_FWRITE(BUF,SIZE,NITEMS,STREAM) \
+	IF_EXIT( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS), EX_IOERR )
 
-#define W_PIPE(FDS) BLOCK( \
-	if ( unlikely( pipe( FDS ) == -1 ) ) perror_exit( EX_OSERR ); )
+#define W_PIPE(FDS)               IF_EXIT( pipe( FDS ) == -1, EX_OSERR )
 
 // extern variable definitions
 extern char const  *me;                 ///< Program name.

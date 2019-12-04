@@ -66,8 +66,7 @@ static alias_t* alias_alloc( void ) {
     n_aliases_alloc += ALIAS_ALLOC_INCREMENT;
     REALLOC( aliases, alias_t, n_aliases_alloc );
   }
-  if ( aliases == NULL )
-    perror_exit( EX_OSERR );
+  IF_EXIT( aliases == NULL, EX_OSERR );
   return &aliases[ n_aliases++ ];
 }
 

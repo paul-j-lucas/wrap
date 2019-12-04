@@ -121,16 +121,14 @@ void* check_realloc( void *p, size_t size ) {
   if ( size == 0 )
     size = 1;
   void *const r = p != NULL ? realloc( p, size ) : malloc( size );
-  if ( unlikely( r == NULL ) )
-    perror_exit( EX_OSERR );
+  IF_EXIT( r == NULL, EX_OSERR );
   return r;
 }
 
 char* check_strdup( char const *s ) {
   assert( s != NULL );
   char *const dup = strdup( s );
-  if ( unlikely( dup == NULL ) )
-    perror_exit( EX_OSERR );
+  IF_EXIT( dup == NULL, EX_OSERR );
   return dup;
 }
 
@@ -370,8 +368,7 @@ void wait_for_debugger_attach( char const *env_var ) {
   assert( env_var != NULL );
   if ( is_affirmative( getenv( env_var ) ) ) {
     PRINT_ERR( "pid=%u: waiting for debugger to attach...\n", getpid() );
-    if ( raise( SIGSTOP ) == -1 )
-      perror_exit( EX_OSERR );
+    IF_EXIT( raise( SIGSTOP ) == -1, EX_OSERR );
   }
 }
 #endif /* NDEBUG */

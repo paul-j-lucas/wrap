@@ -292,8 +292,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 static pid_t read_source_write_wrap( void ) {
 #ifndef DEBUG_RSWW
   pid_t const pid = fork();
-  if ( unlikely( pid == -1 ) )
-    perror_exit( EX_OSERR );
+  IF_EXIT( pid == -1, EX_OSERR );
   if ( pid != 0 )                       // parent process
     return pid;
   //
