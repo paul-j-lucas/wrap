@@ -186,7 +186,7 @@ static inline void swap_line_bufs( void ) {
 int main( int argc, char const *argv[] ) {
   wait_for_debugger_attach( "WRAPC_DEBUG" );
   init( argc, argv );
-  if ( opt_align_column ) {
+  if ( opt_align_column > 0 ) {
     align_eol_comments( CURR );
   } else {
     read_prototype();
