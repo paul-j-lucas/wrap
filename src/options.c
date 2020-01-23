@@ -541,7 +541,8 @@ void options_init( int argc, char const *argv[], void (*usage)(void) ) {
     argc, argv, SHORT_OPTS[ is_wrapc ], LONG_OPTS[ is_wrapc ],
     CMDLINE_FORBIDDEN_OPTS[ is_wrapc ], usage, 0
   );
-  argc -= optind, argv += optind;
+  argc -= optind;
+  argv += optind;
   if ( argc > 0 )
     usage();
 

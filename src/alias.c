@@ -203,8 +203,10 @@ static size_t strcpy_set( char *dest, size_t dest_size, char const *set,
   char const *const dest_end = dest + dest_size - 1/*null*/;
   size_t n_copied = 0;
 
-  while ( dest < dest_end && *src != '\0' && strchr( set, *src ) != NULL )
-    *dest++ = *src++, ++n_copied;
+  while ( dest < dest_end && *src != '\0' && strchr( set, *src ) != NULL ) {
+    *dest++ = *src++;
+    ++n_copied;
+  } // while
 
   *dest = '\0';
   return n_copied;
