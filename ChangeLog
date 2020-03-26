@@ -1,3 +1,93 @@
+2020-03-26  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac, ax_c___attribute__.m4, alias.c, alias.h, align.c, cc_map.c,
+     cc_map.h, common.c, common.h, doxygen.c, doxygen.h, markdown.c,
+     markdown.h, options.c, options.h, pattern.c, pattern.h, read_conf.c,
+     read_conf.h, regex_test.c, unicode.c, unicode.h, util.c, util.h, wrap.c,
+     wrap.h, wrapc.c, wregex.c, wregex.h: Added gcc attributes.
+
+2020-01-22  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac, alias.c, options.c: Added more warnings.
+
+2019-12-04  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Added (void).
+   * wrapc.c: Made "if" explicit.
+   * alias.c, markdown.c, pattern.c, util.c, util.h, wrapc.c: Added IF_EXIT().
+
+2019-12-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, _Noreturn.h, fnmatch.in.h, glthread/lock.c,
+     glthread/lock.h, glthread/threadlib.c, intprops.h, stdlib.in.h,
+     string.in.h, unistd.in.h, verify.h, wchar.in.h, wctype.in.h,
+     gnulib-common.m4, host-cpu-c-abi.m4, lib-link.m4, lib-prefix.m4,
+     mbrtowc.m4, threadlib.m4, wchar_h.m4, wctype_h.m4: Updated GNUlib.
+   * configure.ac, alias.c, alias.h, align.c, cc_map.c, markdown.c, markdown.h,
+     options.c, regex_test.c, unicode.h, util.c, util.h, wrap.c, wrapc.c,
+     wregex.c: Added more -W options for gcc and fixed warnings.
+
+2019-11-15  Paul J. Lucas <paul@lucasmail.org>
+
+   * unicode.c: Removed unneeded #include.
+   * unicode.h: Fixed including of <uchar.h>.
+
+2019-10-29  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.h: s/Mac OS X/MacOS/
+
+2019-09-23  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, _Noreturn.h, flexmember.h, glthread/lock.c,
+     glthread/lock.h, glthread/threadlib.c, intprops.h, localcharset.c,
+     mbrtowc.c, memchr.valgrind, stddef.in.h, stdlib.in.h, string.in.h,
+     unistd.in.h, verify.h, wchar.in.h, wctype.in.h, windows-initguard.h,
+     windows-mutex.c, windows-mutex.h, windows-once.c, windows-once.h,
+     windows-recmutex.c, windows-recmutex.h, windows-rwlock.c,
+     windows-rwlock.h, extern-inline.m4, flexmember.m4, getopt.m4,
+     gnulib-common.m4, gnulib-comp.m4, host-cpu-c-abi.m4, lib-ld.m4,
+     lib-link.m4, lib-prefix.m4, lock.m4, malloc.m4, mbrtowc.m4, memchr.m4,
+     nocrash.m4, pthread_rwlock_rdlock.m4, strerror.m4, sys_socket_h.m4,
+     threadlib.m4, unistd_h.m4: Updated GNUlib.
+   * configure.ac, ax_check_typedef.m4, pjl_check_typedef.m4, unicode.c,
+     unicode.h, wrap.c, wregex.c: s/codepoint_t/char32_t/
+
+2019-07-30  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.h: Comment additions.
+
+2019-07-19  Paul J. Lucas <paul@lucasmail.org>
+
+   * read_conf.h: Tweaked comment.
+
+2019-07-15  Paul J. Lucas <paul@lucasmail.org>
+
+   * util.c: s/'\0'/NULL/
+
+2019-07-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c, wrapc.c: Now printing help to stdout.
+   * wrapc.c: Fixed spacing.
+   * configure.ac, wrap.c, wrapc.c: Reworked help.
+
+2019-04-25  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1: Made man page match recent change to some Doxygen commands.
+
+2019-04-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac: Updated version to 5.4.1.
+   * doxygen.c: Changed some Doxygen elements to be PAR.
+
+2019-04-09  Paul J. Lucas <paul@lucasmail.org>
+
+   * doxygen.h: Comment fixes.
+
+2019-04-04  Paul J. Lucas <paul@lucasmail.org>
+
+   * run_test.sh: Now ensuring that debugger environment variables are unset.
+   * markdown.c: Renaming.
+
 2019-04-03  Paul J. Lucas <paul@lucasmail.org>
 
    * NEWS, configure.ac, wrap.1, markdown.c, options.c, wrapc.c,
