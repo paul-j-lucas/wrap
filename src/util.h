@@ -40,9 +40,9 @@
 #include <sysexits.h>
 
 _GL_INLINE_HEADER_BEGIN
-#ifndef WRAP_UTIL_INLINE
-# define WRAP_UTIL_INLINE _GL_INLINE
-#endif /* WRAP_UTIL_INLINE */
+#ifndef W_UTIL_INLINE
+# define W_UTIL_INLINE _GL_INLINE
+#endif /* W_UTIL_INLINE */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -169,6 +169,7 @@ extern char const  *me;                 ///< Program name.
  * If \a path_name consists entirely of '/' characters,
  * a pointer to the string "/" is returned.
  */
+W_WARN_UNUSED_RESULT
 char const* base_name( char const *path_name );
 
 /**
@@ -189,6 +190,7 @@ char const* base_name( char const *path_name );
  * \a key could be a string and \a elt_cmp could compare the string with a
  * struct's field.
  */
+W_WARN_UNUSED_RESULT
 void const* bin_search( void const *key, void const *elt_base,
                         size_t elt_count, size_t elt_size,
                         int (*elt_cmp)( void const *key, void const *elt ) );
@@ -203,6 +205,7 @@ void const* bin_search( void const *key, void const *elt_base,
  * @return Returns an integer less than zero, zero, or greater thatn zero if
  * the key is less than, equal to, or greater than the element, respectively.
  */
+W_WARN_UNUSED_RESULT
 int bin_search_str_strptr_cmp( void const *key, void const *str_ptr );
 
 /**
@@ -213,6 +216,7 @@ int bin_search_str_strptr_cmp( void const *key, void const *str_ptr );
  * @param s The string to convert.
  * @return Returns the unsigned integer.
  */
+W_WARN_UNUSED_RESULT
 unsigned check_atou( char const *s );
 
 /**
@@ -223,6 +227,7 @@ unsigned check_atou( char const *s );
  * @param size The number of bytes to allocate.
  * @return Returns a pointer to the allocated memory.
  */
+W_WARN_UNUSED_RESULT
 void* check_realloc( void *p, size_t size );
 
 /**
@@ -232,6 +237,7 @@ void* check_realloc( void *p, size_t size );
  * @param s The null-terminated string to duplicate.
  * @return Returns a copy of \a s.
  */
+W_WARN_UNUSED_RESULT
 char* check_strdup( char const *s );
 
 /**
@@ -241,6 +247,7 @@ char* check_strdup( char const *s );
  * @param s_len The length of \a s.
  * @return Returns the new length of \a s.
  */
+W_WARN_UNUSED_RESULT
 size_t chop_eol( char *s, size_t s_len );
 
 /**
@@ -249,6 +256,7 @@ size_t chop_eol( char *s, size_t s_len );
  * @param c The "opening" character.
  * @return Returns said "closing" character or the null byte if none.
  */
+W_WARN_UNUSED_RESULT
 char closing_char( char c );
 
 /**
@@ -270,6 +278,7 @@ void fcopy( FILE *ffrom, FILE *fto );
  * @return Returns \a buf if any characters have been read or NULL on either
  * EOF or error.
  */
+W_WARN_UNUSED_RESULT
 char* fgetsz( char *buf, size_t *size, FILE *ffrom );
 
 /**
@@ -278,6 +287,7 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom );
  * @param p The pointer to add.
  * @return Returns \a p.
  */
+W_NOWARN_UNUSED_RESULT
 void* free_later( void *p );
 
 /**
@@ -291,6 +301,7 @@ void free_now( void );
  *
  * @return Returns said number of columns or 0 if it can not be determined.
  */
+W_WARN_UNUSED_RESULT
 unsigned get_term_columns( void );
 #endif /* WITH_WIDTH_TERM */
 
@@ -302,6 +313,7 @@ unsigned get_term_columns( void );
  * @param s The null-terminated string to check or null.
  * @return Returns \c true only if \a s is affirmative.
  */
+W_WARN_UNUSED_RESULT
 bool is_affirmative( char const *s );
 #endif /* NDEBUG */
 
@@ -312,6 +324,7 @@ bool is_affirmative( char const *s );
  * @param matches The null-terminated array of values to check against.
  * @return Returns \c true only if \a s is among \a matches.
  */
+W_WARN_UNUSED_RESULT
 bool is_any( char const *s, char const *const matches[] );
 
 /**
@@ -321,7 +334,8 @@ bool is_any( char const *s, char const *const matches[] );
  * @param s The null-terminated string to check.
  * @return Returns \c true only if \a s is a blank line.
  */
-WRAP_UTIL_INLINE bool is_blank_line( char const *s ) {
+W_UTIL_INLINE W_WARN_UNUSED_RESULT
+bool is_blank_line( char const *s ) {
   SKIP_CHARS( s, WS_STRN );
   return *s == '\0';
 }
@@ -332,7 +346,8 @@ WRAP_UTIL_INLINE bool is_blank_line( char const *s ) {
  * @param s The null-terminated string to check.
  * @return Returns \c true only if \a s contains only digits.
  */
-WRAP_UTIL_INLINE bool is_digits( char const *s ) {
+W_UTIL_INLINE W_WARN_UNUSED_RESULT
+bool is_digits( char const *s ) {
   return s[ strspn( s, "0123456789" ) ] == '\0';
 }
 
@@ -342,7 +357,8 @@ WRAP_UTIL_INLINE bool is_digits( char const *s ) {
  * @param c The character to check.
  * @return Returns \c true only if it is.
  */
-WRAP_UTIL_INLINE bool is_eol( char c ) {
+W_UTIL_INLINE W_WARN_UNUSED_RESULT
+bool is_eol( char c ) {
   return c == '\n' || c == '\r';
 }
 
@@ -353,7 +369,8 @@ WRAP_UTIL_INLINE bool is_eol( char c ) {
  * @param c The character to check.
  * @return Returns \c true only if \a c is a space or a tab.
  */
-WRAP_UTIL_INLINE bool is_space( char c ) {
+W_UTIL_INLINE W_WARN_UNUSED_RESULT
+bool is_space( char c ) {
   return c == ' ' || c == '\t';
 }
 
@@ -365,7 +382,8 @@ WRAP_UTIL_INLINE bool is_space( char c ) {
  * @param buf_len The length of \a buf.
  * @return Returns \c true only if \a buf ends with \c {CR}{LF}.
  */
-WRAP_UTIL_INLINE bool is_windows_eol( char const buf[], size_t buf_len ) {
+W_UTIL_INLINE W_WARN_UNUSED_RESULT
+bool is_windows_eol( char const buf[], size_t buf_len ) {
   return buf_len >= 2 && buf[ buf_len - 2 ] == '\r';
 }
 
@@ -374,6 +392,7 @@ WRAP_UTIL_INLINE bool is_windows_eol( char const buf[], size_t buf_len ) {
  *
  * @param status The exit status code.
  */
+W_NORETURN
 void perror_exit( int status );
 
 /**
@@ -401,6 +420,7 @@ void split_tws( char buf[], size_t buf_len, char tws[] );
  * @param src The null-terminated string to copy.
  * @return Returns the number of characters copied.
  */
+W_WARN_UNUSED_RESULT
 size_t strcpy_len( char *dst, char const *src );
 
 /**
@@ -411,6 +431,7 @@ size_t strcpy_len( char *dst, char const *src );
  * @param set The null-terminated set of characters.
  * @return Returns the number of characters spanned.
  */
+W_WARN_UNUSED_RESULT
 size_t strrspn( char const *s, char const *set );
 
 /**
@@ -420,7 +441,8 @@ size_t strrspn( char const *s, char const *set );
  * to \c false.
  * @return Returns \c true only if \c *flag is \c true.
  */
-WRAP_UTIL_INLINE bool true_reset( bool *flag ) {
+W_UTIL_INLINE W_WARN_UNUSED_RESULT
+bool true_reset( bool *flag ) {
   return *flag && !(*flag = false);
 }
 

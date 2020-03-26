@@ -38,6 +38,7 @@
  * @return Returns the full-path of the configuration file that was read or
  * NULL if none.
  */
+W_WARN_UNUSED_RESULT
 char const* read_conf( char const *conf_file );
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -93,6 +93,9 @@ AS_IF([test x$enable_width_term != xno -a x$ac_cv_search_endwin = xno],
 
 # Miscellaneous.
 AC_LANG(C)
+AX_C___ATTRIBUTE__
+
+# Compiler warnings.
 AX_CFLAGS_GCC_OPTION([-Wcast-align])
 AX_CFLAGS_GCC_OPTION([-Wcomma])
 AX_CFLAGS_GCC_OPTION([-Wconditional-type-mismatch])

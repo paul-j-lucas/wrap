@@ -21,7 +21,7 @@
 // local
 #include "wrap.h"                       /* must go first */
 /// @cond DOXYGEN_IGNORE
-#define WRAP_CC_MAP_INLINE _GL_EXTERN_INLINE
+#define W_CC_MAP_INLINE _GL_EXTERN_INLINE
 /// @endcond
 #include "cc_map.h"
 #include "options.h"
@@ -64,6 +64,7 @@ static inline void cc_map_init( void ) {
  * @param c The character to add.
  * @return Returns the number of distinct comment delimiter characters added.
  */
+W_WARN_UNUSED_RESULT
 static unsigned cc_set_add( cc_set_t cc_set, char c ) {
   unsigned added = 0;
   if ( !cc_set[ (unsigned char)c ] ) {

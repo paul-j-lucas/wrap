@@ -135,10 +135,19 @@ static md_state_t  *stack;              // global stack of states
 static stack_pos_t  stack_top;          // index of the top of the stack
 
 // local functions
+W_WARN_UNUSED_RESULT
 static bool         md_is_code_fence( char const*, md_code_fence_t* );
+
+W_WARN_UNUSED_RESULT
 static bool         md_is_dl_ul_helper( char const*, md_indent_t* );
+
+W_WARN_UNUSED_RESULT
 static html_state_t md_is_html_tag( char const*, bool* );
+
+W_WARN_UNUSED_RESULT
 static md_line_t    md_nested_within( void );
+
+W_WARN_UNUSED_RESULT
 static char const*  skip_html_tag( char const*, bool* );
 
 ////////// inline functions ///////////////////////////////////////////////////
@@ -150,6 +159,7 @@ static char const*  skip_html_tag( char const*, bool* );
  * converted to lower-case.
  * @return Returns \c true only if \a s is an HTML block-level element.
  */
+W_WARN_UNUSED_RESULT
 static inline bool is_html_block_element( char const *s ) {
   return NULL != bin_search(
     s, HTML_BLOCK_ELEMENT, ARRAY_SIZE( HTML_BLOCK_ELEMENT ),
@@ -165,6 +175,7 @@ static inline bool is_html_block_element( char const *s ) {
  * @return Returns \c true only if \a s is an HTML pre-formatted block-level
  * element.
  */
+W_WARN_UNUSED_RESULT
 static inline bool is_html_pre_element( char const *s ) {
   return  strcmp( s, "pre"    ) == 0 ||
           strcmp( s, "script" ) == 0 ||
@@ -177,6 +188,7 @@ static inline bool is_html_pre_element( char const *s ) {
  * @param c The character to check.
  * @return Returns \c true only if \a c is an HTML element character.
  */
+W_WARN_UNUSED_RESULT
 static inline bool is_html_element_char( char c ) {
   return isalpha( c ) || c == '-';
 }
@@ -198,6 +210,7 @@ static inline void md_code_fence_init( md_code_fence_t *fence ) {
  * @param fence A pointer to the \c struct containing the fence info.
  * @return Returns \c true only if it is.
  */
+W_WARN_UNUSED_RESULT
 static inline bool md_is_code_fence_end( char const *s,
                                          md_code_fence_t *fence ) {
   return (s[0] == '`' || s[0] == '~') && md_is_code_fence( s, fence );
@@ -209,6 +222,7 @@ static inline bool md_is_code_fence_end( char const *s,
  * @param s The null-terminated line to check.
  * @return Returns \c true only if it is.
  */
+W_WARN_UNUSED_RESULT
 static inline bool md_is_link_title( char const *s ) {
   return *s == '"' || *s == '\'' || *s == '(';
 }
@@ -219,6 +233,7 @@ static inline bool md_is_link_title( char const *s ) {
  * @param c The character to check.
  * @return Returns \c true only if \a c is an ordered list delimiter character.
  */
+W_WARN_UNUSED_RESULT
 static inline bool md_is_ol_sep_char( char c ) {
   return c == '.' || c == ')';
 }
@@ -235,6 +250,7 @@ static inline void stack_clear( void ) {
  *
  * @return Returns \c true only if it is.
  */
+W_WARN_UNUSED_RESULT
 static inline bool stack_empty( void ) {
   return stack_top < 0;
 }
@@ -244,6 +260,7 @@ static inline bool stack_empty( void ) {
  *
  * @return Returns said size.
  */
+W_WARN_UNUSED_RESULT
 static inline size_t stack_size( void ) {
   return (size_t)(stack_top + 1);
 }
@@ -255,6 +272,7 @@ static inline size_t stack_size( void ) {
  * @param line_type The line type to check for.
  * @return Returns \c true only if it is.
  */
+W_WARN_UNUSED_RESULT
 static inline bool top_is( md_line_t line_type ) {
   return TOP.line_type == line_type;
 }
@@ -264,6 +282,7 @@ static inline bool top_is( md_line_t line_type ) {
  *
  * @return Returns said indent.
  */
+W_WARN_UNUSED_RESULT
 static inline md_indent_t md_code_indent_min( void ) {
   return (stack_size() - top_is( MD_CODE )) * MD_CODE_INDENT_MIN;
 }
@@ -278,6 +297,7 @@ static inline md_indent_t md_code_indent_min( void ) {
  * converted to equivalent spaces).
  * @return Returns a pointer to the first non-whitespace character.
  */
+W_WARN_UNUSED_RESULT
 static char* first_non_whitespace( char *s, md_indent_t *indent_left ) {
   assert( s != NULL );
   assert( indent_left != NULL );
@@ -315,6 +335,7 @@ done:
  * @return Returns a pointer within \a s just after the ':' if \a s is a URI
  * scheme or null otherwise.
  */
+W_WARN_UNUSED_RESULT
 static char const* is_uri_scheme( char const *s ) {
   assert( s != NULL );
   if ( isalpha( *s ) ) {                // must be ^[a-zA-Z][a-zA-Z0-9.+-]*
@@ -339,6 +360,7 @@ static char const* is_uri_scheme( char const *s ) {
  * @param indent_left The raw indent (in spaces).
  * @return Returns the preferred divisor.
  */
+W_WARN_UNUSED_RESULT
 static md_indent_t md_indent_divisor( md_indent_t indent_left ) {
   md_line_t const line_type = md_nested_within();
   bool const dl_or_ul = line_type == MD_DL || line_type == MD_UL;
@@ -358,6 +380,7 @@ static md_indent_t md_indent_divisor( md_indent_t indent_left ) {
  * @param s The null-terminated line to check.
  * @return Returns \c true only if it is.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_atx_header( char const *s ) {
   assert( s != NULL );
   assert( s[0] == '#' );
@@ -381,6 +404,7 @@ static bool md_is_atx_header( char const *s ) {
 
  * @return Returns \c true only if it is.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
   assert( s != NULL );
   assert( fence != NULL );
@@ -417,6 +441,7 @@ static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
  * @return Returns \c true only if \a s is a PHP Markdown Extra definition list
  * item.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_dl( char const *s, md_indent_t *indent_hang ) {
   assert( s != NULL );
   assert( s[0] == ':' );
@@ -433,6 +458,7 @@ static bool md_is_dl( char const *s, md_indent_t *indent_hang ) {
  * @return Returns \c true only if \a s is a PHP Markdown Extra definition list
  * item.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_dl_ul_helper( char const *s, md_indent_t *indent_hang ) {
   assert( indent_hang != NULL );
   if ( is_space( s[1] ) ) {
@@ -460,6 +486,7 @@ static bool md_is_dl_ul_helper( char const *s, md_indent_t *indent_hang ) {
  * indent (in spaces).
  * @return Returns \c true only if \a s is a Doxygen ordered list item.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_dox_ol( char const *s, md_indent_t *indent_hang ) {
   assert( s != NULL );
   assert( s[0] == '-' );
@@ -481,6 +508,7 @@ static bool md_is_dox_ol( char const *s, md_indent_t *indent_hang ) {
  * @return Returns \c true onlf if \a s is a PHP Markdown Extra footnote
  * definition.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_footnote_def( char const *s, bool *def_text ) {
   assert( s != NULL );
   assert( s[0] == '[' );
@@ -509,6 +537,7 @@ static bool md_is_footnote_def( char const *s, bool *def_text ) {
  * character to match.
  * @return Returns \c true only if it is.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_hr( char const *s ) {
   assert( s != NULL );
   assert( s[0] == '*' || s[0] == '-' || s[0] == '_' );
@@ -532,6 +561,7 @@ static bool md_is_hr( char const *s ) {
  * @return Returns \c true only if the line is a PHP Markdown Extra HTML
  * abbreviation.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_html_abbr( char const *s ) {
   assert( s != NULL );
   assert( s[0] == '*' );
@@ -557,6 +587,7 @@ static bool md_is_html_abbr( char const *s ) {
  * @param s The null-terminated line to check.
  * @return Returns \c true only if \a s ends \a html_state.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_html_end( html_state_t html_state, char const *s ) {
   //
   // For each HTML state, the string that ends it.  NULL entries are handled
@@ -605,6 +636,7 @@ static bool md_is_html_end( html_state_t html_state, char const *s ) {
  * @return Returns the HTML type only if the line is a block-level HTML tag or
  * special markup or HTML_NONE if not.
  */
+W_WARN_UNUSED_RESULT
 static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
   assert( s != NULL );
   assert( s[0] == '<' );
@@ -690,6 +722,7 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
  * has a title attribute on the same line.
  * @return Returns \c true only if \a s is a Markdown link label.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_link_label( char const *s, bool *has_title ) {
   assert( s != NULL );
   assert( s[0] == '[' );
@@ -729,6 +762,7 @@ static bool md_is_link_label( char const *s, bool *has_title ) {
  * @param line_type The line type to check.
  * @return Returns \c true only if \a line_type can nest.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_nestable( md_line_t line_type ) {
   switch ( line_type ) {
     case MD_DL:
@@ -752,6 +786,7 @@ static bool md_is_nestable( md_line_t line_type ) {
  * indent (in spaces).
  * @return Returns \c true only if \a s is a Markdown ordered list item.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_ol( char const *s, md_ol_t *ol_num, char *ol_c,
                       md_indent_t *indent_hang ) {
   assert( s != NULL );
@@ -791,6 +826,7 @@ static bool md_is_ol( char const *s, md_ol_t *ol_num, char *ol_c,
  * @param s The null-terminated line to check.
  * @return Returns \c true only if \a s is a PHP Markdown Extra table line.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_table( char const *s ) {
   assert( s != NULL );
   bool found_nws = false;               // encountered non-whitespace?
@@ -826,6 +862,7 @@ static bool md_is_table( char const *s ) {
  * indent (in spaces).
  * @return Returns \c true only if \a s is a Markdown unordered list item.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_ul( char const *s, md_indent_t *indent_hang ) {
   assert( s != NULL );
   assert( s[0] == '*' || s[0] == '-' || s[0] == '+' );
@@ -840,6 +877,7 @@ static bool md_is_ul( char const *s, md_indent_t *indent_hang ) {
  * header character to match.
  * @return Returns \c true onlt if it is.
  */
+W_WARN_UNUSED_RESULT
 static bool md_is_Setext_header( char const *s ) {
   assert( s != NULL );
   assert( s[0] == '-' || s[0] == '=' );
@@ -856,6 +894,7 @@ static bool md_is_Setext_header( char const *s ) {
  *
  * @return Returns said line true or MD_NONE if none.
  */
+W_WARN_UNUSED_RESULT
 static md_line_t md_nested_within( void ) {
   for ( stack_pos_t pos = stack_top; pos >= 0; --pos ) {
     md_line_t const line_type = STACK(pos).line_type;
@@ -905,6 +944,7 @@ static void md_renumber_ol( char *s, md_ol_t old_n, md_ol_t new_n ) {
  * @return Returns a pointer to just past the closing '>' of the tag or a
  * pointer to an empty string if \a s is not an HTML (or XML) tag.
  */
+W_WARN_UNUSED_RESULT
 static char const* skip_html_tag( char const *s, bool *is_end_tag ) {
   assert( s != NULL );
   assert( is_end_tag != NULL );

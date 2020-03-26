@@ -36,9 +36,9 @@
 #include <stdio.h>                      /* for FILE */
 
 _GL_INLINE_HEADER_BEGIN
-#ifndef WRAP_COMMON_INLINE
-# define WRAP_COMMON_INLINE _GL_INLINE
-#endif /* WRAP_COMMON_INLINE */
+#ifndef W_COMMON_INLINE
+# define W_COMMON_INLINE _GL_INLINE
+#endif /* W_COMMON_INLINE */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -159,7 +159,8 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
  * @param width The line width so far.
  * @return Returns said width.
  */
-WRAP_COMMON_INLINE size_t char_width( char c, size_t width ) {
+W_COMMON_INLINE W_WARN_UNUSED_RESULT
+size_t char_width( char c, size_t width ) {
   return c == '\t' ? opt_tab_spaces - width % opt_tab_spaces : 1;
 }
 
@@ -171,6 +172,7 @@ WRAP_COMMON_INLINE size_t char_width( char c, size_t width ) {
  * @param ffrom The \c FILE to read from.
  * @return Returns the number of characters read.
  */
+W_WARN_UNUSED_RESULT
 size_t check_readline( line_buf_t line, FILE *ffrom );
 
 /**
@@ -183,7 +185,8 @@ void common_cleanup( void );
  *
  * @return Returns said end-of-line string.
  */
-WRAP_COMMON_INLINE char const* eol( void ) {
+W_COMMON_INLINE W_WARN_UNUSED_RESULT
+char const* eol( void ) {
   return (char const*)"\r\n" + (opt_eol != EOL_WINDOWS);
 }
 

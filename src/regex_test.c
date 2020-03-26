@@ -40,6 +40,7 @@ char const       *me;                   ///< Program name.
 
 ////////// local functions ////////////////////////////////////////////////////
 
+W_NORETURN
 static void usage( void ) {
   PRINT_ERR( "usage: %s test\n", me );
   exit( EX_USAGE );

@@ -21,6 +21,9 @@
 #ifndef wrap_alias_H
 #define wrap_alias_H
 
+// local
+#include "wrap.h"                       /* must go first */
+
 /**
  * @file
  * Contains a data structure for a wrap alias and functions to manipulate it.
@@ -53,6 +56,7 @@ void alias_cleanup( void );
  * @return Returns the alias having \a name or \c NULL if no matching alias is
  * found.
  */
+W_WARN_UNUSED_RESULT
 alias_t const* alias_find( char const *name );
 
 /**

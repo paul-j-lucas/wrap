@@ -35,9 +35,9 @@
 #include <string.h>
 
 _GL_INLINE_HEADER_BEGIN
-#ifndef WRAP_CC_MAP_INLINE
-# define WRAP_CC_MAP_INLINE _GL_INLINE
-#endif /* WRAP_CC_MAP_INLINE */
+#ifndef W_CC_MAP_INLINE
+# define W_CC_MAP_INLINE _GL_INLINE
+#endif /* W_CC_MAP_INLINE */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -66,7 +66,8 @@ typedef char* cc_map_t[128];
  * @return Returns \c true only if \a cc_map_entry is a single comment
  * delimiter character.
  */
-WRAP_CC_MAP_INLINE bool cc_is_single( char const *cc_map_entry ) {
+W_CC_MAP_INLINE W_WARN_UNUSED_RESULT
+bool cc_is_single( char const *cc_map_entry ) {
   return strchr( cc_map_entry, CC_SINGLE_CHAR ) != NULL;
 }
 
@@ -79,6 +80,7 @@ WRAP_CC_MAP_INLINE bool cc_is_single( char const *cc_map_entry ) {
  * whitesspace.
  * @return Returns said string of distinct comment delimiter characters.
  */
+W_WARN_UNUSED_RESULT
 char const* cc_map_compile( char const *in_cc );
 
 /**
@@ -88,7 +90,8 @@ char const* cc_map_compile( char const *in_cc );
  * @return Returns said entry or null if \a c is not a comment delimiter
  * character.
  */
-WRAP_CC_MAP_INLINE char const* cc_map_get( char c ) {
+W_CC_MAP_INLINE W_WARN_UNUSED_RESULT
+char const* cc_map_get( char c ) {
   extern cc_map_t cc_map;
   return cc_map[ (unsigned char)c ];
 }

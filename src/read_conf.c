@@ -57,6 +57,7 @@ typedef enum section section_t;
  *
  * @return Returns said directory or NULL if it is not obtainable.
  */
+W_WARN_UNUSED_RESULT
 static char const* home_dir( void ) {
   char const *home = getenv( "HOME" );
 #if HAVE_GETEUID && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR
@@ -95,6 +96,7 @@ static void path_append( char *path, char const *component ) {
  * @param s The line containing the section name to parse.
  * @return Returns the corresponding section name or SECTION_NONE.
  */
+W_WARN_UNUSED_RESULT
 static section_t section_parse( char const *s ) {
   if ( strcmp( s, "[ALIASES]" ) == 0 )
     return SECTION_ALIASES;
@@ -109,6 +111,7 @@ static section_t section_parse( char const *s ) {
  * @param s The null-terminated line to strip the comment from.
  * @return Returns \a s on success or NULL for an unclosed quote.
  */
+W_WARN_UNUSED_RESULT
 static char* strip_comment( char *s ) {
   assert( s != NULL );
   char *const s0 = s;
@@ -143,6 +146,7 @@ static char* strip_comment( char *s ) {
  * @param s The string to trim whitespace from.
  * @return Returns a pointer to within \a s having all whitespace trimmed.
  */
+W_WARN_UNUSED_RESULT
 static char* trim_ws( char *s ) {
   assert( s != NULL );
   SKIP_CHARS( s, WS_STR );

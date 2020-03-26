@@ -94,6 +94,7 @@ typedef struct dox_cmd dox_cmd_t;
  * command's name.
  * @return Returns a pointer to the Doxygen command or null if not found.
  */
+W_WARN_UNUSED_RESULT
 dox_cmd_t const* dox_find_cmd( char const *s );
 
 /**
@@ -105,6 +106,7 @@ dox_cmd_t const* dox_find_cmd( char const *s );
  * the leading `\` or `@`).
  * @return Returns `true` only if \a s starts with a Doxygen command.
  */
+W_WARN_UNUSED_RESULT
 bool dox_parse_cmd_name( char const *s, char *dox_cmd_name );
 
 ///////////////////////////////////////////////////////////////////////////////

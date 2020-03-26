@@ -27,6 +27,8 @@
  * `#include` this file rather than `config.h` directly.
  */
 
+///////////////////////////////////////////////////////////////////////////////
+
 /// @cond DOXYGEN_IGNORE
 
 #ifdef __APPLE__
@@ -62,6 +64,38 @@
 
 // local
 #include "config.h"                     /* must go first */
+
+////////// compiler attributes ////////////////////////////////////////////////
+
+#ifdef HAVE___ATTRIBUTE__
+
+/**
+ * Denote that a function does not return.
+ */
+#define W_NORETURN                __attribute__ ((noreturn))
+
+/**
+ * Denote that a function's return value should never be ignored.
+ *
+ * @sa #W_NOWARN_UNUSED_RESULT
+ */
+#define W_WARN_UNUSED_RESULT      __attribute__ ((warn_unused_result))
+
+#else
+#define W_NORETURN                /* nothing */
+#define W_WARN_UNUSED_RESULT      /* nothing */
+#endif /* HAVE___ATTRIBUTE__ */
+
+/**
+ * Denote that a function's return value may be ignored without warning.
+ *
+ * @note
+ * There is no compiler attribute for this.  It's just a visual cue in code
+ * that #C_WARN_UNUSED_RESULT wasn't forgotten.
+ */
+#define W_NOWARN_UNUSED_RESULT    /* nothing */
+
+///////////////////////////////////////////////////////////////////////////////
 
 #endif /* wrap_wrap_H */
 /* vim:set et sw=2 ts=2: */

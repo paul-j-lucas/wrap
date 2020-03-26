@@ -20,7 +20,7 @@
 
 // local
 #include "wrap.h"                       /* must go first */
-#define WRAP_COMMON_INLINE _GL_EXTERN_INLINE
+#define W_COMMON_INLINE _GL_EXTERN_INLINE
 #include "common.h"
 #include "alias.h"
 #include "options.h"

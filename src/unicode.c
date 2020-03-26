@@ -20,7 +20,7 @@
 
 // local
 #include "wrap.h"                       /* must go first */
-#define WRAP_UNICODE_INLINE _GL_EXTERN_INLINE
+#define W_UNICODE_INLINE _GL_EXTERN_INLINE
 #include "unicode.h"
 
 // standard
@@ -60,6 +60,7 @@ uint8_t const UTF8_LEN_TABLE[] = {
  * @param cp The Unicode code-point to check.
  * @return Returns \c true only if valid.
  */
+W_WARN_UNUSED_RESULT
 static inline bool cp_is_valid( char32_t cp ) {
   return  cp < CP_SURROGATE_HIGH_START
       || (cp > CP_SURROGATE_LOW_END && cp <= CP_VALID_MAX);
