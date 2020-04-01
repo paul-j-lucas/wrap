@@ -169,8 +169,8 @@ static void         wrapc_cleanup( void );
  * Closes both ends of a pipe.
  */
 static inline void close_pipe( int pipe[2] ) {
-  (void)close( pipe[ STDIN_FILENO ] );
-  (void)close( pipe[ STDOUT_FILENO ] );
+  C_IGNORE_RV( close( pipe[ STDIN_FILENO ] ) );
+  C_IGNORE_RV( close( pipe[ STDOUT_FILENO ] ) );
 }
 
 /**
@@ -360,7 +360,7 @@ static pid_t read_source_write_wrap( void ) {
     //
     // In order to know when a comment ends, we have to peek at the next line.
     //
-    (void)check_readline( NEXT, fin );
+    C_IGNORE_RV( check_readline( NEXT, fin ) );
 
     if ( proto_is_comment && is_line_comment( CURR ) == NULL ) {
       //
@@ -1038,7 +1038,7 @@ static void read_prototype( void ) {
     // + The first line should not be altered.
     // + The second line becomes the prototype.
     //
-    (void)check_readline( NEXT, fin );
+    C_IGNORE_RV( check_readline( NEXT, fin ) );
     proto = NEXT;
   }
 

@@ -70,6 +70,7 @@ PJL_CHECK_TYPEDEF(char32_t,[uchar.h],
   AC_DEFINE([HAVE_CHAR32_T], [0], [Define to 1 if `char32_t' is supported.])
 )
 AC_CHECK_MEMBERS([struct passwd.pw_dir],[],[],[[#include <pwd.h>]])
+PJL_COMPILE([__typeof__],[],[__typeof__(1) x __attribute((unused)) = 1;])
 
 # Checks for library functions.
 AC_FUNC_FNMATCH
