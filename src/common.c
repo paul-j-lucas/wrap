@@ -45,9 +45,9 @@ void common_cleanup( void ) {
   free_now();
   pattern_cleanup();
   if ( fin != NULL )
-    fclose( fin );
+    (void)fclose( fin );
   if ( fout != NULL )
-    fclose( fout );
+    (void)fclose( fout );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
