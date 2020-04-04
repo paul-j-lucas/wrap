@@ -334,7 +334,7 @@ bool is_any( char const *s, char const *const matches[] );
  * @param s The null-terminated string to check.
  * @return Returns \c true only if \a s is a blank line.
  */
-W_UTIL_INLINE W_WARN_UNUSED_RESULT
+W_WARN_UNUSED_RESULT W_UTIL_INLINE
 bool is_blank_line( char const *s ) {
   SKIP_CHARS( s, WS_STRN );
   return *s == '\0';
@@ -346,7 +346,7 @@ bool is_blank_line( char const *s ) {
  * @param s The null-terminated string to check.
  * @return Returns \c true only if \a s contains only digits.
  */
-W_UTIL_INLINE W_WARN_UNUSED_RESULT
+W_WARN_UNUSED_RESULT W_UTIL_INLINE
 bool is_digits( char const *s ) {
   return s[ strspn( s, "0123456789" ) ] == '\0';
 }
@@ -357,7 +357,7 @@ bool is_digits( char const *s ) {
  * @param c The character to check.
  * @return Returns \c true only if it is.
  */
-W_UTIL_INLINE W_WARN_UNUSED_RESULT
+W_WARN_UNUSED_RESULT W_UTIL_INLINE
 bool is_eol( char c ) {
   return c == '\n' || c == '\r';
 }
@@ -369,7 +369,7 @@ bool is_eol( char c ) {
  * @param c The character to check.
  * @return Returns \c true only if \a c is a space or a tab.
  */
-W_UTIL_INLINE W_WARN_UNUSED_RESULT
+W_WARN_UNUSED_RESULT W_UTIL_INLINE
 bool is_space( char c ) {
   return c == ' ' || c == '\t';
 }
@@ -382,7 +382,7 @@ bool is_space( char c ) {
  * @param buf_len The length of \a buf.
  * @return Returns \c true only if \a buf ends with \c {CR}{LF}.
  */
-W_UTIL_INLINE W_WARN_UNUSED_RESULT
+W_WARN_UNUSED_RESULT W_UTIL_INLINE
 bool is_windows_eol( char const buf[], size_t buf_len ) {
   return buf_len >= 2 && buf[ buf_len - 2 ] == '\r';
 }
@@ -441,7 +441,7 @@ size_t strrspn( char const *s, char const *set );
  * to \c false.
  * @return Returns \c true only if \c *flag is \c true.
  */
-W_UTIL_INLINE W_WARN_UNUSED_RESULT
+W_WARN_UNUSED_RESULT W_UTIL_INLINE
 bool true_reset( bool *flag ) {
   return *flag && !(*flag = false);
 }

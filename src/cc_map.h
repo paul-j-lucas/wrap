@@ -66,7 +66,7 @@ typedef char* cc_map_t[128];
  * @return Returns \c true only if \a cc_map_entry is a single comment
  * delimiter character.
  */
-W_CC_MAP_INLINE W_WARN_UNUSED_RESULT
+W_WARN_UNUSED_RESULT W_CC_MAP_INLINE
 bool cc_is_single( char const *cc_map_entry ) {
   return strchr( cc_map_entry, CC_SINGLE_CHAR ) != NULL;
 }
@@ -90,7 +90,7 @@ char const* cc_map_compile( char const *in_cc );
  * @return Returns said entry or null if \a c is not a comment delimiter
  * character.
  */
-W_CC_MAP_INLINE W_WARN_UNUSED_RESULT
+W_WARN_UNUSED_RESULT W_CC_MAP_INLINE
 char const* cc_map_get( char c ) {
   extern cc_map_t cc_map;
   return cc_map[ (unsigned char)c ];
