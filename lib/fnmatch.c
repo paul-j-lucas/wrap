@@ -1,4 +1,4 @@
-/* Copyright (C) 1991-1993, 1996-2007, 2009-2019 Free Software Foundation, Inc.
+/* Copyright (C) 1991-1993, 1996-2007, 2009-2020 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -63,15 +63,8 @@ extern int fnmatch (const char *pattern, const char *string, int flags);
 # define SIZE_MAX ((size_t) -1)
 #endif
 
+#include "attribute.h"
 #include "flexmember.h"
-
-#ifndef FALLTHROUGH
-# if __GNUC__ < 7
-#  define FALLTHROUGH ((void) 0)
-# else
-#  define FALLTHROUGH __attribute__ ((__fallthrough__))
-# endif
-#endif
 
 /* We often have to test for FNM_FILE_NAME and FNM_PERIOD being both set.  */
 #define NO_LEADING_PERIOD(flags) \

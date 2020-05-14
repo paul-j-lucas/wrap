@@ -1,5 +1,5 @@
-# sys_socket_h.m4 serial 24
-dnl Copyright (C) 2005-2019 Free Software Foundation, Inc.
+# sys_socket_h.m4 serial 25
+dnl Copyright (C) 2005-2020 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -95,6 +95,8 @@ AC_DEFUN([gl_HEADER_SYS_SOCKET],
 #include <sys/socket.h>
     ]], [socket connect accept bind getpeername getsockname getsockopt
     listen recv send recvfrom sendto setsockopt shutdown accept4])
+
+  AC_REQUIRE([AC_C_RESTRICT])
 ])
 
 AC_DEFUN([gl_PREREQ_SYS_H_SOCKET],

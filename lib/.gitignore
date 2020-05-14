@@ -6,8 +6,12 @@
 /fnmatch.h
 /getopt-cdefs.h
 /getopt.h
+/inttypes..h
+/limits.h
+/locale.h
 /stdbool.h
 /stddef.h
+/stdint.h
 /stdlib.h
 /string.h
 /sys
