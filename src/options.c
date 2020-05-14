@@ -426,7 +426,7 @@ static void parse_options( int argc, char const *argv[],
       case 'D': opt_comment_chars     = optarg;                 break;
       case 'e': opt_eos_delimit       = true;                   break;
       case 'E': opt_eos_spaces        = check_atou( optarg );   break;
-      case 'f': opt_fin               = optarg;              // FALLTHROUGH
+      case 'f': opt_fin               = optarg;                 W_FALLTHROUGH;
       case 'F': opt_fin_name          = base_name( optarg );    break;
       case 'h': opt_hang_tabs         = check_atou( optarg );   break;
       case 'H': opt_hang_spaces       = check_atou( optarg );   break;

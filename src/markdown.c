@@ -974,7 +974,7 @@ static char const* skip_html_tag( char const *s, bool *is_end_tag ) {
           if ( *is_end_tag )            // invalid: more than one '/'
             return "";
           *is_end_tag = true;
-          // FALLTHROUGH
+          W_FALLTHROUGH;
         case '>':                       // found closing '>'
           return ++s;
       } // switch
@@ -1284,7 +1284,7 @@ md_state_t const* markdown_parse( char *s ) {
         curr_line_type = MD_UL;
         break;
       }
-      // FALLTHROUGH
+      W_FALLTHROUGH;
 
     // Unordered lists.
     case '*':
