@@ -259,12 +259,13 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   arg_buf_t   arg_opt_para_delims;
   arg_buf_t   arg_opt_tab_spaces;
 
-  int argc = 0;
+  size_t argc = 0;
   char *argv[17];                       // must be +1 of greatest arg below
 
-#define ARG_SET(ARG)          argv[ argc++ ] = (ARG)
-#define ARG_DUP(FMT)          ARG_SET( check_strdup( FMT ) )
-#define ARG_END               argv[ argc ] = NULL
+#define ARG_CHECK                 assert( argc < ARRAY_SIZE( argv ) )
+#define ARG_SET(ARG)              BLOCK( ARG_CHECK; argv[ argc++ ] = (ARG); )
+#define ARG_DUP(FMT)              ARG_SET( check_strdup( FMT ) )
+#define ARG_END                   ARG_SET( NULL )
 
 #define ARG_SPRINTF(ARG,FMT) \
   snprintf( arg_##ARG, sizeof arg_##ARG, (FMT), (ARG) )
@@ -272,8 +273,8 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   BLOCK( ARG_SPRINTF( ARG, (FMT) ); ARG_SET( arg_##ARG ); )
 
 // These intentionally do NOT use BLOCK().
-#define IF_ARG_DUP(ARG,FMT)   if ( ARG ) ARG_DUP( FMT )
-#define IF_ARG_FMT(ARG,FMT)   if ( ARG ) ARG_FMT( ARG, FMT )
+#define IF_ARG_DUP(ARG,FMT)       if ( ARG ) ARG_DUP( FMT )
+#define IF_ARG_FMT(ARG,FMT)       if ( ARG ) ARG_FMT( ARG, FMT )
 
   // Quoting string arguments is unnecessary since no shell is involved.
 
