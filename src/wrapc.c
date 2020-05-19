@@ -439,8 +439,8 @@ static pid_t read_source_write_wrap( void ) {
     if ( opt_doxygen ) {
       char dox_cmd_name[ DOX_CMD_NAME_SIZE_MAX + 1 ];
       if ( dox_parse_cmd_name( line, dox_cmd_name ) ) {
-        static dox_cmd_t const *pre_dox_cmd;
-        if ( pre_dox_cmd == NULL ) {
+        static dox_cmd_t const *prev_dox_cmd;
+        if ( prev_dox_cmd == NULL ) {
           //
           // See if it's a known Doxygen command.
           //
@@ -459,7 +459,7 @@ static pid_t read_source_write_wrap( void ) {
               // encounter the command's corresponding end command.
               //
               WIPC_SEND( fwrap, WIPC_PREFORMATTED_BEGIN );
-              pre_dox_cmd = dox_cmd;
+              prev_dox_cmd = dox_cmd;
             }
             continue;
           }
@@ -471,14 +471,14 @@ static pid_t read_source_write_wrap( void ) {
             //
           }
         }
-        else if ( strcmp( dox_cmd_name, pre_dox_cmd->end_name ) == 0 ) {
+        else if ( strcmp( dox_cmd_name, prev_dox_cmd->end_name ) == 0 ) {
           //
           // We've encountered the previous Doxygen command's corresponding end
           // command: put that line, then tell wrap to resume wrapping.
           //
           W_FPUTS( line, fwrap );
           WIPC_SEND( fwrap, WIPC_PREFORMATTED_END );
-          pre_dox_cmd = NULL;
+          prev_dox_cmd = NULL;
           continue;
         }
         else {
