@@ -74,6 +74,7 @@ static dox_cmd_t const DOX_COMMANDS[] = {
   { "details",          DOX_INIT_PAR,     NULL },
   { "diafile",          DOX_INIT_EOL,     NULL },
   { "dir",              DOX_INIT_EOL,     NULL },
+  { "docbookinclude",   DOX_INIT_EOL,     NULL },
   { "docbookonly",      DOX_INIT_PRE,     "enddocbookonly" },
   { "dontinclude",      DOX_INIT_EOL,     NULL },
   { "dot",              DOX_INIT_PRE,     "enddot" },
@@ -142,6 +143,7 @@ static dox_cmd_t const DOX_COMMANDS[] = {
   { "link",             DOX_INIT_INLINE,  "endlink" },
 
   { "mainpage",         DOX_INIT_EOL,     NULL },
+  { "maninclude",       DOX_INIT_EOL,     NULL },
   { "manonly",          DOX_INIT_PRE,     "endmanonly" },
   { "memberof",         DOX_INIT_EOL,     NULL },
   { "msc",              DOX_INIT_PRE,     "endmsc" },
@@ -227,6 +229,7 @@ static dox_cmd_t const DOX_COMMANDS[] = {
   { "warning",          DOX_INIT_PAR,     NULL },
   { "weakgroup",        DOX_INIT_EOL,     NULL },
 
+  { "xmlinclude",       DOX_INIT_EOL,     NULL },
   { "xmlonly",          DOX_INIT_PRE,     "endxml" },
   { "xrefitem",         DOX_INIT_PAR,     NULL },
 

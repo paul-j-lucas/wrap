@@ -1,9 +1,15 @@
 Wrap NEWS -- history of user-visible changes.
 
-Copyright (C) 1996-2019 Paul J. Lucas.
+Copyright (C) 1996-2020 Paul J. Lucas.
 See the end of the file for license conditions.
 
 -------------------------------------------------------------------------------
+
+* Changes in Wrap 5.5
+
+** Added support for docbookinclude, maninclude, and xmlinclude
+Added support for these for Doxygen 1.8.18.
+
 
 * Changes in Wrap 5.4.1
 
