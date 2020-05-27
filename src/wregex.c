@@ -92,7 +92,7 @@ int regex_compile( wregex_t *re, char const *pattern ) {
 char const* regex_error( wregex_t *re, int err_code ) {
   assert( re != NULL );
   static char err_buf[ 128 ];
-  C_IGNORE_RV( regerror( err_code, re, err_buf, sizeof err_buf ) );
+  W_IGNORE_RV( regerror( err_code, re, err_buf, sizeof err_buf ) );
   return err_buf;
 }
 
