@@ -993,7 +993,7 @@ static void usage( void ) {
 "  --block-regex=REGEX    (-b)  Block leading regular expression.\n"
 "  --config=FILE          (-c)  The configuration file [default: ~/%s].\n"
 "  --dot-ignore           (-d)  Do not alter lines that begin with '.' (dot).\n"
-"  --eol=CHAR             (-l)\n"
+"  --eol=STR              (-l)\n"
 "      Set line-endings as input/Unix/Windows [default: input].\n"
 "  --eos-delimit          (-e)\n"
 "      Treat whitespace after end-of-sentence as a paragraph delimiter.\n"

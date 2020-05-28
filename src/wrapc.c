@@ -1183,7 +1183,7 @@ static void usage( void ) {
 "  --comment-chars=STR    (-D)  Comment delimiter characters.\n"
 "  --config=FILE          (-c)  The configuration file [default: ~/%s].\n"
 "  --doxygen              (-x)  Format Doxygen.\n"
-"  --eol=CHAR             (-l)\n"
+"  --eol=STR              (-l)\n"
 "      Set line-endings as input/Unix/Windows [default: input].\n"
 "  --eos-delimit          (-e)\n"
 "      Treat whitespace after end-of-sentence as a paragraph delimiter.\n"
