@@ -267,10 +267,8 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 #define ARG_DUP(FMT)              ARG_SET( check_strdup( FMT ) )
 #define ARG_END                   ARG_SET( NULL )
 
-#define ARG_SPRINTF(ARG,FMT) \
-  snprintf( arg_##ARG, sizeof arg_##ARG, (FMT), (ARG) )
-#define ARG_FMT(ARG,FMT) \
-  BLOCK( ARG_SPRINTF( ARG, (FMT) ); ARG_SET( arg_##ARG ); )
+#define ARG_FMT(ARG,FMT) BLOCK( \
+  snprintf( arg_##ARG, sizeof arg_##ARG, (FMT), (ARG) ); ARG_SET( arg_##ARG ); )
 
 // These intentionally do NOT use BLOCK().
 #define IF_ARG_DUP(ARG,FMT)       if ( ARG ) ARG_DUP( FMT )
