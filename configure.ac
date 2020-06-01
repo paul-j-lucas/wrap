@@ -97,6 +97,7 @@ AC_LANG(C)
 AX_C___ATTRIBUTE__
 
 # Compiler warnings.
+AX_CFLAGS_WARN_ALL
 AX_CFLAGS_GCC_OPTION([-Wcast-align])
 AX_CFLAGS_GCC_OPTION([-Wcomma])
 AX_CFLAGS_GCC_OPTION([-Wconditional-type-mismatch])
