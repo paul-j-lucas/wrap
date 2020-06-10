@@ -130,7 +130,7 @@ int main( int argc, char const *argv[] ) {
   regex_free( &re );
 
   W_FERROR( fin );
-  (void)fclose( fin );
+  W_IGNORE_RV( fclose( fin ) );
 
   printf( "%u mismatches\n", mismatches );
   exit( mismatches > 0 ? EX_SOFTWARE : EX_OK );

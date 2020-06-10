@@ -158,15 +158,15 @@ static char* trim_ws( char *s ) {
 ////////// extern functions ///////////////////////////////////////////////////
 
 char const* read_conf( char const *conf_file ) {
-  static char conf_path_buf[ PATH_MAX ];
-  bool const explicit_conf_file = (conf_file != NULL);
+  bool const is_explicit_conf_file = (conf_file != NULL);
 
   section_t section = SECTION_NONE;     // section we're in
 
-  if ( conf_file == NULL ) {            // no explicit conf file: use default
+  if ( !is_explicit_conf_file ) {       // no explicit conf file: use default
     char const *const home = home_dir();
     if ( home == NULL )
       return NULL;
+    static char conf_path_buf[ PATH_MAX ];
     strcpy( conf_path_buf, home );
     path_append( conf_path_buf, CONF_FILE_NAME_DEFAULT );
     conf_file = conf_path_buf;
@@ -175,7 +175,7 @@ char const* read_conf( char const *conf_file ) {
   // open configuration file
   FILE *const fconf = fopen( conf_file, "r" );
   if ( fconf == NULL ) {
-    if ( explicit_conf_file )
+    if ( is_explicit_conf_file )
       PMESSAGE_EXIT( EX_NOINPUT, "%s: %s\n", conf_file, STRERROR );
     return NULL;
   }
@@ -224,7 +224,7 @@ char const* read_conf( char const *conf_file ) {
 
   if ( unlikely( ferror( fconf ) ) )
     PMESSAGE_EXIT( EX_IOERR, "%s: %s\n", conf_file, STRERROR );
-  (void)fclose( fconf );
+  W_IGNORE_RV( fclose( fconf ) );
 
 #ifndef NDEBUG
   if ( is_affirmative( getenv( "WRAP_DUMP_CONF" ) ) ) {
