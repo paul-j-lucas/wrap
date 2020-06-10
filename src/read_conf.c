@@ -163,8 +163,7 @@ char const* read_conf( char const *conf_file ) {
 
   section_t section = SECTION_NONE;     // section we're in
 
-  // locate default configuration file
-  if ( conf_file == NULL ) {
+  if ( conf_file == NULL ) {            // no explicit conf file: use default
     char const *const home = home_dir();
     if ( home == NULL )
       return NULL;
