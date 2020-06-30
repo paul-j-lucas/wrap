@@ -76,17 +76,6 @@ HAVE_INCLUDE_NEXT = (__GNUC__ || 60000000 <= __DECC_VER)
 
 ## end   gnulib module absolute-header
 
-## begin gnulib module alloca
-
-
-libgnu_a_LIBADD += @ALLOCA@
-libgnu_a_DEPENDENCIES += @ALLOCA@
-EXTRA_DIST += alloca.c
-
-EXTRA_libgnu_a_SOURCES += alloca.c
-
-## end   gnulib module alloca
-
 ## begin gnulib module alloca-opt
 
 BUILT_SOURCES += $(ALLOCA_H)
@@ -116,6 +105,42 @@ EXTRA_DIST += alloca.in.h
 EXTRA_DIST += attribute.h
 
 ## end   gnulib module attribute
+
+## begin gnulib module btowc
+
+
+EXTRA_DIST += btowc.c
+
+EXTRA_libgnu_a_SOURCES += btowc.c
+
+## end   gnulib module btowc
+
+## begin gnulib module ctype
+
+BUILT_SOURCES += ctype.h
+
+# We need the following in order to create <ctype.h> when the system
+# doesn't have one that works with the given compiler.
+ctype.h: ctype.in.h $(top_builddir)/config.status $(CXXDEFS_H) $(WARN_ON_USE_H)
+	$(AM_V_GEN)rm -f $@-t $@ && \
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  sed -e 's|@''GUARD_PREFIX''@|GL|g' \
+	      -e 's|@''INCLUDE_NEXT''@|$(INCLUDE_NEXT)|g' \
+	      -e 's|@''PRAGMA_SYSTEM_HEADER''@|@PRAGMA_SYSTEM_HEADER@|g' \
+	      -e 's|@''PRAGMA_COLUMNS''@|@PRAGMA_COLUMNS@|g' \
+	      -e 's|@''NEXT_CTYPE_H''@|$(NEXT_CTYPE_H)|g' \
+	      -e 's/@''GNULIB_ISBLANK''@/$(GNULIB_ISBLANK)/g' \
+	      -e 's/@''HAVE_ISBLANK''@/$(HAVE_ISBLANK)/g' \
+	      -e '/definitions of _GL_FUNCDECL_RPL/r $(CXXDEFS_H)' \
+	      -e '/definition of _GL_WARN_ON_USE/r $(WARN_ON_USE_H)' \
+	      < $(srcdir)/ctype.in.h; \
+	} > $@-t && \
+	mv $@-t $@
+MOSTLYCLEANFILES += ctype.h ctype.h-t
+
+EXTRA_DIST += ctype.in.h
+
+## end   gnulib module ctype
 
 ## begin gnulib module errno
 
@@ -302,6 +327,22 @@ EXTRA_DIST += inttypes.in.h
 
 ## end   gnulib module inttypes-incomplete
 
+## begin gnulib module isblank
+
+
+EXTRA_DIST += isblank.c
+
+EXTRA_libgnu_a_SOURCES += isblank.c
+
+## end   gnulib module isblank
+
+## begin gnulib module libc-config
+
+
+EXTRA_DIST += cdefs.h libc-config.h
+
+## end   gnulib module libc-config
+
 ## begin gnulib module limits-h
 
 BUILT_SOURCES += $(LIMITS_H)
@@ -415,6 +456,15 @@ EXTRA_libgnu_a_SOURCES += mbsrtowcs-state.c mbsrtowcs.c
 
 ## end   gnulib module mbsrtowcs
 
+## begin gnulib module mbtowc
+
+
+EXTRA_DIST += mbtowc-impl.h mbtowc.c
+
+EXTRA_libgnu_a_SOURCES += mbtowc.c
+
+## end   gnulib module mbtowc
+
 ## begin gnulib module memchr
 
 
@@ -423,6 +473,15 @@ EXTRA_DIST += memchr.c memchr.valgrind
 EXTRA_libgnu_a_SOURCES += memchr.c
 
 ## end   gnulib module memchr
+
+## begin gnulib module mempcpy
+
+
+EXTRA_DIST += mempcpy.c
+
+EXTRA_libgnu_a_SOURCES += mempcpy.c
+
+## end   gnulib module mempcpy
 
 ## begin gnulib module setlocale-null
 
@@ -956,6 +1015,7 @@ unistd.h: unistd.in.h $(top_builddir)/config.status $(CXXDEFS_H) $(ARG_NONNULL_H
 	      -e 's/@''GNULIB_GETCWD''@/$(GNULIB_GETCWD)/g' \
 	      -e 's/@''GNULIB_GETDOMAINNAME''@/$(GNULIB_GETDOMAINNAME)/g' \
 	      -e 's/@''GNULIB_GETDTABLESIZE''@/$(GNULIB_GETDTABLESIZE)/g' \
+	      -e 's/@''GNULIB_GETENTROPY''@/$(GNULIB_GETENTROPY)/g' \
 	      -e 's/@''GNULIB_GETGROUPS''@/$(GNULIB_GETGROUPS)/g' \
 	      -e 's/@''GNULIB_GETHOSTNAME''@/$(GNULIB_GETHOSTNAME)/g' \
 	      -e 's/@''GNULIB_GETLOGIN''@/$(GNULIB_GETLOGIN)/g' \
@@ -1004,6 +1064,7 @@ unistd.h: unistd.in.h $(top_builddir)/config.status $(CXXDEFS_H) $(ARG_NONNULL_H
 	      -e 's|@''HAVE_FSYNC''@|$(HAVE_FSYNC)|g' \
 	      -e 's|@''HAVE_FTRUNCATE''@|$(HAVE_FTRUNCATE)|g' \
 	      -e 's|@''HAVE_GETDTABLESIZE''@|$(HAVE_GETDTABLESIZE)|g' \
+	      -e 's|@''HAVE_GETENTROPY''@|$(HAVE_GETENTROPY)|g' \
 	      -e 's|@''HAVE_GETGROUPS''@|$(HAVE_GETGROUPS)|g' \
 	      -e 's|@''HAVE_GETHOSTNAME''@|$(HAVE_GETHOSTNAME)|g' \
 	      -e 's|@''HAVE_GETPAGESIZE''@|$(HAVE_GETPAGESIZE)|g' \
@@ -1073,6 +1134,7 @@ unistd.h: unistd.in.h $(top_builddir)/config.status $(CXXDEFS_H) $(ARG_NONNULL_H
 	      -e 's|@''REPLACE_UNLINKAT''@|$(REPLACE_UNLINKAT)|g' \
 	      -e 's|@''REPLACE_USLEEP''@|$(REPLACE_USLEEP)|g' \
 	      -e 's|@''REPLACE_WRITE''@|$(REPLACE_WRITE)|g' \
+	      -e 's|@''UNISTD_H_HAVE_SYS_RANDOM_H''@|$(UNISTD_H_HAVE_SYS_RANDOM_H)|g' \
 	      -e 's|@''UNISTD_H_HAVE_WINSOCK2_H''@|$(UNISTD_H_HAVE_WINSOCK2_H)|g' \
 	      -e 's|@''UNISTD_H_HAVE_WINSOCK2_H_AND_USE_SOCKETS''@|$(UNISTD_H_HAVE_WINSOCK2_H_AND_USE_SOCKETS)|g' \
 	      -e '/definitions of _GL_FUNCDECL_RPL/r $(CXXDEFS_H)' \
@@ -1126,6 +1188,7 @@ wchar.h: wchar.in.h $(top_builddir)/config.status $(CXXDEFS_H) $(ARG_NONNULL_H) 
 	      -e 's/@''GNULIB_WMEMCMP''@/$(GNULIB_WMEMCMP)/g' \
 	      -e 's/@''GNULIB_WMEMCPY''@/$(GNULIB_WMEMCPY)/g' \
 	      -e 's/@''GNULIB_WMEMMOVE''@/$(GNULIB_WMEMMOVE)/g' \
+	      -e 's/@''GNULIB_WMEMPCPY''@/$(GNULIB_WMEMPCPY)/g' \
 	      -e 's/@''GNULIB_WMEMSET''@/$(GNULIB_WMEMSET)/g' \
 	      -e 's/@''GNULIB_WCSLEN''@/$(GNULIB_WCSLEN)/g' \
 	      -e 's/@''GNULIB_WCSNLEN''@/$(GNULIB_WCSNLEN)/g' \
@@ -1166,6 +1229,7 @@ wchar.h: wchar.in.h $(top_builddir)/config.status $(CXXDEFS_H) $(ARG_NONNULL_H) 
 	      -e 's|@''HAVE_WMEMCMP''@|$(HAVE_WMEMCMP)|g' \
 	      -e 's|@''HAVE_WMEMCPY''@|$(HAVE_WMEMCPY)|g' \
 	      -e 's|@''HAVE_WMEMMOVE''@|$(HAVE_WMEMMOVE)|g' \
+	      -e 's|@''HAVE_WMEMPCPY''@|$(HAVE_WMEMPCPY)|g' \
 	      -e 's|@''HAVE_WMEMSET''@|$(HAVE_WMEMSET)|g' \
 	      -e 's|@''HAVE_WCSLEN''@|$(HAVE_WCSLEN)|g' \
 	      -e 's|@''HAVE_WCSNLEN''@|$(HAVE_WCSNLEN)|g' \
@@ -1265,6 +1329,24 @@ MOSTLYCLEANFILES += wctype.h wctype.h-t
 EXTRA_DIST += wctype.in.h
 
 ## end   gnulib module wctype-h
+
+## begin gnulib module wmemchr
+
+
+EXTRA_DIST += wmemchr-impl.h wmemchr.c
+
+EXTRA_libgnu_a_SOURCES += wmemchr.c
+
+## end   gnulib module wmemchr
+
+## begin gnulib module wmempcpy
+
+
+EXTRA_DIST += wmempcpy.c
+
+EXTRA_libgnu_a_SOURCES += wmempcpy.c
+
+## end   gnulib module wmempcpy
 
 
 mostlyclean-local: mostlyclean-generic

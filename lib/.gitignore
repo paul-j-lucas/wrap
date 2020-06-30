@@ -3,6 +3,7 @@
 /alloca.h
 /configmake.h
 /errno.h
+/ctype.h
 /fnmatch.h
 /getopt-cdefs.h
 /getopt.h
