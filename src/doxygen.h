@@ -38,7 +38,7 @@
 
 /**
  * Doxygen command should be at the beginning of a line.  Examples include \c
- * \\copybrief, \c \\copydetails, and \c \\copydoc,
+ * \\copybrief, \c \\copydetails, and \c \\copydoc.
  */
 #define DOX_BOL     (1u << 1)
 

@@ -154,6 +154,7 @@ static dox_cmd_t const DOX_COMMANDS[] = {
   { "namespace",        DOX_INIT_EOL,     NULL },
   { "nosubgrouping",    DOX_INIT_EOL,     NULL },
   { "note",             DOX_INIT_PAR,     NULL },
+
   { "overload",         DOX_INIT_EOL,     NULL },
 
   { "p",                DOX_INIT_INLINE,  NULL },
