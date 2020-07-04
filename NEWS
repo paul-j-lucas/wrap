@@ -5,6 +5,13 @@ See the end of the file for license conditions.
 
 -------------------------------------------------------------------------------
 
+* Changes in Wrap 5.5.1
+
+** Doxygen command maximum length
+Now checking that the length of a prospective Doxygen command does not exceed
+the maximum possible length.
+
+
 * Changes in Wrap 5.5
 
 ** Added support for docbookinclude, maninclude, and xmlinclude

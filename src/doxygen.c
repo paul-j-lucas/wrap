@@ -272,10 +272,12 @@ bool dox_parse_cmd_name( char const *s, char *dox_cmd_name ) {
 
   SKIP_CHARS( s, WS_ST );
   if ( s[0] == '@' || s[0] == '\\' ) {
-    size_t const dox_cmd_name_len = strspn( s + 1, DOX_CMD_CHARS );
-    strncpy( dox_cmd_name, s + 1, dox_cmd_name_len );
-    dox_cmd_name[ dox_cmd_name_len ] = '\0';
-    return true;
+    size_t const len = strspn( s + 1, DOX_CMD_CHARS );
+    if ( len > 0 && len <= DOX_CMD_NAME_SIZE_MAX ) {
+      strncpy( dox_cmd_name, s + 1, len );
+      dox_cmd_name[ len ] = '\0';
+      return true;
+    }
   }
   return false;
 }
