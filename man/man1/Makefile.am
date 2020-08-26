@@ -20,4 +20,10 @@
 
 dist_man1_MANS = wrap.1 wrapc.1
 
+show_wrap:
+	nroff -man wrap.1 | $(PAGER)
+
+show_wrapc:
+	nroff -man -t wrapc.1 | $(PAGER)
+
 # vim:set noet sw=8 ts=8:
