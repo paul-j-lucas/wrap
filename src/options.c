@@ -65,6 +65,7 @@ static char const   COMMENT_CHARS_DEFAULT[] =
   ">"  ","  // Quoted e-mail
   "{"  ","  // Pascal
   "{-" ","  // Haskell
+  "\\" ","  // Forth
   ;
 
 // extern option variables

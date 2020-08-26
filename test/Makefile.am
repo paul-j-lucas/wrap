@@ -300,6 +300,8 @@ TESTS+=	tests/wrapc-01.test \
 	tests/wrapc--COBOL-08.test \
 	tests/wrapc--crlf-01.test \
 	tests/wrapc--D-01.test \
+	tests/wrapc--Forth-01.test \
+	tests/wrapc--Forth-04.test \
 	tests/wrapc--Fortran-01.test \
 	tests/wrapc--Fortran-02.test \
 	tests/wrapc--Fortran-03.test \

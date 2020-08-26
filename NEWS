@@ -5,6 +5,12 @@ See the end of the file for license conditions.
 
 -------------------------------------------------------------------------------
 
+* Changes in Wrap 5.6
+
+** Forth support
+Added support for Forth \ comments.
+
+
 * Changes in Wrap 5.5.1
 
 ** Doxygen command maximum length
