@@ -95,7 +95,7 @@
 /* The __attribute__ feature is available in gcc versions 2.5 and later.
    The attribute __pure__ was added in gcc 2.96.  */
 #ifndef _GL_ATTRIBUTE_PURE
-# if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96)
+# if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96) || defined __clang__
 #  define _GL_ATTRIBUTE_PURE __attribute__ ((__pure__))
 # else
 #  define _GL_ATTRIBUTE_PURE /* empty */
@@ -942,10 +942,18 @@ _GL_WARN_ON_USE (wcsxfrm, "wcsxfrm is unportable - "
 
 /* Duplicate S, returning an identical malloc'd string.  */
 #if @GNULIB_WCSDUP@
-# if !@HAVE_WCSDUP@
+# if defined _WIN32 && !defined __CYGWIN__
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef wcsdup
+#   define wcsdup _wcsdup
+#  endif
+_GL_CXXALIAS_MDA (wcsdup, wchar_t *, (const wchar_t *s));
+# else
+#  if !@HAVE_WCSDUP@
 _GL_FUNCDECL_SYS (wcsdup, wchar_t *, (const wchar_t *s));
-# endif
+#  endif
 _GL_CXXALIAS_SYS (wcsdup, wchar_t *, (const wchar_t *s));
+# endif
 _GL_CXXALIASWARN (wcsdup);
 #elif defined GNULIB_POSIXCHECK
 # undef wcsdup
@@ -953,6 +961,9 @@ _GL_CXXALIASWARN (wcsdup);
 _GL_WARN_ON_USE (wcsdup, "wcsdup is unportable - "
                  "use gnulib module wcsdup for portability");
 # endif
+#elif defined _WIN32 && !defined __CYGWIN__
+# undef wcsdup
+# define wcsdup _wcsdup
 #endif
 
 
