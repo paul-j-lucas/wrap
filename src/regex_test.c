@@ -27,6 +27,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdnoreturn.h>
 #include <string.h>
 #include <sysexits.h>
 
@@ -40,8 +41,7 @@ char const       *me;                   ///< Program name.
 
 ////////// local functions ////////////////////////////////////////////////////
 
-W_NORETURN
-static void usage( void ) {
+static noreturn void usage( void ) {
   PRINT_ERR( "usage: %s test\n", me );
   exit( EX_USAGE );
 }

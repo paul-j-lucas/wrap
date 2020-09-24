@@ -88,11 +88,6 @@
 #endif
 
 /**
- * Denote that a function does not return.
- */
-#define W_NORETURN                __attribute__((noreturn))
-
-/**
  * Denote that a function's return value should never be ignored.
  *
  * @sa #W_NOWARN_UNUSED_RESULT
@@ -104,10 +99,6 @@
 #ifndef W_FALLTHROUGH
 #define W_FALLTHROUGH             ((void)0)
 #endif /* W_FALLTHROUGH */
-
-#ifndef W_NORETURN
-# define W_NORETURN               /* nothing */
-#endif /* W_NORETURN */
 
 #ifndef W_WARN_UNUSED_RESULT
 # define W_WARN_UNUSED_RESULT     /* nothing */

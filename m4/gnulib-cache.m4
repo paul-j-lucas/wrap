@@ -41,6 +41,7 @@
 #  fnmatch \
 #  getopt-gnu \
 #  stdbool \
+#  stdnoreturn \
 #  strdup-posix \
 #  strerror \
 #  strndup \
@@ -53,6 +54,7 @@ gl_MODULES([
   fnmatch
   getopt-gnu
   stdbool
+  stdnoreturn
   strdup-posix
   strerror
   strndup

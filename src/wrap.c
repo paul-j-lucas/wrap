@@ -36,6 +36,7 @@
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit(), ... */
+#include <stdnoreturn.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -982,8 +983,7 @@ static void put_tabs_spaces( size_t tabs, size_t spaces ) {
 /**
  * Prints the usage message to standard error and exits.
  */
-W_NORETURN
-static void usage( void ) {
+static noreturn void usage( void ) {
   printf(
 "usage: " PACKAGE " [options]\n"
 "       " PACKAGE " -v\n"

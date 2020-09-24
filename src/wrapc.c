@@ -38,6 +38,7 @@
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit() */
+#include <stdnoreturn.h>
 #include <string.h>                     /* for str...() */
 #include <sys/wait.h>                   /* for wait() */
 #include <unistd.h>                     /* for close(), fork(), ... */
@@ -1169,8 +1170,7 @@ static size_t str_width( char const *s ) {
 /**
  * Prints the usage message to standard error and exits.
  */
-W_NORETURN
-static void usage( void ) {
+static noreturn void usage( void ) {
   printf(
 "usage: " PACKAGE "c [options]\n"
 "       " PACKAGE "c -v\n"

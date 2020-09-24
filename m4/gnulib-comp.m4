@@ -87,6 +87,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module stddef:
   # Code from module stdint:
   # Code from module stdlib:
+  # Code from module stdnoreturn:
   # Code from module strdup-posix:
   # Code from module streq:
   # Code from module strerror:
@@ -231,6 +232,7 @@ AC_DEFUN([gl_INIT],
   gl_STDDEF_H
   gl_STDINT_H
   gl_STDLIB_H
+  gl_STDNORETURN_H
   gl_FUNC_STRDUP_POSIX
   if test $REPLACE_STRDUP = 1; then
     AC_LIBOBJ([strdup])
@@ -474,6 +476,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stddef.in.h
   lib/stdint.in.h
   lib/stdlib.in.h
+  lib/stdnoreturn.in.h
   lib/strdup.c
   lib/streq.h
   lib/strerror-override.c
@@ -542,6 +545,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/stddef_h.m4
   m4/stdint.m4
   m4/stdlib_h.m4
+  m4/stdnoreturn.m4
   m4/strdup.m4
   m4/strerror.m4
   m4/string_h.m4

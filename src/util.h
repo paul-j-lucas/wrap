@@ -36,6 +36,7 @@
 #include <stdint.h>                     /* for uintptr_t */
 #include <stdio.h>                      /* for FILE */
 #include <stdlib.h>                     /* for exit(3) */
+#include <stdnoreturn.h>
 #include <string.h>                     /* for strspn(3) */
 #include <sysexits.h>
 
@@ -392,8 +393,7 @@ bool is_windows_eol( char const buf[], size_t buf_len ) {
  *
  * @param status The exit status code.
  */
-W_NORETURN
-void perror_exit( int status );
+noreturn void perror_exit( int status );
 
 /**
  * Sets the locale for the \c LC_COLLATE and \c LC_CTYPE categories to UTF-8.
