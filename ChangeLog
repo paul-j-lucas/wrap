@@ -1,3 +1,128 @@
+2020-11-09  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, attribute.h, stdlib.in.h, alloca.m4, extensions.m4,
+     gnulib-common.m4, malloc.m4, mmap-anon.m4, pid_t.m4, stdlib_h.m4,
+     sys_types_h.m4, threadlib.m4, wchar_h.m4: Updated Gnulib.
+
+2020-10-11  Paul J. Lucas <paul@lucasmail.org>
+
+   * ax_append_flag.m4, ax_check_compile_flag.m4: Updated m4 macros.
+
+2020-09-24  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, stdnoreturn.in.h, gnulib-cache.m4, gnulib-comp.m4,
+     stdnoreturn.m4, regex_test.c, util.h, wrap.c, wrap.h, wrapc.c: Now using
+     Gunlib's stdnoreturn.h.
+
+2020-09-23  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, alloca.in.h, arg-nonnull.h, c++defs.h, cdefs.h,
+     fnmatch.c, fnmatch_loop.c, getopt-cdefs.in.h, intprops.h, inttypes.h,
+     inttypes.in.h, stddef.in.h, stdint.in.h, stdlib.in.h, streq.h,
+     string.in.h, unistd.in.h, verify.h, warn-on-use.h, wchar.in.h,
+     00gnulib.m4, absolute-header.m4, alloca.m4, gnulib-common.m4,
+     gnulib-comp.m4, include_next.m4, inttypes.m4, locale-fr.m4, locale-ja.m4,
+     locale-zh.m4, memchr.m4, multiarch.m4, pid_t.m4, setlocale_null.m4,
+     std-gnu11.m4, stddef_h.m4, stdint.m4, strdup.m4, string_h.m4, unistd_h.m4,
+     warn-on-use.m4, wctype_h.m4, wint_t.m4: Updated Gnulib.
+
+2020-08-26  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, wrapc.1, options.c, test/Makefile.am, hello_01.fs,
+     hello_04.fs, wrapc--Forth-01.txt, wrapc--Forth-04.txt,
+     wrapc--Forth-01.test, wrapc--Forth-04.test: Added suppor for Forth \
+     comments.
+   * man/man1/Makefile.am: Added show_wrap and show_wrapc targets.
+
+2020-08-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1: Added mention of Chapel and Dart.
+
+2020-07-04  Paul J. Lucas <paul@lucasmail.org>
+
+   * NEWS, configure.ac, doxygen.c: Now checking that the length of a
+     prospective Doxygen command does not exceed the maximum possible length.
+
+2020-07-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * doxygen.c, doxygen.h: Doxygen fix.
+
+2020-06-30  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, btowc.c, cdefs.h, ctype.in.h, fnmatch.c, fnmatch_loop.c,
+     getopt.c, isblank.c, libc-config.h, mbtowc-impl.h, mbtowc.c, mempcpy.c,
+     unistd.in.h, verify.h, wchar.in.h, wmemchr-impl.h, wmemchr.c, wmempcpy.c,
+     __inline.m4, btowc.m4, ctype.m4, fnmatch.m4, gnulib-comp.m4, isblank.m4,
+     mbtowc.m4, mempcpy.m4, std-gnu11.m4, unistd_h.m4, wchar_h.m4, wmemchr.m4,
+     wmempcpy.m4: Updated Gnulib.
+
+2020-06-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * common.c, read_conf.c, regex_test.c: s/(void)/W_IGNORE_RV()/
+   * read_conf.c: Tweaked comment.
+
+2020-06-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac: Added AX_CFLAGS_WARN_ALL.
+   * wrapc.c: Removed ARG_SPRINTF().
+
+2020-05-28  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c, wrapc.c: s/--eol=CHAR/--eol=STR/
+
+2020-05-26  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c, wrap.h, wrapc.c, wregex.c: s/C_IGNORE_RV/W_IGNORE_RV/
+   * NEWS, configure.ac, doxygen.c: Added support for docbookinclude,
+     maninclude, and xmlinclude.
+
+2020-05-19  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Added assert() for wrap argument count.
+   * wrapc.c: s/pre_dox_cmd/prev_dox_cmd/
+
+2020-05-14  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, _Noreturn.h, alloca.in.h, arg-nonnull.h, attribute.h,
+     c++defs.h, errno.in.h, flexmember.h, fnmatch.c, fnmatch.in.h,
+     fnmatch_loop.c, getopt-cdefs.in.h, getopt-core.h, getopt-ext.h,
+     getopt-pfx-core.h, getopt-pfx-ext.h, getopt.c, getopt.in.h, getopt1.c,
+     getopt_int.h, gettext.h, hard-locale.c, hard-locale.h, intprops.h,
+     inttypes.h, inttypes.in.h, lc-charset-dispatch.c, lc-charset-dispatch.h,
+     limits.in.h, localcharset.c, localcharset.h, locale.in.h, malloc.c,
+     mbrtowc-impl-utf8.h, mbrtowc-impl.h, mbrtowc.c, mbsinit.c,
+     mbsrtowcs-impl.h, mbsrtowcs-state.c, mbsrtowcs.c, mbtowc-lock.c,
+     mbtowc-lock.h, memchr.c, memchr.valgrind, setlocale-lock.c,
+     setlocale_null.c, setlocale_null.h, stdbool.in.h, stddef.in.h,
+     stdint.in.h, stdlib.in.h, strdup.c, streq.h, strerror-override.c,
+     strerror-override.h, strerror.c, string.in.h, strndup.c, strnlen.c,
+     strnlen1.c, strnlen1.h, sys_types.in.h, sysexits.in.h, unistd.in.h,
+     verify.h, warn-on-use.h, wchar.in.h, wctype.in.h, windows-initguard.h,
+     00gnulib.m4, absolute-header.m4, alloca.m4, builtin-expect.m4, codeset.m4,
+     errno_h.m4, extensions.m4, extern-inline.m4, flexmember.m4, fnmatch.m4,
+     fnmatch_h.m4, getopt.m4, gnulib-cache.m4, gnulib-common.m4,
+     gnulib-comp.m4, gnulib-tool.m4, include_next.m4, inttypes.m4, limits-h.m4,
+     localcharset.m4, locale-fr.m4, locale-ja.m4, locale-zh.m4, locale_h.m4,
+     malloc.m4, mbrtowc.m4, mbsinit.m4, mbsrtowcs.m4, mbstate_t.m4, memchr.m4,
+     mmap-anon.m4, multiarch.m4, nocrash.m4, off_t.m4, setlocale_null.m4,
+     ssize_t.m4, stdbool.m4, stddef_h.m4, stdint.m4, stdlib_h.m4, strdup.m4,
+     strerror.m4, string_h.m4, strndup.m4, strnlen.m4, sys_socket_h.m4,
+     sys_types_h.m4, sysexits.m4, threadlib.m4, unistd_h.m4, visibility.m4,
+     warn-on-use.m4, wchar_h.m4, wchar_t.m4, wctype_h.m4, wint_t.m4,
+     zzgnulib.m4: Updated Gnulib.
+   * configure.ac, markdown.c, options.c, unicode.c, wrap.h: Fixed fallthrough
+     warning.
+
+2020-04-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * common.c, read_conf.c, regex_test.c: Added (void).
+   * pjl_check_typedef.m4: Tweaked comment.
+
+2020-04-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac, pjl_compile.m4, wrap.c, wrap.h, wrapc.c, wregex.c: Now using
+     PJL_COMPILE macro.
+
 2020-03-26  Paul J. Lucas <paul@lucasmail.org>
 
    * configure.ac, ax_c___attribute__.m4, alias.c, alias.h, align.c, cc_map.c,
@@ -101,7 +226,6 @@
    * wrap.1: Typo: s/treaded/treated/
    * NEWS, wrap.c, test/Makefile.am, test_08.c, wrapc--C-08.txt,
      wrapc--C-08.test: Fixed additional blank comment line.
-   * wrapc.c: Added comment.
    * wrapc.c: Added comment.
    * util.c: Added unlikely().
    * align.c, doxygen.c, unicode.c, wrap.c, wrapc.c: Added asserts.
