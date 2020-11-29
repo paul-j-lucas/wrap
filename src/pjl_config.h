@@ -1,8 +1,8 @@
 /*
-**      wrap -- text reformatter
-**      src/wrap.h
+**      PJL Library
+**      src/pjl_config.h
 **
-**      Copyright (C) 2018-2019  Paul J. Lucas, et al.
+**      Copyright (C) 2018-2020  Paul J. Lucas, et al.
 **
 **      This program is free software: you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef wrap_wrap_H
-#define wrap_wrap_H
+#ifndef pjl_config_H
+#define pjl_config_H
 
 /**
  * @file
@@ -128,5 +128,5 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#endif /* wrap_wrap_H */
+#endif /* pjl_config_H */
 /* vim:set et sw=2 ts=2: */

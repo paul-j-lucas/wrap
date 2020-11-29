@@ -28,7 +28,7 @@
  */
 
 // local
-#include "wrap.h"                       /* must go first */
+#include "pjl_config.h"                 /* must go first */
 
 // standard
 #include <inttypes.h>                   /* for uint*_t */

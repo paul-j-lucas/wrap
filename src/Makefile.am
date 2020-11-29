@@ -25,13 +25,13 @@ AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_builddir)/lib
 LDADD = $(top_builddir)/lib/libgnu.a
 
 COMMON_SOURCES = \
+	pjl_config.h \
 	alias.c alias.h \
 	common.c common.h \
 	options.c options.h \
 	pattern.c pattern.h \
 	read_conf.c read_conf.h \
-	util.c util.h \
-	wrap.h
+	util.c util.h
 
 wrap_SOURCES = $(COMMON_SOURCES) \
 	markdown.c markdown.h \
@@ -46,10 +46,10 @@ wrapc_SOURCES = $(COMMON_SOURCES) \
 	wrapc.c
 
 regex_test_SOURCES = \
+	pjl_config.h \
 	regex_test.c \
 	unicode.c unicode.h \
 	util.c util.h \
-	wrap.h \
 	wregex.c wregex.h
 
 # vim:set noet sw=8 ts=8:

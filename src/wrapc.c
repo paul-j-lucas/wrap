@@ -19,7 +19,7 @@
 */
 
 // local
-#include "wrap.h"                       /* must go first */
+#include "pjl_config.h"                 /* must go first */
 #include "alias.h"
 #include "cc_map.h"
 #include "common.h"

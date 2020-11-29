@@ -19,7 +19,7 @@
 */
 
 // local
-#include "wrap.h"                       /* must go first */
+#include "pjl_config.h"                 /* must go first */
 #define W_COMMON_INLINE _GL_EXTERN_INLINE
 #include "common.h"
 #include "alias.h"

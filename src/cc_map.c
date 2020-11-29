@@ -19,7 +19,7 @@
 */
 
 // local
-#include "wrap.h"                       /* must go first */
+#include "pjl_config.h"                 /* must go first */
 /// @cond DOXYGEN_IGNORE
 #define W_CC_MAP_INLINE _GL_EXTERN_INLINE
 /// @endcond

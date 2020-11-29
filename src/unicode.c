@@ -19,7 +19,7 @@
 */
 
 // local
-#include "wrap.h"                       /* must go first */
+#include "pjl_config.h"                 /* must go first */
 #define W_UNICODE_INLINE _GL_EXTERN_INLINE
 #include "unicode.h"
 
