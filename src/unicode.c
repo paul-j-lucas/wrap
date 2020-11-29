@@ -60,7 +60,7 @@ char8_t const UTF8_LEN_TABLE[] = {
  * @param cp The Unicode code-point to check.
  * @return Returns \c true only if valid.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static inline bool cp_is_valid( char32_t cp ) {
   return  cp < CP_SURROGATE_HIGH_START
       || (cp > CP_SURROGATE_LOW_END && cp <= CP_VALID_MAX);
@@ -188,11 +188,11 @@ char32_t utf8_decode_impl( char const *s ) {
   char8_t const *c8 = (char8_t const*)s;
 
   switch ( len ) {
-    case 6: cp += *c8++; cp <<= 6; W_FALLTHROUGH;
-    case 5: cp += *c8++; cp <<= 6; W_FALLTHROUGH;
-    case 4: cp += *c8++; cp <<= 6; W_FALLTHROUGH;
-    case 3: cp += *c8++; cp <<= 6; W_FALLTHROUGH;
-    case 2: cp += *c8++; cp <<= 6; W_FALLTHROUGH;
+    case 6: cp += *c8++; cp <<= 6; PJL_FALLTHROUGH;
+    case 5: cp += *c8++; cp <<= 6; PJL_FALLTHROUGH;
+    case 4: cp += *c8++; cp <<= 6; PJL_FALLTHROUGH;
+    case 3: cp += *c8++; cp <<= 6; PJL_FALLTHROUGH;
+    case 2: cp += *c8++; cp <<= 6; PJL_FALLTHROUGH;
     case 1: cp += *c8;
   } // switch
 

@@ -84,25 +84,25 @@
  * Intentionally fall through to the next `switch` `case`.
  */
 #if __has_attribute(fallthrough) || GCC_AT_LEAST_VERSION(7,0)
-#define W_FALLTHROUGH             __attribute__((fallthrough))
+#define PJL_FALLTHROUGH           __attribute__((fallthrough))
 #endif
 
 /**
  * Denote that a function's return value should never be ignored.
  *
- * @sa #W_NOWARN_UNUSED_RESULT
+ * @sa #PJL_NOWARN_UNUSED_RESULT
  */
-#define W_WARN_UNUSED_RESULT      __attribute__((warn_unused_result))
+#define PJL_WARN_UNUSED_RESULT    __attribute__((warn_unused_result))
 
 #endif /* HAVE___ATTRIBUTE__ */
 
-#ifndef W_FALLTHROUGH
-#define W_FALLTHROUGH             ((void)0)
-#endif /* W_FALLTHROUGH */
+#ifndef PJL_FALLTHROUGH
+#define PJL_FALLTHROUGH           ((void)0)
+#endif /* PJL_FALLTHROUGH */
 
-#ifndef W_WARN_UNUSED_RESULT
-# define W_WARN_UNUSED_RESULT     /* nothing */
-#endif /* W_WARN_UNUSED_RESULT */
+#ifndef PJL_WARN_UNUSED_RESULT
+# define PJL_WARN_UNUSED_RESULT   /* nothing */
+#endif /* PJL_WARN_UNUSED_RESULT */
 
 /**
  * Denote that a function's return value may be ignored without warning.
@@ -111,7 +111,7 @@
  * There is no compiler attribute for this.  It's just a visual cue in code
  * that #C_WARN_UNUSED_RESULT wasn't forgotten.
  */
-#define W_NOWARN_UNUSED_RESULT    /* nothing */
+#define PJL_NOWARN_UNUSED_RESULT  /* nothing */
 
 #ifdef HAVE___TYPEOF__
 /**
@@ -120,10 +120,10 @@
  *
  * @param FN_CALL The function call.
  */
-#define W_IGNORE_RV(FN_CALL) \
+#define PJL_IGNORE_RV(FN_CALL) \
   do { __typeof__(FN_CALL) _rv __attribute__((unused)) = (FN_CALL); } while (0)
 #else
-#define W_IGNORE_RV(FN_CALL)      do { (void)(FN_CALL); } while (0)
+#define PJL_IGNORE_RV(FN_CALL)    do { (void)(FN_CALL); } while (0)
 #endif /* HAVE___TYPEOF__ */
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -44,7 +44,7 @@ static int const    WRAP_REGEX_COMPILE_FLAGS = REG_EXTENDED;
  * @param cp The code-point to check.
  * @return Returns \c true only if \a cp is a word code-point.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static inline bool cp_is_word_char( char32_t cp ) {
   return iswalnum( (wint_t)cp ) || cp == '_';
 }
@@ -62,7 +62,7 @@ static inline bool cp_is_word_char( char32_t cp ) {
  * @return Returns \c true only if the character at \a curr is at the beginning
  * of a word.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static bool is_begin_word_boundary( char const *s, char const *curr ) {
   assert( s != NULL );
   assert( curr != NULL );
@@ -92,7 +92,7 @@ int regex_compile( wregex_t *re, char const *pattern ) {
 char const* regex_error( wregex_t *re, int err_code ) {
   assert( re != NULL );
   static char err_buf[ 128 ];
-  W_IGNORE_RV( regerror( err_code, re, err_buf, sizeof err_buf ) );
+  PJL_IGNORE_RV( regerror( err_code, re, err_buf, sizeof err_buf ) );
   return err_buf;
 }
 

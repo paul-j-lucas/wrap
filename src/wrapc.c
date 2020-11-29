@@ -125,39 +125,39 @@ static void         chop_suffix( char* );
 static void         fork_exec_wrap( pid_t );
 static void         init( int, char const*[] );
 
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static bool         is_block_comment( char const* );
 
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static char const*  is_line_comment( char const* );
 
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static char const*  is_terminated_comment( char* );
 
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static size_t       prefix_span( char const* );
 
 static void         read_prototype( void );
 
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static pid_t        read_source_write_wrap( void );
 
 static void         read_wrap( void );
 static void         set_prefix( char const*, size_t );
 
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static char*        skip_c( char*, char );
 
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static char*        skip_n( char*, size_t );
 
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static size_t       strlen_no_eol( char const* );
 
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static char const*  str_status( int );
 
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static size_t       str_width( char const* );
 
 static void         usage( void );
@@ -170,8 +170,8 @@ static void         wrapc_cleanup( void );
  * Closes both ends of a pipe.
  */
 static inline void close_pipe( int pipe[2] ) {
-  W_IGNORE_RV( close( pipe[ STDIN_FILENO ] ) );
-  W_IGNORE_RV( close( pipe[ STDOUT_FILENO ] ) );
+  PJL_IGNORE_RV( close( pipe[ STDIN_FILENO ] ) );
+  PJL_IGNORE_RV( close( pipe[ STDOUT_FILENO ] ) );
 }
 
 /**
@@ -180,7 +180,7 @@ static inline void close_pipe( int pipe[2] ) {
  * @param c The character to check.
  * @return Returns \c true only if it is.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static inline bool is_comment_char( char c ) {
   return c != '\0' && strchr( opt_comment_chars, c ) != NULL;
 }
@@ -193,7 +193,7 @@ static inline bool is_comment_char( char c ) {
  * @return Returns a pointer to the first non-whitespace character in \a s only
  * if it's a comment delimiter character; NULL otherwise.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static inline char const* is_line_comment( char const *s ) {
   return is_comment_char( SKIP_CHARS( s, WS_ST )[0] ) ? s : NULL;
 }
@@ -314,7 +314,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
  *
  * @return Returns the child's process ID.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static pid_t read_source_write_wrap( void ) {
 #ifndef DEBUG_RSWW
   pid_t const pid = fork();
@@ -360,7 +360,7 @@ static pid_t read_source_write_wrap( void ) {
     //
     // In order to know when a comment ends, we have to peek at the next line.
     //
-    W_IGNORE_RV( check_readline( NEXT, fin ) );
+    PJL_IGNORE_RV( check_readline( NEXT, fin ) );
 
     if ( proto_is_comment && is_line_comment( CURR ) == NULL ) {
       //
@@ -761,7 +761,7 @@ static void init( int argc, char const *argv[] ) {
  * @param s The string to check.
  * @return Returns \c true only if \a s is the beginning of a block comment.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static bool is_block_comment( char const *s ) {
   assert( s != NULL );
   if ( (s = is_line_comment( s )) != NULL ) {
@@ -787,7 +787,7 @@ static bool is_block_comment( char const *s ) {
  * @return Returns a pointer to the start of the terminating comment delimiter
  * or null if it's not a terminated comment.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static char const* is_terminated_comment( char *s ) {
   assert( s != NULL );
   char const *cc = NULL;
@@ -893,7 +893,7 @@ static char const* is_terminated_comment( char *s ) {
  * @param s The string to span.
  * @return Returns the length of the prototype.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static size_t prefix_span( char const *s ) {
   assert( s != NULL );
   size_t ws_len = strspn( s, WS_ST );
@@ -1038,7 +1038,7 @@ static void read_prototype( void ) {
     // + The first line should not be altered.
     // + The second line becomes the prototype.
     //
-    W_IGNORE_RV( check_readline( NEXT, fin ) );
+    PJL_IGNORE_RV( check_readline( NEXT, fin ) );
     proto = NEXT;
   }
 
@@ -1086,7 +1086,7 @@ static void set_prefix( char const *prefix, size_t len ) {
  * @return Returns a pointer within \a s just past the last consecutive
  * occurrence of \a c.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static char* skip_c( char *s, char c ) {
   assert( s != NULL );
   for ( ; *s == c; ++s )
@@ -1101,7 +1101,7 @@ static char* skip_c( char *s, char c ) {
  * @param n The maximum number of characters to skip.
  * @return Returns either \a s+n or a pointer to an end-of-line character.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static char* skip_n( char *s, size_t n ) {
   assert( s != NULL );
   for ( ; *s != '\0' && !is_eol( *s ) && n > 0; ++s, --n )
@@ -1116,7 +1116,7 @@ static char* skip_n( char *s, size_t n ) {
  * @param s The null-terminated string to get the length of.
  * @return Returns said length.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static size_t strlen_no_eol( char const *s ) {
   assert( s != NULL );
   size_t n = strlen( s );
@@ -1132,7 +1132,7 @@ static size_t strlen_no_eol( char const *s ) {
  * @param status The exit status to get the text for.
  * @return Returns said text or "unknown status."
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static char const* str_status( int status ) {
   switch ( status ) {
     case /*  0 */ EX_OK         : return "success";
@@ -1158,7 +1158,7 @@ static char const* str_status( int status ) {
  * @param s The null-terminated string to calculate the width of.
  * @return Returns said width.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static size_t str_width( char const *s ) {
   assert( s != NULL );
   size_t width = 0;

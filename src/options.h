@@ -101,7 +101,7 @@ extern FILE        *fout;               ///< File out.
  * @param buf_size The size of \a buf.
  * @return Returns \a buf.
  */
-W_NOWARN_UNUSED_RESULT
+PJL_NOWARN_UNUSED_RESULT
 char* format_opt( char short_opt, char buf[], size_t buf_size );
 
 /**

@@ -49,7 +49,7 @@ static pattern_t   *patterns = NULL;    // global list of patterns
  *
  * @return Returns a new, uninitialzed pattern.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static pattern_t* pattern_alloc( void ) {
   static size_t n_patterns_alloc = 0;   // number of patterns allocated
 

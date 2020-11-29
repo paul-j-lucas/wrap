@@ -113,7 +113,7 @@ static bool         is_wrapc;           // are we wrapc?
 static char         opts_given[ 128 ];
 
 // local functions
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static unsigned     parse_width( char const* );
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -256,7 +256,7 @@ static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
  * @param short_opt The short option to get the corresponding long option for.
  * @return Returns the said option or the empty string if none.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static char const* get_long_opt( char short_opt ) {
   for ( struct option const *long_opt = LONG_OPTS[ is_wrapc ];
         long_opt->name != NULL;
@@ -276,7 +276,7 @@ static char const* get_long_opt( char short_opt ) {
  * character specification is given.
  * @return Returns the alignment column.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static unsigned parse_align( char const *s, char *align_char ) {
   assert( s != NULL );
   assert( align_char != NULL );
@@ -322,7 +322,7 @@ error:
  * @return Returns the corresponding \c eol_t
  * or prints an error message and exits if \a s is invalid.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static eol_t parse_eol( char const *s ) {
   struct eol_map {
     char const *em_name;
@@ -427,7 +427,7 @@ static void parse_options( int argc, char const *argv[],
       case 'D': opt_comment_chars     = optarg;                 break;
       case 'e': opt_eos_delimit       = true;                   break;
       case 'E': opt_eos_spaces        = check_atou( optarg );   break;
-      case 'f': opt_fin               = optarg;                 W_FALLTHROUGH;
+      case 'f': opt_fin               = optarg;                 PJL_FALLTHROUGH;
       case 'F': opt_fin_name          = base_name( optarg );    break;
       case 'h': opt_hang_tabs         = check_atou( optarg );   break;
       case 'H': opt_hang_spaces       = check_atou( optarg );   break;
@@ -482,7 +482,7 @@ static void parse_options( int argc, char const *argv[],
  * @return Returns the width value
  * or prints an error message and exits if \a s is invalid.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 static unsigned parse_width( char const *s ) {
 #ifdef WITH_WIDTH_TERM
   static char const *const TERM[] = {

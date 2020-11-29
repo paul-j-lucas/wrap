@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      src/read_conf.h
 **
-**      Copyright (C) 2013-2019  Paul J. Lucas
+**      Copyright (C) 2013-2020  Paul J. Lucas
 **
 **      This program is free software: you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@
  * Declares the function to read wrap configuration files.
  */
 
+#include "pjl_config.h"                 /* must go first */
+
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
@@ -38,7 +40,7 @@
  * @return Returns the full-path of the configuration file that was read or
  * NULL if none.
  */
-W_WARN_UNUSED_RESULT
+PJL_WARN_UNUSED_RESULT
 char const* read_conf( char const *conf_file );
 
 ///////////////////////////////////////////////////////////////////////////////

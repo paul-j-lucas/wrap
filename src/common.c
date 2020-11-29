@@ -45,9 +45,9 @@ void common_cleanup( void ) {
   free_now();
   pattern_cleanup();
   if ( fin != NULL )
-    W_IGNORE_RV( fclose( fin ) );
+    PJL_IGNORE_RV( fclose( fin ) );
   if ( fout != NULL )
-    W_IGNORE_RV( fclose( fout ) );
+    PJL_IGNORE_RV( fclose( fout ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
