@@ -31,16 +31,20 @@
 #include "wrap.h"                       /* must go first */
 
 // standard
-#include <inttypes.h>                   /* for uint8_t */
+#include <inttypes.h>                   /* for uint*_t */
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
 #include <string.h>                     /* for memmove(3) */
+#if HAVE_CHAR8_T || HAVE_CHAR32_T
+#include <uchar.h>
+#endif /* HAVE_CHAR8_T || HAVE_CHAR32_T */
 #include <wctype.h>
 
-#if HAVE_CHAR32_T
-#include <uchar.h>
-#else
-typedef uint32_t char32_t;
+#if !HAVE_CHAR8_T
+typedef uint8_t char8_t;                /* borrowed from C++20 */
+#endif /* !HAVE_CHAR8_T */
+#if !HAVE_CHAR32_T
+typedef uint32_t char32_t;              /* C11's char32_t */
 #endif /* !HAVE_CHAR32_T */
 
 _GL_INLINE_HEADER_BEGIN
@@ -159,7 +163,7 @@ bool cp_is_space( char32_t cp ) {
 W_WARN_UNUSED_RESULT W_UNICODE_INLINE
 char32_t utf8_decode( char const *s ) {
   extern char32_t utf8_decode_impl( char const* );
-  char32_t const cp = (uint8_t)*s;
+  char32_t const cp = (char8_t)*s;
   return cp_is_ascii( cp ) ? cp : utf8_decode_impl( s );
 }
 
@@ -173,8 +177,8 @@ char32_t utf8_decode( char const *s ) {
  */
 W_WARN_UNUSED_RESULT W_UNICODE_INLINE
 bool utf8_is_cont( char c ) {
-  uint8_t const u = (uint8_t)c;
-  return u >= 0x80 && u < 0xC0;
+  char8_t const c8 = (char8_t)c;
+  return c8 >= 0x80 && c8 < 0xC0;
 }
 
 /**
@@ -187,8 +191,8 @@ bool utf8_is_cont( char c ) {
  */
 W_WARN_UNUSED_RESULT W_UNICODE_INLINE
 bool utf8_is_start( char c ) {
-  uint8_t const u = (uint8_t)c;
-  return u <= 0x7F || (u >= 0xC2 && u < 0xFE);
+  char8_t const c8 = (char8_t)c;
+  return c8 <= 0x7F || (c8 >= 0xC2 && c8 < 0xFE);
 }
 
 /**
@@ -200,8 +204,8 @@ bool utf8_is_start( char c ) {
  */
 W_WARN_UNUSED_RESULT W_UNICODE_INLINE
 size_t utf8_len( char c ) {
-  extern uint8_t const UTF8_LEN_TABLE[];
-  return (size_t)UTF8_LEN_TABLE[ (uint8_t)c ];
+  extern char8_t const UTF8_LEN_TABLE[];
+  return (size_t)UTF8_LEN_TABLE[ (char8_t)c ];
 }
 
 /**
@@ -233,7 +237,7 @@ size_t utf8_copy_char( char *dest, char const *src ) {
 W_WARN_UNUSED_RESULT W_UNICODE_INLINE
 char const* utf8_rsync( char const *buf, char const *pos ) {
   extern char const* utf8_rsync_impl( char const*, char const* );
-  char32_t const cp = (uint8_t)*pos;
+  char32_t const cp = (char8_t)*pos;
   return cp_is_ascii( cp ) ? pos : utf8_rsync_impl( buf, pos );
 }
 

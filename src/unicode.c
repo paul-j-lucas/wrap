@@ -32,7 +32,7 @@ static char32_t const CP_SURROGATE_HIGH_START = 0x00D800u;
 static char32_t const CP_SURROGATE_LOW_END    = 0x00DFFFu;
 static char32_t const CP_VALID_MAX            = 0x10FFFFu;
 
-uint8_t const UTF8_LEN_TABLE[] = {
+char8_t const UTF8_LEN_TABLE[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
   /* 0 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
   /* 1 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -185,15 +185,15 @@ char32_t utf8_decode_impl( char const *s ) {
   assert( len >= 1 );
 
   char32_t cp = 0;
-  uint8_t const *u = (uint8_t const*)s;
+  char8_t const *c8 = (char8_t const*)s;
 
   switch ( len ) {
-    case 6: cp += *u++; cp <<= 6; W_FALLTHROUGH;
-    case 5: cp += *u++; cp <<= 6; W_FALLTHROUGH;
-    case 4: cp += *u++; cp <<= 6; W_FALLTHROUGH;
-    case 3: cp += *u++; cp <<= 6; W_FALLTHROUGH;
-    case 2: cp += *u++; cp <<= 6; W_FALLTHROUGH;
-    case 1: cp += *u;
+    case 6: cp += *c8++; cp <<= 6; W_FALLTHROUGH;
+    case 5: cp += *c8++; cp <<= 6; W_FALLTHROUGH;
+    case 4: cp += *c8++; cp <<= 6; W_FALLTHROUGH;
+    case 3: cp += *c8++; cp <<= 6; W_FALLTHROUGH;
+    case 2: cp += *c8++; cp <<= 6; W_FALLTHROUGH;
+    case 1: cp += *c8;
   } // switch
 
   static char32_t const OFFSET_TABLE[] = {
