@@ -127,7 +127,7 @@
 #define PJL_IGNORE_RV(FN_CALL) \
   do { __typeof__(FN_CALL) _rv __attribute__((unused)) = (FN_CALL); } while (0)
 #else
-#define PJL_IGNORE_RV(FN_CALL)    do { (void)(FN_CALL); } while (0)
+#define PJL_IGNORE_RV(FN_CALL)    ((void)(FN_CALL))
 #endif /* HAVE___TYPEOF__ */
 
 ///////////////////////////////////////////////////////////////////////////////
