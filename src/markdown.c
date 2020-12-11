@@ -20,9 +20,9 @@
 
 // local
 #include "pjl_config.h"                 /* must go first */
-#include "options.h"
 #include "markdown.h"
 #include "common.h"
+#include "options.h"
 #include "util.h"
 
 // standard
