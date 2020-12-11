@@ -44,7 +44,7 @@
 
 /**
  * Doxygen command continues until the end of the line.  Examples include \c
- * \\def, \c \\hideinitializer, and \c \\mainpage.
+ * \\def, \c \\hideinitializer, and \c \\sa.
  */
 #define DOX_EOL     (1u << 2)
 

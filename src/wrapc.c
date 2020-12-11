@@ -448,9 +448,20 @@ static pid_t read_source_write_wrap( void ) {
           if ( dox_cmd != NULL ) {
             if ( (dox_cmd->type & DOX_BOL) != 0 )
               WIPC_SEND( fwrap, WIPC_DELIMIT_PARAGRAPH );
+
+            if ( (dox_cmd->type & DOX_EOL) != 0 ) {
+              //
+              // The Doxygen command continues until the end of the line: treat
+              // it as preformatted.
+              //
+              WIPC_SEND( fwrap, WIPC_PREFORMATTED_BEGIN );
+            }
+
             W_FPUTS( line, fwrap );
+
             if ( (dox_cmd->type & DOX_EOL) != 0 )
-              WIPC_SEND( fwrap, WIPC_DELIMIT_PARAGRAPH );
+              WIPC_SEND( fwrap, WIPC_PREFORMATTED_END );
+
             if ( (dox_cmd->type & DOX_PRE) != 0 ) {
               //
               // The Doxygen command is for a block of preformatted text (e.g.,
@@ -461,6 +472,7 @@ static pid_t read_source_write_wrap( void ) {
               WIPC_SEND( fwrap, WIPC_PREFORMATTED_BEGIN );
               prev_dox_cmd = dox_cmd;
             }
+
             continue;
           }
           else {
