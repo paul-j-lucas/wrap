@@ -22,4 +22,8 @@ ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = m4/gnulib-cache.m4 README.md
 SUBDIRS = lib src man test
 
+update-gnulib:
+	gnulib-tool --add-import
+	rm -f m4/.gitignore
+
 # vim:set noet sw=8 ts=8:
