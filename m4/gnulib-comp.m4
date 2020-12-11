@@ -59,6 +59,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module getopt-posix:
   # Code from module gettext-h:
   # Code from module hard-locale:
+  # Code from module idx:
   # Code from module include_next:
   # Code from module intprops:
   # Code from module inttypes-incomplete:
@@ -444,6 +445,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gettext.h
   lib/hard-locale.c
   lib/hard-locale.h
+  lib/idx.h
   lib/intprops.h
   lib/inttypes.in.h
   lib/isblank.c
