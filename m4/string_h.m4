@@ -1,11 +1,11 @@
 # Configure a GNU-like replacement for <string.h>.
 
-# Copyright (C) 2007-2020 Free Software Foundation, Inc.
+# Copyright (C) 2007-2021 Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 27
+# serial 29
 
 # Written by Paul Eggert.
 
@@ -86,6 +86,9 @@ AC_DEFUN([gl_HEADER_STRING_H_DEFAULTS],
   GNULIB_STRSIGNAL=0;        AC_SUBST([GNULIB_STRSIGNAL])
   GNULIB_STRVERSCMP=0;       AC_SUBST([GNULIB_STRVERSCMP])
   HAVE_MBSLEN=0;             AC_SUBST([HAVE_MBSLEN])
+  dnl Support Microsoft deprecated alias function names by default.
+  GNULIB_MDA_MEMCCPY=1;      AC_SUBST([GNULIB_MDA_MEMCCPY])
+  GNULIB_MDA_STRDUP=1;       AC_SUBST([GNULIB_MDA_STRDUP])
   dnl Assume proper GNU behavior unless another module says otherwise.
   HAVE_EXPLICIT_BZERO=1;        AC_SUBST([HAVE_EXPLICIT_BZERO])
   HAVE_FFSL=1;                  AC_SUBST([HAVE_FFSL])
@@ -110,6 +113,7 @@ AC_DEFUN([gl_HEADER_STRING_H_DEFAULTS],
   HAVE_SIGDESCR_NP=1;           AC_SUBST([HAVE_SIGDESCR_NP])
   HAVE_DECL_STRSIGNAL=1;        AC_SUBST([HAVE_DECL_STRSIGNAL])
   HAVE_STRVERSCMP=1;            AC_SUBST([HAVE_STRVERSCMP])
+  REPLACE_FFSLL=0;              AC_SUBST([REPLACE_FFSLL])
   REPLACE_MEMCHR=0;             AC_SUBST([REPLACE_MEMCHR])
   REPLACE_MEMMEM=0;             AC_SUBST([REPLACE_MEMMEM])
   REPLACE_STPNCPY=0;            AC_SUBST([REPLACE_STPNCPY])

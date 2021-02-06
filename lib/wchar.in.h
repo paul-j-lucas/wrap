@@ -1,6 +1,6 @@
 /* A substitute for ISO C99 <wchar.h>, for platforms that have issues.
 
-   Copyright (C) 2007-2020 Free Software Foundation, Inc.
+   Copyright (C) 2007-2021 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -953,7 +953,7 @@ _GL_CXXALIASWARN (wcsdup);
 _GL_WARN_ON_USE (wcsdup, "wcsdup is unportable - "
                  "use gnulib module wcsdup for portability");
 # endif
-#else
+#elif @GNULIB_MDA_WCSDUP@
 /* On native Windows, map 'wcsdup' to '_wcsdup', so that -loldnames is not
    required.  In C++ with GNULIB_NAMESPACE, avoid differences between
    platforms by defining GNULIB_NAMESPACE::wcsdup always.  */

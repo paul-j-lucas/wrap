@@ -1,7 +1,7 @@
-# serial 21  -*- Autoconf -*-
+# serial 22  -*- Autoconf -*-
 # Enable extensions on systems that normally disable them.
 
-# Copyright (C) 2003, 2006-2020 Free Software Foundation, Inc.
+# Copyright (C) 2003, 2006-2021 Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -212,4 +212,16 @@ dnl it should only be defined when necessary.
 AC_DEFUN_ONCE([gl_USE_SYSTEM_EXTENSIONS],
 [
   AC_REQUIRE([AC_USE_SYSTEM_EXTENSIONS])
+
+  dnl On OpenBSD 6.8 with GCC, the include files contain a couple of
+  dnl definitions that are only activated with an explicit -D_ISOC11_SOURCE.
+  dnl That's because this version of GCC (4.2.1) supports the option
+  dnl '-std=gnu99' but not the option '-std=gnu11'.
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  case "$host_os" in
+    openbsd*)
+      AC_DEFINE([_ISOC11_SOURCE], [1],
+        [Define to enable the declarations of ISO C 11 types and functions.])
+      ;;
+  esac
 ])

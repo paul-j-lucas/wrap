@@ -1,13 +1,13 @@
 dnl A placeholder for ISO C99 <wchar.h>, for platforms that have issues.
 
-dnl Copyright (C) 2007-2020 Free Software Foundation, Inc.
+dnl Copyright (C) 2007-2021 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
 
 dnl Written by Eric Blake.
 
-# wchar_h.m4 serial 49
+# wchar_h.m4 serial 50
 
 AC_DEFUN([gl_WCHAR_H],
 [
@@ -177,6 +177,8 @@ AC_DEFUN([gl_WCHAR_H_DEFAULTS],
   GNULIB_WCSTOK=0;      AC_SUBST([GNULIB_WCSTOK])
   GNULIB_WCSWIDTH=0;    AC_SUBST([GNULIB_WCSWIDTH])
   GNULIB_WCSFTIME=0;    AC_SUBST([GNULIB_WCSFTIME])
+  dnl Support Microsoft deprecated alias function names by default.
+  GNULIB_MDA_WCSDUP=1;  AC_SUBST([GNULIB_MDA_WCSDUP])
   dnl Assume proper GNU behavior unless another module says otherwise.
   HAVE_BTOWC=1;         AC_SUBST([HAVE_BTOWC])
   HAVE_MBSINIT=1;       AC_SUBST([HAVE_MBSINIT])

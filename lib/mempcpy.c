@@ -1,5 +1,5 @@
 /* Copy memory area and return pointer after last written byte.
-   Copyright (C) 2003, 2007, 2009-2020 Free Software Foundation, Inc.
+   Copyright (C) 2003, 2007, 2009-2021 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,6 +19,9 @@
 /* Specification.  */
 #include <string.h>
 
+/* A function definition is only needed if HAVE_MEMPCPY is not defined.  */
+#if !HAVE_MEMPCPY
+
 /* Copy N bytes of SRC to DEST, return pointer to bytes after the
    last written byte.  */
 void *
@@ -26,3 +29,5 @@ mempcpy (void *dest, const void *src, size_t n)
 {
   return (char *) memcpy (dest, src, n) + n;
 }
+
+#endif

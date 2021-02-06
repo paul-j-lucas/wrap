@@ -1,6 +1,6 @@
 /* A GNU-like <string.h>.
 
-   Copyright (C) 1995-1996, 2001-2020 Free Software Foundation, Inc.
+   Copyright (C) 1995-1996, 2001-2021 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -69,6 +69,14 @@
 # include <unistd.h>
 #endif
 
+/* AIX 7.2 declares ffsl and ffsll in <strings.h>, not in <string.h>.  */
+/* But in any case avoid namespace pollution on glibc systems.  */
+#if ((@GNULIB_FFSL@ || @GNULIB_FFSLL@ || defined GNULIB_POSIXCHECK) \
+     && defined _AIX) \
+    && ! defined __GLIBC__
+# include <strings.h>
+#endif
+
 /* The definitions of _GL_FUNCDECL_RPL etc. are copied here.  */
 
 /* The definition of _GL_ARG_NONNULL is copied here.  */
@@ -110,10 +118,18 @@ _GL_WARN_ON_USE (ffsl, "ffsl is not portable - use the ffsl module");
 
 /* Find the index of the least-significant set bit.  */
 #if @GNULIB_FFSLL@
-# if !@HAVE_FFSLL@
+# if @REPLACE_FFSLL@
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   define ffsll rpl_ffsll
+#  endif
+_GL_FUNCDECL_RPL (ffsll, int, (long long int i));
+_GL_CXXALIAS_RPL (ffsll, int, (long long int i));
+# else
+#  if !@HAVE_FFSLL@
 _GL_FUNCDECL_SYS (ffsll, int, (long long int i));
-# endif
+#  endif
 _GL_CXXALIAS_SYS (ffsll, int, (long long int i));
+# endif
 _GL_CXXALIASWARN (ffsll);
 #elif defined GNULIB_POSIXCHECK
 # undef ffsll
@@ -123,21 +139,23 @@ _GL_WARN_ON_USE (ffsll, "ffsll is not portable - use the ffsll module");
 #endif
 
 
+#if @GNULIB_MDA_MEMCCPY@
 /* On native Windows, map 'memccpy' to '_memccpy', so that -loldnames is not
    required.  In C++ with GNULIB_NAMESPACE, avoid differences between
    platforms by defining GNULIB_NAMESPACE::memccpy always.  */
-#if defined _WIN32 && !defined __CYGWIN__
-# if !(defined __cplusplus && defined GNULIB_NAMESPACE)
-#  undef memccpy
-#  define memccpy _memccpy
-# endif
+# if defined _WIN32 && !defined __CYGWIN__
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef memccpy
+#   define memccpy _memccpy
+#  endif
 _GL_CXXALIAS_MDA (memccpy, void *,
                   (void *dest, const void *src, int c, size_t n));
-#else
+# else
 _GL_CXXALIAS_SYS (memccpy, void *,
                   (void *dest, const void *src, int c, size_t n));
-#endif
+# endif
 _GL_CXXALIASWARN (memccpy);
+#endif
 
 
 /* Return the first instance of C within N bytes of S, or NULL.  */
@@ -425,7 +443,7 @@ _GL_CXXALIASWARN (strdup);
 _GL_WARN_ON_USE (strdup, "strdup is unportable - "
                  "use gnulib module strdup for portability");
 # endif
-#else
+#elif @GNULIB_MDA_STRDUP@
 /* On native Windows, map 'creat' to '_creat', so that -loldnames is not
    required.  In C++ with GNULIB_NAMESPACE, avoid differences between
    platforms by defining GNULIB_NAMESPACE::creat always.  */
