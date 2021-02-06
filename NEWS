@@ -5,6 +5,12 @@ See the end of the file for license conditions.
 
 -------------------------------------------------------------------------------
 
+* Changes in Wrap 5.6.2
+
+** `AX_CHECK_COMPILE_FLAG`
+Replaced used of `AX_CFLAGS_GCC_OPTION` with `AX_CHECK_COMPILE_FLAG`.
+
+
 * Changes in Wrap 5.6.1
 
 ** Doxygen EOL command change
