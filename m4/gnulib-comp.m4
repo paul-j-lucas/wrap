@@ -105,6 +105,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module wctype-h:
   # Code from module wmemchr:
   # Code from module wmempcpy:
+  # Code from module xalloc-oversized:
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -121,6 +122,8 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl_LIBSOURCES]))
   m4_pushdef([gl_LIBSOURCES_LIST], [])
   m4_pushdef([gl_LIBSOURCES_DIR], [])
+  m4_pushdef([GL_MACRO_PREFIX], [gl])
+  m4_pushdef([GL_MODULE_INDICATOR_PREFIX], [GL])
   gl_COMMON
   gl_source_base='lib'
   gl_FUNC_ALLOCA
@@ -132,6 +135,7 @@ AC_DEFUN([gl_INIT],
   gl_WCHAR_MODULE_INDICATOR([btowc])
   gl___BUILTIN_EXPECT
   gl_CTYPE_H
+  gl_CTYPE_H_REQUIRE_DEFAULTS
   gl_HEADER_ERRNO_H
   AC_REQUIRE([gl_EXTERN_INLINE])
   AC_C_FLEXIBLE_ARRAY_MEMBER
@@ -142,6 +146,7 @@ AC_DEFUN([gl_INIT],
   fi
   gl_FNMATCH_MODULE_INDICATOR([fnmatch])
   gl_FNMATCH_H
+  gl_FNMATCH_H_REQUIRE_DEFAULTS
   gl_FUNC_GETOPT_GNU
   dnl Because of the way gl_FUNC_GETOPT_GNU is implemented (the gl_getopt_required
   dnl mechanism), there is no need to do any AC_LIBOBJ or AC_SUBST here; they are
@@ -161,6 +166,7 @@ AC_DEFUN([gl_INIT],
   LIB_HARD_LOCALE="$LIB_SETLOCALE_NULL"
   AC_SUBST([LIB_HARD_LOCALE])
   gl_INTTYPES_INCOMPLETE
+  gl_INTTYPES_H_REQUIRE_DEFAULTS
   gl_FUNC_ISBLANK
   if test $HAVE_ISBLANK = 0; then
     AC_LIBOBJ([isblank])
@@ -174,12 +180,12 @@ AC_DEFUN([gl_INIT],
   LOCALCHARSET_TESTS_ENVIRONMENT=
   AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
   gl_LOCALE_H
-  gl_FUNC_MALLOC_POSIX
+  gl_LOCALE_H_REQUIRE_DEFAULTS
+  AC_REQUIRE([gl_FUNC_MALLOC_POSIX])
   if test $REPLACE_MALLOC = 1; then
     AC_LIBOBJ([malloc])
   fi
   gl_STDLIB_MODULE_INDICATOR([malloc-posix])
-  gl_MODULE_INDICATOR([malloc-posix])
   gl_FUNC_MBRTOWC
   if test $HAVE_MBRTOWC = 0 || test $REPLACE_MBRTOWC = 1; then
     AC_LIBOBJ([mbrtowc])
@@ -232,8 +238,10 @@ AC_DEFUN([gl_INIT],
   gt_TYPE_SSIZE_T
   AM_STDBOOL_H
   gl_STDDEF_H
+  gl_STDDEF_H_REQUIRE_DEFAULTS
   gl_STDINT_H
   gl_STDLIB_H
+  gl_STDLIB_H_REQUIRE_DEFAULTS
   gl_STDNORETURN_H
   gl_FUNC_STRDUP_POSIX
   if test $REPLACE_STRDUP = 1; then
@@ -253,7 +261,8 @@ AC_DEFUN([gl_INIT],
     AC_LIBOBJ([strerror-override])
     gl_PREREQ_SYS_H_WINSOCK2
   fi
-  gl_HEADER_STRING_H
+  gl_STRING_H
+  gl_STRING_H_REQUIRE_DEFAULTS
   gl_FUNC_STRNDUP
   if test $HAVE_STRNDUP = 0 || test $REPLACE_STRNDUP = 1; then
     AC_LIBOBJ([strndup])
@@ -266,11 +275,15 @@ AC_DEFUN([gl_INIT],
   fi
   gl_STRING_MODULE_INDICATOR([strnlen])
   gl_SYS_TYPES_H
+  gl_SYS_TYPES_H_REQUIRE_DEFAULTS
   AC_PROG_MKDIR_P
   gl_SYSEXITS
   gl_UNISTD_H
+  gl_UNISTD_H_REQUIRE_DEFAULTS
   gl_WCHAR_H
+  gl_WCHAR_H_REQUIRE_DEFAULTS
   gl_WCTYPE_H
+  gl_WCTYPE_H_REQUIRE_DEFAULTS
   gl_FUNC_WMEMCHR
   if test $HAVE_WMEMCHR = 0; then
     AC_LIBOBJ([wmemchr])
@@ -293,6 +306,8 @@ AC_DEFUN([gl_INIT],
       m4_if(m4_sysval, [0], [],
         [AC_FATAL([expected source file, required through AC_LIBSOURCES, not found])])
   ])
+  m4_popdef([GL_MODULE_INDICATOR_PREFIX])
+  m4_popdef([GL_MACRO_PREFIX])
   m4_popdef([gl_LIBSOURCES_DIR])
   m4_popdef([gl_LIBSOURCES_LIST])
   m4_popdef([AC_LIBSOURCES])
@@ -319,6 +334,8 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([AC_LIBSOURCES], m4_defn([gltests_LIBSOURCES]))
   m4_pushdef([gltests_LIBSOURCES_LIST], [])
   m4_pushdef([gltests_LIBSOURCES_DIR], [])
+  m4_pushdef([GL_MACRO_PREFIX], [gltests])
+  m4_pushdef([GL_MODULE_INDICATOR_PREFIX], [GL])
   gl_COMMON
   gl_source_base='tests'
 changequote(,)dnl
@@ -339,6 +356,8 @@ changequote([, ])dnl
       m4_if(m4_sysval, [0], [],
         [AC_FATAL([expected source file, required through AC_LIBSOURCES, not found])])
   ])
+  m4_popdef([GL_MODULE_INDICATOR_PREFIX])
+  m4_popdef([GL_MACRO_PREFIX])
   m4_popdef([gltests_LIBSOURCES_DIR])
   m4_popdef([gltests_LIBSOURCES_LIST])
   m4_popdef([AC_LIBSOURCES])
@@ -503,6 +522,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/wmemchr-impl.h
   lib/wmemchr.c
   lib/wmempcpy.c
+  lib/xalloc-oversized.h
   m4/00gnulib.m4
   m4/__inline.m4
   m4/absolute-header.m4
@@ -510,7 +530,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/btowc.m4
   m4/builtin-expect.m4
   m4/codeset.m4
-  m4/ctype.m4
+  m4/ctype_h.m4
   m4/errno_h.m4
   m4/extensions.m4
   m4/extern-inline.m4
