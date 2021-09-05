@@ -241,7 +241,7 @@ static dox_cmd_t const DOX_COMMANDS[] = {
 ////////// local functions ////////////////////////////////////////////////////
 
 /**
- * Comparison function for bin_search that compares a string key against an
+ * Comparison function for bsearch(3) that compares a string key against an
  * element of array of dox_cmd_t.
  *
  * @param key A pointer to the string being searched for.
@@ -251,7 +251,7 @@ static dox_cmd_t const DOX_COMMANDS[] = {
  * respectively.
  */
 PJL_WARN_UNUSED_RESULT
-static int bin_search_str_dox_cmp( void const *key, void const *elt ) {
+static int bsearch_str_dox_cmp( void const *key, void const *elt ) {
   char const *const s_key = REINTERPRET_CAST( char const*, key );
   dox_cmd_t const *const dox_elt = REINTERPRET_CAST( dox_cmd_t const*, elt );
   return strcmp( s_key, dox_elt->name );
@@ -260,9 +260,9 @@ static int bin_search_str_dox_cmp( void const *key, void const *elt ) {
 ////////// extern functions ///////////////////////////////////////////////////
 
 dox_cmd_t const* dox_find_cmd( char const *s ) {
-  return bin_search(
+  return bsearch(
     s, DOX_COMMANDS, ARRAY_SIZE( DOX_COMMANDS ),
-    sizeof( dox_cmd_t ), &bin_search_str_dox_cmp
+    sizeof( dox_cmd_t ), &bsearch_str_dox_cmp
   );
 }
 

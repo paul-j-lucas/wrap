@@ -75,29 +75,7 @@ char const* base_name( char const *path_name ) {
   return path_name;
 }
 
-void const* bin_search( void const *key, void const *elt_base,
-                        size_t elt_count, size_t elt_size,
-                        int (*elt_cmp)( void const*, void const* ) ) {
-  assert( key != NULL );
-  assert( elt_base != NULL );
-  assert( elt_size != 0 );
-  assert( elt_cmp != NULL );
-
-  while ( elt_count > 0 ) {
-    void const *const elt_curr = elt_base + (elt_count >> 1) * elt_size;
-    int const cmp = (*elt_cmp)( key, elt_curr );
-    if ( cmp == 0 )
-      return elt_curr;
-    if ( cmp > 0 ) {
-      elt_base = elt_curr + elt_size;
-      --elt_count;
-    }
-    elt_count >>= 1;
-  } // while
-  return NULL;
-}
-
-int bin_search_str_strptr_cmp( void const *key, void const *str_ptr ) {
+int bsearch_str_strptr_cmp( void const *key, void const *str_ptr ) {
   char const *const s_key = REINTERPRET_CAST( char const*, key );
   char const *const s_elt = *REINTERPRET_CAST( char const**, str_ptr );
   return strcmp( s_key, s_elt );

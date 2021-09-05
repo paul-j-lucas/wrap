@@ -161,9 +161,9 @@ static char const*  skip_html_tag( char const*, bool* );
  */
 PJL_WARN_UNUSED_RESULT
 static inline bool is_html_block_element( char const *s ) {
-  return NULL != bin_search(
+  return NULL != bsearch(
     s, HTML_BLOCK_ELEMENT, ARRAY_SIZE( HTML_BLOCK_ELEMENT ),
-    sizeof(char const*), &bin_search_str_strptr_cmp
+    sizeof(char const*), &bsearch_str_strptr_cmp
   );
 }
 
