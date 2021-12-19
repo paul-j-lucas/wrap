@@ -1,3 +1,46 @@
+2021-12-19  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, _Noreturn.h, attribute.h, cdefs.h, getopt.c, gettext.h,
+     idx.h, intprops.h, libc-config.h, limits.in.h, stdlib.in.h, string.in.h,
+     verify.h, wchar.in.h, extern-inline.m4, gnulib-common.m4, gnulib-comp.m4,
+     limits-h.m4, string_h.m4, threadlib.m4, vararrays.m4, wchar_h.m4: Updated
+     Gnulib.
+
+2021-09-04  Paul J. Lucas <paul@lucasmail.org>
+
+   * doxygen.c, markdown.c, util.c, util.h: Replaced bin_search() with standard
+     bsearch(3).
+
+2021-08-06  Paul J. Lucas <paul@lucasmail.org>
+
+   * run_test.sh: Now distinguishing failed from error.
+
+2021-07-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * strerror-override.c, strerror-override.h, unistd.in.h: Updated GnuLib.
+
+2021-06-15  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, _Noreturn.h, alloca.in.h, arg-nonnull.h, attribute.h,
+     btowc.c, c++defs.h, cdefs.h, ctype.in.h, errno.in.h, flexmember.h,
+     fnmatch.c, fnmatch.in.h, fnmatch_loop.c, getopt-cdefs.in.h, getopt-core.h,
+     getopt-ext.h, getopt-pfx-core.h, getopt-pfx-ext.h, getopt.c, getopt.in.h,
+     getopt1.c, getopt_int.h, gettext.h, hard-locale.c, hard-locale.h, idx.h,
+     intprops.h, inttypes.h, inttypes.in.h, isblank.c, lc-charset-dispatch.c,
+     lc-charset-dispatch.h, libc-config.h, limits.in.h, localcharset.c,
+     localcharset.h, locale.in.h, malloc.c, mbrtowc-impl-utf8.h,
+     mbrtowc-impl.h, mbrtowc.c, mbsinit.c, mbsrtowcs-impl.h, mbsrtowcs-state.c,
+     mbsrtowcs.c, mbtowc-impl.h, mbtowc-lock.c, mbtowc-lock.h, mbtowc.c,
+     memchr.c, memchr.valgrind, mempcpy.c, setlocale-lock.c, setlocale_null.c,
+     setlocale_null.h, stdbool.in.h, stddef.in.h, stdint.in.h, stdlib.in.h,
+     stdnoreturn.in.h, strdup.c, streq.h, strerror-override.c,
+     strerror-override.h, strerror.c, string.in.h, strndup.c, strnlen.c,
+     strnlen1.c, strnlen1.h, sys_types.in.h, sysexits.in.h, unistd.c,
+     unistd.in.h, verify.h, warn-on-use.h, wchar.in.h, wctype-h.c, wctype.in.h,
+     windows-initguard.h, wmemchr-impl.h, wmemchr.c, wmempcpy.c,
+     xalloc-oversized.h, gnulib-common.m4, gnulib-comp.m4, malloc.m4,
+     unistd_h.m4, visibility.m4: Updated GnuLib.
+
 2021-04-27  Paul J. Lucas <paul@lucasmail.org>
 
    * lib/Makefile.am, cdefs.h, libc-config.h, malloc.c, stdlib.in.h,
