@@ -61,6 +61,7 @@ static dox_cmd_t const DOX_COMMANDS[] = {
   { "cite",             DOX_INIT_EOL,     NULL },
   { "class",            DOX_INIT_EOL,     NULL },
   { "code",             DOX_INIT_PRE,     "endcode" },
+  { "concept",          DOX_INIT_EOL,     NULL },
   { "cond",             DOX_INIT_PAR,     "endcond" },
   { "copybrief",        DOX_INIT_BOL,     NULL },
   { "copydetails",      DOX_INIT_BOL,     NULL },
