@@ -52,16 +52,6 @@
 # include <wchar.h>
 #endif
 
-/* The __attribute__ feature is available in gcc versions 2.5 and later.
-   The attribute __pure__ was added in gcc 2.96.  */
-#ifndef _GL_ATTRIBUTE_PURE
-# if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96) || defined __clang__
-#  define _GL_ATTRIBUTE_PURE __attribute__ ((__pure__))
-# else
-#  define _GL_ATTRIBUTE_PURE /* empty */
-# endif
-#endif
-
 /* NetBSD 5.0 declares strsignal in <unistd.h>, not in <string.h>.  */
 /* But in any case avoid namespace pollution on glibc systems.  */
 #if (@GNULIB_STRSIGNAL@ || defined GNULIB_POSIXCHECK) && defined __NetBSD__ \
@@ -77,12 +67,60 @@
 # include <strings.h>
 #endif
 
+/* _GL_ATTRIBUTE_DEALLOC (F, I) declares that the function returns pointers
+   that can be freed by passing them as the Ith argument to the
+   function F.  */
+#ifndef _GL_ATTRIBUTE_DEALLOC
+# if __GNUC__ >= 11
+#  define _GL_ATTRIBUTE_DEALLOC(f, i) __attribute__ ((__malloc__ (f, i)))
+# else
+#  define _GL_ATTRIBUTE_DEALLOC(f, i)
+# endif
+#endif
+
+/* _GL_ATTRIBUTE_DEALLOC_FREE declares that the function returns pointers that
+   can be freed via 'free'; it can be used only after declaring 'free'.  */
+/* Applies to: functions.  Cannot be used on inline functions.  */
+#ifndef _GL_ATTRIBUTE_DEALLOC_FREE
+# define _GL_ATTRIBUTE_DEALLOC_FREE _GL_ATTRIBUTE_DEALLOC (free, 1)
+#endif
+
+/* _GL_ATTRIBUTE_MALLOC declares that the function returns a pointer to freshly
+   allocated memory.  */
+/* Applies to: functions.  */
+#ifndef _GL_ATTRIBUTE_MALLOC
+# if __GNUC__ >= 3 || defined __clang__
+#  define _GL_ATTRIBUTE_MALLOC __attribute__ ((__malloc__))
+# else
+#  define _GL_ATTRIBUTE_MALLOC
+# endif
+#endif
+
+/* The __attribute__ feature is available in gcc versions 2.5 and later.
+   The attribute __pure__ was added in gcc 2.96.  */
+#ifndef _GL_ATTRIBUTE_PURE
+# if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96) || defined __clang__
+#  define _GL_ATTRIBUTE_PURE __attribute__ ((__pure__))
+# else
+#  define _GL_ATTRIBUTE_PURE /* empty */
+# endif
+#endif
+
 /* The definitions of _GL_FUNCDECL_RPL etc. are copied here.  */
 
 /* The definition of _GL_ARG_NONNULL is copied here.  */
 
 /* The definition of _GL_WARN_ON_USE is copied here.  */
 
+/* Declare 'free' if needed for _GL_ATTRIBUTE_DEALLOC_FREE.  */
+_GL_EXTERN_C void free (void *);
+#if @GNULIB_FREE_POSIX@
+# if (@REPLACE_FREE@ && !defined free \
+      && !(defined __cplusplus && defined GNULIB_NAMESPACE))
+#  define free rpl_free
+_GL_EXTERN_C void free (void *);
+# endif
+#endif
 
 /* Clear a block of memory.  The compiler will not delete a call to
    this function, even if the block is dead after the call.  */
@@ -418,7 +456,10 @@ _GL_WARN_ON_USE (strchrnul, "strchrnul is unportable - "
 #   undef strdup
 #   define strdup rpl_strdup
 #  endif
-_GL_FUNCDECL_RPL (strdup, char *, (char const *__s) _GL_ARG_NONNULL ((1)));
+_GL_FUNCDECL_RPL (strdup, char *,
+                  (char const *__s)
+                  _GL_ARG_NONNULL ((1))
+                  _GL_ATTRIBUTE_MALLOC _GL_ATTRIBUTE_DEALLOC_FREE);
 _GL_CXXALIAS_RPL (strdup, char *, (char const *__s));
 # elif defined _WIN32 && !defined __CYGWIN__
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
@@ -431,35 +472,47 @@ _GL_CXXALIAS_MDA (strdup, char *, (char const *__s));
     /* strdup exists as a function and as a macro.  Get rid of the macro.  */
 #   undef strdup
 #  endif
-#  if !(@HAVE_DECL_STRDUP@ || defined strdup)
-_GL_FUNCDECL_SYS (strdup, char *, (char const *__s) _GL_ARG_NONNULL ((1)));
+#  if (!@HAVE_DECL_STRDUP@ || __GNUC__ >= 11) && !defined strdup
+_GL_FUNCDECL_SYS (strdup, char *,
+                  (char const *__s)
+                  _GL_ARG_NONNULL ((1))
+                  _GL_ATTRIBUTE_MALLOC _GL_ATTRIBUTE_DEALLOC_FREE);
 #  endif
 _GL_CXXALIAS_SYS (strdup, char *, (char const *__s));
 # endif
 _GL_CXXALIASWARN (strdup);
-#elif defined GNULIB_POSIXCHECK
-# undef strdup
-# if HAVE_RAW_DECL_STRDUP
+#else
+# if __GNUC__ >= 11 && !defined strdup
+/* For -Wmismatched-dealloc: Associate strdup with free or rpl_free.  */
+_GL_FUNCDECL_SYS (strdup, char *,
+                  (char const *__s)
+                  _GL_ARG_NONNULL ((1))
+                  _GL_ATTRIBUTE_MALLOC _GL_ATTRIBUTE_DEALLOC_FREE);
+# endif
+# if defined GNULIB_POSIXCHECK
+#  undef strdup
+#  if HAVE_RAW_DECL_STRDUP
 _GL_WARN_ON_USE (strdup, "strdup is unportable - "
                  "use gnulib module strdup for portability");
-# endif
-#elif @GNULIB_MDA_STRDUP@
+#  endif
+# elif @GNULIB_MDA_STRDUP@
 /* On native Windows, map 'creat' to '_creat', so that -loldnames is not
    required.  In C++ with GNULIB_NAMESPACE, avoid differences between
    platforms by defining GNULIB_NAMESPACE::strdup always.  */
-# if defined _WIN32 && !defined __CYGWIN__
-#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
-#   undef strdup
-#   define strdup _strdup
-#  endif
+#  if defined _WIN32 && !defined __CYGWIN__
+#   if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#    undef strdup
+#    define strdup _strdup
+#   endif
 _GL_CXXALIAS_MDA (strdup, char *, (char const *__s));
-# else
-#  if defined __cplusplus && defined GNULIB_NAMESPACE && defined strdup
-#   undef strdup
-#  endif
+#  else
+#   if defined __cplusplus && defined GNULIB_NAMESPACE && defined strdup
+#    undef strdup
+#   endif
 _GL_CXXALIAS_SYS (strdup, char *, (char const *__s));
-# endif
+#  endif
 _GL_CXXALIASWARN (strdup);
+# endif
 #endif
 
 /* Append no more than N characters from SRC onto DEST.  */
