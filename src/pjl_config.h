@@ -31,6 +31,8 @@
 #error "Must #include pjl_config.h instead."
 #endif
 
+#include <attribute.h>
+
 ///////////////////////////////////////////////////////////////////////////////
 
 /// @cond DOXYGEN_IGNORE
@@ -69,58 +71,21 @@
 // local
 #include "config.h"                     /* must go first */
 
-#ifndef __has_attribute
-# define __has_attribute(X)       0
-#endif
-
-#if defined(__GNUC__) && !(defined(__clang__) || defined(__INTEL_COMPILER))
-# define GCC_AT_LEAST_VERSION(MAJOR,MINOR) \
-    (__GNUC__ > (MAJOR) || (__GNUC__ == (MAJOR) && __GNUC_MINOR__ >= (MINOR)))
-#else
-# define GCC_AT_LEAST_VERSION(MAJOR,MINOR) 0
-#endif
-
 ////////// compiler attributes ////////////////////////////////////////////////
-
-#ifdef HAVE___ATTRIBUTE__
-
-/**
- * Intentionally fall through to the next `switch` `case`.
- */
-#if __has_attribute(fallthrough) || GCC_AT_LEAST_VERSION(7,0)
-#define PJL_FALLTHROUGH           __attribute__((fallthrough))
-#endif
-
-/**
- * Denote that a function's return value should never be ignored.
- *
- * @sa #PJL_NOWARN_UNUSED_RESULT
- */
-#define PJL_WARN_UNUSED_RESULT    __attribute__((warn_unused_result))
-
-#endif /* HAVE___ATTRIBUTE__ */
-
-#ifndef PJL_FALLTHROUGH
-#define PJL_FALLTHROUGH           ((void)0)
-#endif /* PJL_FALLTHROUGH */
-
-#ifndef PJL_WARN_UNUSED_RESULT
-# define PJL_WARN_UNUSED_RESULT   /* nothing */
-#endif /* PJL_WARN_UNUSED_RESULT */
 
 /**
  * Denote that a function's return value may be ignored without warning.
  *
  * @note
  * There is no compiler attribute for this.  It's just a visual cue in code
- * that #C_WARN_UNUSED_RESULT wasn't forgotten.
+ * that #NODISCARD wasn't forgotten.
  */
-#define PJL_NOWARN_UNUSED_RESULT  /* nothing */
+#define PJL_DISCARD               /* nothing */
 
 #ifdef HAVE___TYPEOF__
 /**
  * Ignore the return value of a function even if it was declared with
- * #C_WARN_UNUSED_RESULT.
+ * `NODISCARD`.
  *
  * @param FN_CALL The function call.
  */

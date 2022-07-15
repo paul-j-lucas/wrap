@@ -133,7 +133,7 @@ typedef regex_t wregex_t;
  * @param pattern The regular expression pattern to compile.
  * @return Returns 0 on success or non-zero for an invalid \a pattern.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 int regex_compile( wregex_t *re, char const *pattern );
 
 /**
@@ -143,7 +143,7 @@ int regex_compile( wregex_t *re, char const *pattern );
  * @param err_code The error code.
  * @return Returns a pointer to a static buffer containing the error message.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 char const* regex_error( wregex_t *re, int err_code );
 
 /**
@@ -165,7 +165,7 @@ void regex_free( wregex_t *re );
  * and there was a match.
  * @return Returns \c true only if there was a match.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 bool regex_match( wregex_t *re, char const *s, size_t offset,
                   size_t *range );
 

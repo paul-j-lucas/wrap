@@ -170,7 +170,7 @@ extern char const  *me;                 ///< Program name.
  * If \a path_name consists entirely of '/' characters,
  * a pointer to the string "/" is returned.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 char const* base_name( char const *path_name );
 
 /**
@@ -183,7 +183,7 @@ char const* base_name( char const *path_name );
  * @return Returns an integer less than zero, zero, or greater thatn zero if
  * the key is less than, equal to, or greater than the element, respectively.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 int bsearch_str_strptr_cmp( void const *key, void const *str_ptr );
 
 /**
@@ -194,7 +194,7 @@ int bsearch_str_strptr_cmp( void const *key, void const *str_ptr );
  * @param s The string to convert.
  * @return Returns the unsigned integer.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 unsigned check_atou( char const *s );
 
 /**
@@ -205,7 +205,7 @@ unsigned check_atou( char const *s );
  * @param size The number of bytes to allocate.
  * @return Returns a pointer to the allocated memory.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 void* check_realloc( void *p, size_t size );
 
 /**
@@ -215,7 +215,7 @@ void* check_realloc( void *p, size_t size );
  * @param s The null-terminated string to duplicate.
  * @return Returns a copy of \a s.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 char* check_strdup( char const *s );
 
 /**
@@ -225,7 +225,7 @@ char* check_strdup( char const *s );
  * @param s_len The length of \a s.
  * @return Returns the new length of \a s.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 size_t chop_eol( char *s, size_t s_len );
 
 /**
@@ -234,7 +234,7 @@ size_t chop_eol( char *s, size_t s_len );
  * @param c The "opening" character.
  * @return Returns said "closing" character or the null byte if none.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 char closing_char( char c );
 
 /**
@@ -256,7 +256,7 @@ void fcopy( FILE *ffrom, FILE *fto );
  * @return Returns \a buf if any characters have been read or NULL on either
  * EOF or error.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 char* fgetsz( char *buf, size_t *size, FILE *ffrom );
 
 /**
@@ -265,7 +265,7 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom );
  * @param p The pointer to add.
  * @return Returns \a p.
  */
-PJL_NOWARN_UNUSED_RESULT
+PJL_DISCARD
 void* free_later( void *p );
 
 /**
@@ -279,7 +279,7 @@ void free_now( void );
  *
  * @return Returns said number of columns or 0 if it can not be determined.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 unsigned get_term_columns( void );
 #endif /* WITH_WIDTH_TERM */
 
@@ -291,7 +291,7 @@ unsigned get_term_columns( void );
  * @param s The null-terminated string to check or null.
  * @return Returns \c true only if \a s is affirmative.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 bool is_affirmative( char const *s );
 #endif /* NDEBUG */
 
@@ -302,7 +302,7 @@ bool is_affirmative( char const *s );
  * @param matches The null-terminated array of values to check against.
  * @return Returns \c true only if \a s is among \a matches.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 bool is_any( char const *s, char const *const matches[] );
 
 /**
@@ -312,7 +312,7 @@ bool is_any( char const *s, char const *const matches[] );
  * @param s The null-terminated string to check.
  * @return Returns \c true only if \a s is a blank line.
  */
-PJL_WARN_UNUSED_RESULT W_UTIL_INLINE
+NODISCARD W_UTIL_INLINE
 bool is_blank_line( char const *s ) {
   SKIP_CHARS( s, WS_STRN );
   return *s == '\0';
@@ -324,7 +324,7 @@ bool is_blank_line( char const *s ) {
  * @param s The null-terminated string to check.
  * @return Returns \c true only if \a s contains only digits.
  */
-PJL_WARN_UNUSED_RESULT W_UTIL_INLINE
+NODISCARD W_UTIL_INLINE
 bool is_digits( char const *s ) {
   return s[ strspn( s, "0123456789" ) ] == '\0';
 }
@@ -335,7 +335,7 @@ bool is_digits( char const *s ) {
  * @param c The character to check.
  * @return Returns \c true only if it is.
  */
-PJL_WARN_UNUSED_RESULT W_UTIL_INLINE
+NODISCARD W_UTIL_INLINE
 bool is_eol( char c ) {
   return c == '\n' || c == '\r';
 }
@@ -347,7 +347,7 @@ bool is_eol( char c ) {
  * @param c The character to check.
  * @return Returns \c true only if \a c is a space or a tab.
  */
-PJL_WARN_UNUSED_RESULT W_UTIL_INLINE
+NODISCARD W_UTIL_INLINE
 bool is_space( char c ) {
   return c == ' ' || c == '\t';
 }
@@ -360,7 +360,7 @@ bool is_space( char c ) {
  * @param buf_len The length of \a buf.
  * @return Returns \c true only if \a buf ends with \c {CR}{LF}.
  */
-PJL_WARN_UNUSED_RESULT W_UTIL_INLINE
+NODISCARD W_UTIL_INLINE
 bool is_windows_eol( char const buf[], size_t buf_len ) {
   return buf_len >= 2 && buf[ buf_len - 2 ] == '\r';
 }
@@ -397,7 +397,7 @@ void split_tws( char buf[], size_t buf_len, char tws[] );
  * @param src The null-terminated string to copy.
  * @return Returns the number of characters copied.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 size_t strcpy_len( char *dst, char const *src );
 
 /**
@@ -408,7 +408,7 @@ size_t strcpy_len( char *dst, char const *src );
  * @param set The null-terminated set of characters.
  * @return Returns the number of characters spanned.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 size_t strrspn( char const *s, char const *set );
 
 /**
@@ -418,7 +418,7 @@ size_t strrspn( char const *s, char const *set );
  * to \c false.
  * @return Returns \c true only if \c *flag is \c true.
  */
-PJL_WARN_UNUSED_RESULT W_UTIL_INLINE
+NODISCARD W_UTIL_INLINE
 bool true_reset( bool *flag ) {
   return *flag && !(*flag = false);
 }

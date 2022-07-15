@@ -95,16 +95,16 @@ static size_t       put_spaces;         // number of spaces to put between words
 static bool         was_eos_char;       // prev char an end-of-sentence char?
 
 // local functions
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static char32_t     buf_getcp( char const**, utf8c_t );
 
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static size_t       buf_readline( void );
 
 static void         delimit_paragraph( void );
 static void         init( int, char const*[] );
 
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static bool         markdown_adjust( void );
 
 static void         markdown_reset();
@@ -122,7 +122,7 @@ static void         wrap_cleanup( void );
  *
  * @return Returns `true` only if it does.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static inline bool block_regex_matches( void ) {
   return  opt_block_regex != NULL &&
           regex_match( &block_regex, input_buf, 0, NULL );
@@ -134,7 +134,7 @@ static inline bool block_regex_matches( void ) {
  * @param cp The Unicode code-point to check.
  * @return Returns \c true only if \a cp is a paragraph delimiter character.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static inline bool cp_is_para_delim( char32_t cp ) {
   return  opt_para_delims != NULL && cp_is_ascii( cp ) &&
           strchr( opt_para_delims, (int)cp ) != NULL;
@@ -500,7 +500,7 @@ int main( int argc, char const *argv[] ) {
  * @param ppc A pointer to the pointer to character to advance.
  * @return Returns said character or \c EOF.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static int buf_getc( char const **ppc ) {
   assert( ppc != NULL );
   assert( *ppc != NULL );
@@ -621,7 +621,7 @@ read_line:
  * @param utf8c The buffer to put the UTF-8 bytes into.
  * @return Returns said code-point or \c CP_EOF.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static char32_t buf_getcp( char const **ppc, utf8c_t utf8c ) {
   int c;
   if ( unlikely( (c = buf_getc( ppc )) == EOF ) )
@@ -646,7 +646,7 @@ static char32_t buf_getcp( char const **ppc, utf8c_t utf8c ) {
  *
  * @return Returns the number of bytes read.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static size_t buf_readline( void ) {
   size_t bytes_read;
 
@@ -821,7 +821,7 @@ static void init( int argc, char const *argv[] ) {
  * @return Returns \c true if we're to proceed or \c false if another line
  * should be read.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static bool markdown_adjust( void ) {
   static md_line_t  prev_line_type;
   static md_seq_t   prev_seq_num = MD_SEQ_NUM_INIT;

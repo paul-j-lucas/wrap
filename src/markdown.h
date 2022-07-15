@@ -103,7 +103,7 @@ void markdown_cleanup( void );
  * @param s The null-terminated string to parse.
  * @return Returns a pointer to the current Markdown state.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 md_state_t const* markdown_parse( char *s );
 
 ///////////////////////////////////////////////////////////////////////////////

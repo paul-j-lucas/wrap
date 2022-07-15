@@ -40,7 +40,7 @@
  * @return Returns the full-path of the configuration file that was read or
  * NULL if none.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 char const* read_conf( char const *conf_file );
 
 ///////////////////////////////////////////////////////////////////////////////

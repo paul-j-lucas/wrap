@@ -65,7 +65,7 @@ void pattern_cleanup( void );
  * @return Returns the alias associated with the pattern that matches
  * \a file_name or \c NULL if no matching pattern is found.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 alias_t const* pattern_find( char const *file_name );
 
 /**

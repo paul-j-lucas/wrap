@@ -56,7 +56,7 @@ void alias_cleanup( void );
  * @return Returns the alias having \a name or \c NULL if no matching alias is
  * found.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 alias_t const* alias_find( char const *name );
 
 /**

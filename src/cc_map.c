@@ -64,7 +64,7 @@ static inline void cc_map_init( void ) {
  * @param c The character to add.
  * @return Returns the number of distinct comment delimiter characters added.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static unsigned cc_set_add( cc_set_t cc_set, char c ) {
   unsigned added = 0;
   if ( !cc_set[ (unsigned char)c ] ) {

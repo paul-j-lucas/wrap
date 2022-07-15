@@ -47,7 +47,7 @@ static alias_t     *aliases = NULL;     // global list of aliases
 static size_t       n_aliases = 0;      // number of aliases
 
 // local functions
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static size_t strcpy_set( char*, size_t, char const*, char const* );
 
 ////////// local functions ////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ static size_t strcpy_set( char*, size_t, char const*, char const* );
  *
  * @return Returns a new, uninitialzed alias.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static alias_t* alias_alloc( void ) {
   static size_t n_aliases_alloc = 0;    // number of aliases allocated
 
@@ -196,7 +196,7 @@ done:
  * @param src The null-terminated string to be copied.
  * @return Returns the number of characters copied.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static size_t strcpy_set( char *dest, size_t dest_size, char const *set,
                           char const *src ) {
   assert( dest != NULL );

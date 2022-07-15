@@ -41,7 +41,7 @@
  * @param s The null-terminated string to check.
  * @return Returns \c true only if \a s starts an end-of-line comment.
  */
-PJL_WARN_UNUSED_RESULT
+NODISCARD
 static bool is_eol_comment( char const *s ) {
   assert( s != NULL );
   char const *const cc = cc_map_get( *s );
