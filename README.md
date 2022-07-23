@@ -98,6 +98,6 @@ and
 installed,
 you can generate `configure` yourself by doing:
 
-    autoreconf -fiv
+    ./bootstrap
 
 Then follow the generic installation instructions given in `INSTALL`.
