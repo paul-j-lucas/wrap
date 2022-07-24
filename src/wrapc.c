@@ -318,7 +318,7 @@ NODISCARD
 static pid_t read_source_write_wrap( void ) {
 #ifndef DEBUG_RSWW
   pid_t const pid = fork();
-  IF_EXIT( pid == -1, EX_OSERR );
+  perror_exit_if( pid == -1, EX_OSERR );
   if ( pid != 0 )                       // parent process
     return pid;
   //
@@ -331,9 +331,7 @@ static pid_t read_source_write_wrap( void ) {
   //
   FILE *const fwrap = fdopen( pipes[ TO_WRAP ][ STDOUT_FILENO ], "w" );
   if ( unlikely( fwrap == NULL ) )
-    PMESSAGE_EXIT( EX_OSERR,
-      "child can't open pipe for writing: %s\n", STRERROR
-    );
+    FATAL_ERR( EX_OSERR, "child can't open pipe for writing: %s\n", STRERROR );
   wait_for_debugger_attach( "WRAPC_DEBUG_RSRW" );
 #else
   FILE *const fwrap = stdout;
@@ -536,9 +534,7 @@ static void read_wrap( void ) {
   //
   FILE *const fwrap = fdopen( pipes[ FROM_WRAP ][ STDIN_FILENO ], "r" );
   if ( unlikely( fwrap == NULL ) )
-    PMESSAGE_EXIT( EX_OSERR,
-      "parent can't open pipe for reading: %s\n", STRERROR
-    );
+    FATAL_ERR( EX_OSERR, "parent can't open pipe for reading: %s\n", STRERROR );
 
   wait_for_debugger_attach( "WRAPC_DEBUG_RW" );
 
@@ -1070,7 +1066,7 @@ static void read_prototype( void ) {
   }
 
   if ( line_width < LINE_WIDTH_MINIMUM )
-    PMESSAGE_EXIT( EX_USAGE,
+    FATAL_ERR( EX_USAGE,
       "line-width (%d) is too small (<%d)\n",
       line_width, LINE_WIDTH_MINIMUM
     );
@@ -1230,14 +1226,14 @@ static void wait_for_child_processes( void ) {
     if ( WIFEXITED( wait_status ) ) {
       int const exit_status = WEXITSTATUS( wait_status );
       if ( exit_status != 0 ) {
-        PMESSAGE_EXIT( exit_status,
+        FATAL_ERR( exit_status,
           "child process exited with status %d: %s\n",
           exit_status, str_status( exit_status )
         );
       }
     } else if ( WIFSIGNALED( wait_status ) ) {
       int const signal = WTERMSIG( wait_status );
-      PMESSAGE_EXIT( EX_OSERR,
+      FATAL_ERR( EX_OSERR,
         "child process terminated with signal %d: %s\n",
         signal, strsignal( signal )
       );

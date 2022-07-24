@@ -113,7 +113,7 @@ bool regex_match( wregex_t *re, char const *s, size_t offset, size_t *range ) {
   if ( err_code == REG_NOMATCH )
     return false;
   if ( err_code < 0 )
-    PMESSAGE_EXIT( EX_SOFTWARE,
+    FATAL_ERR( EX_SOFTWARE,
       "regular expression error (%d): %s\n",
       err_code, regex_error( re, err_code )
     );

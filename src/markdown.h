@@ -45,8 +45,8 @@
  * and printed for debugging).
  */
 enum md_line {
-  MD_NONE         = '0',
-  MD_CODE         = 'C',
+  MD_NONE         = '0',                ///< None.
+  MD_CODE         = 'C',                ///< Code block.
   MD_DL           = ':',                ///< Definition list.
   MD_FOOTNOTE_DEF = '^',                ///< [^id]: footnote definition.
   MD_HEADER_ATX   = '#',                ///< # to ######
@@ -56,7 +56,7 @@ enum md_line {
   MD_HTML_BLOCK   = '<',                ///< HTML block.
   MD_LINK_LABEL   = '[',                ///< [id]: <URI>
   MD_OL           = '1',                ///< Ordered list: 1., 2., ....
-  MD_TABLE        = '|',                ///< Markdown table.
+  MD_TABLE        = '|',                ///< Table.
   MD_TEXT         = 'T',                ///< Plain text.
   MD_UL           = '*',                ///< Unordered list: *, +, or -.
 };

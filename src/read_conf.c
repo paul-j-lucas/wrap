@@ -176,7 +176,7 @@ char const* read_conf( char const *conf_file ) {
   FILE *const fconf = fopen( conf_file, "r" );
   if ( fconf == NULL ) {
     if ( is_explicit_conf_file )
-      PMESSAGE_EXIT( EX_NOINPUT, "%s: %s\n", conf_file, STRERROR );
+      FATAL_ERR( EX_NOINPUT, "%s: %s\n", conf_file, STRERROR );
     return NULL;
   }
 
@@ -187,7 +187,7 @@ char const* read_conf( char const *conf_file ) {
     ++line_no;
     char *line = strip_comment( line_buf );
     if ( line == NULL )
-      PMESSAGE_EXIT( EX_CONFIG,
+      FATAL_ERR( EX_CONFIG,
         "%s:%u: \"%s\": unclosed quote\n",
         conf_file, line_no, trim_ws( line_buf )
       );
@@ -199,7 +199,7 @@ char const* read_conf( char const *conf_file ) {
     if ( line[0] == '[' ) {
       section = section_parse( line );
       if ( section == SECTION_NONE )
-        PMESSAGE_EXIT( EX_CONFIG,
+        FATAL_ERR( EX_CONFIG,
           "%s:%u: \"%s\": invalid section\n",
           conf_file, line_no, line
         );
@@ -209,7 +209,7 @@ char const* read_conf( char const *conf_file ) {
     // parse line within section
     switch ( section ) {
       case SECTION_NONE:
-        PMESSAGE_EXIT( EX_CONFIG,
+        FATAL_ERR( EX_CONFIG,
           "%s:%u: \"%s\": line not within any section\n",
           conf_file, line_no, line
         );
@@ -223,7 +223,7 @@ char const* read_conf( char const *conf_file ) {
   } // while
 
   if ( unlikely( ferror( fconf ) ) )
-    PMESSAGE_EXIT( EX_IOERR, "%s: %s\n", conf_file, STRERROR );
+    FATAL_ERR( EX_IOERR, "%s: %s\n", conf_file, STRERROR );
   PJL_IGNORE_RV( fclose( fconf ) );
 
 #ifndef NDEBUG

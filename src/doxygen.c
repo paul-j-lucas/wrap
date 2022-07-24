@@ -253,8 +253,8 @@ static dox_cmd_t const DOX_COMMANDS[] = {
  */
 NODISCARD
 static int bsearch_str_dox_cmp( void const *key, void const *elt ) {
-  char const *const s_key = REINTERPRET_CAST( char const*, key );
-  dox_cmd_t const *const dox_elt = REINTERPRET_CAST( dox_cmd_t const*, elt );
+  char const *const s_key = key;
+  dox_cmd_t const *const dox_elt = elt;
   return strcmp( s_key, dox_elt->name );
 }
 

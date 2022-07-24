@@ -42,7 +42,7 @@ char const       *me;                   ///< Program name.
 ////////// local functions ////////////////////////////////////////////////////
 
 static noreturn void usage( void ) {
-  PRINT_ERR( "usage: %s test\n", me );
+  EPRINTF( "usage: %s test\n", me );
   exit( EX_USAGE );
 }
 
@@ -56,14 +56,14 @@ int main( int argc, char const *argv[] ) {
   char const *const test_path = argv[1];
   FILE *const fin = fopen( test_path, "r" );
   if ( fin == NULL )
-    PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", test_path, STRERROR );
+    FATAL_ERR( EX_NOINPUT, "\"%s\": %s\n", test_path, STRERROR );
 
   setlocale_utf8();
 
   wregex_t re;
   int const regex_err_code = regex_compile( &re, WRAP_RE );
   if ( regex_err_code != 0 )
-    PMESSAGE_EXIT( EX_SOFTWARE,
+    FATAL_ERR( EX_SOFTWARE,
       "internal regular expression error (%d): %s\n",
       regex_err_code, regex_error( &re, regex_err_code )
     );
@@ -79,7 +79,7 @@ int main( int argc, char const *argv[] ) {
 
     char *const sep = strchr( line_buf, TEST_SEP );
     if ( sep == NULL )
-      PMESSAGE_EXIT( EX_DATAERR,
+      FATAL_ERR( EX_DATAERR,
         "%s:%u: missing separator '%c'\n",
         test_path, line_no, TEST_SEP
       );
@@ -94,7 +94,7 @@ int main( int argc, char const *argv[] ) {
 
     if ( !matched ) {
       if ( expected_len > 0 ) {
-        PRINT_ERR(
+        EPRINTF(
           "%s:%u: <%s> wasn't matched when it should have been\n",
           test_path, line_no, expected
         );
@@ -110,7 +110,7 @@ int main( int argc, char const *argv[] ) {
     match[ match_len ] = '\0';
 
     if ( expected_len == 0 ) {
-      PRINT_ERR(
+      EPRINTF(
         "%s:%u: <%s> matched when it shouldn't have\n",
         test_path, line_no, match
       );
@@ -119,7 +119,7 @@ int main( int argc, char const *argv[] ) {
     }
 
     if ( match_len != expected_len || strcmp( match, expected ) != 0 ) {
-      PRINT_ERR(
+      EPRINTF(
         "%s:%u: match <%s> does not equal expected <%s>\n",
         test_path, line_no, match, expected
       );

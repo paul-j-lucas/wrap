@@ -234,7 +234,7 @@ static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
           char const gave_opt2 = *opt;
           char opt1_buf[ OPT_BUF_SIZE ];
           char opt2_buf[ OPT_BUF_SIZE ];
-          PMESSAGE_EXIT( EX_USAGE,
+          FATAL_ERR( EX_USAGE,
             "%s and %s are mutually exclusive\n",
             format_opt( gave_opt1, opt1_buf, sizeof opt1_buf ),
             format_opt( gave_opt2, opt2_buf, sizeof opt2_buf  )
@@ -307,7 +307,7 @@ static unsigned parse_align( char const *s, char *align_char ) {
 error:
   NO_OP;
   char opt_buf[ OPT_BUF_SIZE ];
-  PMESSAGE_EXIT( EX_USAGE,
+  FATAL_ERR( EX_USAGE,
     "\"%s\": invalid value for %s; %s\n",
     s, format_opt( 'A', opt_buf, sizeof opt_buf ),
     "must be digits followed by one of:"
@@ -368,7 +368,7 @@ static eol_t parse_eol( char const *s ) {
   } // for
 
   char opt_buf[ OPT_BUF_SIZE ];
-  PMESSAGE_EXIT( EX_USAGE,
+  FATAL_ERR( EX_USAGE,
     "\"%s\": invalid value for %s; must be one of:\n\t%s\n",
     s, format_opt( 'l', opt_buf, sizeof opt_buf ), values_buf
   );
@@ -406,13 +406,13 @@ static void parse_options( int argc, char const *argv[],
 
     if ( line_no > 0 ) {                // we're parsing a conf file
       if ( strchr( CONF_FORBIDDEN_OPTS, opt ) != NULL )
-        PMESSAGE_EXIT( EX_CONFIG,
+        FATAL_ERR( EX_CONFIG,
           "%s:%u: '%c': option not allowed in configuration file\n",
           opt_conf_file, line_no, opt
         );
     }
     else if ( strchr( cmdline_forbidden_opts, opt ) != NULL ) {
-      PRINT_ERR( "%s: invalid option -- '%c'\n", me, opt );
+      EPRINTF( "%s: invalid option -- '%c'\n", me, opt );
       usage();
     }
 
@@ -470,7 +470,7 @@ static void parse_options( int argc, char const *argv[],
   }
 
   if ( print_version ) {
-    PRINT_ERR( "%s\n", PACKAGE_STRING );
+    EPRINTF( "%s\n", PACKAGE_STRING );
     exit( EX_OK );
   }
 }
@@ -517,7 +517,7 @@ static unsigned parse_width( char const *s ) {
   } // for
 
   char opt_buf[ OPT_BUF_SIZE ];
-  PMESSAGE_EXIT( EX_USAGE,
+  FATAL_ERR( EX_USAGE,
     "\"%s\": invalid value for %s; must be one of:\n\t%s\n",
     s, format_opt( 'w', opt_buf, sizeof opt_buf ), values_buf
   );
@@ -557,7 +557,7 @@ void options_init( int argc, char const *argv[], void (*usage)(void) ) {
     opt_conf_file = read_conf( opt_conf_file );
     if ( opt_alias != NULL ) {
       if ( (alias = alias_find( opt_alias )) == NULL )
-        PMESSAGE_EXIT( EX_USAGE,
+        FATAL_ERR( EX_USAGE,
           "\"%s\": no such alias in %s\n",
           opt_alias, opt_conf_file
         );
@@ -573,9 +573,9 @@ void options_init( int argc, char const *argv[], void (*usage)(void) ) {
   }
 
   if ( opt_fin != NULL && (fin = fopen( opt_fin, "r" )) == NULL )
-    PMESSAGE_EXIT( EX_NOINPUT, "\"%s\": %s\n", opt_fin, STRERROR );
+    FATAL_ERR( EX_NOINPUT, "\"%s\": %s\n", opt_fin, STRERROR );
   if ( opt_fout != NULL && (fout = fopen( opt_fout, "w" )) == NULL )
-    PMESSAGE_EXIT( EX_CANTCREAT, "\"%s\": %s\n", opt_fout, STRERROR );
+    FATAL_ERR( EX_CANTCREAT, "\"%s\": %s\n", opt_fout, STRERROR );
 
   if ( fin == NULL )
     fin = stdin;

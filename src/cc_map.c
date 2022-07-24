@@ -95,7 +95,7 @@ char const* cc_map_compile( char const *in_cc ) {
     if ( isspace( *cc ) || *cc == ',' )
       continue;
     if ( !ispunct( *cc ) )
-      PMESSAGE_EXIT( EX_USAGE,
+      FATAL_ERR( EX_USAGE,
         "\"%s\": invalid value for %s;\n\tmust only be either: %s\n",
         in_cc, format_opt( 'D', opt_buf, sizeof opt_buf ),
         "punctuation or whitespace characters"
@@ -103,7 +103,7 @@ char const* cc_map_compile( char const *in_cc ) {
 
     bool const is_double_cc = ispunct( cc[1] ) && cc[1] != ',';
     if ( is_double_cc && ispunct( cc[2] ) && cc[2] != ',' )
-      PMESSAGE_EXIT( EX_USAGE,
+      FATAL_ERR( EX_USAGE,
         "\"%s\": invalid value for %s: \"%c%c%c\": %s\n",
         in_cc, format_opt( 'D', opt_buf, sizeof opt_buf ), cc[0], cc[1], cc[2],
         "more than two consecutive comment characters"
@@ -137,7 +137,7 @@ char const* cc_map_compile( char const *in_cc ) {
   } // for
 
   if ( distinct_cc == 0 )
-    PMESSAGE_EXIT( EX_USAGE,
+    FATAL_ERR( EX_USAGE,
       "value for %s must not be only whitespace or commas\n",
       format_opt( 'D', opt_buf, sizeof opt_buf )
     );
@@ -154,9 +154,9 @@ char const* cc_map_compile( char const *in_cc ) {
   if ( is_affirmative( getenv( "WRAP_DUMP_CC_MAP" ) ) ) {
     for ( size_t i = 0; i < ARRAY_SIZE( cc_map ); ++i ) {
       if ( cc_map[i] )
-        PRINT_ERR( "%c \"%s\"\n", (char)i, cc_map[i] );
+        EPRINTF( "%c \"%s\"\n", STATIC_CAST( char, i ), cc_map[i] );
     } // for
-    PRINT_ERR( "\n%u distinct = \"%s\"\n", distinct_cc, out_cc );
+    EPRINTF( "\n%u distinct = \"%s\"\n", distinct_cc, out_cc );
   }
 #endif /* NDEBUG */
 

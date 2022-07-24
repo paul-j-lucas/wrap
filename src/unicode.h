@@ -38,6 +38,7 @@
 #if HAVE_CHAR8_T || HAVE_CHAR32_T
 #include <uchar.h>
 #endif /* HAVE_CHAR8_T || HAVE_CHAR32_T */
+#include "util.h"
 #include <wctype.h>
 
 #if !HAVE_CHAR8_T
@@ -163,7 +164,7 @@ bool cp_is_space( char32_t cp ) {
 NODISCARD W_UNICODE_INLINE
 char32_t utf8_decode( char const *s ) {
   extern char32_t utf8_decode_impl( char const* );
-  char32_t const cp = (char8_t)*s;
+  char32_t const cp = STATIC_CAST( char8_t, *s );
   return cp_is_ascii( cp ) ? cp : utf8_decode_impl( s );
 }
 
@@ -177,7 +178,7 @@ char32_t utf8_decode( char const *s ) {
  */
 NODISCARD W_UNICODE_INLINE
 bool utf8_is_cont( char c ) {
-  char8_t const c8 = (char8_t)c;
+  char8_t const c8 = STATIC_CAST( char8_t, c );
   return c8 >= 0x80 && c8 < 0xC0;
 }
 
@@ -191,7 +192,7 @@ bool utf8_is_cont( char c ) {
  */
 NODISCARD W_UNICODE_INLINE
 bool utf8_is_start( char c ) {
-  char8_t const c8 = (char8_t)c;
+  char8_t const c8 = STATIC_CAST( char8_t, c );
   return c8 <= 0x7F || (c8 >= 0xC2 && c8 < 0xFE);
 }
 
@@ -205,7 +206,7 @@ bool utf8_is_start( char c ) {
 NODISCARD W_UNICODE_INLINE
 size_t utf8_len( char c ) {
   extern char8_t const UTF8_LEN_TABLE[];
-  return (size_t)UTF8_LEN_TABLE[ (char8_t)c ];
+  return (size_t)UTF8_LEN_TABLE[ STATIC_CAST( char8_t, c ) ];
 }
 
 /**
@@ -237,7 +238,7 @@ size_t utf8_copy_char( char *dest, char const *src ) {
 NODISCARD W_UNICODE_INLINE
 char const* utf8_rsync( char const *buf, char const *pos ) {
   extern char const* utf8_rsync_impl( char const*, char const* );
-  char32_t const cp = (char8_t)*pos;
+  char32_t const cp = STATIC_CAST( char8_t, *pos );
   return cp_is_ascii( cp ) ? pos : utf8_rsync_impl( buf, pos );
 }
 

@@ -76,37 +76,29 @@ char const* base_name( char const *path_name ) {
 }
 
 int bsearch_str_strptr_cmp( void const *key, void const *str_ptr ) {
-  char const *const s_key = REINTERPRET_CAST( char const*, key );
-  char const *const s_elt = *REINTERPRET_CAST( char const**, str_ptr );
+  char const *const s_key = key;
+  char const *const s_elt = *POINTER_CAST( char const**, str_ptr );
   return strcmp( s_key, s_elt );
 }
 
 unsigned check_atou( char const *s ) {
   assert( s != NULL );
   if ( !is_digits( s ) )
-    PMESSAGE_EXIT( EX_USAGE, "\"%s\": invalid integer\n", s );
-  return (unsigned)strtoul( s, NULL, 10 );
+    FATAL_ERR( EX_USAGE, "\"%s\": invalid integer\n", s );
+  return STATIC_CAST( unsigned, strtoul( s, NULL, 10 ) );
 }
 
 void* check_realloc( void *p, size_t size ) {
-  //
-  // Autoconf, 5.5.1:
-  //
-  // realloc
-  //    The C standard says a call realloc(NULL, size) is equivalent to
-  //    malloc(size), but some old systems don't support this (e.g., NextStep).
-  //
-  if ( size == 0 )
-    size = 1;
-  void *const r = p != NULL ? realloc( p, size ) : malloc( size );
-  IF_EXIT( r == NULL, EX_OSERR );
-  return r;
+  assert( size > 0 );
+  p = p != NULL ? realloc( p, size ) : malloc( size );
+  perror_exit_if( p == NULL, EX_OSERR );
+  return p;
 }
 
 char* check_strdup( char const *s ) {
   assert( s != NULL );
   char *const dup = strdup( s );
-  IF_EXIT( dup == NULL, EX_OSERR );
+  perror_exit_if( dup == NULL, EX_OSERR );
   return dup;
 }
 
@@ -252,7 +244,7 @@ error:
     if ( likely( cterm_fd != -1 ) )
       close( cterm_fd );
     if ( unlikely( reason != NULL ) )
-      PMESSAGE_EXIT( EX_UNAVAILABLE,
+      FATAL_ERR( EX_UNAVAILABLE,
         "failed to determine number of columns in terminal: %s\n",
         reason
       );
@@ -302,10 +294,10 @@ void setlocale_utf8( void ) {
       return;
   } // for
 
-  PRINT_ERR( "%s: could not set locale to UTF-8; tried: ", me );
+  EPRINTF( "%s: could not set locale to UTF-8; tried: ", me );
   bool comma = false;
   for ( char const *const *loc = UTF8_LOCALES; *loc != NULL; ++loc ) {
-    PRINT_ERR( "%s%s", (comma ? ", " : ""), *loc );
+    EPRINTF( "%s%s", (comma ? ", " : ""), *loc );
     comma = true;
   } // for
   W_FPUTC( '\n', stderr );
@@ -345,8 +337,8 @@ size_t strrspn( char const *s, char const *set ) {
 void wait_for_debugger_attach( char const *env_var ) {
   assert( env_var != NULL );
   if ( is_affirmative( getenv( env_var ) ) ) {
-    PRINT_ERR( "pid=%u: waiting for debugger to attach...\n", getpid() );
-    IF_EXIT( raise( SIGSTOP ) == -1, EX_OSERR );
+    EPRINTF( "pid=%u: waiting for debugger to attach...\n", getpid() );
+    perror_exit_if( raise( SIGSTOP ) == -1, EX_OSERR );
   }
 }
 #endif /* NDEBUG */

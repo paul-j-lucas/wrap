@@ -68,7 +68,7 @@ static alias_t* alias_alloc( void ) {
     n_aliases_alloc += ALIAS_ALLOC_INCREMENT;
     REALLOC( aliases, alias_t, n_aliases_alloc );
   }
-  IF_EXIT( aliases == NULL, EX_OSERR );
+  perror_exit_if( aliases == NULL, EX_OSERR );
   return &aliases[ n_aliases++ ];
 }
 
@@ -90,7 +90,7 @@ static void alias_check_dup( char const *conf_file, unsigned line_no ) {
     char const *const last_name = aliases[i].argv[0];
     while ( --i >= 0 ) {
       if ( strcmp( aliases[i].argv[0], last_name ) == 0 )
-        PMESSAGE_EXIT( EX_CONFIG,
+        FATAL_ERR( EX_CONFIG,
           "%s:%u: \"%s\": duplicate alias name (first is on line %u)\n",
           conf_file, line_no, last_name, aliases[i].line_no
         );
@@ -132,7 +132,7 @@ static void alias_import( alias_t *to_alias, char const **ps,
   *ps += strcpy_set( from_name, sizeof from_name, ALIAS_NAME_CHARS, *ps );
   alias_t const *const from_alias = alias_find( from_name );
   if ( from_alias == NULL )
-    PMESSAGE_EXIT( EX_CONFIG,
+    FATAL_ERR( EX_CONFIG,
       "%s:%u: \"@%s\": no such alias\n",
       conf_file, line_no, from_name
     );
@@ -268,11 +268,11 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
   // part 2: whitespace
   SKIP_CHARS( line, WS_STR );
   if ( *line == '\0' )
-    PMESSAGE_EXIT( EX_CONFIG, "%s:%u: '=' expected\n", conf_file, line_no );
+    FATAL_ERR( EX_CONFIG, "%s:%u: '=' expected\n", conf_file, line_no );
 
   // part 3: =
   if ( *line != '=' )
-    PMESSAGE_EXIT( EX_CONFIG,
+    FATAL_ERR( EX_CONFIG,
       "%s:%u: '%c': unexpected character; '=' expected\n",
       conf_file, line_no, *line
     );
@@ -283,7 +283,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
     SKIP_CHARS( line, WS_STR );
     if ( *line == '\0' ) {
       if ( alias->argc == 1 )
-        PMESSAGE_EXIT( EX_CONFIG,
+        FATAL_ERR( EX_CONFIG,
           "%s:%u: option(s) expected after '='\n",
           conf_file, line_no
         );

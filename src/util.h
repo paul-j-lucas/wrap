@@ -47,57 +47,134 @@ _GL_INLINE_HEADER_BEGIN
 
 ///////////////////////////////////////////////////////////////////////////////
 
-/** Gets the number of elements of the given array. */
+/**
+ * Gets the number of elements of the given array.
+ *
+ * @param A The array to get the number of elements of.
+ */
 #define ARRAY_SIZE(A)             (sizeof(A) / sizeof(A[0]))
 
-/** Embeds the given statements into a compount statement block. */
+/**
+ * Embeds the given statements into a compound statement block.
+ *
+ * @param ... The statement(s) to embed.
+ */
 #define BLOCK(...)                do { __VA_ARGS__ } while (0)
 
-/** Explicit C version of C++'s `const_cast`. */
+/**
+ * C version of C++'s `const_cast`.
+ *
+ * @param T The type to cast to.
+ * @param EXPR The expression to cast.
+ *
+ * @note This macro can't actually implement C++'s `const_cast` because there's
+ * no way to do it in C.  It serves merely as a visual cue for the type of cast
+ * meant.
+ *
+ * @sa #POINTER_CAST()
+ * @sa #STATIC_CAST()
+ */
 #define CONST_CAST(T,EXPR)        ((T)(EXPR))
 
-/** Frees the given memory. */
+/**
+ * Frees the given memory.
+ *
+ * @param PTR The pointer to the memory to free.
+ *
+ * @remarks
+ * This macro exists since free'ing a pointer to `const` generates a warning.
+ */
 #define FREE(PTR)                 free( CONST_CAST( void*, (PTR) ) )
 
-/** Frees the newly allocated C string later. */
+/**
+ * Allocates a new C string of size \a SIZE and marks it to be free'd later.
+ *
+ * @param SIZE The size of the string to allocate.
+ * @return Returrns a pointer to the new string.
+ *
+ * @sa #FREE_STR_LATER()
+ */
 #define FREE_STRBUF_LATER(SIZE)   FREE_STR_LATER( MALLOC( char, (SIZE) ) )
 
-/** Frees the given C string later. */
-#define FREE_STR_LATER(PTR)       REINTERPRET_CAST( char*, free_later( PTR ) )
-
-/** Frees the duplicated C string later. */
-#define FREE_STRDUP_LATER(PTR)    FREE_STR_LATER( check_strdup( PTR ) )
+/**
+ * Calls free_later() with \a PTR.
+ *
+ * @return Returns \a PTR cast to `char*`.
+ *
+ * @sa free_later()
+ */
+#define FREE_STR_LATER(PTR)       POINTER_CAST( char*, free_later( PTR ) )
 
 /**
- * Evaluates \a EXPR: if it returns `true`, calls perror_exit() with \a ERR.
- *
- * @param EXPR The expression to evaluate.
- * @param ERR The exit status code to use.
+ * No-operation statement.  (Useful for a `goto` target.)
  */
-#define IF_EXIT(EXPR,ERR) \
-  BLOCK( if ( unlikely( EXPR ) ) perror_exit( ERR ); )
-
-/** No-operation statement.  (Useful for a `goto` target.) */
 #define NO_OP                     ((void)0)
 
-/** Shorthand for printing to standard error. */
-#define PRINT_ERR(...)            fprintf( stderr, __VA_ARGS__ )
+/**
+ * Shorthand for printing to standard error.
+ *
+ * @param ... The `printf()` arguments.
+ *
+ * @sa #W_FPRINTF()
+ */
+#define EPRINTF(...)              fprintf( stderr, __VA_ARGS__ )
 
-/** Explicit C version of C++'s `reinterpret_cast`. */
-#define REINTERPRET_CAST(T,EXPR)  ((T)(uintptr_t)(EXPR))
+/**
+ * Prints an error message to standard error and exits with \a STATUS code.
+ *
+ * @param STATUS The status code to **exit**(3) with.
+ * @param FORMAT The `printf()` format to use.
+ * @param ... The `printf()` arguments.
+ *
+ * @sa perror_exit()
+ */
+#define FATAL_ERR(STATUS,FORMAT,...) \
+  BLOCK( EPRINTF( "%s: " FORMAT, me, __VA_ARGS__ ); _Exit( STATUS ); )
 
-/** Advances \a S over all \a CHARS. */
+/**
+ * Cast either from or to a pointer type &mdash; similar to C++'s
+ * `reinterpret_cast`, but for pointers only.
+ *
+ * @param T The type to cast to.
+ * @param EXPR The expression to cast.
+ *
+ * @note This macro silences a "cast to pointer from integer of different size"
+ * warning.  In C++, this would be done via `reinterpret_cast`, but it's not
+ * possible to implement that in C that works for both pointers and integers.
+ *
+ * @sa #CONST_CAST()
+ * @sa #STATIC_CAST()
+ */
+#define POINTER_CAST(T,EXPR)      ((T)(uintptr_t)(EXPR))
+
+/**
+ * Advances \a S over all \a CHARS.
+ *
+ * @param S The string pointer to advance.
+ * @param CHARS A string containing the characters to skip over.
+ * @return Returns the updated \a S.
+ */
 #define SKIP_CHARS(S,CHARS)       ((S) += strspn( (S), (CHARS) ))
 
-/** Explicit C version of C++'s `static_cast`. */
+/**
+ * C version of C++'s `static_cast`.
+ *
+ * @param T The type to cast to.
+ * @param EXPR The expression to cast.
+ *
+ * @note This macro can't actually implement C++'s `static_cast` because
+ * there's no way to do it in C.  It serves merely as a visual cue for the type
+ * of cast meant.
+ *
+ * @sa #CONST_CAST()
+ * @sa #POINTER_CAST()
+ */
 #define STATIC_CAST(T,EXPR)       ((T)(EXPR))
 
-/** Shorthand for calling **strerror**(3). */
+/**
+ * Shorthand for calling **strerror**(3) with `errno`.
+ */
 #define STRERROR                  strerror( errno )
-
-#define WS_ST                     " \t"       /**< Space Tab. */
-#define WS_STR                    WS_ST "\r"  /**< Space Tab Return. */
-#define WS_STRN                   WS_STR "\n" /**< Space Tab Return Newline. */
 
 #ifdef __GNUC__
 
@@ -126,32 +203,125 @@ _GL_INLINE_HEADER_BEGIN
 # define unlikely(EXPR)           (EXPR)
 #endif /* __GNUC__ */
 
-#define MALLOC(TYPE,N) \
-  STATIC_CAST(TYPE*, check_realloc( NULL, sizeof(TYPE) * (N) ))
+/**
+ * Convenience macro for calling check_realloc().
+ *
+ * @param TYPE The type to allocate.
+ * @param N The number of objects of \a TYPE to allocate.  It _must_ be &gt; 0.
+ * @return Returns a pointer to \a N uninitialized objects of \a TYPE.
+ *
+ * @sa check_realloc()
+ * @sa #REALLOC()
+ */
+#define MALLOC(TYPE,N)            check_realloc( NULL, sizeof(TYPE) * (N) )
 
-#define PMESSAGE_EXIT(STATUS,FORMAT,...) \
-  BLOCK( PRINT_ERR( "%s: " FORMAT, me, __VA_ARGS__ ); exit( STATUS ); )
-
+/**
+ * Convenience macro for calling check_realloc().
+ *
+ * @param PTR The pointer to memory to reallocate.  It is set to the newly
+ * reallocated memory.
+ * @param TYPE The type of object to reallocate.
+ * @param N The number of objects of \a TYPE to reallocate.
+ *
+ * @sa check_realloc()
+ * @sa #MALLOC()
+ */
 #define REALLOC(PTR,TYPE,N) \
-  (PTR) = STATIC_CAST(TYPE*, check_realloc( (PTR), sizeof(TYPE) * (size_t)(N) ))
+  (PTR) = check_realloc( (PTR), sizeof(TYPE) * (size_t)(N) )
 
-#define W_DUP(FD)                 IF_EXIT( dup( FD ) == -1, EX_OSERR )
+/**
+ * Calls **dup**(2), check for an error, and exits if there was one.
+ *
+ * @param FD The file descriptor to duplicate.
+ */
+#define W_DUP(FD)                 perror_exit_if( dup( FD ) == -1, EX_OSERR )
 
-#define W_FERROR(STREAM)          IF_EXIT( ferror( STREAM ), EX_IOERR )
+/**
+ * Calls **ferror**(3) and exits if there was an error on \a STREAM.
+ *
+ * @param STREAM The `FILE` stream to check for an error.
+ *
+ * @sa perror_exit_if()
+ */
+#define W_FERROR(STREAM)          perror_exit_if( ferror( STREAM ), EX_IOERR )
 
+/**
+ * Shorthand for printing to standard output.
+ *
+ * @param ... The `printf()` arguments.
+ *
+ * @sa #EFPRINTF()
+ */
 #define W_FPRINTF(STREAM,...) \
-	IF_EXIT( fprintf( (STREAM), __VA_ARGS__ ) < 0, EX_IOERR )
+	perror_exit_if( fprintf( (STREAM), __VA_ARGS__ ) < 0, EX_IOERR )
 
+/**
+ * Calls **putc**(3), checks for an error, and exits if there was one.
+ *
+ * @param C The character to print.
+ * @param STREAM The `FILE` stream to print to.
+ *
+ * @sa #EPUTC()
+ * @sa #W_FPRINTF()
+ * @sa #W_FPUTS()
+ * @sa perror_exit_if()
+ */
 #define W_FPUTC(C,STREAM) \
-	IF_EXIT( putc( (C), (STREAM) ) == EOF, EX_IOERR )
+	perror_exit_if( putc( (C), (STREAM) ) == EOF, EX_IOERR )
 
+/**
+ * Calls **fputs**(3), checks for an error, and exits if there was one.
+ *
+ * @param S The C string to print.
+ * @param STREAM The `FILE` stream to print to.
+ *
+ * @sa #EPUTS()
+ * @sa #W_FPRINTF()
+ * @sa #W_FPUTC()
+ * @sa perror_exit_if()
+ */
 #define W_FPUTS(S,STREAM) \
-	IF_EXIT( fputs( (S), (STREAM) ) == EOF, EX_IOERR )
+	perror_exit_if( fputs( (S), (STREAM) ) == EOF, EX_IOERR )
 
+/**
+ * Calls **fwrite**(3), checks for an error, and exits if there was one.
+ *
+ * @param BUF The buffer to write.
+ * @param SIZE The number of bytes of each object.
+ * @param NITEMS The number of items to write.
+ * @param STREAM The `FILE` stream to write to.
+ *
+ * @sa #EPUTS()
+ * @sa #F_FPRINTF()
+ * @sa #FF_PUTC()
+ * @sa perror_exit_if()
+ */
 #define W_FWRITE(BUF,SIZE,NITEMS,STREAM) \
-	IF_EXIT( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS), EX_IOERR )
+	perror_exit_if( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS), EX_IOERR )
 
-#define W_PIPE(FDS)               IF_EXIT( pipe( FDS ) == -1, EX_OSERR )
+/**
+ * Calls **pipe**(2), checks for an error, and exits if there was one.
+ *
+ * @param FDS An array of two integer file descriptors to create.
+ *
+ * @sa perror_exit_if()
+ */
+#define W_PIPE(FDS)               perror_exit_if( pipe( FDS ) == -1, EX_OSERR )
+
+/**
+ * Whitespace string: space and tab only.
+ */
+#define WS_ST                     " \t"
+
+/**
+ * Whitespace string: space, tab, and carriage return only.
+ */
+#define WS_STR                    WS_ST "\r"
+
+/**
+ * Whitespace string: space, tab, carriage return, and newline only.
+ */
+#define WS_STRN                   WS_STR "\n"
 
 // extern variable definitions
 extern char const  *me;                 ///< Program name.
@@ -371,6 +541,23 @@ bool is_windows_eol( char const buf[], size_t buf_len ) {
  * @param status The exit status code.
  */
 noreturn void perror_exit( int status );
+
+/**
+ * If \a expr is `true`, prints an error message for `errno` to standard error
+ * and exits.
+ *
+ * @param expr The expression.
+ * @param status The exit status code.
+ *
+ * @sa #FATAL_ERR()
+ * @sa #INTERNAL_ERR()
+ * @sa perror_exit()
+ */
+W_UTIL_INLINE
+void perror_exit_if( bool expr, int status ) {
+  if ( unlikely( expr ) )
+    perror_exit( status );
+}
 
 /**
  * Sets the locale for the \c LC_COLLATE and \c LC_CTYPE categories to UTF-8.

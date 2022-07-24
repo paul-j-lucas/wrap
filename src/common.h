@@ -199,7 +199,7 @@ char const* eol( void ) {
 //#define DEBUG_MARKDOWN
 
 #ifdef DEBUG_MARKDOWN
-# define MD_DEBUG(...)      PRINT_ERR( __VA_ARGS__ )
+# define MD_DEBUG(...)      EPRINTF( __VA_ARGS__ )
 #else
 # define MD_DEBUG(...)      NO_OP
 #endif /* DEBUG_MARKDOWN */
