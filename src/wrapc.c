@@ -71,13 +71,13 @@ typedef enum delim delim_t;
 //#define DEBUG_RSWW
 
 #ifdef DEBUG_RSWW
-# undef W_PIPE
-# define W_PIPE(P) NO_OP
+# undef PIPE
+# define PIPE(P) NO_OP
 #endif /* DEBUG_RSWW */
 
 // Redirects file-descriptor FD to/from pipe P.
 #define REDIRECT(FD,P) \
-  BLOCK( close( FD ); W_DUP( pipes[P][FD] ); close_pipe( pipes[P] ); )
+  BLOCK( close( FD ); DUP( pipes[P][FD] ); close_pipe( pipes[P] ); )
 
 /**
  * Contains the current and next lines of input so the next line can be peeked
@@ -216,8 +216,8 @@ int main( int argc, char const *argv[] ) {
     align_eol_comments( CURR );
   } else {
     read_prototype();
-    W_PIPE( pipes[ TO_WRAP ] );
-    W_PIPE( pipes[ FROM_WRAP ] );
+    PIPE( pipes[ TO_WRAP ] );
+    PIPE( pipes[ FROM_WRAP ] );
     fork_exec_wrap( read_source_write_wrap() );
     read_wrap();
     wait_for_child_processes();
@@ -342,7 +342,7 @@ static pid_t read_source_write_wrap( void ) {
     // For block comments, write the first line directly to the output.
     //
     adjust_comment_width( CURR );
-    W_FPUTS( CURR, fout );
+    FPUTS( CURR, fout );
     swap_line_bufs();
   }
 
@@ -455,7 +455,7 @@ static pid_t read_source_write_wrap( void ) {
               WIPC_SEND( fwrap, WIPC_PREFORMATTED_BEGIN );
             }
 
-            W_FPUTS( line, fwrap );
+            FPUTS( line, fwrap );
 
             if ( (dox_cmd->type & DOX_EOL) != 0 )
               WIPC_SEND( fwrap, WIPC_PREFORMATTED_END );
@@ -486,7 +486,7 @@ static pid_t read_source_write_wrap( void ) {
           // We've encountered the previous Doxygen command's corresponding end
           // command: put that line, then tell wrap to resume wrapping.
           //
-          W_FPUTS( line, fwrap );
+          FPUTS( line, fwrap );
           WIPC_SEND( fwrap, WIPC_PREFORMATTED_END );
           prev_dox_cmd = NULL;
           continue;
@@ -501,7 +501,7 @@ static pid_t read_source_write_wrap( void ) {
       }
     }
 
-    W_FPUTS( line, fwrap );
+    FPUTS( line, fwrap );
   } // for
   exit( EX_OK );
 
@@ -512,8 +512,8 @@ verbatim:
   // verbatim.
   //
   WIPC_SEND( fwrap, WIPC_WRAP_END );
-  W_FPUTS( CURR, fwrap );
-  W_FPUTS( NEXT, fwrap );
+  FPUTS( CURR, fwrap );
+  FPUTS( NEXT, fwrap );
   fcopy( fin, fwrap );
   exit( EX_OK );
 }
@@ -616,7 +616,7 @@ static void read_wrap( void ) {
     }
 
     // don't emit proto_tws for blank lines
-    W_FPRINTF(
+    FPRINTF(
       fout, "%s%s%s%s%s",
       prefix_buf, is_blank_line( line ) ? "" : proto_tws, line, suffix_buf,
       eol()
@@ -624,7 +624,7 @@ static void read_wrap( void ) {
   } // for
 
 done:
-  W_FERROR( fwrap );
+  FERROR( fwrap );
 #endif /* DEBUG_RSWW */
 }
 

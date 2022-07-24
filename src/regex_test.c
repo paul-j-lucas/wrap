@@ -129,7 +129,7 @@ int main( int argc, char const *argv[] ) {
 
   regex_free( &re );
 
-  W_FERROR( fin );
+  FERROR( fin );
   PJL_IGNORE_RV( fclose( fin ) );
 
   printf( "%u mismatches\n", mismatches );

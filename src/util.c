@@ -128,8 +128,8 @@ void fcopy( FILE *ffrom, FILE *fto ) {
 
   char buf[ 8192 ];
   for ( size_t size; (size = fread( buf, 1, sizeof buf, ffrom )) > 0; )
-    W_FWRITE( buf, 1, size, fto );
-  W_FERROR( ffrom );
+    perror_exit_if( fwrite( buf, 1, size, fto ) < size, EX_IOERR );
+  FERROR( ffrom );
 }
 
 char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
@@ -300,7 +300,7 @@ void setlocale_utf8( void ) {
     EPRINTF( "%s%s", (comma ? ", " : ""), *loc );
     comma = true;
   } // for
-  W_FPUTC( '\n', stderr );
+  EPUTC( '\n' );
 
   exit( EX_UNAVAILABLE );
 }

@@ -77,6 +77,53 @@ _GL_INLINE_HEADER_BEGIN
 #define CONST_CAST(T,EXPR)        ((T)(EXPR))
 
 /**
+ * Calls **ferror**(3) and exits if there was an error on \a STREAM.
+ *
+ * @param STREAM The `FILE` stream to check for an error.
+ *
+ * @sa perror_exit_if()
+ */
+#define FERROR(STREAM)            perror_exit_if( ferror( STREAM ), EX_IOERR )
+
+/**
+ * Shorthand for printing to standard output.
+ *
+ * @param ... The `printf()` arguments.
+ *
+ * @sa #EFPRINTF()
+ */
+#define FPRINTF(STREAM,...) \
+	perror_exit_if( fprintf( (STREAM), __VA_ARGS__ ) < 0, EX_IOERR )
+
+/**
+ * Calls **putc**(3), checks for an error, and exits if there was one.
+ *
+ * @param C The character to print.
+ * @param STREAM The `FILE` stream to print to.
+ *
+ * @sa #EPUTC()
+ * @sa #FPRINTF()
+ * @sa #FPUTS()
+ * @sa perror_exit_if()
+ */
+#define FPUTC(C,STREAM) \
+	perror_exit_if( putc( (C), (STREAM) ) == EOF, EX_IOERR )
+
+/**
+ * Calls **fputs**(3), checks for an error, and exits if there was one.
+ *
+ * @param S The C string to print.
+ * @param STREAM The `FILE` stream to print to.
+ *
+ * @sa #EPUTS()
+ * @sa #FPRINTF()
+ * @sa #FPUTC()
+ * @sa perror_exit_if()
+ */
+#define FPUTS(S,STREAM) \
+	perror_exit_if( fputs( (S), (STREAM) ) == EOF, EX_IOERR )
+
+/**
  * Frees the given memory.
  *
  * @param PTR The pointer to the memory to free.
@@ -115,9 +162,19 @@ _GL_INLINE_HEADER_BEGIN
  *
  * @param ... The `printf()` arguments.
  *
- * @sa #W_FPRINTF()
+ * @sa #FPRINTF()
  */
 #define EPRINTF(...)              fprintf( stderr, __VA_ARGS__ )
+
+/**
+ * Shorthand for printing \a C to standard error.
+ *
+ * @param C The character to print.
+ *
+ * @sa #EPRINTF()
+ * @wa #FPUTC()
+ */
+#define EPUTC(C)                  FPUTC( C, stderr )
 
 /**
  * Prints an error message to standard error and exits with \a STATUS code.
@@ -234,70 +291,7 @@ _GL_INLINE_HEADER_BEGIN
  *
  * @param FD The file descriptor to duplicate.
  */
-#define W_DUP(FD)                 perror_exit_if( dup( FD ) == -1, EX_OSERR )
-
-/**
- * Calls **ferror**(3) and exits if there was an error on \a STREAM.
- *
- * @param STREAM The `FILE` stream to check for an error.
- *
- * @sa perror_exit_if()
- */
-#define W_FERROR(STREAM)          perror_exit_if( ferror( STREAM ), EX_IOERR )
-
-/**
- * Shorthand for printing to standard output.
- *
- * @param ... The `printf()` arguments.
- *
- * @sa #EFPRINTF()
- */
-#define W_FPRINTF(STREAM,...) \
-	perror_exit_if( fprintf( (STREAM), __VA_ARGS__ ) < 0, EX_IOERR )
-
-/**
- * Calls **putc**(3), checks for an error, and exits if there was one.
- *
- * @param C The character to print.
- * @param STREAM The `FILE` stream to print to.
- *
- * @sa #EPUTC()
- * @sa #W_FPRINTF()
- * @sa #W_FPUTS()
- * @sa perror_exit_if()
- */
-#define W_FPUTC(C,STREAM) \
-	perror_exit_if( putc( (C), (STREAM) ) == EOF, EX_IOERR )
-
-/**
- * Calls **fputs**(3), checks for an error, and exits if there was one.
- *
- * @param S The C string to print.
- * @param STREAM The `FILE` stream to print to.
- *
- * @sa #EPUTS()
- * @sa #W_FPRINTF()
- * @sa #W_FPUTC()
- * @sa perror_exit_if()
- */
-#define W_FPUTS(S,STREAM) \
-	perror_exit_if( fputs( (S), (STREAM) ) == EOF, EX_IOERR )
-
-/**
- * Calls **fwrite**(3), checks for an error, and exits if there was one.
- *
- * @param BUF The buffer to write.
- * @param SIZE The number of bytes of each object.
- * @param NITEMS The number of items to write.
- * @param STREAM The `FILE` stream to write to.
- *
- * @sa #EPUTS()
- * @sa #F_FPRINTF()
- * @sa #FF_PUTC()
- * @sa perror_exit_if()
- */
-#define W_FWRITE(BUF,SIZE,NITEMS,STREAM) \
-	perror_exit_if( fwrite( (BUF), (SIZE), (NITEMS), (STREAM) ) < (NITEMS), EX_IOERR )
+#define DUP(FD)                   perror_exit_if( dup( FD ) == -1, EX_OSERR )
 
 /**
  * Calls **pipe**(2), checks for an error, and exits if there was one.
@@ -306,7 +300,7 @@ _GL_INLINE_HEADER_BEGIN
  *
  * @sa perror_exit_if()
  */
-#define W_PIPE(FDS)               perror_exit_if( pipe( FDS ) == -1, EX_OSERR )
+#define PIPE(FDS)                 perror_exit_if( pipe( FDS ) == -1, EX_OSERR )
 
 /**
  * Whitespace string: space and tab only.

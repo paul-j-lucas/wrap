@@ -144,7 +144,7 @@ static inline bool cp_is_para_delim( char32_t cp ) {
  * Prints an end-of-line and sends any pending IPC message to wrapc.
  */
 static inline void print_eol( void ) {
-  W_FPUTS( eol(), fout );
+  FPUTS( eol(), fout );
   wipc_send( ipc_buf );
 }
 
@@ -303,7 +303,7 @@ int main( int argc, char const *argv[] ) {
       if ( opt_lead_dot_ignore && cp == '.' ) {
         consec_newlines = 0;
         delimit_paragraph();
-        W_FPUTS( input_buf, fout );     // print the line as-is
+        FPUTS( input_buf, fout );       // print the line as-is
         //
         // Make state as if line never happened.
         //
@@ -483,7 +483,7 @@ int main( int argc, char const *argv[] ) {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  W_FERROR( fin );
+  FERROR( fin );
   if ( output_len > 0 ) {               // print left-over text
     if ( !is_long_line )
       print_lead_chars();
@@ -605,7 +605,7 @@ read_line:
     }
 
     if ( is_preformatted ) {
-      W_FPUTS( input_buf, fout );
+      FPUTS( input_buf, fout );
       goto read_line;
     }
   }
@@ -848,7 +848,7 @@ static bool markdown_adjust( void ) {
           // Prevent blank lines immediately after these Markdown line types
           // from being swallowed by wrap by just printing them directly.
           //
-          W_FPUTS( input_buf, fout );
+          FPUTS( input_buf, fout );
         }
         break;
       default:
@@ -868,7 +868,7 @@ static bool markdown_adjust( void ) {
           // print the marker line as-is "behind wrap's back" so it won't be
           // wrapped.
           //
-          W_FPUTS( input_buf, fout );
+          FPUTS( input_buf, fout );
           input_buf[0] = '\0';
         }
         break;
@@ -893,7 +893,7 @@ static bool markdown_adjust( void ) {
       //
       print_lead_chars();
       print_line( output_len, /*do_eol=*/true );
-      W_FPUTS( input_buf, fout );
+      FPUTS( input_buf, fout );
       return false;
 
     case MD_DL:
@@ -938,13 +938,13 @@ static void markdown_reset( void ) {
  */
 static void print_lead_chars( void ) {
   if ( proto_buf[0] != '\0' ) {
-    W_FPRINTF( fout, "%s%s", proto_buf, output_len > 0 ? proto_tws : "" );
+    FPRINTF( fout, "%s%s", proto_buf, output_len > 0 ? proto_tws : "" );
   }
   else if ( output_len > 0 ) {
     for ( size_t i = 0; i < opt_lead_tabs; ++i )
-      W_FPUTC( '\t', fout );
+      FPUTC( '\t', fout );
     for ( size_t i = 0; i < opt_lead_spaces; ++i )
-      W_FPUTC( ' ', fout );
+      FPUTC( ' ', fout );
   }
 }
 
@@ -958,7 +958,7 @@ static void print_lead_chars( void ) {
 static void print_line( size_t len, bool do_eol ) {
   output_buf[ len ] = '\0';
   if ( len > 0 ) {
-    W_FPUTS( output_buf, fout );
+    FPUTS( output_buf, fout );
     if ( do_eol )
       print_eol();
   }

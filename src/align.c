@@ -275,7 +275,7 @@ void align_eol_comments( char input_buf[] ) {
 
 print_line:
     output_buf[ output_len ] = '\0';
-    W_FPRINTF( fout, "%s%s", output_buf, eol() );
+    FPRINTF( fout, "%s%s", output_buf, eol() );
   } while ( check_readline( input_buf, fin ) );
 }
 
