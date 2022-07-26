@@ -288,7 +288,7 @@ static unsigned parse_align( char const *s, char *align_char ) {
   char *end = NULL;
   errno = 0;
   unsigned const col = (unsigned)strtoul( s, &end, 10 );
-  if ( unlikely( errno || end == s ) )
+  if ( unlikely( errno != 0 || end == s ) )
     goto error;
   if ( *end != '\0' ) {
     if ( *end == ',' )
