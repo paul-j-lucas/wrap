@@ -111,7 +111,10 @@ static void         markdown_reset();
 static void         print_lead_chars( void );
 static void         print_line( size_t, bool );
 static void         put_tabs_spaces( size_t, size_t );
+
+noreturn
 static void         usage( void );
+
 static void         wipc_send( char* );
 static void         wrap_cleanup( void );
 
@@ -983,7 +986,7 @@ static void put_tabs_spaces( size_t tabs, size_t spaces ) {
 /**
  * Prints the usage message to standard error and exits.
  */
-static noreturn void usage( void ) {
+static void usage( void ) {
   printf(
 "usage: " PACKAGE " [options]\n"
 "       " PACKAGE " -v\n"

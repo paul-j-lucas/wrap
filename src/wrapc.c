@@ -160,6 +160,7 @@ static char const*  str_status( int );
 NODISCARD
 static size_t       str_width( char const* );
 
+noreturn
 static void         usage( void );
 static void         wait_for_child_processes( void );
 static void         wrapc_cleanup( void );
@@ -1178,7 +1179,7 @@ static size_t str_width( char const *s ) {
 /**
  * Prints the usage message to standard error and exits.
  */
-static noreturn void usage( void ) {
+static void usage( void ) {
   printf(
 "usage: " PACKAGE "c [options]\n"
 "       " PACKAGE "c -v\n"
