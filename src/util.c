@@ -183,9 +183,9 @@ unsigned get_term_columns( void ) {
   if ( cols == UNSET ) {
     cols = 0;
 
-    char reason_buf[ 128 ];
+    int         cterm_fd = -1;
+    char        reason_buf[ 128 ];
     char const *reason = NULL;
-    int cterm_fd = -1;
 
     char const *const term = getenv( "TERM" );
     if ( unlikely( term == NULL ) ) {
@@ -242,7 +242,7 @@ unsigned get_term_columns( void ) {
 
 error:
     if ( likely( cterm_fd != -1 ) )
-      close( cterm_fd );
+      PJL_IGNORE_RV( close( cterm_fd ) );
     if ( unlikely( reason != NULL ) )
       FATAL_ERR( EX_UNAVAILABLE,
         "failed to determine number of columns in terminal: %s\n",
