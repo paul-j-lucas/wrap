@@ -34,7 +34,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrapc\fP 1 "August 26, 2020" "PJL TOOLS"
+.TH \f3wrapc\fP 1 "August 26, 2022" "PJL TOOLS"
 .SH NAME
 wrapc \- comment reformatter
 .SH SYNOPSIS
@@ -539,7 +539,7 @@ There is more than one ``token'' on the line before the comment
     } // for
 #endif /* NDEBUG */
 .cE 0
-.IP ""
+.IP
 are not aligned.
 A ``token'' is one of:
 .P
@@ -592,7 +592,7 @@ Aligns end-of-line comments at column
 .I n
 by either inserting or deleting whitespace
 before each comment.
-.IP ""
+.IP
 The optional alignment character specifier
 .I s
 is one of:
@@ -606,12 +606,12 @@ For example, given:
 .cS
           static char const SEP = '/'; // path separator
 .cE 0
-.IP ""
+.IP
 the first whitespace character
 after the last non-whitespace character
 before the comment
 is the character after `\f(CW;\fP'.
-.IP ""
+.IP
 If there is no such character,
 uses the last whitespace character encountered.
 If no whitespace character was encountered,
@@ -647,10 +647,10 @@ then the last tab is replaced by spaces
 such that the comment is aligned at column
 .IR n .
 .RE
-.IP ""
+.IP
 The default is
 .BR auto .
-.IP ""
+.IP
 Since false-positive
 comment delimiter characters
 can more easily occur on lines containing code,
@@ -681,7 +681,7 @@ Only punctuation characters
 .BR ispunct (3)
 returns non-zero)
 are allowed.
-.IP ""
+.IP
 Comment delimiters are specified by either one or two characters,
 e.g.,
 \f(CW#\fP,
@@ -689,7 +689,7 @@ e.g.,
 \f(CW/*\fP,
 i.e., whatever comment delimiter character(s) are used
 by a particular programming language.
-.IP ""
+.IP
 Multiple delimiters are separated by either commas or whitespace.
 Specifying any of the characters
 \f(CW(<[{\fP
