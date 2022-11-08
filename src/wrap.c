@@ -977,9 +977,9 @@ static void print_line( size_t len, bool do_eol ) {
  */
 static void put_tabs_spaces( size_t tabs, size_t spaces ) {
   output_width += tabs * opt_tab_spaces + spaces;
-  for ( ; tabs > 0; --tabs )
+  while ( tabs-- > 0 )
     output_buf[ output_len++ ] = '\t';
-  for ( ; spaces > 0; --spaces )
+  while ( spaces-- > 0 )
     output_buf[ output_len++ ] = ' ';
 }
 
