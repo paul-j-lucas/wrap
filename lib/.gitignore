@@ -1,9 +1,10 @@
 /*.alias
 /*.sed
 /alloca.h
+/assert.h
 /configmake.h
-/errno.h
 /ctype.h
+/errno.h
 /fnmatch.h
 /getopt-cdefs.h
 /getopt.h
@@ -11,6 +12,7 @@
 /limits.h
 /locale.h
 /stdbool.h
+/stdckdint.h
 /stddef.h
 /stdint.h
 /stdlib.h
