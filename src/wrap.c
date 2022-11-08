@@ -408,14 +408,13 @@ int main( int argc, char const *argv[] ) {
             // hyphenated word.
             //
           }
-        } else {
-          if ( cp_is_hyphen_adjacent( cp_prev ) && cp_is_hyphen( cp ) ) {
-            //
-            // We've encountered H- meaning that this is potentially a
-            // hyphenated word.
-            //
-            hyphen = HYPHEN_MAYBE;
-          }
+        }
+        else if ( cp_is_hyphen_adjacent( cp_prev ) && cp_is_hyphen( cp ) ) {
+          //
+          // We've encountered H- meaning that this is potentially a
+          // hyphenated word.
+          //
+          hyphen = HYPHEN_MAYBE;
         }
       }
     }
