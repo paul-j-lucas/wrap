@@ -1,3 +1,84 @@
+2022-11-15  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac: Added more compiler warnings.
+
+2022-11-08  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: s/for/while/
+   * lib/Makefile.am, assert.in.h, fnmatch.c, fnmatch_loop.c, hard-locale.h,
+     intprops-internal.h, intprops.h, mbrtowc.c, mbsinit.c, stdckdint.in.h,
+     stdlib.in.h, strerror.c, string.in.h, unistd.in.h, verify.h, wchar.in.h,
+     assert_h.m4, c-bool.m4, gnulib-common.m4, gnulib-comp.m4, warn-on-use.m4:
+     Updated Gnulib.
+   * configure.ac: Reworked configure.ac to check for optional
+     headers/libraries only when appropriate.
+
+2022-08-26  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.1: Eliminated double blank lines.
+
+2022-08-18  Paul J. Lucas <paul@lucasmail.org>
+
+   * util.c: Added PJL_IGNORE_RV().
+
+2022-08-17  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c, wrapc.c: Moved noreturn.
+   * wrap.c, wrapc.c: Now only 1 space after ) in help.
+
+2022-07-26  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.c: Explicit != 0.
+
+2022-07-22  Paul J. Lucas <paul@lucasmail.org>
+
+   * bootstrap: Added bootstrap.
+
+2022-07-15  Paul J. Lucas <paul@lucasmail.org>
+
+   * pjl_config.h: s/__attribute__((unused))/MAYBE_UNUSED/
+   * lib/Makefile.am, cdefs.h, libc-config.h, stdlib.in.h, string.in.h,
+     verify.h, wchar.in.h, extern-inline.m4, gnulib-common.m4: Updated GnuLib.
+   * alias.c, alias.h, align.c, cc_map.c, cc_map.h, common.h, doxygen.c,
+     doxygen.h, markdown.c, markdown.h, options.c, options.h, pattern.c,
+     pattern.h, pjl_config.h, read_conf.c, read_conf.h, unicode.c, unicode.h,
+     util.h, wrap.c, wrapc.c, wregex.c, wregex.h: Now using attribute.h.
+
+2022-01-16  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, _Noreturn.h, alloca.in.h, arg-nonnull.h, attribute.h,
+     btowc.c, c++defs.h, cdefs.h, ctype.in.h, errno.in.h, flexmember.h,
+     fnmatch.c, fnmatch.in.h, fnmatch_loop.c, getopt-cdefs.in.h, getopt-core.h,
+     getopt-ext.h, getopt-pfx-core.h, getopt-pfx-ext.h, getopt.c, getopt.in.h,
+     getopt1.c, getopt_int.h, gettext.h, hard-locale.c, hard-locale.h, idx.h,
+     intprops.h, inttypes.h, inttypes.in.h, isblank.c, lc-charset-dispatch.c,
+     lc-charset-dispatch.h, libc-config.h, limits.in.h, localcharset.c,
+     localcharset.h, locale.in.h, malloc.c, mbrtowc-impl-utf8.h,
+     mbrtowc-impl.h, mbrtowc.c, mbsinit.c, mbsrtowcs-impl.h, mbsrtowcs-state.c,
+     mbsrtowcs.c, mbtowc-impl.h, mbtowc-lock.c, mbtowc-lock.h, mbtowc.c,
+     memchr.c, memchr.valgrind, mempcpy.c, setlocale-lock.c, setlocale_null.c,
+     setlocale_null.h, stdbool.in.h, stddef.in.h, stdint.in.h, stdlib.in.h,
+     stdnoreturn.in.h, strdup.c, streq.h, strerror-override.c,
+     strerror-override.h, strerror.c, string.in.h, strndup.c, strnlen.c,
+     strnlen1.c, strnlen1.h, sys_types.in.h, sysexits.in.h, unistd.c,
+     unistd.in.h, verify.h, warn-on-use.h, wchar.in.h, wctype-h.c, wctype.in.h,
+     windows-initguard.h, wmemchr-impl.h, wmemchr.c, wmempcpy.c,
+     xalloc-oversized.h, 00gnulib.m4, __inline.m4, absolute-header.m4,
+     alloca.m4, btowc.m4, builtin-expect.m4, codeset.m4, ctype_h.m4,
+     errno_h.m4, extensions.m4, extern-inline.m4, flexmember.m4, fnmatch.m4,
+     fnmatch_h.m4, getopt.m4, gnulib-cache.m4, gnulib-common.m4,
+     gnulib-comp.m4, gnulib-tool.m4, include_next.m4, inttypes.m4, isblank.m4,
+     limits-h.m4, localcharset.m4, locale-fr.m4, locale-ja.m4, locale-zh.m4,
+     locale_h.m4, malloc.m4, mbrtowc.m4, mbsinit.m4, mbsrtowcs.m4,
+     mbstate_t.m4, mbtowc.m4, memchr.m4, mempcpy.m4, mmap-anon.m4,
+     multiarch.m4, nocrash.m4, off_t.m4, pid_t.m4, setlocale_null.m4,
+     ssize_t.m4, std-gnu11.m4, stdbool.m4, stddef_h.m4, stdint.m4, stdlib_h.m4,
+     stdnoreturn.m4, strdup.m4, strerror.m4, string_h.m4, strndup.m4,
+     strnlen.m4, sys_socket_h.m4, sys_types_h.m4, sysexits.m4, threadlib.m4,
+     unistd_h.m4, vararrays.m4, visibility.m4, warn-on-use.m4, wchar_h.m4,
+     wchar_t.m4, wctype_h.m4, wint_t.m4, wmemchr.m4, wmempcpy.m4, zzgnulib.m4:
+     Updated Gnulib.
+
 2021-12-19  Paul J. Lucas <paul@lucasmail.org>
 
    * lib/Makefile.am, _Noreturn.h, attribute.h, cdefs.h, getopt.c, gettext.h,
