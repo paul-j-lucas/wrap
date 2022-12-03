@@ -38,6 +38,7 @@
 #include <stdlib.h>                     /* for exit(), ... */
 #include <stdnoreturn.h>
 #include <string.h>
+#include <sysexits.h>
 #include <unistd.h>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -113,7 +114,7 @@ static void         print_line( size_t, bool );
 static void         put_tabs_spaces( size_t, size_t );
 
 noreturn
-static void         usage( void );
+static void         usage( int );
 
 static void         wipc_send( char* );
 static void         wrap_cleanup( void );
@@ -983,60 +984,90 @@ static void put_tabs_spaces( size_t tabs, size_t spaces ) {
 }
 
 /**
- * Prints the usage message to standard error and exits.
+ * Prints the usage message and exits.
+ *
+ * @param status The status to exit with.  If it is `EX_OK`, prints to standard
+ * output; otherwise prints to standard error.
  */
-static void usage( void ) {
-  printf(
+static void usage( int status ) {
+  fprintf( status == EX_OK ? stdout : stderr,
 "usage: " PACKAGE " [options]\n"
 "       " PACKAGE " -v\n"
 "options:\n"
-"  --alias=NAME           (-a) Use alias from configuration file.\n"
-"  --all-newlines-delimit (-N) Treat newlines as a paragraph delimiters.\n"
-"  --block-regex=REGEX    (-b) Block leading regular expression.\n"
-"  --config=FILE          (-c) The configuration file [default: ~/%s].\n"
-"  --dot-ignore           (-d) Do not alter lines that begin with '.' (dot).\n"
-"  --eol=STR              (-l)\n"
+"  --alias=NAME           (-%c) Use alias from configuration file.\n"
+"  --all-newlines-delimit (-%c) Treat newlines as a paragraph delimiters.\n"
+"  --block-regex=REGEX    (-%c) Block leading regular expression.\n"
+"  --config=FILE          (-%c) The configuration file [default: ~/%s].\n"
+"  --dot-ignore           (-%c) Do not alter lines that begin with '.' (dot).\n"
+"  --eol=STR              (-%c)\n"
 "      Set line-endings as input/Unix/Windows [default: input].\n"
-"  --eos-delimit          (-e)\n"
+"  --eos-delimit          (-%c)\n"
 "      Treat whitespace after end-of-sentence as a paragraph delimiter.\n"
-"  --eos-spaces=NUM       (-E) Spaces after end-of-sentence [default: %d].\n"
-"  --file=FILE            (-f) Read from this file [default: stdin].\n"
-"  --file-name=NAME       (-F) Filename for stdin.\n"
-"  --hang-spaces=NUM      (-H)\n"
+"  --eos-spaces=NUM       (-%c) Spaces after end-of-sentence [default: %d].\n"
+"  --file=FILE            (-%c) Read from this file [default: stdin].\n"
+"  --file-name=NAME       (-%c) Filename for stdin.\n"
+"  --hang-spaces=NUM      (-%c)\n"
 "      Hang-indent spaces after tabs for all but first line of each paragraph.\n"
-"  --hang-tabs=NUM        (-h)\n"
+"  --hang-tabs=NUM        (-%c)\n"
 "      Hang-indent tabs for all but first line of each paragraph.\n"
-"  --indent-spaces=NUM    (-I)\n"
+"  --indent-spaces=NUM    (-%c)\n"
 "      Indent spaces after tabs for first line of each paragraph.\n"
-"  --indent-tabs=NUM      (-i) Indent tabs for first line of each paragraph.\n"
-"  --lead-spaces=NUM      (-S) Prepend leading spaces after tabs to each line.\n"
-"  --lead-string=STR      (-L) String to prepend to every line.\n"
-"  --lead-tabs=NUM        (-t) Prepend leading tabs to each line.\n"
-"  --markdown             (-u) Format Markdown.\n"
-"  --mirror-spaces=NUM    (-M) Mirror spaces.\n"
-"  --mirror-tabs=NUM      (-m) Mirror tabs.\n"
-"  --no-config            (-C) Suppress reading configuration file.\n"
-"  --no-hyphen            (-y) Suppress wrapping at hyphen characters.\n"
-"  --no-newlines-delimit  (-n) Do not treat newlines as paragraph delimiters.\n"
-"  --output=FILE          (-o) Write to this file [default: stdout].\n"
-"  --para-chars=STR       (-p) Additional paragraph delimiter characters.\n"
-"  --prototype            (-P)\n"
+"  --indent-tabs=NUM      (-%c) Indent tabs for first line of each paragraph.\n"
+"  --lead-spaces=NUM      (-%c) Prepend leading spaces after tabs to each line.\n"
+"  --lead-string=STR      (-%c) String to prepend to every line.\n"
+"  --lead-tabs=NUM        (-%c) Prepend leading tabs to each line.\n"
+"  --markdown             (-%c) Format Markdown.\n"
+"  --mirror-spaces=NUM    (-%c) Mirror spaces.\n"
+"  --mirror-tabs=NUM      (-%c) Mirror tabs.\n"
+"  --no-config            (-%c) Suppress reading configuration file.\n"
+"  --no-hyphen            (-%c) Suppress wrapping at hyphen characters.\n"
+"  --no-newlines-delimit  (-%c) Do not treat newlines as paragraph delimiters.\n"
+"  --output=FILE          (-%c) Write to this file [default: stdout].\n"
+"  --para-chars=STR       (-%c) Additional paragraph delimiter characters.\n"
+"  --prototype            (-%c)\n"
 "      Treat leading whitespace on first line as prototype.\n"
-"  --tab-spaces=NUM       (-s) Tab-spaces equivalence [default: %d].\n"
-"  --title                (-T) Treat paragraph's first line as title.\n"
-"  --version              (-v) Print version and exit.\n"
-"  --whitespace-delimit   (-W)\n"
+"  --tab-spaces=NUM       (-%c) Tab-spaces equivalence [default: %d].\n"
+"  --title                (-%c) Treat paragraph's first line as title.\n"
+"  --version              (-%c) Print version and exit.\n"
+"  --whitespace-delimit   (-%c)\n"
 "      Treat line beginning with whitespace as paragraph delimiter.\n"
-"  --width=NUM|terminal   (-w) Line width [default: %d].\n"
+"  --width=NUM|terminal   (-%c) Line width [default: %d].\n"
 "\n"
 "Report bugs to: " PACKAGE_BUGREPORT "\n"
-PACKAGE_NAME " home page: " PACKAGE_URL "\n"
-    , CONF_FILE_NAME_DEFAULT
-    , EOS_SPACES_DEFAULT
-    , TAB_SPACES_DEFAULT
-    , LINE_WIDTH_DEFAULT
+PACKAGE_NAME " home page: " PACKAGE_URL "\n",
+    COPT(ALIAS),
+    COPT(ALL_NEWLINES_DELIMIT),
+    COPT(BLOCK_REGEX),
+    COPT(CONFIG), CONF_FILE_NAME_DEFAULT,
+    COPT(DOT_IGNORE),
+    COPT(EOL),
+    COPT(EOS_DELIMIT),
+    COPT(EOS_SPACES), EOS_SPACES_DEFAULT,
+    COPT(FILE),
+    COPT(FILE_NAME),
+    COPT(HANG_SPACES),
+    COPT(HANG_TABS),
+    COPT(INDENT_SPACES),
+    COPT(INDENT_TABS),
+    COPT(LEAD_SPACES),
+    COPT(LEAD_STRING),
+    COPT(LEAD_TABS),
+    COPT(MARKDOWN),
+    COPT(MIRROR_SPACES),
+    COPT(MIRROR_TABS),
+    COPT(NO_CONFIG),
+    COPT(NO_HYPHEN),
+    COPT(NO_NEWLINES_DELIMIT),
+    COPT(OUTPUT),
+    COPT(PARA_CHARS),
+    COPT(PROTOTYPE),
+    COPT(TAB_SPACES), TAB_SPACES_DEFAULT,
+    COPT(TITLE_LINE),
+    COPT(VERSION),
+    COPT(WHITESPACE_DELIMIT),
+    COPT(WIDTH), LINE_WIDTH_DEFAULT
   );
-  exit( EX_USAGE );
+  exit( status );
 }
 
 /**

@@ -37,6 +37,48 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+#define OPT_ALIAS                 a
+#define OPT_ALIGN_COLUMN          A
+#define OPT_BLOCK_REGEX           b
+#define OPT_CONFIG                c
+#define OPT_NO_CONFIG             C
+#define OPT_DOT_IGNORE            d
+#define OPT_COMMENT_CHARS         D
+#define OPT_EOS_DELIMIT           e
+#define OPT_EOS_SPACES            E
+#define OPT_FILE                  f
+#define OPT_FILE_NAME             F
+#define OPT_HANG_TABS             h
+#define OPT_HANG_SPACES           H
+#define OPT_INDENT_TABS           i
+#define OPT_INDENT_SPACES         I
+#define OPT_EOL                   l
+#define OPT_LEAD_STRING           L
+#define OPT_MIRROR_TABS           m
+#define OPT_MIRROR_SPACES         M
+#define OPT_NO_NEWLINES_DELIMIT   n
+#define OPT_ALL_NEWLINES_DELIMIT  N
+#define OPT_OUTPUT                o
+#define OPT_PARA_CHARS            p
+#define OPT_PROTOTYPE             P
+#define OPT_TAB_SPACES            s
+#define OPT_LEAD_SPACES           S
+#define OPT_LEAD_TABS             t
+#define OPT_TITLE_LINE            T
+#define OPT_MARKDOWN              u
+#define OPT_VERSION               v
+#define OPT_WIDTH                 w
+#define OPT_WHITESPACE_DELIMIT    W
+#define OPT_DOXYGEN               x
+#define OPT_NO_HYPHEN             y
+#define OPT_ENABLE_IPC            Z
+
+/// Command-line option character as a character literal.
+#define COPT(X)                   CHARIFY(OPT_##X)
+
+/// Command-line option character as a single-character string literal.
+#define SOPT(X)                   STRINGIFY(OPT_##X)
+
 #define OPT_BUF_SIZE              32    /* used for format_opt() */
 
 /**
@@ -102,7 +144,7 @@ extern FILE        *fout;               ///< File out.
  * @return Returns \a buf.
  */
 PJL_DISCARD
-char* format_opt( char short_opt, char buf[], size_t buf_size );
+char* opt_format( char short_opt, char buf[], size_t buf_size );
 
 /**
  * Initializes command-line option variables.
@@ -112,7 +154,7 @@ char* format_opt( char short_opt, char buf[], size_t buf_size );
  * @param usage A pointer to a function to print a usage message.  It must not
  * return.
  */
-void options_init( int argc, char const *argv[], void (*usage)(void) );
+void options_init( int argc, char const *argv[], void (*usage)(int) );
 
 ///////////////////////////////////////////////////////////////////////////////
 
