@@ -1,3 +1,9 @@
+2022-12-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * cc_map.c, options.c, options.h, util.h, wrap.c, wrapc.c: Reworked option
+     parsing.
+   * configure.ac: Now requiring C11.
+
 2022-11-15  Paul J. Lucas <paul@lucasmail.org>
 
    * configure.ac: Added more compiler warnings.
