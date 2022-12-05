@@ -163,9 +163,9 @@ _GL_INLINE_HEADER_BEGIN
  *
  * @param STREAM The `FILE` stream to check for an error.
  *
- * @sa perror_exit_if()
+ * @sa #PERROR_EXIT_IF()
  */
-#define FERROR(STREAM)            perror_exit_if( ferror( STREAM ), EX_IOERR )
+#define FERROR(STREAM)            PERROR_EXIT_IF( ferror( STREAM ), EX_IOERR )
 
 /**
  * Shorthand for printing to standard output.
@@ -173,9 +173,10 @@ _GL_INLINE_HEADER_BEGIN
  * @param ... The `printf()` arguments.
  *
  * @sa #EFPRINTF()
+ * @sa #PERROR_EXIT_IF()
  */
 #define FPRINTF(STREAM,...) \
-	perror_exit_if( fprintf( (STREAM), __VA_ARGS__ ) < 0, EX_IOERR )
+	PERROR_EXIT_IF( fprintf( (STREAM), __VA_ARGS__ ) < 0, EX_IOERR )
 
 /**
  * Calls **putc**(3), checks for an error, and exits if there was one.
@@ -186,10 +187,10 @@ _GL_INLINE_HEADER_BEGIN
  * @sa #EPUTC()
  * @sa #FPRINTF()
  * @sa #FPUTS()
- * @sa perror_exit_if()
+ * @sa #PERROR_EXIT_IF()
  */
 #define FPUTC(C,STREAM) \
-	perror_exit_if( putc( (C), (STREAM) ) == EOF, EX_IOERR )
+	PERROR_EXIT_IF( putc( (C), (STREAM) ) == EOF, EX_IOERR )
 
 /**
  * Calls **fputs**(3), checks for an error, and exits if there was one.
@@ -200,10 +201,10 @@ _GL_INLINE_HEADER_BEGIN
  * @sa #EPUTS()
  * @sa #FPRINTF()
  * @sa #FPUTC()
- * @sa perror_exit_if()
+ * @sa #PERROR_EXIT_IF()
  */
 #define FPUTS(S,STREAM) \
-	perror_exit_if( fputs( (S), (STREAM) ) == EOF, EX_IOERR )
+	PERROR_EXIT_IF( fputs( (S), (STREAM) ) == EOF, EX_IOERR )
 
 /**
  * Frees the given memory.
@@ -266,6 +267,7 @@ _GL_INLINE_HEADER_BEGIN
  * @param ... The `printf()` arguments.
  *
  * @sa #INTERNAL_ERR()
+ * @sa #PERROR_EXIT_IF()
  * @sa perror_exit()
  */
 #define FATAL_ERR(STATUS,FORMAT,...) \
@@ -279,10 +281,25 @@ _GL_INLINE_HEADER_BEGIN
  * @param ... The `printf()` arguments.
  *
  * @sa #FATAL_ERR()
+ * @sa #PERROR_EXIT_IF()
  * @sa perror_exit()
  */
 #define INTERNAL_ERR(FORMAT,...) \
   FATAL_ERR( EX_SOFTWARE, "%s:%d: internal error: " FORMAT, __FILE__, __LINE__, __VA_ARGS__ )
+
+/**
+ * If \a EXPR is `true`, prints an error message for `errno` to standard error
+ * and exits with status \a STATUS.
+ *
+ * @param EXPR The expression.
+ * @param STATUS The exit status code.
+ *
+ * @sa #FATAL_ERR()
+ * @sa #INTERNAL_ERR()
+ * @sa perror_exit()
+ */
+#define PERROR_EXIT_IF( EXPR, STATUS ) \
+  BLOCK( if ( unlikely( EXPR ) ) perror_exit( STATUS ); )
 
 /**
  * Cast either from or to a pointer type &mdash; similar to C++'s
@@ -400,16 +417,16 @@ _GL_INLINE_HEADER_BEGIN
  *
  * @param FD The file descriptor to duplicate.
  */
-#define DUP(FD)                   perror_exit_if( dup( FD ) == -1, EX_OSERR )
+#define DUP(FD)                   PERROR_EXIT_IF( dup( FD ) == -1, EX_OSERR )
 
 /**
  * Calls **pipe**(2), checks for an error, and exits if there was one.
  *
  * @param FDS An array of two integer file descriptors to create.
  *
- * @sa perror_exit_if()
+ * @sa #PERROR_EXIT_IF()
  */
-#define PIPE(FDS)                 perror_exit_if( pipe( FDS ) == -1, EX_OSERR )
+#define PIPE(FDS)                 PERROR_EXIT_IF( pipe( FDS ) == -1, EX_OSERR )
 
 /**
  * Whitespace string: space and tab only.
@@ -433,7 +450,7 @@ extern char const  *me;                 ///< Program name.
 
 /**
  * Extracts the base portion of a path-name.
- * Unlike \c basename(3):
+ * Unlike **basename**(3):
  *  + Trailing \c '/' characters are not deleted.
  *  + \a path_name is never modified (hence can therefore be \c const).
  *  + Returns a pointer within \a path_name (hence is multi-call safe).
@@ -447,7 +464,7 @@ NODISCARD
 char const* base_name( char const *path_name );
 
 /**
- * Comparison function for bsearch(3) that compares a string key against an
+ * Comparison function for **bsearch**(3) that compares a string key against an
  * element of array of constant pointer to constant char.
  *
  * @param key A pointer to the string being searched for.
@@ -460,8 +477,15 @@ NODISCARD
 int bsearch_str_strptr_cmp( void const *key, void const *str_ptr );
 
 /**
+ * Calls **atexit**(3) and checks for failure.
+ *
+ * @param cleanup_fn The pointer to the function to call **atexit**(3) with.
+ */
+void check_atexit( void (*cleanup_fn)(void) );
+
+/**
  * Converts an ASCII string to an unsigned integer.
- * Unlike \c atoi(3), insists that all characters in \a s are digits.
+ * Unlike **atoi**(3), insists that all characters in \a s are digits.
  * If conversion fails, prints an error message and exits.
  *
  * @param s The string to convert.
@@ -471,7 +495,7 @@ NODISCARD
 unsigned check_atou( char const *s );
 
 /**
- * Calls \c realloc(3) and checks for failure.
+ * Calls **realloc**(3) and checks for failure.
  * If reallocation fails, prints an error message and exits.
  *
  * @param p The pointer to reallocate.  If NULL, new memory is allocated.
@@ -482,7 +506,7 @@ NODISCARD
 void* check_realloc( void *p, size_t size );
 
 /**
- * Calls \c strdup(3) and checks for failure.
+ * Calls **strdup**(3) and checks for failure.
  * If memory allocation fails, prints an error message and exits.
  *
  * @param s The null-terminated string to duplicate.
@@ -646,23 +670,6 @@ bool is_windows_eol( char const buf[], size_t buf_len ) {
 noreturn void perror_exit( int status );
 
 /**
- * If \a expr is `true`, prints an error message for `errno` to standard error
- * and exits.
- *
- * @param expr The expression.
- * @param status The exit status code.
- *
- * @sa #FATAL_ERR()
- * @sa #INTERNAL_ERR()
- * @sa perror_exit()
- */
-W_UTIL_INLINE
-void perror_exit_if( bool expr, int status ) {
-  if ( unlikely( expr ) )
-    perror_exit( status );
-}
-
-/**
  * Sets the locale for the \c LC_COLLATE and \c LC_CTYPE categories to UTF-8.
  */
 void setlocale_utf8( void );
@@ -681,7 +688,7 @@ void setlocale_utf8( void );
 void split_tws( char buf[], size_t buf_len, char tws[] );
 
 /**
- * A variant of strcpy(3) that returns the number of characters copied.
+ * A variant of **strcpy**(3) that returns the number of characters copied.
  *
  * @param dst A pointer to receive the copy of \a src.
  * @param src The null-terminated string to copy.
@@ -691,7 +698,7 @@ NODISCARD
 size_t strcpy_len( char *dst, char const *src );
 
 /**
- * Reverse strspn(3): spans the trailing part of \a s as long as characters
+ * Reverse **strspn**(3): spans the trailing part of \a s as long as characters
  * from \a s occur in \a set.
  *
  * @param s The null-terminated string to span.

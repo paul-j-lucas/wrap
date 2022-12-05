@@ -320,7 +320,7 @@ NODISCARD
 static pid_t read_source_write_wrap( void ) {
 #ifndef DEBUG_RSWW
   pid_t const pid = fork();
-  perror_exit_if( pid == -1, EX_OSERR );
+  PERROR_EXIT_IF( pid == -1, EX_OSERR );
   if ( pid != 0 )                       // parent process
     return pid;
   //
@@ -743,8 +743,13 @@ done:
  * @param argv The command-line arguments from main().
  */
 static void init( int argc, char const *argv[] ) {
+  static bool initialized;
+  assert( !initialized );
+  initialized = true;
+
   atexit( common_cleanup );
   atexit( wrapc_cleanup );
+
   options_init( argc, argv, usage );
   opt_comment_chars = cc_map_compile( opt_comment_chars );
 

@@ -26,6 +26,7 @@
 // standard
 #include <assert.h>
 #include <ctype.h>
+#include <errno.h>
 #include <locale.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -81,24 +82,32 @@ int bsearch_str_strptr_cmp( void const *key, void const *str_ptr ) {
   return strcmp( s_key, s_elt );
 }
 
+void check_atexit( void (*cleanup_fn)(void) ) {
+  assert( cleanup_fn != NULL );
+  PERROR_EXIT_IF( atexit( cleanup_fn ) != 0, EX_OSERR );
+}
+
 unsigned check_atou( char const *s ) {
   assert( s != NULL );
   if ( !is_digits( s ) )
     FATAL_ERR( EX_USAGE, "\"%s\": invalid integer\n", s );
-  return STATIC_CAST( unsigned, strtoul( s, NULL, 10 ) );
+  errno = 0;
+  unsigned long const rv = strtoul( s, NULL, 10 );
+  PERROR_EXIT_IF( errno != 0, EX_USAGE );
+  return STATIC_CAST( unsigned, rv );
 }
 
 void* check_realloc( void *p, size_t size ) {
   assert( size > 0 );
   p = p != NULL ? realloc( p, size ) : malloc( size );
-  perror_exit_if( p == NULL, EX_OSERR );
+  PERROR_EXIT_IF( p == NULL, EX_OSERR );
   return p;
 }
 
 char* check_strdup( char const *s ) {
   assert( s != NULL );
   char *const dup = strdup( s );
-  perror_exit_if( dup == NULL, EX_OSERR );
+  PERROR_EXIT_IF( dup == NULL, EX_OSERR );
   return dup;
 }
 
@@ -128,7 +137,7 @@ void fcopy( FILE *ffrom, FILE *fto ) {
 
   char buf[ 8192 ];
   for ( size_t size; (size = fread( buf, 1, sizeof buf, ffrom )) > 0; )
-    perror_exit_if( fwrite( buf, 1, size, fto ) < size, EX_IOERR );
+    PERROR_EXIT_IF( fwrite( buf, 1, size, fto ) < size, EX_IOERR );
   FERROR( ffrom );
 }
 
@@ -338,7 +347,7 @@ void wait_for_debugger_attach( char const *env_var ) {
   assert( env_var != NULL );
   if ( is_affirmative( getenv( env_var ) ) ) {
     EPRINTF( "pid=%u: waiting for debugger to attach...\n", getpid() );
-    perror_exit_if( raise( SIGSTOP ) == -1, EX_OSERR );
+    PERROR_EXIT_IF( raise( SIGSTOP ) == -1, EX_OSERR );
   }
 }
 #endif /* NDEBUG */
