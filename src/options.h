@@ -144,7 +144,7 @@ extern FILE        *fout;               ///< File out.
  * @return Returns \a buf.
  */
 PJL_DISCARD
-char* opt_format( char short_opt, char buf[], size_t buf_size );
+char* opt_format( char short_opt, char buf[const], size_t buf_size );
 
 /**
  * Initializes command-line option variables.

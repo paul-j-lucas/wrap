@@ -128,7 +128,7 @@ static bool is_eol_comment( char const *s ) {
 
 ////////// extern functions ///////////////////////////////////////////////////
 
-void align_eol_comments( char input_buf[] ) {
+void align_eol_comments( char input_buf[const] ) {
   do {
     size_t      col = 0;
     bool        is_backslash = false;   // got a backslash?

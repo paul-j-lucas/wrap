@@ -50,7 +50,7 @@
  * @param input_buf The input buffer to use.  It must contain the first line of
  * text read.
  */
-void align_eol_comments( char input_buf[] );
+void align_eol_comments( char input_buf[const] );
 
 ///////////////////////////////////////////////////////////////////////////////
 

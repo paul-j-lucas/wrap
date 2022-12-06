@@ -438,9 +438,9 @@ static eol_t parse_eol( char const *s ) {
  * originating line number; zero otherwise.
  */
 static void parse_options( int argc, char const *argv[],
-                           char const short_opts[],
-                           struct option const long_opts[],
-                           char const cmdline_forbidden_opts[],
+                           char const short_opts[const],
+                           struct option const long_opts[const],
+                           char const cmdline_forbidden_opts[const],
                            void (*usage)(int), unsigned line_no ) {
   assert( usage != NULL );
 
@@ -449,7 +449,10 @@ static void parse_options( int argc, char const *argv[],
   CLEAR_OPTIONS();
 
   for (;;) {
-    int opt = getopt_long( argc, (char**)argv, short_opts, long_opts, NULL );
+    int const opt = getopt_long(
+      argc, CONST_CAST( char**, argv ), short_opts, long_opts,
+      /*longindex=*/NULL
+    );
     if ( opt == -1 )
       break;
     SET_OPTION( opt );
@@ -462,8 +465,7 @@ static void parse_options( int argc, char const *argv[],
         );
     }
     else if ( strchr( cmdline_forbidden_opts, opt ) != NULL ) {
-      EPRINTF( "%s: invalid option -- '%c'\n", me, opt );
-      usage( EX_USAGE);
+      FATAL_ERR( EX_USAGE, "%s: invalid option -- '%c'\n", me, opt );
     }
 
     switch ( opt ) {
@@ -778,8 +780,8 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
     }
     if ( alias != NULL )
       parse_options(
-        alias->argc, alias->argv, OPTS_SHORT[0], OPTS_LONG[0], "", usage,
-        alias->line_no
+        alias->argc, alias->argv, OPTS_SHORT[0], OPTS_LONG[0],
+        /*cmdline_forbidden_opts=*/"", usage, alias->line_no
       );
   }
 

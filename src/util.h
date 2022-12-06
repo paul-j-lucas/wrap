@@ -600,7 +600,7 @@ bool is_affirmative( char const *s );
  * @return Returns \c true only if \a s is among \a matches.
  */
 NODISCARD
-bool is_any( char const *s, char const *const matches[] );
+bool is_any( char const *s, char const *const matches[const] );
 
 /**
  * Checks whether \a s is a blank line, that is a line consisting only of
@@ -658,7 +658,7 @@ bool is_space( char c ) {
  * @return Returns \c true only if \a buf ends with \c {CR}{LF}.
  */
 NODISCARD W_UTIL_INLINE
-bool is_windows_eol( char const buf[], size_t buf_len ) {
+bool is_windows_eol( char const buf[const], size_t buf_len ) {
   return buf_len >= 2 && buf[ buf_len - 2 ] == '\r';
 }
 
@@ -685,7 +685,7 @@ void setlocale_utf8( void );
  * @param tws The buffer to receive the trailing whitespace from \a buf, if
  * any.
  */
-void split_tws( char buf[], size_t buf_len, char tws[] );
+void split_tws( char buf[const], size_t buf_len, char tws[const] );
 
 /**
  * A variant of **strcpy**(3) that returns the number of characters copied.

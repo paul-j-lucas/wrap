@@ -277,7 +277,7 @@ bool is_affirmative( char const *s ) {
 }
 #endif /* NDEBUG */
 
-bool is_any( char const *s, char const *const matches[] ) {
+bool is_any( char const *s, char const *const matches[const] ) {
   if ( s != NULL ) {
     for ( char const *const *match = matches; *match != NULL; ++match ) {
       if ( strcasecmp( s, *match ) == 0 )
@@ -314,7 +314,7 @@ void setlocale_utf8( void ) {
   exit( EX_UNAVAILABLE );
 }
 
-void split_tws( char buf[], size_t buf_len, char tws[] ) {
+void split_tws( char buf[const], size_t buf_len, char tws[const] ) {
   size_t const tnws_len = buf_len - strrspn( buf, WS_ST );
   strcpy( tws, buf + tnws_len );
   buf[ tnws_len ] = '\0';
