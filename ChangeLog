@@ -1,3 +1,12 @@
+2022-12-09  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, string.in.h, verify.h, string_h.m4: Updated Gnulib.
+
+2022-12-06  Paul J. Lucas <paul@lucasmail.org>
+
+   * align.c, options.c, options.h, util.c, util.h, wrapc.c: Added "const" to
+     array parameters; added comments.
+
 2022-12-05  Paul J. Lucas <paul@lucasmail.org>
 
    * alias.c, markdown.c, pattern.c, util.c, util.h, wrap.c, wrapc.c:
