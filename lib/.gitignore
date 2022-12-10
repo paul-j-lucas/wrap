@@ -1,8 +1,5 @@
-/*.alias
-/*.sed
 /alloca.h
 /assert.h
-/configmake.h
 /ctype.h
 /errno.h
 /fnmatch.h
@@ -20,7 +17,6 @@
 /string.h
 /sys
 /sysexits.h
-/unistd.h
 /unistd.h
 /wchar.h
 /wctype.h
