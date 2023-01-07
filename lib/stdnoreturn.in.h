@@ -1,6 +1,6 @@
 /* A substitute for ISO C11 <stdnoreturn.h>.
 
-   Copyright 2012-2022 Free Software Foundation, Inc.
+   Copyright 2012-2023 Free Software Foundation, Inc.
 
    This file is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,9 @@
    References:
    ISO C11 (latest free draft
    <http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf>)
-   section 7.23 */
+   section 7.23
+
+   <stdnoreturn.h> is obsolescent in C23, so new code should avoid it.  */
 
 /* The definition of _Noreturn is copied here.  */
 
