@@ -1,3 +1,10 @@
+2023-01-22  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, _Noreturn.h, hard-locale.c, stdlib.in.h, verify.h,
+     assert_h.m4, gnulib-common.m4, gnulib-comp.m4, mbrtowc.m4, mbtowc.m4,
+     mempcpy.m4, setlocale_null.m4, stdlib_h.m4, threadlib.m4, wmempcpy.m4:
+     Updated Gnulib.
+
 2023-01-07  Paul J. Lucas <paul@lucasmail.org>
 
    * lib/Makefile.am, _Noreturn.h, alloca.in.h, arg-nonnull.h, assert.in.h,
