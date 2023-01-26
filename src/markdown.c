@@ -126,7 +126,7 @@ static char const *const HTML_BLOCK_ELEMENT[] = {
 };
 
 // local variable definitions
-static html_state_t cur_html_state;
+static html_state_t curr_html_state;
 static md_seq_t     next_seq_num;
 static bool         prev_blank_line;
 static bool         prev_code_fence_end;
@@ -1035,7 +1035,7 @@ void markdown_cleanup( void ) {
 }
 
 void markdown_init( void ) {
-  cur_html_state = HTML_NONE;
+  curr_html_state = HTML_NONE;
   prev_code_fence_end = false;
   prev_link_label_has_title = false;
   //
@@ -1147,7 +1147,7 @@ md_state_t const* markdown_parse( char *s ) {
     //
     // HTML blocks.
     //
-    switch ( cur_html_state ) {
+    switch ( curr_html_state ) {
       case HTML_ELEMENT:
         if ( blank_line )
           stack_pop();
@@ -1156,8 +1156,8 @@ md_state_t const* markdown_parse( char *s ) {
         stack_pop();
         break;
       default:
-        if ( md_is_html_end( cur_html_state, s ) )
-          cur_html_state = HTML_END;
+        if ( md_is_html_end( curr_html_state, s ) )
+          curr_html_state = HTML_END;
         //
         // As long as we're in the MD_HTML_BLOCK state, we can just return
         // without further checks.
@@ -1230,10 +1230,10 @@ md_state_t const* markdown_parse( char *s ) {
     // Block-level HTML.
     case '<': {
       bool is_end_tag;
-      cur_html_state = md_is_html_tag( nws, &is_end_tag );
-      if ( cur_html_state != HTML_NONE ) {
+      curr_html_state = md_is_html_tag( nws, &is_end_tag );
+      if ( curr_html_state != HTML_NONE ) {
         if ( is_end_tag )               // HTML ends on same line as it begins
-          cur_html_state = HTML_END;
+          curr_html_state = HTML_END;
         stack_push( MD_HTML_BLOCK, indent_left, 0 );
         return &TOP;
       }
