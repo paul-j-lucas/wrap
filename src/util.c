@@ -77,9 +77,9 @@ char const* base_name( char const *path_name ) {
 }
 
 int bsearch_str_strptr_cmp( void const *key, void const *str_ptr ) {
-  char const *const s_key = key;
-  char const *const s_elt = *POINTER_CAST( char const**, str_ptr );
-  return strcmp( s_key, s_elt );
+  char const *const key_s = key;
+  char const *const elt_s = *POINTER_CAST( char const**, str_ptr );
+  return strcmp( key_s, elt_s );
 }
 
 void check_atexit( void (*cleanup_fn)(void) ) {

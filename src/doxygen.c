@@ -253,9 +253,9 @@ static dox_cmd_t const DOX_COMMANDS[] = {
  */
 NODISCARD
 static int bsearch_str_dox_cmp( void const *key, void const *elt ) {
-  char const *const s_key = key;
-  dox_cmd_t const *const dox_elt = elt;
-  return strcmp( s_key, dox_elt->name );
+  char const *const key_s = key;
+  dox_cmd_t const *const elt_dox = elt;
+  return strcmp( key_s, elt_dox->name );
 }
 
 ////////// extern functions ///////////////////////////////////////////////////
