@@ -1,3 +1,25 @@
+2023-04-05  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, btowc.c, fnmatch.c, getopt-pfx-core.h, hard-locale.h,
+     limits.in.h, setlocale_null.c, stddef.in.h, stdlib.in.h, string.in.h,
+     unistd.in.h, verify.h, wchar.in.h, assert_h.m4, btowc.m4, fnmatch.m4,
+     gnulib-common.m4, limits-h.m4, malloc.m4, mbrtowc.m4, mbsrtowcs.m4,
+     setlocale_null.m4, stddef_h.m4, stdlib_h.m4, strerror.m4, wchar_h.m4:
+     Updated GnuLib.
+
+2023-01-31  Paul J. Lucas <paul@lucasmail.org>
+
+   * lib/Makefile.am, cdefs.h, inttypes.h, inttypes.in.h, libc-config.h,
+     locale.in.h, stdlib.in.h, string.in.h, unistd.in.h, wchar.in.h,
+     gnulib-common.m4, gnulib-comp.m4, inttypes.m4, mbtowc.m4, mempcpy.m4,
+     stddef_h.m4, stdlib_h.m4, string_h.m4, threadlib.m4, unistd_h.m4,
+     wchar_h.m4, wmempcpy.m4: Updated Gnulib.
+
+2023-01-26  Paul J. Lucas <paul@lucasmail.org>
+
+   * doxygen.c, util.c: Renaming.
+   * markdown.c: c/cur_/curr_/
+
 2023-01-22  Paul J. Lucas <paul@lucasmail.org>
 
    * lib/Makefile.am, _Noreturn.h, hard-locale.c, stdlib.in.h, verify.h,
@@ -209,7 +231,6 @@
 
 2021-02-06  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS: Updated.
    * lib/Makefile.am, _Noreturn.h, alloca.in.h, arg-nonnull.h, attribute.h,
      btowc.c, c++defs.h, cdefs.h, ctype.in.h, errno.in.h, flexmember.h,
      fnmatch.c, fnmatch.in.h, fnmatch_loop.c, getopt-cdefs.in.h, getopt-core.h,
@@ -319,7 +340,7 @@
 
 2020-08-26  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS, configure.ac, wrapc.1, options.c, test/Makefile.am, hello_01.fs,
+   * configure.ac, wrapc.1, options.c, test/Makefile.am, hello_01.fs,
      hello_04.fs, wrapc--Forth-01.txt, wrapc--Forth-04.txt,
      wrapc--Forth-01.test, wrapc--Forth-04.test: Added suppor for Forth \
      comments.
@@ -354,8 +375,8 @@
 2020-05-26  Paul J. Lucas <paul@lucasmail.org>
 
    * wrap.c, wrap.h, wrapc.c, wregex.c: s/C_IGNORE_RV/W_IGNORE_RV/
-   * NEWS, configure.ac, doxygen.c: Added support for docbookinclude,
-     maninclude, and xmlinclude.
+   * configure.ac, doxygen.c: Added support for docbookinclude, maninclude, and
+     xmlinclude.
 
 2020-05-19  Paul J. Lucas <paul@lucasmail.org>
 
@@ -469,7 +490,7 @@
 
 2019-04-10  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS, configure.ac: Updated version to 5.4.1.
+   * configure.ac: Updated version to 5.4.1.
 
 2019-04-04  Paul J. Lucas <paul@lucasmail.org>
 
@@ -483,8 +504,8 @@
 
 2019-04-02  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS, wrap.c, test/Makefile.am, test_08.c, wrapc--C-08.txt,
-     wrapc--C-08.test: Fixed additional blank comment line.
+   * wrap.c, test/Makefile.am, test_08.c, wrapc--C-08.txt, wrapc--C-08.test:
+     Fixed additional blank comment line.
    * wrapc.c: Added comment.
    * util.c: Added unlikely().
    * align.c, doxygen.c, unicode.c, wrap.c, wrapc.c: Added asserts.
@@ -499,7 +520,6 @@
 
 2019-03-30  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS: Updated.
    * configure.ac, markdown.c, test/Makefile.am, md-ol-12s.md,
      wrap--Markdown-ol-12s.txt, wrap--Markdown-ol-12s.test: Fixed hang-indent
      for ordered lists >= 10.
@@ -553,8 +573,8 @@
      unistd_h.m4, warn-on-use.m4, wchar_h.m4, wchar_t.m4, wctype_h.m4,
      wint_t.m4: Updated Gnulib.
    * doxygen.c, doxygen.h, wrap.h: Updated copyright year to 2019, part 2.
-   * Makefile.am, NEWS, configure.ac, man/Makefile.am, man/man1/Makefile.am,
-     wrap.1, man/man5/Makefile.am, wraprc.5, src/Makefile.am, alias.c, alias.h,
+   * Makefile.am, configure.ac, man/Makefile.am, man/man1/Makefile.am, wrap.1,
+     man/man5/Makefile.am, wraprc.5, src/Makefile.am, alias.c, alias.h,
      common.c, common.h, markdown.c, markdown.h, options.c, options.h,
      pattern.c, pattern.h, read_conf.c, read_conf.h, unicode.h, util.c, util.h,
      wrap.c, wrapc.c, test/Makefile.am, run_test.sh: Updated copyright year to
@@ -596,7 +616,6 @@
 2018-12-07  Paul J. Lucas <paul@lucasmail.org>
 
    * configure.ac: Upped version to 5.2.1.
-   * NEWS: Added blank lines.
    * lib/Makefile.am, _Noreturn.h, intprops.h, stdlib.in.h, unistd.in.h,
      errno_h.m4, fnmatch.m4, fnmatch_h.m4, gnulib-common.m4, gnulib-comp.m4,
      stddef_h.m4, unistd_h.m4: Updated GNUlib.
@@ -677,9 +696,9 @@
      stdlib_h.m4, strdup.m4, strerror.m4, string_h.m4, strndup.m4, strnlen.m4,
      sys_socket_h.m4, sys_types_h.m4, sysexits.m4, unistd_h.m4, warn-on-use.m4,
      wchar_h.m4, wchar_t.m4, wctype_h.m4, wint_t.m4: Updated GNUlib.
-   * NEWS, configure.ac, wrapc.1, options.c, wrapc.c, test/Makefile.am,
-     hello_00.sim, hello_01.sim, hello_02.sim, hello_03.sim, hello_04.sim,
-     hello_05.sim, hello_06.sim, wrapc--Simula-00.txt, wrapc--Simula-01.txt,
+   * configure.ac, wrapc.1, options.c, wrapc.c, test/Makefile.am, hello_00.sim,
+     hello_01.sim, hello_02.sim, hello_03.sim, hello_04.sim, hello_05.sim,
+     hello_06.sim, wrapc--Simula-00.txt, wrapc--Simula-01.txt,
      wrapc--Simula-02.txt, wrapc--Simula-03.txt, wrapc--Simula-04.txt,
      wrapc--Simula-05.txt, wrapc--Simula-06.txt, wrapc--Simula-00.test,
      wrapc--Simula-01.test, wrapc--Simula-02.test, wrapc--Simula-03.test,
@@ -774,10 +793,6 @@
      GNUlib.
    * src/Makefile.am: Added headers.
 
-2017-04-19  Paul J. Lucas <paul@lucasmail.org>
-
-   * NEWS: Added missing .
-
 2017-04-10  Paul J. Lucas <paul@lucasmail.org>
 
    * configure.ac: Fixed typo in comment.
@@ -789,7 +804,7 @@
 
 2017-03-10  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS, wrapc.1, align.c, test/Makefile.am, wrapc-A-08a.c, wrapc-A-08b.pas,
+   * wrapc.1, align.c, test/Makefile.am, wrapc-A-08a.c, wrapc-A-08b.pas,
      wrapc-A-09a.c, wrapc-A-08a.txt, wrapc-A-08b.txt, wrapc-A-09a.txt,
      wrapc-A-08a.test, wrapc-A-08b.test, wrapc-A-09a.test: Now longer aligning
      comments after single tokens.
@@ -820,19 +835,18 @@
 
 2017-03-01  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS, configure.ac, wrapc.c, test/Makefile.am, wrapc-A-18.c,
-     wrapc-A-19.pas, wrapc-A-18.txt, wrapc-A-19.txt, wrapc-A-18.test,
-     wrapc-A-19.test: Now ignoring within-line comments for -A.
+   * configure.ac, wrapc.c, test/Makefile.am, wrapc-A-18.c, wrapc-A-19.pas,
+     wrapc-A-18.txt, wrapc-A-19.txt, wrapc-A-18.test, wrapc-A-19.test: Now
+     ignoring within-line comments for -A.
 
 2017-02-23  Paul J. Lucas <paul@lucasmail.org>
 
-   * COPYING, Makefile.am, NEWS, configure.ac, man/Makefile.am,
-     man/man1/Makefile.am, wrap.1, wrapc.1, man/man5/Makefile.am, wraprc.5,
-     src/Makefile.am, alias.c, alias.h, common.c, common.h, markdown.c,
-     markdown.h, options.c, options.h, pattern.c, pattern.h, read_conf.c,
-     read_conf.h, regex_test.c, unicode.c, unicode.h, util.c, util.h, wrap.c,
-     wrapc.c, wregex.c, wregex.h, test/Makefile.am, run_test.sh: Updated to
-     GPLv3.
+   * COPYING, Makefile.am, configure.ac, man/Makefile.am, man/man1/Makefile.am,
+     wrap.1, wrapc.1, man/man5/Makefile.am, wraprc.5, src/Makefile.am, alias.c,
+     alias.h, common.c, common.h, markdown.c, markdown.h, options.c, options.h,
+     pattern.c, pattern.h, read_conf.c, read_conf.h, regex_test.c, unicode.c,
+     unicode.h, util.c, util.h, wrap.c, wrapc.c, wregex.c, wregex.h,
+     test/Makefile.am, run_test.sh: Updated to GPLv3.
 
 2017-02-13  Paul J. Lucas <paul@lucasmail.org>
 
@@ -863,9 +877,9 @@
 2017-02-08  Paul J. Lucas <paul@lucasmail.org>
 
    * options.c: Now using strcasecmp().
-   * NEWS, configure.ac, wrapc.1, wraprc.5, alias.c, alias.h, markdown.c,
-     options.c, options.h, pattern.c, pattern.h, read_conf.c, util.c, util.h,
-     wrapc.c, test/Makefile.am, wrapc-A-01a.c, wrapc-A-01b.c, wrapc-A-02a.c,
+   * configure.ac, wrapc.1, wraprc.5, alias.c, alias.h, markdown.c, options.c,
+     options.h, pattern.c, pattern.h, read_conf.c, util.c, util.h, wrapc.c,
+     test/Makefile.am, wrapc-A-01a.c, wrapc-A-01b.c, wrapc-A-02a.c,
      wrapc-A-02b.c, wrapc-A-03a.c, wrapc-A-03b.c, wrapc-A-04a.c, wrapc-A-04b.c,
      wrapc-A-05a.c, wrapc-A-05b.c, wrapc-A-06.c, wrapc-A-10.c, wrapc-A-11.c,
      wrapc-A-12.c, wrapc-A-13.c, wrapc-A-14.c, wrapc-A-14s.c, wrapc-A-15.c,
@@ -897,13 +911,13 @@
 
 2017-02-03  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS, configure.ac, wrap.1, wrapc.1, options.c, util.c, util.h: Added
+   * configure.ac, wrap.1, wrapc.1, options.c, util.c, util.h: Added
      --width=term.
 
 2017-02-02  Paul J. Lucas <paul@lucasmail.org>
 
    * options.c: Moved check_mutually_exclusive().
-   * NEWS, configure.ac, wrapc.1, options.c, options.h, test/Makefile.am,
+   * configure.ac, wrapc.1, options.c, options.h, test/Makefile.am,
      wrapc-D-02.test: Better handling of --comment-chars/-D value.
 
 2017-02-01  Paul J. Lucas <paul@lucasmail.org>
@@ -952,8 +966,7 @@
    * lib/Makefile.am, malloc.c, strdup.c, gnulib-cache.m4, gnulib-comp.m4,
      malloc.m4, strdup.m4: Added strdup-posix to Gnulib.
    * wraprc.5: Mention the characters comprising alias names.
-   * NEWS, configure.ac, wrap.1, wrapc.1, options.c: Added long command-line
-     options.
+   * configure.ac, wrap.1, wrapc.1, options.c: Added long command-line options.
    * wregex.c: Added missing header.
    * options.c, options.h: Made COMMENT_CHARS_DEFAULT a constant.
    * lib/Makefile.am, errno.in.h, intprops.h, strerror-override.c,
@@ -989,12 +1002,11 @@
 
    * markdown.c: Made md_code_indent_min() actually be inline.
    * util.c, wrapc.c: Removed _s struct suffix.
-   * NEWS, configure.ac, wrap.1, src/Makefile.am, regex_test.c, wrap.c,
-     wregex.c, wregex.h, test/Makefile.am, regex-http-01.txt,
-     regex-http-02.txt, wrap--regex-http-01.txt, wrap--regex-http-02.txt,
-     run_test.sh, e-mail.regex, file.regex, ftp.regex, http.regex,
-     wrap--regex-http-01.test, wrap--regex-http-02.test: No longer wrap at
-     hyphens within URLs.
+   * configure.ac, wrap.1, src/Makefile.am, regex_test.c, wrap.c, wregex.c,
+     wregex.h, test/Makefile.am, regex-http-01.txt, regex-http-02.txt,
+     wrap--regex-http-01.txt, wrap--regex-http-02.txt, run_test.sh,
+     e-mail.regex, file.regex, ftp.regex, http.regex, wrap--regex-http-01.test,
+     wrap--regex-http-02.test: No longer wrap at hyphens within URLs.
 
 2017-01-16  Paul J. Lucas <paul@lucasmail.org>
 
@@ -1056,9 +1068,8 @@
    * wrap.c, wrapc.c: Added comments.
    * util.h, wrap.c, wrapc.c: Added is_windows_eol().
    * wrap.c: Whitespace fix.
-   * NEWS, configure.ac, wrap.1, wrapc.1, common.h, options.c, options.h,
-     wrap.c, wrapc.c, test/Makefile.am, wrap-E1.txt, wrap-E1.test: Added -E
-     option.
+   * configure.ac, wrap.1, wrapc.1, common.h, options.c, options.h, wrap.c,
+     wrapc.c, test/Makefile.am, wrap-E1.txt, wrap-E1.test: Added -E option.
 
 2016-12-11  Paul J. Lucas <paul@lucasmail.org>
 
@@ -1082,7 +1093,7 @@
    * wrap.c: Removed duplicate tyedef.
    * unicode.h: Fixed signed/unsigned warning.
    * c++defs.h, snippet/c++defs.h: Updated gnulib.
-   * NEWS, configure.ac, wrap.1, src/Makefile.am, unicode.c, unicode.h, wrap.c:
+   * configure.ac, wrap.1, src/Makefile.am, unicode.c, unicode.h, wrap.c:
      Better Unicode support.
 
 2016-11-18  Paul J. Lucas <paul@lucasmail.org>
@@ -1134,8 +1145,8 @@
 
 2016-11-09  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS, configure.ac, wrap.1, wrapc.1, options.c, options.h, wrap.c,
-     wrapc.c, test/Makefile.am, hyphen-01.txt, hyphen-02.txt, hyphen-03.txt,
+   * configure.ac, wrap.1, wrapc.1, options.c, options.h, wrap.c, wrapc.c,
+     test/Makefile.am, hyphen-01.txt, hyphen-02.txt, hyphen-03.txt,
      hyphen-04.txt, hyphen-U+00AD-01.txt, hyphen-U+2010-01.txt,
      wrap-H3-t1-T.txt, wrap-P-01.txt, wrap-hyphen-01.txt, wrap-hyphen-02.txt,
      wrap-hyphen-03.txt, wrap-hyphen-04.txt, wrap-hyphen-U+00AD-01.txt,
@@ -1182,7 +1193,6 @@
      strnlen.m4, sys_types_h.m4, sysexits.m4, unistd_h.m4, warn-on-use.m4,
      wchar_h.m4, wchar_t.m4, wctype_h.m4, wint_t.m4, snippet/arg-nonnull.h,
      snippet/c++defs.h, snippet/warn-on-use.h: Updated gnulib.
-   * NEWS: Updated NEWS.
    * wrap.1: Updated for CommonMark.
    * wrapc.1: Added mention of indent(1).
    * markdown.c: No longer requireing any Markdown in column 1.
@@ -1337,9 +1347,9 @@
 
 2016-07-26  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS, configure.ac, wrapc.1, options.h, wrapc.c, test/Makefile.am,
-     hello_01.cbl, hello_02.cbl, hello_03.cbl, hello_04.cbl, hello_05.cbl,
-     hello_06.cbl, hello_07.cbl, wrapc--COBOL-01.txt, wrapc--COBOL-02.txt,
+   * configure.ac, wrapc.1, options.h, wrapc.c, test/Makefile.am, hello_01.cbl,
+     hello_02.cbl, hello_03.cbl, hello_04.cbl, hello_05.cbl, hello_06.cbl,
+     hello_07.cbl, wrapc--COBOL-01.txt, wrapc--COBOL-02.txt,
      wrapc--COBOL-03.txt, wrapc--COBOL-04.txt, wrapc--COBOL-05.txt,
      wrapc--COBOL-06.txt, wrapc--COBOL-07.txt, wrapc--COBOL-01.test,
      wrapc--COBOL-02.test, wrapc--COBOL-03.test, wrapc--COBOL-04.test,
@@ -1404,7 +1414,7 @@
    * wrapc.c: Added set_prefix().
    * wrap.c: Removed unnecessary comment.
    * common.h, util.h, wrapc.c: Added NO_OP.
-   * NEWS, configure.ac, wrap.1, wrapc.1, alias.c, markdown.c, pattern.c,
+   * configure.ac, wrap.1, wrapc.1, alias.c, markdown.c, pattern.c,
      read_conf.c, util.h, wrap.c, wrapc.c, test/Makefile.am, wrapc-box-01.c,
      wrapc-box-01.pas, wrapc-box-01.sh, wrapc-box-02.c, wrapc-box-02.pas,
      wrapc-box-02.sh, wrapc-box-03.c, wrapc-box-03.pas, wrapc-box-03.sh,
@@ -1453,9 +1463,9 @@
    * markdown.c: Reversed check of md_is_footnote_def() and md_is_link_label()
      since the former is more specific.
    * markdown.c: Sorted function.
-   * NEWS, wrap.1, markdown.c, markdown.h, wrap.c, test/Makefile.am,
-     md-abbr-01.c, md-abbr-01.md, md-abbr-02.c, md-abbr-02.md, md-abbr-03.c,
-     md-abbr-03.md, md-abbr-04.c, md-abbr-04.md, md-abbr-05.c, md-abbr-05.md,
+   * wrap.1, markdown.c, markdown.h, wrap.c, test/Makefile.am, md-abbr-01.c,
+     md-abbr-01.md, md-abbr-02.c, md-abbr-02.md, md-abbr-03.c, md-abbr-03.md,
+     md-abbr-04.c, md-abbr-04.md, md-abbr-05.c, md-abbr-05.md,
      wrap--Markdown-abbr-01.txt, wrap--Markdown-abbr-02.txt,
      wrap--Markdown-abbr-03.txt, wrap--Markdown-abbr-04.txt,
      wrap--Markdown-abbr-05.txt, wrapc--Markdown-abbr-01.txt,
@@ -1468,7 +1478,7 @@
      wrapc--Markdown-abbr-04.test, wrapc--Markdown-abbr-05.test: Added PHP
      Markdown Extra abbreviation support.
    * wrap.c: Added comment.
-   * NEWS, wrap.1, markdown.c, markdown.h, wrap.c, test/Makefile.am,
+   * wrap.1, markdown.c, markdown.h, wrap.c, test/Makefile.am,
      md-footnote-01.c, md-footnote-01.md, md-footnote-02.c, md-footnote-02.md,
      wrap--Markdown-footnote-01.txt, wrap--Markdown-footnote-02.txt,
      wrapc--Markdown-footnote-01.txt, wrapc--Markdown-footnote-02.txt,
@@ -1482,9 +1492,9 @@
 
 2016-05-14  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS, configure.ac, wrap.1, markdown.c, markdown.h, wrap.c,
-     test/Makefile.am, md-dl-01s.md, md-dl-01s.xq, md-dl-02s.md, md-dl-02s.xq,
-     md-dl-03s.md, md-dl-03s.xq, md-dl-04s.md, wrap--Markdown-dl-01s.txt,
+   * configure.ac, wrap.1, markdown.c, markdown.h, wrap.c, test/Makefile.am,
+     md-dl-01s.md, md-dl-01s.xq, md-dl-02s.md, md-dl-02s.xq, md-dl-03s.md,
+     md-dl-03s.xq, md-dl-04s.md, wrap--Markdown-dl-01s.txt,
      wrap--Markdown-dl-02s.txt, wrap--Markdown-dl-03s.txt,
      wrap--Markdown-dl-04s.txt, wrapc--Markdown-dl-01s.txt,
      wrapc--Markdown-dl-02s.txt, wrapc--Markdown-dl-03s.txt,
@@ -1503,11 +1513,11 @@
    * wrap.1: Added note about blank lines around tables; and nesting.
    * markdown.c: Fixed typo in comment.
    * options.c: s/SIZE_T_MAX/SIZE_MAX/
-   * NEWS, configure.ac, wrap.1, markdown.c, markdown.h, wrap.c,
-     test/Makefile.am, md-table-01.c, md-table-01.md, md-table-02.c,
-     md-table-02.md, md-table-03.c, md-table-03.md, md-table-04.c,
-     md-table-04.md, md-table-05.c, md-table-05.md, md-table-06.c,
-     md-table-06.md, wrap--Markdown-table-01.txt, wrap--Markdown-table-02.txt,
+   * configure.ac, wrap.1, markdown.c, markdown.h, wrap.c, test/Makefile.am,
+     md-table-01.c, md-table-01.md, md-table-02.c, md-table-02.md,
+     md-table-03.c, md-table-03.md, md-table-04.c, md-table-04.md,
+     md-table-05.c, md-table-05.md, md-table-06.c, md-table-06.md,
+     wrap--Markdown-table-01.txt, wrap--Markdown-table-02.txt,
      wrap--Markdown-table-03.txt, wrap--Markdown-table-04.txt,
      wrap--Markdown-table-05.txt, wrap--Markdown-table-06.txt,
      wrapc--Markdown-table-01.txt, wrapc--Markdown-table-02.txt,
@@ -1600,7 +1610,7 @@
 
 2016-04-30  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS, wrap.1, options.c, options.h, util.c, util.h, wrap.c, wrapc.c,
+   * wrap.1, options.c, options.h, util.c, util.h, wrap.c, wrapc.c,
      test/Makefile.am, wrap-L.wraprc, wrap-L-01.txt, wrap-L-01.test: Added wrap
      -L option.
    * alias.c, read_conf.c, test/Makefile.am, alias-unclosed_quote.wraprc,
@@ -1608,7 +1618,7 @@
      with spaces.
    * markdown.c, util.c, util.h, wrap.c: Wrap prototype code now taking
      advantage of reading an initial line.
-   * NEWS, configure.ac, wrap.1, wrapc.1, wraprc.5, src/Makefile.am, alias.c,
+   * configure.ac, wrap.1, wrapc.1, wraprc.5, src/Makefile.am, alias.c,
      alias.h, common.c, common.h, markdown.c, markdown.h, options.c, options.h,
      pattern.c, pattern.h, read_conf.c, read_conf.h, util.c, util.h, wrap.c,
      wrapc.c, test/Makefile.am, md-Setext-01.md, md-Setext-02.md,
@@ -1890,7 +1900,7 @@
      wrapc-block-03.txt, wrapc-XQuery-01.test, wrapc-XQuery-02.test,
      wrapc-XQuery-03.test, wrapc-XQuery-04.test, wrapc-block-03.test: Handling
      of block comments other than C-style, part 2.
-   * NEWS, wrapc.1, wrapc.c, test/Makefile.am, wrapc-block-01.txt,
+   * wrapc.1, wrapc.c, test/Makefile.am, wrapc-block-01.txt,
      wrapc-block-02.txt, wrapc-block-01.txt, wrapc-block-02.txt,
      wrapc-block-01.test, wrapc-block-02.test: Handling of block comments other
      than C-style.
@@ -1905,13 +1915,12 @@
 2016-03-21  Paul J. Lucas <paul@lucasmail.org>
 
    * wrap.c: Got rid of signed/unsigned comparison warning.
-   * NEWS: Updated.
    * wrapc.1: Updated for C-style comments.
    * wrap.1: Now using .IP \n[step].
    * options.c, options.h: Updated GPL.
    * wrapc.1, data-01.1, wrapc-01.txt, wrap-a.txt, wrap-d.txt, wrap-dep.txt,
      wrapc-no_options-01.txt: s/white-space/whitespace/
-   * NEWS, wrap.1, wrapc.1, wrap.c, wrapc.c, test/Makefile.am, wrap-b.txt,
+   * wrap.1, wrapc.1, wrap.c, wrapc.c, test/Makefile.am, wrap-b.txt,
      wrapc-b.txt, wrap-b-h1.txt, wrap-b-t1.txt, wrap-b.txt, wrapc-b.txt,
      wrap-b-h1.test, wrap-b-t1.test, wrap-b.test, wrapc-b.test: Added -b
      option.
@@ -1942,7 +1951,7 @@
 
 2016-03-16  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS, wrapc.1, wrapc.c, test/Makefile.am, wrapc-C_comment-01.txt,
+   * wrapc.1, wrapc.c, test/Makefile.am, wrapc-C_comment-01.txt,
      wrapc-C_comment-01.txt, wrapc-C_comment-01.test: Added special-case
      handling of */.
 
@@ -1951,7 +1960,7 @@
    * wrap.c: Now calling init() sooner.
    * wrapc.c: s/from_wrap/fwrap/
    * alias.c, alias.h, pattern.c, wrap.c, wrapc.c: Moving away from #define.
-   * NEWS, wrapc.1, wrapc.c, test/Makefile.am, wrapc-D-01.txt, wrapc-D-01.txt,
+   * wrapc.1, wrapc.c, test/Makefile.am, wrapc-D-01.txt, wrapc-D-01.txt,
      wrapc-D-01.test: Added wrapc -D option.
 
 2016-03-13  Paul J. Lucas <paul@lucasmail.org>
@@ -1976,13 +1985,12 @@
 
 2016-03-10  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS, wrap.1, wrap.c, test/Makefile.am, wrap-P-01.txt, wrap-P-02.txt,
+   * wrap.1, wrap.c, test/Makefile.am, wrap-P-01.txt, wrap-P-02.txt,
      wrap-P-03.txt, wrap-P-04.txt, wrap-P-01.txt, wrap-P-02.txt, wrap-P-03.txt,
      wrap-P-04.txt, wrap-P-01.test, wrap-P-02.test, wrap-P-03.test,
      wrap-P-04.test: Added -P option.
    * alias.c, alias.h, pattern.c, pattern.h, read_conf.c, util.c, util.h,
      wrap.c: Now using size_t/unsigned instead of int.
-   * NEWS: Added 3.3 news.
    * configure.ac, wrapc.1, wrapc.c, test/Makefile.am, wrapc-04.txt,
      wrapc-no_options-05.txt, wrapc-no_options-05.test: wrapc now special-cases
      first line not being a comment.
@@ -2076,7 +2084,7 @@
 2015-10-28  Paul J. Lucas <paul@lucasmail.org>
 
    * wrapc.c: Improved leader handling.
-   * NEWS, configure.ac, wrapc.c, test/Makefile.am, bullets-01.txt,
+   * configure.ac, wrapc.c, test/Makefile.am, bullets-01.txt,
      wrapc-no_options-04.txt, wrapc-no_options-04.test: Improved leader
      handling.
 
@@ -2095,7 +2103,6 @@
 
 2015-09-14  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS: Added mention of stopping wrapping text upon non-comment line.
    * wrapc.1: Added mention of end of comment behavior.
    * wrapc.c: Now calling exit() directly.
 
@@ -2122,7 +2129,7 @@
    * wrapc.c: Moved leader_tws code.
    * wrapc.c: Formatting change.
    * read_conf.c: Now using PACKAGE as part of CONF_FILE_NAME.
-   * NEWS, configure.ac, wrapc.c, test/Makefile.am, wrapc-03.txt,
+   * configure.ac, wrapc.c, test/Makefile.am, wrapc-03.txt,
      wrapc-no_options-02.txt, wrapc-no_options-03.txt,
      wrapc-no_options-03.test: Fixed emitting trailing whitespace.
 
@@ -2139,10 +2146,6 @@
 2015-08-13  Paul J. Lucas <paul@lucasmail.org>
 
    * configure.ac: Fixed extra CFLAGS.
-
-2015-08-06  Paul J. Lucas <paul@lucasmail.org>
-
-   * NEWS: Updated copyright year; fixed typo.
 
 2015-08-05  Paul J. Lucas <paul@lucasmail.org>
 
@@ -2162,7 +2165,6 @@
 
 2015-06-20  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS: Added updates about C99.
    * configure.ac, alias.c, alias.h, common.c, common.h, getopt.c, getopt.h,
      pattern.c, pattern.h, read_conf.c, read_conf.h, wrap.c, wrapc.c: Now using
      C99.
@@ -2237,15 +2239,14 @@
    * pattern.c: Fixed typos.
    * alias.c: Fixed typos.
    * wrapc.c: Moved arg_buf typedef.
-   * NEWS, common.h, wrap.c, wrapc.c: 1. Added () around arguments for FPUTC
-     and FPUTS. 2. Now checking that line_width doesn't become too small. 3.
-     Now scanning for leading characters on every line.
+   * common.h, wrap.c, wrapc.c: 1. Added () around arguments for FPUTC and
+     FPUTS. 2. Now checking that line_width doesn't become too small. 3. Now
+     scanning for leading characters on every line.
 
 2014-06-16  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS, configure.ac, wrapc.1, common.h, wrapc.c: Now handling ragged
-     comment lines better.
-   * NEWS: Updated news/changes.
+   * configure.ac, wrapc.1, common.h, wrapc.c: Now handling ragged comment
+     lines better.
 
 2014-06-14  Paul J. Lucas <paul@lucasmail.org>
 
@@ -2295,13 +2296,12 @@
 
 2014-01-18  Paul J. Lucas <paul@lucasmail.org>
 
-   * Makefile.am, Makefile.in, NEWS, configure.ac, man/Makefile.am,
-     man/Makefile.in, man/man1/Makefile.am, man/man1/Makefile.in, wrapc.1,
-     man/man5/Makefile.am, man/man5/Makefile.in, wraprc.5, src/Makefile.am,
-     src/Makefile.in, alias.c, alias.h, common.c, common.h, getopt.c, getopt.h,
-     pattern.c, pattern.h, read_conf.c, read_conf.h, wrap.c, wrapc.c,
-     test/Makefile.am, test/Makefile.in, run_test.sh: Updated copyright year to
-     2014.
+   * Makefile.am, Makefile.in, configure.ac, man/Makefile.am, man/Makefile.in,
+     man/man1/Makefile.am, man/man1/Makefile.in, wrapc.1, man/man5/Makefile.am,
+     man/man5/Makefile.in, wraprc.5, src/Makefile.am, src/Makefile.in, alias.c,
+     alias.h, common.c, common.h, getopt.c, getopt.h, pattern.c, pattern.h,
+     read_conf.c, read_conf.h, wrap.c, wrapc.c, test/Makefile.am,
+     test/Makefile.in, run_test.sh: Updated copyright year to 2014.
    * Makefile.in, aclocal.m4, man/Makefile.in, man/man1/Makefile.in, wrap.1,
      man/man5/Makefile.in, src/Makefile.in, wrap.c, test/Makefile.am,
      test/Makefile.in, wrap-I2-W.test: Changed -b to -W.
@@ -2313,7 +2313,6 @@
      fprintf().
    * test/Makefile.am, test/Makefile.in, wrapc-02.txt, wrapc-no_options-02.txt,
      wrapc-no_options-02.test: Added test to test wrapc short-line bug.
-   * NEWS: Added mention of short-line bug fix.
    * wrapc.c: Fixed bug in reading lines < lead_width.
    * wrap.c: Fixed opening of output file.
    * wrap-conf-not_found.test: Updated expected exit status.
@@ -2354,7 +2353,6 @@
 
 2013-11-15  Paul J. Lucas <paul@lucasmail.org>
 
-   * NEWS: More news.
    * alias.c, pattern.c, read_conf.c: More commentss.
    * wrapc.c: Added missing exit codes.
    * wrapc.c: Fixed opening of fin/fout.
@@ -2428,12 +2426,12 @@
      ax_cflags_warn_all.m4, ax_check_compile_flag.m4, man/Makefile.in,
      man/man1/Makefile.in, man/man5/Makefile.in, src/Makefile.am,
      src/Makefile.in: Added checking of extra C compiler warning flags.
-   * NEWS, wrap.1, wrapc.1, common.h, wrap.c, wrapc.c, utf8-w77.test,
-     utf8-w78.test, utf8-w79.test, utf8-w80.test, wrap-I2-w72.test,
-     wrap-bI2.test: Changed "length" to "width" and -l to -w.
-   * NEWS, wrap.1, wrap.c, utf8-01.txt, utf8-l77.txt, utf8-l78.txt,
-     utf8-l79.txt, utf8-l80.txt, utf8-l77.test, utf8-l78.test, utf8-l79.test,
-     utf8-l80.test: Added UTF-8 support.
+   * wrap.1, wrapc.1, common.h, wrap.c, wrapc.c, utf8-w77.test, utf8-w78.test,
+     utf8-w79.test, utf8-w80.test, wrap-I2-w72.test, wrap-bI2.test: Changed
+     "length" to "width" and -l to -w.
+   * wrap.1, wrap.c, utf8-01.txt, utf8-l77.txt, utf8-l78.txt, utf8-l79.txt,
+     utf8-l80.txt, utf8-l77.test, utf8-l78.test, utf8-l79.test, utf8-l80.test:
+     Added UTF-8 support.
    * run_tests.sh: Reworked test filename format.
    * run_tests.sh: Now doing PASS/FAIL.
    * Makefile: Added automake-required targets.
@@ -2472,10 +2470,6 @@
      man/man5/Makefile.in, missing, src/Makefile.am, src/Makefile.in, common.c,
      common.h, config.h.in, read_conf.c, wrap.c, wrapc.c: Now build with
      configure.
-
-2013-11-03  Paul J. Lucas <paul@lucasmail.org>
-
-   * NEWS: New file.
 
 2013-11-02  Paul J. Lucas <paul@lucasmail.org>
 
