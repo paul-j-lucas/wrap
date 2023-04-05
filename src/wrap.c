@@ -108,7 +108,7 @@ static void         init( int, char const*[] );
 NODISCARD
 static bool         markdown_adjust( void );
 
-static void         markdown_reset();
+static void         markdown_reset( void );
 static void         print_lead_chars( void );
 static void         print_line( size_t, bool );
 static void         put_tabs_spaces( size_t, size_t );
