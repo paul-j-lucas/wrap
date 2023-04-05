@@ -1,5 +1,6 @@
 2023-04-05  Paul J. Lucas <paul@lucasmail.org>
 
+   * wrap.c: Added missing "void".
    * lib/Makefile.am, btowc.c, fnmatch.c, getopt-pfx-core.h, hard-locale.h,
      limits.in.h, setlocale_null.c, stddef.in.h, stdlib.in.h, string.in.h,
      unistd.in.h, verify.h, wchar.in.h, assert_h.m4, btowc.m4, fnmatch.m4,
