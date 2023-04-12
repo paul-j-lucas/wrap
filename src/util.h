@@ -260,32 +260,18 @@ _GL_INLINE_HEADER_BEGIN
 #define EPUTC(C)                  FPUTC( C, stderr )
 
 /**
- * Prints an error message to standard error and exits with \a STATUS code.
- *
- * @param STATUS The status code to **exit**(3) with.
- * @param FORMAT The `printf()` format to use.
- * @param ... The `printf()` arguments.
- *
- * @sa #INTERNAL_ERR()
- * @sa #PERROR_EXIT_IF()
- * @sa perror_exit()
- */
-#define FATAL_ERR(STATUS,FORMAT,...) \
-  BLOCK( EPRINTF( "%s: " FORMAT, me, __VA_ARGS__ ); _Exit( STATUS ); )
-
-/**
- * A special-case of #FATAL_ERR that additionally prints the file and line
+ * A special-case of fatal_error() that additionally prints the file and line
  * where an internal error occurred.
  *
  * @param FORMAT The `printf()` format to use.
  * @param ... The `printf()` arguments.
  *
- * @sa #FATAL_ERR()
+ * @sa fatal_error()
  * @sa #PERROR_EXIT_IF()
  * @sa perror_exit()
  */
-#define INTERNAL_ERR(FORMAT,...) \
-  FATAL_ERR( EX_SOFTWARE, "%s:%d: internal error: " FORMAT, __FILE__, __LINE__, __VA_ARGS__ )
+#define INTERNAL_ERROR(FORMAT,...) \
+  fatal_error( EX_SOFTWARE, "%s:%d: internal error: " FORMAT, __FILE__, __LINE__, __VA_ARGS__ )
 
 /**
  * If \a EXPR is `true`, prints an error message for `errno` to standard error
@@ -294,8 +280,8 @@ _GL_INLINE_HEADER_BEGIN
  * @param EXPR The expression.
  * @param STATUS The exit status code.
  *
- * @sa #FATAL_ERR()
- * @sa #INTERNAL_ERR()
+ * @sa fatal_error()
+ * @sa #INTERNAL_ERROR()
  * @sa perror_exit()
  */
 #define PERROR_EXIT_IF( EXPR, STATUS ) \
@@ -533,6 +519,21 @@ size_t chop_eol( char *s, size_t s_len );
  */
 NODISCARD
 char closing_char( char c );
+
+/**
+ * Prints an error message to standard error and exits with \a status code.
+ *
+ * @param status The status code to exit with.
+ * @param format The `printf()` format string literal to use.
+ * @param ... The `printf()` arguments.
+ *
+ * @sa #INTERNAL_ERROR()
+ * @sa perror_exit()
+ * @sa #PERROR_EXIT_IF()
+ * @sa #UNEXPECTED_INT_VALUE()
+ */
+PJL_PRINTF_LIKE_FUNC(2)
+noreturn void fatal_error( int status, char const *format, ... );
 
 /**
  * Copies \a ffrom to \a fto until EOF.

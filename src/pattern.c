@@ -120,11 +120,11 @@ void pattern_parse( char const *line, char const *conf_file,
   // part 2: whitespace
   SKIP_CHARS( line, WS_STR );
   if ( *line == '\0' )
-    FATAL_ERR( EX_CONFIG, "%s:%u: '=' expected\n", conf_file, line_no );
+    fatal_error( EX_CONFIG, "%s:%u: '=' expected\n", conf_file, line_no );
 
   // part 3: =
   if ( *line != '=' )
-    FATAL_ERR( EX_CONFIG,
+    fatal_error( EX_CONFIG,
       "%s:%u: '%c': unexpected character; '=' expected\n",
       conf_file, line_no, *line
     );
@@ -133,7 +133,7 @@ void pattern_parse( char const *line, char const *conf_file,
   // part 4: whitespace
   SKIP_CHARS( line, WS_STR );
   if ( *line == '\0' )
-    FATAL_ERR( EX_CONFIG,
+    fatal_error( EX_CONFIG,
       "%s:%u: alias name expected after '='\n",
       conf_file, line_no
     );
@@ -141,7 +141,7 @@ void pattern_parse( char const *line, char const *conf_file,
   // part 5: alias
   alias_t const *const alias = alias_find( line );
   if ( alias == NULL )
-    FATAL_ERR( EX_CONFIG,
+    fatal_error( EX_CONFIG,
       "%s:%u: \"%s\": no such alias\n", conf_file, line_no, line
     );
   pattern->alias = alias;

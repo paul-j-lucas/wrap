@@ -56,14 +56,14 @@ int main( int argc, char const *argv[] ) {
   char const *const test_path = argv[1];
   FILE *const fin = fopen( test_path, "r" );
   if ( fin == NULL )
-    FATAL_ERR( EX_NOINPUT, "\"%s\": %s\n", test_path, STRERROR );
+    fatal_error( EX_NOINPUT, "\"%s\": %s\n", test_path, STRERROR );
 
   setlocale_utf8();
 
   wregex_t re;
   int const regex_err_code = regex_compile( &re, WRAP_RE );
   if ( regex_err_code != 0 )
-    FATAL_ERR( EX_SOFTWARE,
+    fatal_error( EX_SOFTWARE,
       "internal regular expression error (%d): %s\n",
       regex_err_code, regex_error( &re, regex_err_code )
     );
@@ -79,7 +79,7 @@ int main( int argc, char const *argv[] ) {
 
     char *const sep = strchr( line_buf, TEST_SEP );
     if ( sep == NULL )
-      FATAL_ERR( EX_DATAERR,
+      fatal_error( EX_DATAERR,
         "%s:%u: missing separator '%c'\n",
         test_path, line_no, TEST_SEP
       );

@@ -332,8 +332,11 @@ static pid_t read_source_write_wrap( void ) {
   // Read from fin and write to pipes[TO_WRAP] (wrap).
   //
   FILE *const fwrap = fdopen( pipes[ TO_WRAP ][ STDOUT_FILENO ], "w" );
-  if ( unlikely( fwrap == NULL ) )
-    FATAL_ERR( EX_OSERR, "child can't open pipe for writing: %s\n", STRERROR );
+  if ( unlikely( fwrap == NULL ) ) {
+    fatal_error( EX_OSERR,
+      "child can't open pipe for writing: %s\n", STRERROR
+    );
+  }
   wait_for_debugger_attach( "WRAPC_DEBUG_RSRW" );
 #else
   FILE *const fwrap = stdout;
@@ -535,8 +538,11 @@ static void read_wrap( void ) {
   // Read from pipes[FROM_WRAP] (wrap) and write to fout.
   //
   FILE *const fwrap = fdopen( pipes[ FROM_WRAP ][ STDIN_FILENO ], "r" );
-  if ( unlikely( fwrap == NULL ) )
-    FATAL_ERR( EX_OSERR, "parent can't open pipe for reading: %s\n", STRERROR );
+  if ( unlikely( fwrap == NULL ) ) {
+    fatal_error( EX_OSERR,
+      "parent can't open pipe for reading: %s\n", STRERROR
+    );
+  }
 
   wait_for_debugger_attach( "WRAPC_DEBUG_RW" );
 
@@ -1073,7 +1079,7 @@ static void read_prototype( void ) {
   }
 
   if ( line_width < LINE_WIDTH_MINIMUM )
-    FATAL_ERR( EX_USAGE,
+    fatal_error( EX_USAGE,
       "line-width (%d) is too small (<%d)\n",
       line_width, LINE_WIDTH_MINIMUM
     );
@@ -1252,14 +1258,14 @@ static void wait_for_child_processes( void ) {
     if ( WIFEXITED( wait_status ) ) {
       int const exit_status = WEXITSTATUS( wait_status );
       if ( exit_status != 0 ) {
-        FATAL_ERR( exit_status,
+        fatal_error( exit_status,
           "child process exited with status %d: %s\n",
           exit_status, str_status( exit_status )
         );
       }
     } else if ( WIFSIGNALED( wait_status ) ) {
       int const signal = WTERMSIG( wait_status );
-      FATAL_ERR( EX_OSERR,
+      fatal_error( EX_OSERR,
         "child process terminated with signal %d: %s\n",
         signal, strsignal( signal )
       );

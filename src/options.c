@@ -284,7 +284,7 @@ static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
           char const gave_opt2 = *opt;
           char opt1_buf[ OPT_BUF_SIZE ];
           char opt2_buf[ OPT_BUF_SIZE ];
-          FATAL_ERR( EX_USAGE,
+          fatal_error( EX_USAGE,
             "%s and %s are mutually exclusive\n",
             opt_format( gave_opt1, opt1_buf, sizeof opt1_buf ),
             opt_format( gave_opt2, opt2_buf, sizeof opt2_buf  )
@@ -357,7 +357,7 @@ static unsigned parse_align( char const *s, char *align_char ) {
 error:
   NO_OP;
   char opt_buf[ OPT_BUF_SIZE ];
-  FATAL_ERR( EX_USAGE,
+  fatal_error( EX_USAGE,
     "\"%s\": invalid value for %s; %s\n",
     s, opt_format( 'A', opt_buf, sizeof opt_buf ),
     "must be digits followed by one of:"
@@ -418,7 +418,7 @@ static eol_t parse_eol( char const *s ) {
   } // for
 
   char opt_buf[ OPT_BUF_SIZE ];
-  FATAL_ERR( EX_USAGE,
+  fatal_error( EX_USAGE,
     "\"%s\": invalid value for %s; must be one of:\n\t%s\n",
     s, opt_format( 'l', opt_buf, sizeof opt_buf ), values_buf
   );
@@ -459,13 +459,13 @@ static void parse_options( int argc, char const *argv[],
 
     if ( line_no > 0 ) {                // we're parsing a conf file
       if ( strchr( CONF_FORBIDDEN_OPTS, opt ) != NULL )
-        FATAL_ERR( EX_CONFIG,
+        fatal_error( EX_CONFIG,
           "%s:%u: '%c': option not allowed in configuration file\n",
           opt_conf_file, line_no, opt
         );
     }
     else if ( strchr( cmdline_forbidden_opts, opt ) != NULL ) {
-      FATAL_ERR( EX_USAGE, "%s: invalid option -- '%c'\n", me, opt );
+      fatal_error( EX_USAGE, "%s: invalid option -- '%c'\n", me, opt );
     }
 
     switch ( opt ) {
@@ -577,23 +577,23 @@ static void parse_options( int argc, char const *argv[],
 
       case ':': {                       // option missing required argument
         char opt_buf[ OPT_BUF_SIZE ];
-        FATAL_ERR( EX_USAGE,
+        fatal_error( EX_USAGE,
           "\"%s\" requires an argument\n",
           opt_format( STATIC_CAST( char, optopt ), opt_buf, sizeof opt_buf )
         );
       }
 
       case '?':                         // invalid option
-        FATAL_ERR( EX_USAGE,
+        fatal_error( EX_USAGE,
           "'%c': invalid option\n", STATIC_CAST( char, optopt )
         );
 
       default:
         if ( isprint( opt ) )
-          INTERNAL_ERR(
+          INTERNAL_ERROR(
             "'%c': unaccounted-for getopt_long() return value\n", opt
           );
-        INTERNAL_ERR(
+        INTERNAL_ERROR(
           "%d: unaccounted-for getopt_long() return value\n", opt
         );
     } // switch
@@ -730,7 +730,7 @@ static unsigned parse_width( char const *s ) {
   } // for
 
   char opt_buf[ OPT_BUF_SIZE ];
-  FATAL_ERR( EX_USAGE,
+  fatal_error( EX_USAGE,
     "\"%s\": invalid value for %s; must be one of:\n\t%s\n",
     s, opt_format( 'w', opt_buf, sizeof opt_buf ), values_buf
   );
@@ -770,7 +770,7 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
     opt_conf_file = read_conf( opt_conf_file );
     if ( opt_alias != NULL ) {
       if ( (alias = alias_find( opt_alias )) == NULL )
-        FATAL_ERR( EX_USAGE,
+        fatal_error( EX_USAGE,
           "\"%s\": no such alias in %s\n",
           opt_alias, opt_conf_file
         );
@@ -786,9 +786,9 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
   }
 
   if ( opt_fin != NULL && (fin = fopen( opt_fin, "r" )) == NULL )
-    FATAL_ERR( EX_NOINPUT, "\"%s\": %s\n", opt_fin, STRERROR );
+    fatal_error( EX_NOINPUT, "\"%s\": %s\n", opt_fin, STRERROR );
   if ( opt_fout != NULL && (fout = fopen( opt_fout, "w" )) == NULL )
-    FATAL_ERR( EX_CANTCREAT, "\"%s\": %s\n", opt_fout, STRERROR );
+    fatal_error( EX_CANTCREAT, "\"%s\": %s\n", opt_fout, STRERROR );
 
   if ( fin == NULL )
     fin = stdin;

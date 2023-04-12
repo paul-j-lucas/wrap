@@ -82,6 +82,19 @@
  */
 #define PJL_DISCARD               /* nothing */
 
+#ifdef HAVE___ATTRIBUTE__
+
+/**
+ * Denote a function declaration takes a `printf`-like format string followed
+ * by a variable number of arguments.
+ *
+ * @param N The position (starting at 1) of the parameter that contains the
+ * format string.
+ */
+#define PJL_PRINTF_LIKE_FUNC(N)   __attribute__((format(printf, (N), (N)+1)))
+
+#endif /* HAVE___ATTRIBUTE__ */
+
 #ifdef HAVE___TYPEOF__
 /**
  * Ignore the return value of a function even if it was declared with
@@ -94,6 +107,16 @@
 #else
 #define PJL_IGNORE_RV(FN_CALL)    ((void)(FN_CALL))
 #endif /* HAVE___TYPEOF__ */
+
+///////////////////////////////////////////////////////////////////////////////
+
+#ifndef PJL_IGNORE_RV
+#define PJL_IGNORE_RV(FN_CALL)    ((void)(FN_CALL))
+#endif /* PJL_IGNORE_RV */
+
+#ifndef PJL_PRINTF_LIKE_FUNC
+#define PJL_PRINTF_LIKE_FUNC(N)   /* nothing */
+#endif /* PJL_PRINTF_LIKE_FUNC */
 
 ///////////////////////////////////////////////////////////////////////////////
 

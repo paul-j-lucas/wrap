@@ -733,7 +733,7 @@ static void init( int argc, char const *argv[] ) {
           opt_lead_tabs * opt_tab_spaces + opt_lead_spaces);
 
   if ( temp_width < LINE_WIDTH_MINIMUM )
-    FATAL_ERR( EX_USAGE,
+    fatal_error( EX_USAGE,
       "line-width (%d) is too small (<%d)\n",
       temp_width, LINE_WIDTH_MINIMUM
     );
@@ -745,7 +745,7 @@ static void init( int argc, char const *argv[] ) {
   if ( !opt_no_hyphen ) {
     int const regex_err_code = regex_compile( &nonws_no_wrap_regex, WRAP_RE );
     if ( regex_err_code != 0 )
-      FATAL_ERR( EX_SOFTWARE,
+      fatal_error( EX_SOFTWARE,
         "internal regular expression error (%d): %s\n",
         regex_err_code, regex_error( &nonws_no_wrap_regex, regex_err_code )
       );
@@ -760,7 +760,7 @@ static void init( int argc, char const *argv[] ) {
     }
     int const regex_err_code = regex_compile( &block_regex, opt_block_regex );
     if ( regex_err_code != 0 )
-      FATAL_ERR( EX_USAGE,
+      fatal_error( EX_USAGE,
         "\"%s\": regular expression error (%d): %s\n",
         opt_block_regex, regex_err_code,
         regex_error( &block_regex, regex_err_code )

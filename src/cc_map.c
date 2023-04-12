@@ -95,7 +95,7 @@ char const* cc_map_compile( char const *in_cc ) {
     if ( isspace( *cc ) || *cc == ',' )
       continue;
     if ( !ispunct( *cc ) )
-      FATAL_ERR( EX_USAGE,
+      fatal_error( EX_USAGE,
         "\"%s\": invalid value for %s;\n\tmust only be either: %s\n",
         in_cc, opt_format( 'D', opt_buf, sizeof opt_buf ),
         "punctuation or whitespace characters"
@@ -103,7 +103,7 @@ char const* cc_map_compile( char const *in_cc ) {
 
     bool const is_double_cc = ispunct( cc[1] ) && cc[1] != ',';
     if ( is_double_cc && ispunct( cc[2] ) && cc[2] != ',' )
-      FATAL_ERR( EX_USAGE,
+      fatal_error( EX_USAGE,
         "\"%s\": invalid value for %s: \"%c%c%c\": %s\n",
         in_cc, opt_format( 'D', opt_buf, sizeof opt_buf ), cc[0], cc[1], cc[2],
         "more than two consecutive comment characters"
@@ -137,7 +137,7 @@ char const* cc_map_compile( char const *in_cc ) {
   } // for
 
   if ( distinct_cc == 0 )
-    FATAL_ERR( EX_USAGE,
+    fatal_error( EX_USAGE,
       "value for %s must not be only whitespace or commas\n",
       opt_format( 'D', opt_buf, sizeof opt_buf )
     );

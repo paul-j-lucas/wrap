@@ -28,6 +28,10 @@
 #include <ctype.h>
 #include <errno.h>
 #include <locale.h>
+#ifndef NDEBUG
+#include <signal.h>                     /* for raise(3) */
+#endif /* NDEBUG */
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>                     /* for malloc(), ... */
@@ -46,10 +50,6 @@
 # endif
 # include <term.h>                      /* for setupterm(3) */
 #endif /* WITH_WIDTH_TERM */
-
-#ifndef NDEBUG
-# include <signal.h>                    /* for raise(3) */
-#endif /* NDEBUG */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -90,7 +90,7 @@ void check_atexit( void (*cleanup_fn)(void) ) {
 unsigned check_atou( char const *s ) {
   assert( s != NULL );
   if ( !is_digits( s ) )
-    FATAL_ERR( EX_USAGE, "\"%s\": invalid integer\n", s );
+    fatal_error( EX_USAGE, "\"%s\": invalid integer\n", s );
   errno = 0;
   unsigned long const rv = strtoul( s, NULL, 10 );
   PERROR_EXIT_IF( errno != 0, EX_USAGE );
@@ -129,6 +129,15 @@ char closing_char( char c ) {
     case '{': return '}' ;
     default : return '\0';
   } // switch
+}
+
+void fatal_error( int status, char const *format, ... ) {
+  EPRINTF( "%s: ", me );
+  va_list args;
+  va_start( args, format );
+  vfprintf( stderr, format, args );
+  va_end( args );
+  _Exit( status );
 }
 
 void fcopy( FILE *ffrom, FILE *fto ) {
@@ -253,7 +262,7 @@ error:
     if ( likely( cterm_fd != -1 ) )
       PJL_IGNORE_RV( close( cterm_fd ) );
     if ( unlikely( reason != NULL ) )
-      FATAL_ERR( EX_UNAVAILABLE,
+      fatal_error( EX_UNAVAILABLE,
         "failed to determine number of columns in terminal: %s\n",
         reason
       );
