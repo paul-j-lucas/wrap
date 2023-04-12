@@ -1,3 +1,9 @@
+2023-04-12  Paul J. Lucas <paul@lucasmail.org>
+
+   * alias.c, cc_map.c, options.c, pattern.c, pjl_config.h, read_conf.c,
+     regex_test.c, util.c, util.h, wrap.c, wrapc.c, wregex.c:
+     s/FATAL_ERR()/fatal_error()/
+
 2023-04-09  Paul J. Lucas <paul@lucasmail.org>
 
    * lib/Makefile.am, locale.in.h, stdlib.in.h, gnulib-common.m4, stdlib_h.m4:
