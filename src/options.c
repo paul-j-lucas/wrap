@@ -262,6 +262,29 @@ static struct option const *const OPTS_LONG[] = {
 ////////// local functions ////////////////////////////////////////////////////
 
 /**
+ * If \a opt was given, checks that _only_ it was given and, if not, prints an
+ * error message and exits; if \a opt was not given, does nothing.
+ *
+ * @param opt The option to check for.
+ */
+static void opt_check_exclusive( char opt ) {
+  if ( !opts_given[ STATIC_CAST( unsigned char, opt ) ] )
+    return;
+  for ( size_t i = 0; i < ARRAY_SIZE( opts_given ); ++i ) {
+    char const curr_opt = STATIC_CAST( char, i );
+    if ( curr_opt == opt )
+      continue;
+    if ( opts_given[ STATIC_CAST( unsigned char, curr_opt ) ] ) {
+      char opt_buf[ OPT_BUF_SIZE ];
+      fatal_error( EX_USAGE,
+        "%s can be given only by itself\n",
+        opt_format( opt, opt_buf, sizeof opt_buf )
+      );
+    }
+  } // for
+}
+
+/**
  * Checks that no options were given that are among the two given mutually
  * exclusive sets of short options.
  * Prints an error message and exits if any such options are found.
@@ -269,7 +292,8 @@ static struct option const *const OPTS_LONG[] = {
  * @param opts1 The first set of short options.
  * @param opts2 The second set of short options.
  */
-static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
+static void opt_check_mutually_exclusive( char const *opts1,
+                                          char const *opts2 ) {
   assert( opts1 != NULL );
   assert( opts2 != NULL );
 
@@ -307,7 +331,7 @@ static void check_mutually_exclusive( char const *opts1, char const *opts2 ) {
  * @return Returns the said option or the empty string if none.
  */
 NODISCARD
-static char const* get_long_opt( char short_opt ) {
+static char const* opt_get_long( char short_opt ) {
   for ( struct option const *long_opt = OPTS_LONG[ is_wrapc ];
         long_opt->name != NULL;
         ++long_opt ) {
@@ -603,7 +627,7 @@ static void parse_options( int argc, char const *argv[],
     //
     // Check for mutually exclusive options only when parsing the command-line.
     //
-    check_mutually_exclusive( SOPT(ALIGN_COLUMN),
+    opt_check_mutually_exclusive( SOPT(ALIGN_COLUMN),
       SOPT(ALIAS)
       SOPT(ALL_NEWLINES_DELIMIT)
       SOPT(BLOCK_REGEX)
@@ -627,15 +651,15 @@ static void parse_options( int argc, char const *argv[],
       SOPT(WHITESPACE_DELIMIT)
       SOPT(WIDTH)
     );
-    check_mutually_exclusive( SOPT(ALL_NEWLINES_DELIMIT),
+    opt_check_mutually_exclusive( SOPT(ALL_NEWLINES_DELIMIT),
       SOPT(NO_NEWLINES_DELIMIT)
     );
-    check_mutually_exclusive( SOPT(FILE), SOPT(FILE_NAME) );
-    check_mutually_exclusive( SOPT(MARKDOWN),
+    opt_check_mutually_exclusive( SOPT(FILE), SOPT(FILE_NAME) );
+    opt_check_mutually_exclusive( SOPT(MARKDOWN),
       SOPT(TAB_SPACES)
       SOPT(TITLE_LINE)
     );
-    check_mutually_exclusive( SOPT(MARKDOWN) SOPT(PROTOTYPE),
+    opt_check_mutually_exclusive( SOPT(MARKDOWN) SOPT(PROTOTYPE),
       SOPT(DOT_IGNORE)
       SOPT(HANG_SPACES)
       SOPT(HANG_TABS)
@@ -648,38 +672,7 @@ static void parse_options( int argc, char const *argv[],
       SOPT(MIRROR_TABS)
       SOPT(WHITESPACE_DELIMIT)
     );
-    check_mutually_exclusive( SOPT(VERSION),
-      SOPT(ALIAS)
-      SOPT(ALIGN_COLUMN)
-      SOPT(ALL_NEWLINES_DELIMIT)
-      SOPT(BLOCK_REGEX)
-      SOPT(CONFIG)
-      SOPT(DOT_IGNORE)
-      SOPT(DOXYGEN)
-      SOPT(EOL)
-      SOPT(EOS_DELIMIT)
-      SOPT(EOS_SPACES)
-      SOPT(FILE)
-      SOPT(FILE_NAME)
-      SOPT(HANG_SPACES)
-      SOPT(HANG_TABS)
-      SOPT(INDENT_SPACES)
-      SOPT(INDENT_TABS)
-      SOPT(LEAD_SPACES)
-      SOPT(LEAD_TABS)
-      SOPT(MARKDOWN)
-      SOPT(MIRROR_SPACES)
-      SOPT(MIRROR_TABS)
-      SOPT(NO_CONFIG)
-      SOPT(NO_HYPHEN)
-      SOPT(NO_NEWLINES_DELIMIT)
-      SOPT(OUTPUT)
-      SOPT(PARA_CHARS)
-      SOPT(TAB_SPACES)
-      SOPT(TITLE_LINE)
-      SOPT(WHITESPACE_DELIMIT)
-      SOPT(WIDTH)
-    );
+    opt_check_exclusive( COPT(VERSION) );
   }
 
   if ( print_version ) {
@@ -742,7 +735,7 @@ static unsigned parse_width( char const *s ) {
 ////////// extern functions ///////////////////////////////////////////////////
 
 char* opt_format( char short_opt, char buf[], size_t size ) {
-  char const *const long_opt = get_long_opt( short_opt );
+  char const *const long_opt = opt_get_long( short_opt );
   snprintf(
     buf, size, "%s%s%s-%c",
     *long_opt != '\0' ? "--" : "", long_opt,
