@@ -1,5 +1,11 @@
 2023-05-03  Paul J. Lucas <paul@lucasmail.org>
 
+   * lib/Makefile.am, c++defs.h, ctype.in.h, fnmatch.in.h, inttypes.h,
+     inttypes.in.h, limits.in.h, locale.in.h, stdlib.in.h, string.in.h,
+     sys_types.in.h, unistd.in.h, verify.h, wchar.in.h, wctype.in.h,
+     extern-inline.m4, gnulib-common.m4, limits-h.m4, locale-fr.m4,
+     locale-ja.m4, locale-zh.m4, stdlib_h.m4, threadlib.m4, wchar_h.m4: Updated
+     GnuLib.
    * options.c: Eliminated *_OPTION() macros.
    * options.c: Added opt_check_exclusive().
    * doxygen.c: Made @par be EOL.
