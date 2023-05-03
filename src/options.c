@@ -38,10 +38,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define CLEAR_OPTIONS()     memset( opts_given, 0, sizeof opts_given )
-#define GAVE_OPTION(OPT)    (opts_given[ (unsigned char)(OPT) ])
-#define SET_OPTION(OPT)     (opts_given[ (unsigned char)(OPT) ] = (char)(OPT))
-
 // local constants
 static char const   COMMENT_CHARS_DEFAULT[] =
   "!"  ","  // Fortran, Simula
@@ -303,7 +299,7 @@ static void opt_check_mutually_exclusive( char const *opts1,
 
   for ( unsigned i = 0; i < 2; ++i ) {
     for ( ; *opt != '\0'; ++opt ) {
-      if ( GAVE_OPTION( *opt ) ) {
+      if ( opts_given[ STATIC_CAST( unsigned char, *opt ) ] ) {
         if ( ++gave_count > 1 ) {
           char const gave_opt2 = *opt;
           char opt1_buf[ OPT_BUF_SIZE ];
@@ -470,7 +466,7 @@ static void parse_options( int argc, char const *argv[],
 
   optind = opterr = 1;
   bool print_version = false;
-  CLEAR_OPTIONS();
+  memset( opts_given, 0, sizeof opts_given );
 
   for (;;) {
     int const opt = getopt_long(
@@ -479,8 +475,6 @@ static void parse_options( int argc, char const *argv[],
     );
     if ( opt == -1 )
       break;
-    SET_OPTION( opt );
-
     if ( line_no > 0 ) {                // we're parsing a conf file
       if ( strchr( CONF_FORBIDDEN_OPTS, opt ) != NULL )
         fatal_error( EX_CONFIG,
@@ -621,6 +615,7 @@ static void parse_options( int argc, char const *argv[],
           "%d: unaccounted-for getopt_long() return value\n", opt
         );
     } // switch
+    opts_given[ opt ] = true;
   } // for
 
   if ( line_no == 0 ) {
