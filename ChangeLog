@@ -1,3 +1,17 @@
+2023-05-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.c: Eliminated *_OPTION() macros.
+   * options.c: Added opt_check_exclusive().
+   * doxygen.c: Made @par be EOL.
+
+2023-04-13  Paul J. Lucas <paul@lucasmail.org>
+
+   * pjl_config.h: Fix for updated GnuLib !_GL_CONFIG_H_INCLUDED.
+   * attribute.h, ctype.in.h, flexmember.h, fnmatch.in.h, inttypes.h,
+     inttypes.in.h, locale.in.h, stddef.in.h, stdlib.in.h, stdnoreturn.in.h,
+     strerror-override.h, string.in.h, strnlen1.h, unistd.in.h, wchar.in.h,
+     wctype.in.h, gnulib-common.m4, mbrtowc.m4: Updated GnuLib.
+
 2023-04-12  Paul J. Lucas <paul@lucasmail.org>
 
    * alias.c, cc_map.c, options.c, pattern.c, pjl_config.h, read_conf.c,
