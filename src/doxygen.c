@@ -161,7 +161,7 @@ static dox_cmd_t const DOX_COMMANDS[] = {
   { "p",                DOX_INIT_INLINE,  NULL },
   { "package",          DOX_INIT_EOL,     NULL },
   { "page",             DOX_INIT_EOL,     NULL },
-  { "par",              DOX_INIT_PAR,     NULL },
+  { "par",              DOX_INIT_EOL,     NULL },
   { "paragraph",        DOX_INIT_EOL,     NULL },
   { "param",            DOX_INIT_PAR,     NULL },
   { "parblock",         DOX_INIT_EOL,     "endparblock" },
