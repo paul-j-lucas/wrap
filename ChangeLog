@@ -1,3 +1,7 @@
+2023-05-07  Paul J. Lucas <paul@lucasmail.org>
+
+   * cc_map.c, options.c, options.h: opt_format() now uses internal buffers.
+
 2023-05-03  Paul J. Lucas <paul@lucasmail.org>
 
    * lib/Makefile.am, c++defs.h, ctype.in.h, fnmatch.in.h, inttypes.h,
