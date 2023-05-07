@@ -79,8 +79,6 @@
 /// Command-line option character as a single-character string literal.
 #define SOPT(X)                   STRINGIFY(OPT_##X)
 
-#define OPT_BUF_SIZE              32    /* used for format_opt() */
-
 /**
  * End-of-Line formats.
  */
@@ -139,12 +137,14 @@ extern FILE        *fout;               ///< File out.
  *
  * @param short_opt The short option (along with its corresponding long option,
  * if any) to format.
- * @param buf The buffer to use.
- * @param buf_size The size of \a buf.
  * @return Returns \a buf.
+ *
+ * @warning The pointer returned is to a small number of static buffers, so you
+ * can't do something like call this more than twice in the same `printf()`
+ * statement.
  */
 PJL_DISCARD
-char* opt_format( char short_opt, char buf[const], size_t buf_size );
+char const* opt_format( char short_opt );
 
 /**
  * Initializes command-line option variables.

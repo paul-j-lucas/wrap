@@ -36,6 +36,8 @@
 #include <stdbool.h>
 #include <string.h>                     /* for memset(3) */
 
+#define OPT_BUF_SIZE              32    /* used for opt_format() */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 // local constants
@@ -264,17 +266,15 @@ static struct option const *const OPTS_LONG[] = {
  * @param opt The option to check for.
  */
 static void opt_check_exclusive( char opt ) {
-  if ( !opts_given[ STATIC_CAST( unsigned char, opt ) ] )
+  if ( !opts_given[ STATIC_CAST( unsigned, opt ) ] )
     return;
   for ( size_t i = 0; i < ARRAY_SIZE( opts_given ); ++i ) {
     char const curr_opt = STATIC_CAST( char, i );
     if ( curr_opt == opt )
       continue;
-    if ( opts_given[ STATIC_CAST( unsigned char, curr_opt ) ] ) {
-      char opt_buf[ OPT_BUF_SIZE ];
+    if ( opts_given[ STATIC_CAST( unsigned, curr_opt ) ] ) {
       fatal_error( EX_USAGE,
-        "%s can be given only by itself\n",
-        opt_format( opt, opt_buf, sizeof opt_buf )
+        "%s can be given only by itself\n", opt_format( opt )
       );
     }
   } // for
@@ -299,15 +299,13 @@ static void opt_check_mutually_exclusive( char const *opts1,
 
   for ( unsigned i = 0; i < 2; ++i ) {
     for ( ; *opt != '\0'; ++opt ) {
-      if ( opts_given[ STATIC_CAST( unsigned char, *opt ) ] ) {
+      if ( opts_given[ STATIC_CAST( unsigned, *opt ) ] ) {
         if ( ++gave_count > 1 ) {
           char const gave_opt2 = *opt;
-          char opt1_buf[ OPT_BUF_SIZE ];
-          char opt2_buf[ OPT_BUF_SIZE ];
           fatal_error( EX_USAGE,
             "%s and %s are mutually exclusive\n",
-            opt_format( gave_opt1, opt1_buf, sizeof opt1_buf ),
-            opt_format( gave_opt2, opt2_buf, sizeof opt2_buf  )
+            opt_format( gave_opt1 ),
+            opt_format( gave_opt2 )
           );
         }
         gave_opt1 = *opt;
@@ -375,13 +373,11 @@ static unsigned parse_align( char const *s, char *align_char ) {
   return col;
 
 error:
-  NO_OP;
-  char opt_buf[ OPT_BUF_SIZE ];
   fatal_error( EX_USAGE,
-    "\"%s\": invalid value for %s; %s\n",
-    s, opt_format( 'A', opt_buf, sizeof opt_buf ),
-    "must be digits followed by one of:"
-    " a, auto, s, space, spaces, t, tab, tabs"
+    "\"%s\": invalid value for %s;"
+    " must be digits followed by one of:"
+    " a, auto, s, space, spaces, t, tab, tabs\n",
+    s, opt_format( 'A' )
   );
 }
 
@@ -437,10 +433,9 @@ static eol_t parse_eol( char const *s ) {
     pvalues += strlen( m->em_name );
   } // for
 
-  char opt_buf[ OPT_BUF_SIZE ];
   fatal_error( EX_USAGE,
     "\"%s\": invalid value for %s; must be one of:\n\t%s\n",
-    s, opt_format( 'l', opt_buf, sizeof opt_buf ), values_buf
+    s, opt_format( 'l' ), values_buf
   );
 }
 
@@ -593,13 +588,11 @@ static void parse_options( int argc, char const *argv[],
         opt_line_width = parse_width( optarg );
         break;
 
-      case ':': {                       // option missing required argument
-        char opt_buf[ OPT_BUF_SIZE ];
+      case ':':                         // option missing required argument
         fatal_error( EX_USAGE,
           "\"%s\" requires an argument\n",
-          opt_format( STATIC_CAST( char, optopt ), opt_buf, sizeof opt_buf )
+          opt_format( STATIC_CAST( char, optopt ) )
         );
-      }
 
       case '?':                         // invalid option
         fatal_error( EX_USAGE,
@@ -717,10 +710,9 @@ static unsigned parse_width( char const *s ) {
     pvalues += strlen( *t );
   } // for
 
-  char opt_buf[ OPT_BUF_SIZE ];
   fatal_error( EX_USAGE,
     "\"%s\": invalid value for %s; must be one of:\n\t%s\n",
-    s, opt_format( 'w', opt_buf, sizeof opt_buf ), values_buf
+    s, opt_format( 'w' ), values_buf
   );
 #else
   return check_atou( s );
@@ -729,12 +721,16 @@ static unsigned parse_width( char const *s ) {
 
 ////////// extern functions ///////////////////////////////////////////////////
 
-char* opt_format( char short_opt, char buf[], size_t size ) {
+char const* opt_format( char short_opt ) {
+  static char bufs[ 2 ][ OPT_BUF_SIZE ];
+  static unsigned buf_index;
+  char *const buf = bufs[ buf_index++ % 2 ];
+
   char const *const long_opt = opt_get_long( short_opt );
   snprintf(
-    buf, size, "%s%s%s-%c",
-    *long_opt != '\0' ? "--" : "", long_opt,
-    *long_opt != '\0' ? "/"  : "", short_opt
+    buf, OPT_BUF_SIZE, "%s%s%s-%c",
+    long_opt[0] != '\0' ? "--" : "", long_opt,
+    long_opt[0] != '\0' ? "/"  : "", short_opt
   );
   return buf;
 }
