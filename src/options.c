@@ -664,7 +664,7 @@ static void parse_options( int argc, char const *argv[],
   }
 
   if ( print_version ) {
-    EPRINTF( "%s\n", PACKAGE_STRING );
+    puts( PACKAGE_STRING );
     exit( EX_OK );
   }
 }
