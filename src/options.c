@@ -460,11 +460,12 @@ static void parse_options( int argc, char const *argv[],
   assert( usage != NULL );
 
   optind = opterr = 1;
-  bool print_version = false;
+  int opt;
+  bool opt_version = false;
   memset( opts_given, 0, sizeof opts_given );
 
   for (;;) {
-    int const opt = getopt_long(
+    opt = getopt_long(
       argc, CONST_CAST( char**, argv ), short_opts, long_opts,
       /*longindex=*/NULL
     );
@@ -489,7 +490,7 @@ static void parse_options( int argc, char const *argv[],
         opt_align_column = parse_align( optarg, &opt_align_char );
         break;
       case COPT(ALL_NEWLINES_DELIMIT):
-        opt_newlines_delimit  = 1;
+        opt_newlines_delimit = 1;
         break;
       case COPT(BLOCK_REGEX):
         opt_block_regex = optarg;
@@ -561,7 +562,7 @@ static void parse_options( int argc, char const *argv[],
         opt_no_hyphen = true;
         break;
       case COPT(NO_NEWLINES_DELIMIT):
-        opt_newlines_delimit  = SIZE_MAX;
+        opt_newlines_delimit = SIZE_MAX;
         break;
       case COPT(OUTPUT):
         opt_fout = optarg;
@@ -579,7 +580,7 @@ static void parse_options( int argc, char const *argv[],
         opt_title_line = true;
         break;
       case COPT(VERSION):
-        print_version = true;
+        opt_version = true;
         break;
       case COPT(WHITESPACE_DELIMIT):
         opt_lead_ws_delimit = true;
@@ -588,16 +589,10 @@ static void parse_options( int argc, char const *argv[],
         opt_line_width = parse_width( optarg );
         break;
 
-      case ':':                         // option missing required argument
-        fatal_error( EX_USAGE,
-          "\"%s\" requires an argument\n",
-          opt_format( STATIC_CAST( char, optopt ) )
-        );
-
-      case '?':                         // invalid option
-        fatal_error( EX_USAGE,
-          "'%c': invalid option\n", STATIC_CAST( char, optopt )
-        );
+      case ':':
+        goto missing_arg;
+      case '?':
+        goto invalid_opt;
 
       default:
         if ( isprint( opt ) )
@@ -663,10 +658,28 @@ static void parse_options( int argc, char const *argv[],
     opt_check_exclusive( COPT(VERSION) );
   }
 
-  if ( print_version ) {
+  if ( opt_version ) {
     puts( PACKAGE_STRING );
     exit( EX_OK );
   }
+
+  return;
+
+invalid_opt:
+  NO_OP;
+  // Determine whether the invalid option was short or long.
+  char const *invalid_opt = argv[ optind - 1 ];
+  if ( invalid_opt != NULL && strncmp( invalid_opt, "--", 2 ) == 0 ) {
+    invalid_opt += 2;                   // skip over "--"
+    fatal_error( EX_USAGE, "\"%s\": invalid option\n", invalid_opt );
+  }
+  fatal_error( EX_USAGE, "'%c': invalid option\n", STATIC_CAST( char, optopt ) );
+
+missing_arg:
+  fatal_error( EX_USAGE,
+    "\"%s\" requires an argument\n",
+    opt_format( STATIC_CAST( char, opt == ':' ? optopt : opt ) )
+  );
 }
 
 /**
