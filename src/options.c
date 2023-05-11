@@ -281,41 +281,45 @@ static void opt_check_exclusive( char opt ) {
 }
 
 /**
+ * If \a opt was given, checks that no option in \a opts was also given.  If it
+ * was, prints an error message and exits; if it wasn't, does nothing.
+ *
+ * @param opt The option.
+ * @param opts The set of options.
+ *
+ * @sa opt_check_s_mutually_exclusive()
+ */
+static void opt_check_mutually_exclusive( char opt, char const *opts ) {
+  assert( opts != NULL );
+  if ( !opts_given[ STATIC_CAST( unsigned, opt ) ] )
+    return;
+  for ( ; *opts != '\0'; ++opts ) {
+    assert( *opts != opt );
+    if ( opts_given[ STATIC_CAST( unsigned, *opts ) ] ) {
+      fatal_error( EX_USAGE,
+        "%s and %s are mutually exclusive\n",
+        opt_format( opt ),
+        opt_format( *opts )
+      );
+    }
+  } // for
+}
+
+/**
  * Checks that no options were given that are among the two given mutually
  * exclusive sets of short options.
  * Prints an error message and exits if any such options are found.
  *
  * @param opts1 The first set of short options.
  * @param opts2 The second set of short options.
+ *
+ * @sa opt_check_mutually_exclusive()
  */
-static void opt_check_mutually_exclusive( char const *opts1,
-                                          char const *opts2 ) {
+static void opt_check_s_mutually_exclusive( char const *opts1,
+                                            char const *opts2 ) {
   assert( opts1 != NULL );
-  assert( opts2 != NULL );
-
-  unsigned gave_count = 0;
-  char const *opt = opts1;
-  char gave_opt1 = '\0';
-
-  for ( unsigned i = 0; i < 2; ++i ) {
-    for ( ; *opt != '\0'; ++opt ) {
-      if ( opts_given[ STATIC_CAST( unsigned, *opt ) ] ) {
-        if ( ++gave_count > 1 ) {
-          char const gave_opt2 = *opt;
-          fatal_error( EX_USAGE,
-            "%s and %s are mutually exclusive\n",
-            opt_format( gave_opt1 ),
-            opt_format( gave_opt2 )
-          );
-        }
-        gave_opt1 = *opt;
-        break;
-      }
-    } // for
-    if ( gave_count == 0 )
-      break;
-    opt = opts2;
-  } // for
+  for ( ; *opts1 != '\0'; ++opts1 )
+    opt_check_mutually_exclusive( *opts1, opts2 );
 }
 
 /**
@@ -610,7 +614,7 @@ static void parse_options( int argc, char const *argv[],
     //
     // Check for mutually exclusive options only when parsing the command-line.
     //
-    opt_check_mutually_exclusive( SOPT(ALIGN_COLUMN),
+    opt_check_mutually_exclusive( COPT(ALIGN_COLUMN),
       SOPT(ALIAS)
       SOPT(ALL_NEWLINES_DELIMIT)
       SOPT(BLOCK_REGEX)
@@ -634,15 +638,15 @@ static void parse_options( int argc, char const *argv[],
       SOPT(WHITESPACE_DELIMIT)
       SOPT(WIDTH)
     );
-    opt_check_mutually_exclusive( SOPT(ALL_NEWLINES_DELIMIT),
+    opt_check_mutually_exclusive( COPT(ALL_NEWLINES_DELIMIT),
       SOPT(NO_NEWLINES_DELIMIT)
     );
-    opt_check_mutually_exclusive( SOPT(FILE), SOPT(FILE_NAME) );
-    opt_check_mutually_exclusive( SOPT(MARKDOWN),
+    opt_check_mutually_exclusive( COPT(FILE), SOPT(FILE_NAME) );
+    opt_check_mutually_exclusive( COPT(MARKDOWN),
       SOPT(TAB_SPACES)
       SOPT(TITLE_LINE)
     );
-    opt_check_mutually_exclusive( SOPT(MARKDOWN) SOPT(PROTOTYPE),
+    opt_check_s_mutually_exclusive( SOPT(MARKDOWN) SOPT(PROTOTYPE),
       SOPT(DOT_IGNORE)
       SOPT(HANG_SPACES)
       SOPT(HANG_TABS)
