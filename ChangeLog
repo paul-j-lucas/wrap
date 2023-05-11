@@ -1,3 +1,7 @@
+2023-05-11  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.c: Added opt_check_s_mutually_exclusive().
+
 2023-05-07  Paul J. Lucas <paul@lucasmail.org>
 
    * options.c: Now using PACKAGE_STRING.
