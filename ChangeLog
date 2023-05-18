@@ -1,5 +1,6 @@
 2023-05-18  Paul J. Lucas <paul@lucasmail.org>
 
+   * markdown.c: Added ().
    * markdown.c: Ensure that STRLIT is really a string literal.
 
 2023-05-11  Paul J. Lucas <paul@lucasmail.org>
