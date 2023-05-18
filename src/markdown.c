@@ -45,17 +45,24 @@
   (strncmp( (S), (STRLIT), sizeof( STRLIT ) - 1 ) == 0)
 
 /**
- * Gets the Nth Markdown state down from the top of the stack.
+ * Gets an lvalue reference to the Nth Markdown state down from the top of the
+ * stack.
  *
  * @param N The Nth item to get (0 = top of stack).
- * @return Returns the Nth Markdown state.
+ * @return Returns an lvalue reference to the Nth Markdown state.
+ *
+ * @note This is a macro instead of an inline function so it'll be an lvalue
+ * reference.
  */
 #define STACK(N)            (stack[ stack_top - (N) ])
 
 /**
- * Gets the top Markdown state from the stack.
+ * Gets an lvalue reference to the top Markdown state on the stack.
  *
- * @return Returns the top Markdown state.
+ * @return Returns an lvalue reference to the top Markdown state.
+ *
+ * @note This is a macro instead of an inline function so it'll be an lvalue
+ * reference.
  */
 #define TOP                 STACK(0)
 
