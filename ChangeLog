@@ -1,5 +1,7 @@
 2023-05-18  Paul J. Lucas <paul@lucasmail.org>
 
+   * alias.c, align.c, cc_map.c, markdown.c, options.c, regex_test.c,
+     unicode.h, util.c, wrap.c, wrapc.c, wregex.c: Using STATIC_CAST more.
    * markdown.c: Added ().
    * markdown.c: Ensure that STRLIT is really a string literal.
 
