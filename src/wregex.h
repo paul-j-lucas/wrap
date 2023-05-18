@@ -70,27 +70,22 @@
  * nor an IP address for the domain, but it will work for most e-mail
  * addresses.
  *
- * See also:
- *  + RFC 5322: "Internet Message Format," Section 3.4.1, "Addr-Spec
- *    Specification," Network Working Group of the Internet Engineering Task
- *    Force, October 2008,
+ * @sa [RFC 5322: Internet Message Format, Section 3.4.1, Addr-Spec
+ * Specification](https://datatracker.ietf.org/doc/html/rfc5322#section-3.4.1)
  */
 #define WRAP_RE_EMAIL             "(mailto:)?" RE_LOCAL "@" RE_DOMAIN
 
 /**
  * Regular expression for a file URI.
  *
- * See also:
- *  + "The file URI Scheme," Applications Area Working Group, July 2015.
+ * @sa [RFC 8089: The "file" URI Scheme](https://datatracker.ietf.org/doc/html/rfc8089)
  */
 #define WRAP_RE_FILE_URI          "file:" "(" RE_FILEAUTH ")?" RE_PATH
 
 /**
  * Regular expression for an FTP URI.
  *
- * See also:
- *  + RFC 3986: "Uniform Resource Identifier (URI): Generic Syntax," Network
- *    Working Group of the Internet Engineering Task Force, January 2005.
+ * @sa [RFC 3986: Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986)
  */
 #define WRAP_RE_FTP_URI           \
   "ftp://"                        \
@@ -101,9 +96,7 @@
 /**
  * Regular expression for an HTTP URI.
  *
- * See also:
- *  + RFC 3986: "Uniform Resource Identifier (URI): Generic Syntax," Network
- *    Working Group of the Internet Engineering Task Force, January 2005.
+ * @sa [RFC 3986: Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986)
  */
 #define WRAP_RE_HTTP_URI          \
   "https?://"                     \

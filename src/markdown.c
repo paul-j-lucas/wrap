@@ -333,14 +333,11 @@ done:
 /**
  * Checks whether the given string is a URI scheme followed by a ':'.
  *
- * See also:
- *  + RFC 3986: "Uniform Resource Identifier (URI): Generic Syntax," Section
- *    3.1, "Scheme," Network Working Group of the Internet Engineering Task
- *    Force, January 2005.
- *
  * @param s The null-terminated string to check.
  * @return Returns a pointer within \a s just after the ':' if \a s is a URI
  * scheme or null otherwise.
+ *
+ * @sa [RFC 3986: Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986)
  */
 NODISCARD
 static char const* is_uri_scheme( char const *s ) {
