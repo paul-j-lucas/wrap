@@ -1,3 +1,7 @@
+2023-05-18  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c: Ensure that STRLIT is really a string literal.
+
 2023-05-11  Paul J. Lucas <paul@lucasmail.org>
 
    * options.c: Added opt_check_s_mutually_exclusive().
