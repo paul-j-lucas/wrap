@@ -35,7 +35,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #define CLEAR_RETURN(TOKEN) \
-  BLOCK( stack_clear(); stack_push( TOKEN, 0, 0 ); return &TOP; )
+  BLOCK( stack_clear(); stack_push( (TOKEN), 0, 0 ); return &TOP; )
 
 #define PREV_BOOL(NAME)           \
   bool const NAME = prev_##NAME;  \
