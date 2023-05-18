@@ -269,7 +269,7 @@ static inline bool stack_empty( void ) {
  */
 NODISCARD
 static inline size_t stack_size( void ) {
-  return (size_t)(stack_top + 1);
+  return STATIC_CAST( size_t, stack_top + 1 );
 }
 
 /**
@@ -608,7 +608,7 @@ static bool md_is_html_end( html_state_t html_state, char const *s ) {
     NULL,   // HTML_END
   };
 
-  assert( (size_t)html_state < ARRAY_SIZE( HTML_END_STR ) );
+  assert( STATIC_CAST( size_t, html_state ) < ARRAY_SIZE( HTML_END_STR ) );
   assert( s != NULL );
 
   if ( html_state == HTML_PRE ) {
@@ -694,7 +694,7 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
       element[ len ] = '\0';
       break;
     }
-    element[ len++ ] = (char)tolower( *s++ );
+    element[ len++ ] = STATIC_CAST( char, tolower( *s++ ) );
   } // for
 
   if ( is_html_pre_element( element ) ) {
@@ -802,9 +802,9 @@ static bool md_is_ol( char const *s, md_ol_t *ol_num, char *ol_c,
   *ol_num = 0;
   char const *d = s;
   for ( ; isdigit( *d ); ++d )
-    *ol_num = *ol_num * 10 + (unsigned)(*d - '0');
+    *ol_num = *ol_num * 10 + STATIC_CAST( unsigned, *d - '0' );
 
-  size_t const len = (size_t)(d - s);
+  size_t const len = STATIC_CAST( size_t, d - s );
   if ( len >= 1 && len <= MD_OL_CHAR_MAX && md_is_ol_sep_char( d[0] ) &&
        is_space( d[1] ) ) {
     *ol_c = d[0];
@@ -921,7 +921,8 @@ static void md_renumber_ol( char *s, md_ol_t old_n, md_ol_t new_n ) {
   assert( s != NULL );
   if ( new_n != old_n ) {
     size_t const s_len = strlen( s );
-    size_t const old_digits = (size_t)(1 + (old_n > 9) + (old_n > 99));
+    size_t const old_digits =
+      STATIC_CAST( size_t, 1 + (old_n > 9) + (old_n > 99) );
 
     // convert new_n to a string
     char new_buf[11];                   // enough for sizeof(md_ol_t) == 4
@@ -1016,7 +1017,7 @@ static void stack_push( md_line_t line_type, md_indent_t indent_left,
   if ( stack_capacity == 0 ) {
     stack_capacity = STATE_ALLOC_DEFAULT;
     stack = MALLOC( md_state_t, stack_capacity );
-  } else if ( (size_t)stack_top >= stack_capacity ) {
+  } else if ( STATIC_CAST( size_t, stack_top ) >= stack_capacity ) {
     stack_capacity += STATE_ALLOC_INCREMENT;
     REALLOC( stack, md_state_t, stack_capacity );
   }

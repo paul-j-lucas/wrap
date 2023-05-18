@@ -75,7 +75,7 @@ typedef char utf8c_t[ UTF8_CHAR_SIZE_MAX ];
  */
 NODISCARD W_UNICODE_INLINE
 bool cp_is_alpha( char32_t cp ) {
-  return iswalpha( (wint_t)cp );
+  return iswalpha( STATIC_CAST( wint_t, cp ) );
 }
 
 /**
@@ -97,7 +97,7 @@ bool cp_is_ascii( char32_t cp ) {
  */
 NODISCARD W_UNICODE_INLINE
 bool cp_is_control( char32_t cp ) {
-  return iswcntrl( (wint_t)cp );
+  return iswcntrl( STATIC_CAST( wint_t, cp ) );
 }
 
 /**
@@ -150,7 +150,7 @@ bool cp_is_hyphen_adjacent( char32_t cp ) {
  */
 NODISCARD W_UNICODE_INLINE
 bool cp_is_space( char32_t cp ) {
-  return iswspace( (wint_t)cp );
+  return iswspace( STATIC_CAST( wint_t, cp ) );
 }
 
 /**

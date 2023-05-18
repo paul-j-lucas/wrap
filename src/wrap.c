@@ -141,7 +141,7 @@ static inline bool block_regex_matches( void ) {
 NODISCARD
 static inline bool cp_is_para_delim( char32_t cp ) {
   return  opt_para_delims != NULL && cp_is_ascii( cp ) &&
-          strchr( opt_para_delims, (int)cp ) != NULL;
+          strchr( opt_para_delims, STATIC_CAST( int, cp ) ) != NULL;
 }
 
 /**
@@ -382,7 +382,7 @@ int main( int argc, char const *argv[] ) {
     encountered_nonws = true;
 
     if ( !opt_no_hyphen ) {
-      size_t const pos = (size_t)(pb - input_buf);
+      size_t const pos = STATIC_CAST( size_t, pb - input_buf );
       if ( pos >= nonws_no_wrap_range[1] || pos < nonws_no_wrap_range[0] ) {
         //
         // We're outside the non-whitespace-no-wrap range.
@@ -525,7 +525,7 @@ read_line:
   } // while
 
   if ( !opt_no_hyphen && check_for_nonws_no_wrap_match ) {
-    size_t const pos = (size_t)(*ppc - input_buf);
+    size_t const pos = STATIC_CAST( size_t, *ppc - input_buf );
     //
     // If there was a previous non-whitespace-no-wrap range and we're past it,
     // see if there is another match on the same line.
@@ -629,16 +629,16 @@ static char32_t buf_getcp( char const **ppc, utf8c_t utf8c ) {
   int c;
   if ( unlikely( (c = buf_getc( ppc )) == EOF ) )
     return CP_EOF;
-  size_t const len = utf8_len( (char)c );
+  size_t const len = utf8_len( STATIC_CAST( char, c ) );
   if ( unlikely( len == 0 ) )
     return CP_INVALID;
-  utf8c[0] = (char)c;
+  utf8c[0] = STATIC_CAST( char, c );
   for ( size_t i = 1; i < len; ++i ) {
     if ( unlikely( (c = buf_getc( ppc )) == EOF ) )
       return CP_EOF;
-    if ( unlikely( !utf8_is_cont( (char)c ) ) )
+    if ( unlikely( !utf8_is_cont( STATIC_CAST( char, c ) ) ) )
       return CP_INVALID;
-    utf8c[i] = (char)c;
+    utf8c[i] = STATIC_CAST( char, c );
   } // for
 
   return utf8_decode( utf8c );
@@ -728,7 +728,7 @@ static void init( int argc, char const *argv[] ) {
     opt_tab_spaces = TAB_SPACES_MARKDOWN;
   }
 
-  int const temp_width = (int)opt_line_width -
+  int const temp_width = STATIC_CAST( int, opt_line_width ) -
     (int)(2 * (opt_mirror_tabs * opt_tab_spaces + opt_mirror_spaces) +
           opt_lead_tabs * opt_tab_spaces + opt_lead_spaces);
 
@@ -737,7 +737,7 @@ static void init( int argc, char const *argv[] ) {
       "line-width (%d) is too small (<%d)\n",
       temp_width, LINE_WIDTH_MINIMUM
     );
-  opt_line_width = line_width = (size_t)temp_width;
+  opt_line_width = line_width = STATIC_CAST( size_t, temp_width );
 
   opt_lead_tabs   += opt_mirror_tabs;
   opt_lead_spaces += opt_mirror_spaces;
@@ -836,7 +836,7 @@ static bool markdown_adjust( void ) {
   md_state_t const *const md = markdown_parse( input_buf );
   MD_DEBUG(
     "T=%c N=%2u D=%u L=%u H=%u|%s",
-    (char)md->line_type, md->seq_num, md->depth,
+    STATIC_CAST( char, md->line_type ), md->seq_num, md->depth,
     md->indent_left, md->indent_hang, input_buf
   );
 

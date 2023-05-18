@@ -145,7 +145,7 @@ char const* cc_map_compile( char const *in_cc ) {
   char *s = out_cc;
   for ( size_t i = 0; i < ARRAY_SIZE( cc_set ); ++i ) {
     if ( cc_set[i] )
-      *s++ = (char)i;
+      *s++ = STATIC_CAST( char, i );
   } // for
   *s = '\0';
 

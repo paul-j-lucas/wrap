@@ -165,11 +165,11 @@ char* fgetsz( char *buf, size_t *size, FILE *ffrom ) {
   char *s = buf;
 
   for ( size_t n = *size; n > 0 && (c = getc( ffrom )) != EOF; --n )
-    if ( (*s++ = (char)c) == '\n' )
+    if ( (*s++ = STATIC_CAST( char, c )) == '\n' )
       break;
 
   *s = '\0';
-  *size = (size_t)(s - buf);
+  *size = STATIC_CAST( size_t, s - buf );
 
   return c == EOF && *size == 0 ? NULL : buf;
 }
@@ -195,7 +195,7 @@ void free_now( void ) {
 
 #ifdef WITH_WIDTH_TERM
 unsigned get_term_columns( void ) {
-  static unsigned const UNSET = (unsigned)-1;
+  static unsigned const UNSET = STATIC_CAST( unsigned, -1 );
   static unsigned cols = UNSET;
 
   if ( cols == UNSET ) {
@@ -223,7 +223,7 @@ unsigned get_term_columns( void ) {
     }
 
     int sut_err;
-    if ( setupterm( CONST_CAST(char*, term), cterm_fd, &sut_err ) == ERR ) {
+    if ( setupterm( CONST_CAST( char*, term ), cterm_fd, &sut_err ) == ERR ) {
       reason = reason_buf;
       switch ( sut_err ) {
         case -1:
@@ -247,7 +247,7 @@ unsigned get_term_columns( void ) {
       goto error;
     }
 
-    int const ti_cols = tigetnum( (char*)"cols" );
+    int const ti_cols = tigetnum( CONST_CAST( char*, "cols" ) );
     if ( unlikely( ti_cols < 0 ) ) {
       snprintf(
         reason_buf, sizeof reason_buf,
@@ -256,7 +256,7 @@ unsigned get_term_columns( void ) {
       goto error;
     }
 
-    cols = (unsigned)ti_cols;
+    cols = STATIC_CAST( unsigned, ti_cols );
 
 error:
     if ( likely( cterm_fd != -1 ) )
@@ -335,7 +335,7 @@ size_t strcpy_len( char *dst, char const *src ) {
   char const *const dst0 = dst;
   while ( (*dst++ = *src++) != '\0' )
     /* empty */;
-  return (size_t)(dst - dst0 - 1);
+  return STATIC_CAST( size_t, dst - dst0 - 1 );
 }
 
 size_t strrspn( char const *s, char const *set ) {

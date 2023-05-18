@@ -359,7 +359,7 @@ static unsigned parse_align( char const *s, char *align_char ) {
 
   char *end = NULL;
   errno = 0;
-  unsigned const col = (unsigned)strtoul( s, &end, 10 );
+  unsigned const col = STATIC_CAST( unsigned, strtoul( s, &end, 10 ) );
   if ( unlikely( errno != 0 || end == s ) )
     goto error;
   if ( *end != '\0' ) {
@@ -705,7 +705,7 @@ static unsigned parse_width( char const *s ) {
 
   assert( s != NULL );
   if ( is_digits( s ) )
-    return (unsigned)strtoul( s, NULL, 10 );
+    return STATIC_CAST( unsigned, strtoul( s, NULL, 10 ) );
 
   size_t values_buf_size = 1;           // for trailing null
   for ( char const *const *t = TERM; *t != NULL; ++t ) {

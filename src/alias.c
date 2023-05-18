@@ -86,7 +86,7 @@ static void alias_check_dup( char const *conf_file, unsigned line_no ) {
     // The number of aliases is assumed to be small, so linear search is good
     // enough.
     //
-    int i = (int)n_aliases - 1;
+    int i = STATIC_CAST( int, n_aliases ) - 1;
     char const *const last_name = aliases[i].argv[0];
     while ( --i >= 0 ) {
       if ( strcmp( aliases[i].argv[0], last_name ) == 0 )
@@ -290,7 +290,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
       break;
     }
 
-    if ( (size_t)alias->argc == n_argv_alloc ) {
+    if ( STATIC_CAST( size_t, alias->argc ) == n_argv_alloc ) {
       n_argv_alloc += ALIAS_ARGV_ALLOC_INCREMENT;
       REALLOC( alias->argv, char const*, n_argv_alloc );
     }
@@ -301,7 +301,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
       alias->argv[ alias->argc++ ] = arg_dup( &line );
   } // for
 
-  if ( n_argv_alloc > (size_t)alias->argc + 1 )
+  if ( n_argv_alloc > STATIC_CAST( size_t, alias->argc ) + 1 )
     REALLOC( alias->argv, char const*, alias->argc + 1 );
   alias->argv[ alias->argc ] = NULL;
 }

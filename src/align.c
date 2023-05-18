@@ -209,8 +209,8 @@ void align_eol_comments( char input_buf[const] ) {
               // all the whitespace between there and the comment with
               // opt_align_char.
               //
-              col = (size_t)last_nonws_col;
-              output_len = (size_t)last_nonws_len;
+              col = STATIC_CAST( size_t, last_nonws_col );
+              output_len = STATIC_CAST( size_t, last_nonws_len );
 
               //
               // While we're less than the alignment column, insert whitespace.
@@ -267,7 +267,7 @@ void align_eol_comments( char input_buf[const] ) {
         if ( is_space( *s ) ) {
           last_ws = *s;
         } else {
-          last_nonws_col = (ssize_t)col;
+          last_nonws_col = STATIC_CAST( ssize_t, col );
           last_nonws_len = s - input_buf + 1;
         }
       }

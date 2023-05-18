@@ -46,7 +46,7 @@ static int const    WRAP_REGEX_COMPILE_FLAGS = REG_EXTENDED;
  */
 NODISCARD
 static inline bool cp_is_word_char( char32_t cp ) {
-  return iswalnum( (wint_t)cp ) || cp == '_';
+  return iswalnum( STATIC_CAST( wint_t, cp ) ) || cp == '_';
 }
 
 ////////// local functions ////////////////////////////////////////////////////
@@ -121,8 +121,8 @@ bool regex_match( wregex_t *re, char const *s, size_t offset, size_t *range ) {
     return false;
 
   if ( range != NULL ) {
-    range[0] = (size_t)match[0].rm_so + offset;
-    range[1] = (size_t)match[0].rm_eo + offset;
+    range[0] = STATIC_CAST( size_t, match[0].rm_so ) + offset;
+    range[1] = STATIC_CAST( size_t, match[0].rm_eo ) + offset;
   }
   return true;
 }
