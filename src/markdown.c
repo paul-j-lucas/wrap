@@ -42,7 +42,7 @@
   prev_##NAME = false
 
 #define STRN_EQ_LIT(S,STRLIT) \
-  (strncmp( (S), (STRLIT), sizeof( STRLIT ) - 1 ) == 0)
+  (strncmp( (S), (STRLIT ""), sizeof( STRLIT "" ) - 1 ) == 0)
 
 /**
  * Gets an lvalue reference to the Nth Markdown state down from the top of the
