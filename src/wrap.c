@@ -36,7 +36,6 @@
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit(), ... */
-#include <stdnoreturn.h>
 #include <string.h>
 #include <sysexits.h>
 #include <unistd.h>
@@ -113,7 +112,7 @@ static void         print_lead_chars( void );
 static void         print_line( size_t, bool );
 static void         put_tabs_spaces( size_t, size_t );
 
-noreturn
+_Noreturn
 static void         usage( int );
 
 static void         wipc_send( char* );

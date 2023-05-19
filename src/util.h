@@ -36,7 +36,6 @@
 #include <stdint.h>                     /* for uintptr_t */
 #include <stdio.h>                      /* for FILE */
 #include <stdlib.h>                     /* for exit(3) */
-#include <stdnoreturn.h>
 #include <string.h>                     /* for strspn(3) */
 #include <sysexits.h>
 
@@ -533,7 +532,7 @@ char closing_char( char c );
  * @sa #UNEXPECTED_INT_VALUE()
  */
 PJL_PRINTF_LIKE_FUNC(2)
-noreturn void fatal_error( int status, char const *format, ... );
+_Noreturn void fatal_error( int status, char const *format, ... );
 
 /**
  * Copies \a ffrom to \a fto until EOF.
@@ -668,7 +667,7 @@ bool is_windows_eol( char const buf[const], size_t buf_len ) {
  *
  * @param status The exit status code.
  */
-noreturn void perror_exit( int status );
+_Noreturn void perror_exit( int status );
 
 /**
  * Sets the locale for the \c LC_COLLATE and \c LC_CTYPE categories to UTF-8.

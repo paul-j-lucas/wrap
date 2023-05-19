@@ -38,7 +38,6 @@
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit() */
-#include <stdnoreturn.h>
 #include <string.h>                     /* for str...() */
 #include <sys/wait.h>                   /* for wait() */
 #include <sysexits.h>
@@ -161,7 +160,7 @@ static char const*  str_status( int );
 NODISCARD
 static size_t       str_width( char const* );
 
-noreturn
+_Noreturn
 static void         usage( int );
 static void         wait_for_child_processes( void );
 static void         wrapc_cleanup( void );

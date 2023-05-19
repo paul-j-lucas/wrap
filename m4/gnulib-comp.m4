@@ -91,7 +91,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module stddef:
   # Code from module stdint:
   # Code from module stdlib:
-  # Code from module stdnoreturn:
   # Code from module strdup-posix:
   # Code from module streq:
   # Code from module strerror:
@@ -286,9 +285,6 @@ AC_DEFUN([gl_INIT],
   AC_PROG_MKDIR_P
   gl_STDLIB_H
   gl_STDLIB_H_REQUIRE_DEFAULTS
-  AC_PROG_MKDIR_P
-  gl_STDNORETURN_H
-  gl_CONDITIONAL_HEADER([stdnoreturn.h])
   AC_PROG_MKDIR_P
   gl_FUNC_STRDUP_POSIX
   gl_CONDITIONAL([GL_COND_OBJ_STRDUP], [test $REPLACE_STRDUP = 1])
@@ -576,7 +572,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stddef.in.h
   lib/stdint.in.h
   lib/stdlib.in.h
-  lib/stdnoreturn.in.h
   lib/strdup.c
   lib/streq.h
   lib/strerror-override.c
@@ -647,7 +642,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/stddef_h.m4
   m4/stdint.m4
   m4/stdlib_h.m4
-  m4/stdnoreturn.m4
   m4/strdup.m4
   m4/strerror.m4
   m4/string_h.m4

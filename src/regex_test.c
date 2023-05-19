@@ -27,7 +27,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdnoreturn.h>
 #include <string.h>
 #include <sysexits.h>
 
@@ -41,7 +40,8 @@ char const       *me;                   ///< Program name.
 
 ////////// local functions ////////////////////////////////////////////////////
 
-static noreturn void usage( void ) {
+_Noreturn
+static void usage( void ) {
   EPRINTF( "usage: %s test\n", me );
   exit( EX_USAGE );
 }
