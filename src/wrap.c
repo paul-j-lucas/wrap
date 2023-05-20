@@ -868,26 +868,20 @@ static bool markdown_adjust( void ) {
         break;
     } // switch
 
-    switch ( md->line_type ) {
-      case MD_FOOTNOTE_DEF:
-        if ( !md->fn_def_text ) {
-          //
-          // For a footnote definition line that does not have text on the same
-          // line:
-          //
-          //      [^1]:
-          //          Like this.
-          //
-          // print the marker line as-is "behind wrap's back" so it won't be
-          // wrapped.
-          //
-          FPUTS( input_buf, fout );
-          input_buf[0] = '\0';
-        }
-        break;
-      default:
-        /* suppress warning */;
-    } // switch
+    if ( md->line_type == MD_FOOTNOTE_DEF && !md->fn_def_text ) {
+      //
+      // For a footnote definition line that does not have text on the same
+      // line:
+      //
+      //      [^1]:
+      //          Like this.
+      //
+      // print the marker line as-is "behind wrap's back" so it won't be
+      // wrapped.
+      //
+      FPUTS( input_buf, fout );
+      input_buf[0] = '\0';
+    }
 
     prev_line_type = md->line_type;
   }
