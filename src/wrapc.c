@@ -179,7 +179,7 @@ static inline void close_pipe( int pipe[2] ) {
  * Gets whether \a c is a comment delimiter character.
  *
  * @param c The character to check.
- * @return Returns \c true only if it is.
+ * @return Returns `true` only if it is.
  */
 NODISCARD
 static inline bool is_comment_char( char c ) {
@@ -779,7 +779,7 @@ static void init( int argc, char const *argv[] ) {
  * thereafter.
  *
  * @param s The string to check.
- * @return Returns \c true only if \a s is the beginning of a block comment.
+ * @return Returns `true` only if \a s is the beginning of a block comment.
  */
 NODISCARD
 static bool is_block_comment( char const *s ) {

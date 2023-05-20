@@ -389,8 +389,8 @@ error:
  * Parses an End-of-Line value.
  *
  * @param s The null-terminated string to parse.
- * @return Returns the corresponding \c eol_t
- * or prints an error message and exits if \a s is invalid.
+ * @return Returns the corresponding \ref eol_t or prints an error message and
+ * exits if \a s is invalid.
  */
 NODISCARD
 static eol_t parse_eol( char const *s ) {
@@ -446,8 +446,8 @@ static eol_t parse_eol( char const *s ) {
 /**
  * Parses command-line options.
  *
- * @param argc The argument count from \c main().
- * @param argv The argument values from \c main().
+ * @param argc The argument count from main().
+ * @param argv The argument values from main().
  * @param short_opts The set of short options.
  * @param long_opts The set of long options.
  * @param cmdline_forbidden_opts The set of options that are forbidden on the

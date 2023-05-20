@@ -135,7 +135,7 @@ static inline bool block_regex_matches( void ) {
  * Checks whether \a cp is a paragraph delimiter Unicode character.
  *
  * @param cp The Unicode code-point to check.
- * @return Returns \c true only if \a cp is a paragraph delimiter character.
+ * @return Returns `true` only if \a cp is a paragraph delimiter character.
  */
 NODISCARD
 static inline bool cp_is_para_delim( char32_t cp ) {
@@ -824,7 +824,7 @@ static void init( int argc, char const *argv[] ) {
 /**
  * Adjusts wrap's indent, hang-indent, and line-width for each Markdown line.
  *
- * @return Returns \c true if we're to proceed or \c false if another line
+ * @return Returns `true` if we're to proceed or \c false if another line
  * should be read.
  */
 NODISCARD
@@ -959,7 +959,7 @@ static void print_lead_chars( void ) {
  * length.
  *
  * @param len The length of the output buffer.
- * @param do_eol If \c true, prints and end-of-line afterwards.
+ * @param do_eol If `true`, prints and end-of-line afterwards.
  */
 static void print_line( size_t len, bool do_eol ) {
   output_buf[ len ] = '\0';

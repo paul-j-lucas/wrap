@@ -436,8 +436,8 @@ extern char const  *me;                 ///< Program name.
 /**
  * Extracts the base portion of a path-name.
  * Unlike **basename**(3):
- *  + Trailing \c '/' characters are not deleted.
- *  + \a path_name is never modified (hence can therefore be \c const).
+ *  + Trailing `/` characters are not deleted.
+ *  + \a path_name is never modified (hence can therefore be `const`).
  *  + Returns a pointer within \a path_name (hence is multi-call safe).
  *
  * @param path_name The path-name to extract the base portion of.
@@ -537,8 +537,8 @@ _Noreturn void fatal_error( int status, char const *format, ... );
 /**
  * Copies \a ffrom to \a fto until EOF.
  *
- * @param ffrom The \c FILE to copy from.
- * @param fto The \c FILE to copy to.
+ * @param ffrom The FILE to copy from.
+ * @param fto The FILE to copy to.
  */
 void fcopy( FILE *ffrom, FILE *fto );
 
@@ -549,7 +549,7 @@ void fcopy( FILE *ffrom, FILE *fto );
  * @param buf A pointer to the buffer to receive the line.
  * @param size A pointer to the capacity of \a buf.  On return, it is set to
  * the number of characters read.
- * @param ffrom The \c FILE to read from.
+ * @param ffrom The FILE to read from.
  * @return Returns \a buf if any characters have been read or NULL on either
  * EOF or error.
  */
@@ -586,7 +586,7 @@ unsigned get_term_columns( void );
  * 1, t, true, y, or yes, case-insensitive.
  *
  * @param s The null-terminated string to check or null.
- * @return Returns \c true only if \a s is affirmative.
+ * @return Returns `true` only if \a s is affirmative.
  */
 NODISCARD
 bool is_affirmative( char const *s );
@@ -597,7 +597,7 @@ bool is_affirmative( char const *s );
  *
  * @param s The null-terminated string to check or null.
  * @param matches The null-terminated array of values to check against.
- * @return Returns \c true only if \a s is among \a matches.
+ * @return Returns `true` only if \a s is among \a matches.
  */
 NODISCARD
 bool is_any( char const *s, char const *const matches[const] );
@@ -607,7 +607,7 @@ bool is_any( char const *s, char const *const matches[const] );
  * whitespace.
  *
  * @param s The null-terminated string to check.
- * @return Returns \c true only if \a s is a blank line.
+ * @return Returns `true` only if \a s is a blank line.
  */
 NODISCARD W_UTIL_INLINE
 bool is_blank_line( char const *s ) {
@@ -619,7 +619,7 @@ bool is_blank_line( char const *s ) {
  * Checks whether \a s only contains decimal digit characters.
  *
  * @param s The null-terminated string to check.
- * @return Returns \c true only if \a s contains only digits.
+ * @return Returns `true` only if \a s contains only digits.
  */
 NODISCARD W_UTIL_INLINE
 bool is_digits( char const *s ) {
@@ -630,7 +630,7 @@ bool is_digits( char const *s ) {
  * Checks whether \a c is an end-of-line character.
  *
  * @param c The character to check.
- * @return Returns \c true only if it is.
+ * @return Returns `true` only if it is.
  */
 NODISCARD W_UTIL_INLINE
 bool is_eol( char c ) {
@@ -642,7 +642,7 @@ bool is_eol( char c ) {
  * end of a line.
  *
  * @param c The character to check.
- * @return Returns \c true only if \a c is a space or a tab.
+ * @return Returns `true` only if \a c is a space or a tab.
  */
 NODISCARD W_UTIL_INLINE
 bool is_space( char c ) {
@@ -651,11 +651,11 @@ bool is_space( char c ) {
 
 /**
  * Gets whether the line in \a buf is a Windows line, i.e., ends with
- * \c {CR}{LF}.
+ * `{CR}{LF}`.
  *
  * @param buf The buffer to check.
  * @param buf_len The length of \a buf.
- * @return Returns \c true only if \a buf ends with \c {CR}{LF}.
+ * @return Returns `true` only if \a buf ends with `{CR}{LF}`.
  */
 NODISCARD W_UTIL_INLINE
 bool is_windows_eol( char const buf[const], size_t buf_len ) {
@@ -663,20 +663,20 @@ bool is_windows_eol( char const buf[const], size_t buf_len ) {
 }
 
 /**
- * Prints an error message for \c errno to standard error and exits.
+ * Prints an error message for `errno` to standard error and exits.
  *
  * @param status The exit status code.
  */
 _Noreturn void perror_exit( int status );
 
 /**
- * Sets the locale for the \c LC_COLLATE and \c LC_CTYPE categories to UTF-8.
+ * Sets the locale for the `LC_COLLATE` and `LC_CTYPE` categories to UTF-8.
  */
 void setlocale_utf8( void );
 
 /**
  * Splits off the trailing whitespace (tws) from \a buf into \a tws.  For
- * example, if \a buf is initially <code>"# "</code>, it will become \c "#" and
+ * example, if \a buf is initially <code>"# "</code>, it will become `#` and
  * \a tws will become <code>" "</code>.
  *
  * @param buf The null-terminated buffer to split off the trailing whitespace
@@ -709,11 +709,11 @@ NODISCARD
 size_t strrspn( char const *s, char const *set );
 
 /**
- * Checks the flag: if \c true, resets the flag to \c false.
+ * Checks the flag: if `true`, resets the flag to `false`.
  *
- * @param flag A pointer to the Boolean flag to be tested and, if \c true, set
+ * @param flag A pointer to the Boolean flag to be tested and, if `true`, set
  * to \c false.
- * @return Returns \c true only if \c *flag is \c true.
+ * @return Returns `true` only if \a *flag is `true`.
  */
 NODISCARD W_UTIL_INLINE
 bool true_reset( bool *flag ) {

@@ -156,7 +156,7 @@ void regex_free( wregex_t *re );
  * @param range A pointer to an array of size 2 to receive the beginning
  * position and one past the end position of the match -- set only if not NULL
  * and there was a match.
- * @return Returns \c true only if there was a match.
+ * @return Returns `true` only if there was a match.
  */
 NODISCARD
 bool regex_match( wregex_t *re, char const *s, size_t offset,

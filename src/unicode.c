@@ -58,7 +58,7 @@ char8_t const UTF8_LEN_TABLE[] = {
  * Checks whether a given Unicode code-point is valid.
  *
  * @param cp The Unicode code-point to check.
- * @return Returns \c true only if valid.
+ * @return Returns `true` only if valid.
  */
 NODISCARD
 static inline bool cp_is_valid( char32_t cp ) {

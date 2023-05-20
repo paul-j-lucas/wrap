@@ -53,7 +53,7 @@ void alias_cleanup( void );
  * name and return that alias.
  *
  * @param name The name to match.
- * @return Returns the alias having \a name or \c NULL if no matching alias is
+ * @return Returns the alias having \a name or NULL if no matching alias is
  * found.
  */
 NODISCARD

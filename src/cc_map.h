@@ -63,8 +63,8 @@ typedef char* cc_map_t[128];
  *
  * @param cc_map_entry A comment delimiter character map entry returned by
  * cc_map_get().
- * @return Returns \c true only if \a cc_map_entry is a single comment
- * delimiter character.
+ * @return Returns `true` only if \a cc_map_entry is a single comment delimiter
+ * character.
  */
 NODISCARD W_CC_MAP_INLINE
 bool cc_is_single( char const *cc_map_entry ) {

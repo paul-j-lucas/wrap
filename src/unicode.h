@@ -71,7 +71,7 @@ typedef char utf8c_t[ UTF8_CHAR_SIZE_MAX ];
  * Checks whether \a cp is an alphabetic character.
  *
  * @param cp The Unicode code-point to check.
- * @return Returns \c true only if \a cp is an alphabetic character.
+ * @return Returns `true` only if \a cp is an alphabetic character.
  */
 NODISCARD W_UNICODE_INLINE
 bool cp_is_alpha( char32_t cp ) {
@@ -82,7 +82,7 @@ bool cp_is_alpha( char32_t cp ) {
  * Checks whether \a cp is an ASCII character.
  *
  * @param cp The Unicode code-point to check.
- * @return Returns \c true only if \a cp is an ASCII character.
+ * @return Returns `true` only if \a cp is an ASCII character.
  */
 NODISCARD W_UNICODE_INLINE
 bool cp_is_ascii( char32_t cp ) {
@@ -93,7 +93,7 @@ bool cp_is_ascii( char32_t cp ) {
  * Checks whether \a cp is a control character.
  *
  * @param cp The Unicode code-point to check.
- * @return Returns \c true only if \a cp is a control character.
+ * @return Returns `true` only if \a cp is a control character.
  */
 NODISCARD W_UNICODE_INLINE
 bool cp_is_control( char32_t cp ) {
@@ -104,7 +104,7 @@ bool cp_is_control( char32_t cp ) {
  * Checks whether \a cp is an "end-of-sentence" character
  *
  * @param cp The Unicode code-point to check.
- * @return Returns \cp true only if \a cp is an end-of-sentence character.
+ * @return Returns `true` only if \a cp is an end-of-sentence character.
  */
 NODISCARD
 bool cp_is_eos( char32_t cp );
@@ -115,7 +115,7 @@ bool cp_is_eos( char32_t cp );
  * a ')' following a '.'.
  *
  * @param cp The Unicode code-point to check.
- * @return Returns \c true only if \a cp is an end-of-sentence-extender
+ * @return Returns `true` only if \a cp is an end-of-sentence-extender
  * character.
  */
 NODISCARD
@@ -125,7 +125,7 @@ bool cp_is_eos_ext( char32_t cp );
  * Checks whether the given Unicode code-point is a hyphen-like character.
  *
  * @param cp The Unicode code-point to check.
- * @return Returns \c true only if \a cp is a Unicode hyphen-like character.
+ * @return Returns `true` only if \a cp is a Unicode hyphen-like character.
  */
 NODISCARD
 bool cp_is_hyphen( char32_t cp );
@@ -135,7 +135,7 @@ bool cp_is_hyphen( char32_t cp );
  * character that can appear adjacent to a hyphen on either side.
  *
  * @param cp The Unicode code-point to check.
- * @return Returns \c true only if \a cp can appear on either side of a hyphen.
+ * @return Returns `true` only if \a cp can appear on either side of a hyphen.
  */
 NODISCARD W_UNICODE_INLINE
 bool cp_is_hyphen_adjacent( char32_t cp ) {
@@ -158,8 +158,8 @@ bool cp_is_space( char32_t cp ) {
  * (This inline version is optimized for the common case of ASCII.)
  *
  * @param s A pointer to the first byte of the UTF-8 encoded character.
- * @return Returns said code-point or \c CP_INVALID if the UTF-8 byte sequence
- * is invalid.
+ * @return Returns said code-point or \ref #CP_INVALID if the UTF-8 byte
+ * sequence is invalid.
  */
 NODISCARD W_UNICODE_INLINE
 char32_t utf8_decode( char const *s ) {
@@ -173,7 +173,7 @@ char32_t utf8_decode( char const *s ) {
  * of an encoded character.
  *
  * @param c The byte to check.
- * @return Returns \c true only if the byte is not the first byte of a byte
+ * @return Returns `true` only if the byte is not the first byte of a byte
  * sequence of a UTF-8 encoded character.
  */
 NODISCARD W_UNICODE_INLINE
@@ -187,8 +187,8 @@ bool utf8_is_cont( char c ) {
  * an encoded character.
  *
  * @param c The byte to check.
- * @return Returns \c true only if the byte is the first byte of a byte
- * sequence of a UTF-8 encoded character.
+ * @return Returns `true` only if the byte is the first byte of a byte sequence
+ * of a UTF-8 encoded character.
  */
 NODISCARD W_UNICODE_INLINE
 bool utf8_is_start( char c ) {

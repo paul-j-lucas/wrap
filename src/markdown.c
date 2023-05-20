@@ -164,7 +164,7 @@ static char const*  skip_html_tag( char const*, bool* );
  *
  * @param s The null-terminated string to check. It is assumed to have been
  * converted to lower-case.
- * @return Returns \c true only if \a s is an HTML block-level element.
+ * @return Returns `true` only if \a s is an HTML block-level element.
  */
 NODISCARD
 static inline bool is_html_block_element( char const *s ) {
@@ -179,7 +179,7 @@ static inline bool is_html_block_element( char const *s ) {
  *
  * @param s The null-terminated string to check. It is assumed to have been
  * converted to lower-case.
- * @return Returns \c true only if \a s is an HTML pre-formatted block-level
+ * @return Returns `true` only if \a s is an HTML pre-formatted block-level
  * element.
  */
 NODISCARD
@@ -193,7 +193,7 @@ static inline bool is_html_pre_element( char const *s ) {
  * Checks whether \a c is an HTML element character.
  *
  * @param c The character to check.
- * @return Returns \c true only if \a c is an HTML element character.
+ * @return Returns `true` only if \a c is an HTML element character.
  */
 NODISCARD
 static inline bool is_html_element_char( char c ) {
@@ -214,8 +214,8 @@ static inline void md_code_fence_init( md_code_fence_t *fence ) {
  * Checks whether the line is the end of a PHP Markdown Extra code fence.
  *
  * @param s The null-terminated line to check.
- * @param fence A pointer to the \c struct containing the fence info.
- * @return Returns \c true only if it is.
+ * @param fence A pointer to the `struct` containing the fence info.
+ * @return Returns `true` only if it is.
  */
 NODISCARD
 static inline bool md_is_code_fence_end( char const *s,
@@ -227,7 +227,7 @@ static inline bool md_is_code_fence_end( char const *s,
  * Checks whether the line is a Markdown link title attribute.
  *
  * @param s The null-terminated line to check.
- * @return Returns \c true only if it is.
+ * @return Returns `true` only if it is.
  */
 NODISCARD
 static inline bool md_is_link_title( char const *s ) {
@@ -238,7 +238,7 @@ static inline bool md_is_link_title( char const *s ) {
  * Checks whether \a c is a Markdown ordered list delimiter character.
  *
  * @param c The character to check.
- * @return Returns \c true only if \a c is an ordered list delimiter character.
+ * @return Returns `true` only if \a c is an ordered list delimiter character.
  */
 NODISCARD
 static inline bool md_is_ol_sep_char( char c ) {
@@ -255,7 +255,7 @@ static inline void stack_clear( void ) {
 /**
  * Checks whether the Markdown state stack is empty.
  *
- * @return Returns \c true only if it is.
+ * @return Returns `true` only if it is.
  */
 NODISCARD
 static inline bool stack_empty( void ) {
@@ -277,7 +277,7 @@ static inline size_t stack_size( void ) {
  * the stack is a particular type.
  *
  * @param line_type The line type to check for.
- * @return Returns \c true only if it is.
+ * @return Returns `true` only if it is.
  */
 NODISCARD
 static inline bool top_is( md_line_t line_type ) {
@@ -354,10 +354,12 @@ static char const* is_uri_scheme( char const *s ) {
 }
 
 /**
- * Markdown allows 3, but prefers 4, spaces per indent.  Given an indent, gets
- * its preferred divisor.  For example, for \a indent values of 3, 6, 7, or 9
- * spaces, returns 3; for value of 4, 5, 8, or 12, returns 4.
+ * Given an indent, gets its preferred divisor.
  *
+ * @remarks Markdown allows 3, but prefers 4, spaces per indent.  For example,
+ * for \a indent values of 3, 6, 7, or 9 spaces, returns 3; for value of 4, 5,
+ * 8, or 12, returns 4.
+ * @par
  * As a special case, we also allow 2 spaces per indent for definition and
  * unordered lists.
  *
@@ -378,11 +380,11 @@ static md_indent_t md_indent_divisor( md_indent_t indent_left ) {
 
 /**
  * Checks whether the line is a Markdown atx header line, a sequence of one to
- * six \c # characters starting in column 1 and followed by a whitespace
+ * six `#` characters starting in column 1 and followed by a whitespace
  * character.
  *
  * @param s The null-terminated line to check.
- * @return Returns \c true only if it is.
+ * @return Returns `true` only if it is.
  */
 NODISCARD
 static bool md_is_atx_header( char const *s ) {
@@ -399,14 +401,14 @@ static bool md_is_atx_header( char const *s ) {
 
 /**
  * Checks whether the line is a PHP Markdown Extra code fence, a series of 3 or
- * more \c ~ or \c ` characters.
+ * more `~` or \c ` characters.
  *
  * @param s The null-terminated line to check.
- * @param fence A pointer to the \c struct containing the fence info: if
- * \c fence->cf_c, return new fence info; otherwise checks to see if \a s
+ * @param fence A pointer to the `struct` containing the fence info: if
+ * `fence->cf_c`, return new fence info; otherwise checks to see if \a s
  * matches the existing fence info.
 
- * @return Returns \c true only if it is.
+ * @return Returns `true` only if it is.
  */
 NODISCARD
 static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
@@ -442,7 +444,7 @@ static bool md_is_code_fence( char const *s, md_code_fence_t *fence ) {
  * @param s The null-terminated line to check.
  * @param indent_hang A pointer to the variable to receive the relative hang
  * indent (in spaces).
- * @return Returns \c true only if \a s is a PHP Markdown Extra definition list
+ * @return Returns `true` only if \a s is a PHP Markdown Extra definition list
  * item.
  */
 NODISCARD
@@ -459,16 +461,16 @@ static bool md_is_dl( char const *s, md_indent_t *indent_hang ) {
  * @param s The null-terminated line to check.
  * @param indent_hang A pointer to the variable to receive the relative hang
  * indent (in spaces).
- * @return Returns \c true only if \a s is a PHP Markdown Extra definition list
+ * @return Returns `true` only if \a s is a PHP Markdown Extra definition list
  * item.
  */
 NODISCARD
 static bool md_is_dl_ul_helper( char const *s, md_indent_t *indent_hang ) {
   assert( indent_hang != NULL );
   if ( is_space( s[1] ) ) {
-    if ( s[1] == '\t' )
+    if ( s[1] == '\t' ) {
       *indent_hang = MD_LIST_INDENT_MAX;
-    else {
+    } else {
       *indent_hang = MD_DL_UL_INDENT_MIN;
       if ( is_space( s[2] ) ) {
         ++*indent_hang;
@@ -482,13 +484,13 @@ static bool md_is_dl_ul_helper( char const *s, md_indent_t *indent_hang ) {
 }
 
 /**
- * Checks whether the line is a Doxygen ordered list item: a \c "-#" followed
- * by whitespace.
+ * Checks whether the line is a Doxygen ordered list item: a `-#` followed by
+ * whitespace.
  *
  * @param s The null-terminated line to check.
  * @param indent_hang A pointer to the variable to receive the relative hang
  * indent (in spaces).
- * @return Returns \c true only if \a s is a Doxygen ordered list item.
+ * @return Returns `true` only if \a s is a Doxygen ordered list item.
  */
 NODISCARD
 static bool md_is_dox_ol( char const *s, md_indent_t *indent_hang ) {
@@ -509,7 +511,7 @@ static bool md_is_dox_ol( char const *s, md_indent_t *indent_hang ) {
  * @param s The null-terminated line to check.
  * @param def_text A pointer to the variable to receive whether the footnote
  * definition line contains any text other than the marker.
- * @return Returns \c true onlf if \a s is a PHP Markdown Extra footnote
+ * @return Returns `true` onlf if \a s is a PHP Markdown Extra footnote
  * definition.
  */
 NODISCARD
@@ -534,12 +536,11 @@ static bool md_is_footnote_def( char const *s, bool *def_text ) {
 
 /**
  * Checks whether the line is a Markdown horizontal rule, a series of 3 or more
- * \c *, \c -, or \c _ characters that may optionally be separated by
- * whitespace.
+ * `*`, `-`, or `_` characters that may optionally be separated by whitespace.
  *
  * @param s The null-terminated line to check where \a s[0] is used as the rule
  * character to match.
- * @return Returns \c true only if it is.
+ * @return Returns `true` only if it is.
  */
 NODISCARD
 static bool md_is_hr( char const *s ) {
@@ -562,7 +563,7 @@ static bool md_is_hr( char const *s ) {
  * Checks whether the line is a PHP Markdown Extra HTML abbreviation.
  *
  * @param s The null-terminated line to check.
- * @return Returns \c true only if the line is a PHP Markdown Extra HTML
+ * @return Returns `true` only if the line is a PHP Markdown Extra HTML
  * abbreviation.
  */
 NODISCARD
@@ -589,7 +590,7 @@ static bool md_is_html_abbr( char const *s ) {
  *
  * @param html_state The HTML state.
  * @param s The null-terminated line to check.
- * @return Returns \c true only if \a s ends \a html_state.
+ * @return Returns `true` only if \a s ends \a html_state.
  */
 NODISCARD
 static bool md_is_html_end( html_state_t html_state, char const *s ) {
@@ -724,7 +725,7 @@ static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
  * @param s The null-terminated line to check.
  * @param has_title A pointer to the variable to receive whether the link label
  * has a title attribute on the same line.
- * @return Returns \c true only if \a s is a Markdown link label.
+ * @return Returns `true` only if \a s is a Markdown link label.
  */
 NODISCARD
 static bool md_is_link_label( char const *s, bool *has_title ) {
@@ -764,7 +765,7 @@ static bool md_is_link_label( char const *s, bool *has_title ) {
  * Checks whether \a line_type can nest.
  *
  * @param line_type The line type to check.
- * @return Returns \c true only if \a line_type can nest.
+ * @return Returns `true` only if \a line_type can nest.
  */
 NODISCARD
 static bool md_is_nestable( md_line_t line_type ) {
@@ -781,14 +782,14 @@ static bool md_is_nestable( md_line_t line_type ) {
 
 /**
  * Checks whether the line is a Markdown ordered list item: a sequence of
- * digits followed by either \c '.' or \c ')' and whitespace.
+ * digits followed by either `'.'` or `')'` and whitespace.
  *
  * @param s The null-terminated line to check.
  * @param ol_num A pointer to the variable to receive the ordered list number.
  * @param ol_c A pointer to the variable to receive the ordered list character.
  * @param indent_hang A pointer to the variable to receive the relative hang
  * indent (in spaces).
- * @return Returns \c true only if \a s is a Markdown ordered list item.
+ * @return Returns `true` only if \a s is a Markdown ordered list item.
  */
 NODISCARD
 static bool md_is_ol( char const *s, md_ol_t *ol_num, char *ol_c,
@@ -828,7 +829,7 @@ static bool md_is_ol( char const *s, md_ol_t *ol_num, char *ol_c,
  * Checks whether the line is a PHP Markdown Extra table line.
  *
  * @param s The null-terminated line to check.
- * @return Returns \c true only if \a s is a PHP Markdown Extra table line.
+ * @return Returns `true` only if \a s is a PHP Markdown Extra table line.
  */
 NODISCARD
 static bool md_is_table( char const *s ) {
@@ -864,7 +865,7 @@ static bool md_is_table( char const *s ) {
  * @param s The null-terminated line to check.
  * @param indent_hang A pointer to the variable to receive the relative hang
  * indent (in spaces).
- * @return Returns \c true only if \a s is a Markdown unordered list item.
+ * @return Returns `true` only if \a s is a Markdown unordered list item.
  */
 NODISCARD
 static bool md_is_ul( char const *s, md_indent_t *indent_hang ) {
@@ -875,11 +876,11 @@ static bool md_is_ul( char const *s, md_indent_t *indent_hang ) {
 
 /**
  * Checks whether the line is a Markdown Setext header line, a sequence of one
- * or more \c = or \c - characters starting in column 1.
+ * or more `=` or `-` characters starting in column 1.
  *
  * @param s The null-terminated line to check where \a s[0] is used as the
  * header character to match.
- * @return Returns \c true onlt if it is.
+ * @return Returns `true` onlt if it is.
  */
 NODISCARD
 static bool md_is_Setext_header( char const *s ) {
@@ -944,8 +945,8 @@ static void md_renumber_ol( char *s, md_ol_t old_n, md_ol_t new_n ) {
  * Skips past the end of the current HTML (or XML) tag.
  *
  * @param s A pointer to within the text of an HTML (or XML) tag.
- * @param is_end_tag A pointer to a \c bool: if \c true, we are skipping an
- * end tag; if \c false, set to \c true if the tag is an XML end tag on return.
+ * @param is_end_tag A pointer to a `bool`: if `true` we are skipping an end
+ * tag; if `false`, set to `true` if the tag is an XML end tag on return.
  * @return Returns a pointer to just past the closing '>' of the tag or a
  * pointer to an empty string if \a s is not an HTML (or XML) tag.
  */

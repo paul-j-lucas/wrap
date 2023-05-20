@@ -132,8 +132,8 @@ extern FILE        *fout;               ///< File out.
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
- * Formats an option as <code>[--%s/]-%c</code> where \c %s is the long option
- * (if any) and %c is the short option.
+ * Formats an option as <code>[--%s/]-%c</code> where `%s` is the long option
+ * (if any) and `%c` is the short option.
  *
  * @param short_opt The short option (along with its corresponding long option,
  * if any) to format.
@@ -149,8 +149,8 @@ char const* opt_format( char short_opt );
 /**
  * Initializes command-line option variables.
  *
- * @param argc The argument count from \c main().
- * @param argv The argument values from \c main().
+ * @param argc The argument count from main().
+ * @param argv The argument values from main().
  * @param usage A pointer to a function to print a usage message.  It must not
  * return.
  */

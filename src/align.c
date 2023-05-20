@@ -39,7 +39,7 @@
  * Gets whether \a s starts an end-of-line comment.
  *
  * @param s The null-terminated string to check.
- * @return Returns \c true only if \a s starts an end-of-line comment.
+ * @return Returns `true` only if \a s starts an end-of-line comment.
  */
 NODISCARD
 static bool is_eol_comment( char const *s ) {

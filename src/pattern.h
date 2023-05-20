@@ -63,7 +63,7 @@ void pattern_cleanup( void );
  *
  * @param file_name The file-name to match.
  * @return Returns the alias associated with the pattern that matches
- * \a file_name or \c NULL if no matching pattern is found.
+ * \a file_name or NULL if no matching pattern is found.
  */
 NODISCARD
 alias_t const* pattern_find( char const *file_name );

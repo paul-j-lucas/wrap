@@ -42,7 +42,7 @@ static int const    WRAP_REGEX_COMPILE_FLAGS = REG_EXTENDED;
  * character.  Note that this function is locale sensitive.
  *
  * @param cp The code-point to check.
- * @return Returns \c true only if \a cp is a word code-point.
+ * @return Returns `true` only if \a cp is a word code-point.
  */
 NODISCARD
 static inline bool cp_is_word_char( char32_t cp ) {
@@ -59,7 +59,7 @@ static inline bool cp_is_word_char( char32_t cp ) {
  * @param s The UTF-8 encoded string to check within.
  * @param curr A pointer to the first byte of the UTF-8 encoded character to
  * check.
- * @return Returns \c true only if the character at \a curr is at the beginning
+ * @return Returns `true` only if the character at \a curr is at the beginning
  * of a word.
  */
 NODISCARD

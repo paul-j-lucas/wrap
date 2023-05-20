@@ -152,7 +152,7 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
 
 /**
  * Computes the width of a character where tabs have a width of
- * \c opt_tab_spaces spaces minus the number of spaces we're into a tab-stop;
+ * \ref opt_tab_spaces spaces minus the number of spaces we're into a tab-stop;
  * all others characters have a width of 1.
  *
  * @param c The character to get the width of.
@@ -169,7 +169,7 @@ size_t char_width( char c, size_t width ) {
  * If reading fails, prints an error message and exits.
  *
  * @param line The line buffer to read into.
- * @param ffrom The \c FILE to read from.
+ * @param ffrom The `FILE` to read from.
  * @return Returns the number of characters read.
  */
 NODISCARD

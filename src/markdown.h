@@ -41,24 +41,24 @@
 
 /**
  * Markdown line types.
- * (The values are arbitrary: they are mnemonic and useful when cast to \c char
+ * (The values are arbitrary: they are mnemonic and useful when cast to `char`
  * and printed for debugging).
  */
 enum md_line {
   MD_NONE         = '0',                ///< None.
   MD_CODE         = 'C',                ///< Code block.
   MD_DL           = ':',                ///< Definition list.
-  MD_FOOTNOTE_DEF = '^',                ///< [^id]: footnote definition.
-  MD_HEADER_ATX   = '#',                ///< # to ######
-  MD_HEADER_LINE  = '=',                ///< ===== or -----
-  MD_HR           = '_',                ///< ***, ---, or ___
-  MD_HTML_ABBR    = 'A',                ///< *[abbr]: abbreviation.
+  MD_FOOTNOTE_DEF = '^',                ///< `[^id]`: footnote definition.
+  MD_HEADER_ATX   = '#',                ///< `#` to `######`
+  MD_HEADER_LINE  = '=',                ///< `=====` or `-----`
+  MD_HR           = '_',                ///< `***`, `---`, or `___`
+  MD_HTML_ABBR    = 'A',                ///< `*[abbr]`: abbreviation.
   MD_HTML_BLOCK   = '<',                ///< HTML block.
-  MD_LINK_LABEL   = '[',                ///< [id]: <URI>
-  MD_OL           = '1',                ///< Ordered list: 1., 2., ....
+  MD_LINK_LABEL   = '[',                ///< `[id]:` _URI_
+  MD_OL           = '1',                ///< Ordered list: `1.`, `2.`, ....
   MD_TABLE        = '|',                ///< Table.
   MD_TEXT         = 'T',                ///< Plain text.
-  MD_UL           = '*',                ///< Unordered list: *, +, or -.
+  MD_UL           = '*',                ///< Unordered list: `*`, `+`, or `-`.
 };
 typedef enum md_line md_line_t;
 

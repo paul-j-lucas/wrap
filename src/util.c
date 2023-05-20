@@ -55,7 +55,7 @@
 
 /**
  * A node for a singly linked list of pointers to memory to be freed via
- * \c atexit().
+ * `atexit()`.
  */
 struct free_node {
   void             *fn_ptr;

@@ -71,7 +71,7 @@ static char const* home_dir( void ) {
 }
 
 /**
- * Appends a component to a path ensuring that exactly one \c / separates them.
+ * Appends a component to a path ensuring that exactly one `/ `separates them.
  *
  * @param path The path to append to.
  * The buffer pointed to must be big enough to hold the new path.
@@ -106,7 +106,7 @@ static section_t section_parse( char const *s ) {
 }
 
 /**
- * Strips a \c # comment from a line minding quotes and backslashes.
+ * Strips a `#` comment from a line minding quotes and backslashes.
  *
  * @param s The null-terminated line to strip the comment from.
  * @return Returns \a s on success or NULL for an unclosed quote.
