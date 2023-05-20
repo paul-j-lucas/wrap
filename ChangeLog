@@ -1,3 +1,7 @@
+2023-05-20  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c: s/return NULL/break/
+
 2023-05-19  Paul J. Lucas <paul@lucasmail.org>
 
    * lib/Makefile.am, gnulib-cache.m4, gnulib-common.m4, gnulib-comp.m4,
