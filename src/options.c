@@ -483,7 +483,7 @@ static void parse_options( int argc, char const *argv[],
         );
     }
     else if ( strchr( cmdline_forbidden_opts, opt ) != NULL ) {
-      fatal_error( EX_USAGE, "%s: invalid option -- '%c'\n", me, opt );
+      goto invalid_opt;
     }
 
     switch ( opt ) {
