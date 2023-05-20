@@ -74,7 +74,7 @@ struct md_state {
   md_line_t   line_type;
   md_seq_t    seq_num;
   md_depth_t  depth;
-  bool        fn_def_text;              // true if footnote def has text on line
+  bool        footnote_def_has_text;    // footnote def has text on line?
   md_indent_t indent_left;
   md_indent_t indent_hang;              // hang-indent for lists
   char        ol_c;                     // ordered list character: . or )

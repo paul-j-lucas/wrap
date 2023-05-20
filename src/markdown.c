@@ -509,16 +509,16 @@ static bool md_is_dox_ol( char const *s, md_indent_t *indent_hang ) {
  * Checks whether the line is a PHP Markdown Extra footnote definition.
  *
  * @param s The null-terminated line to check.
- * @param def_text A pointer to the variable to receive whether the footnote
- * definition line contains any text other than the marker.
+ * @param def_has_text A pointer to the variable to receive whether the
+ * footnote definition line contains any text other than the marker.
  * @return Returns `true` onlf if \a s is a PHP Markdown Extra footnote
  * definition.
  */
 NODISCARD
-static bool md_is_footnote_def( char const *s, bool *def_text ) {
+static bool md_is_footnote_def( char const *s, bool *def_has_text ) {
   assert( s != NULL );
   assert( s[0] == '[' );
-  assert( def_text != NULL );
+  assert( def_has_text != NULL );
 
   if ( *++s == '^' ) {
     while ( *++s != '\0' ) {
@@ -526,7 +526,7 @@ static bool md_is_footnote_def( char const *s, bool *def_text ) {
         if ( !(*++s == ':' && isspace( *++s )) )
           break;
         SKIP_CHARS( s, WS_STR );
-        *def_text = *s && !isspace( *s );
+        *def_has_text = *s && !isspace( *s );
         return true;
       }
     } // while
@@ -1220,11 +1220,11 @@ md_state_t const* markdown_parse( char *s ) {
     // Markdown link labels or PHP Markdown Extra footnote definitions.
     case '[':
       if ( indent_left <= MD_LINK_INDENT_MAX ) {
-        bool fn_def_text;
-        if ( md_is_footnote_def( nws, &fn_def_text ) ) {
+        bool def_has_text;
+        if ( md_is_footnote_def( nws, &def_has_text ) ) {
           stack_clear();
           stack_push( MD_FOOTNOTE_DEF, 0, MD_FOOTNOTE_INDENT );
-          TOP.fn_def_text = fn_def_text;
+          TOP.footnote_def_has_text = def_has_text;
           return &TOP;
         }
         if ( md_is_link_label( nws, &prev_link_label_has_title ) )

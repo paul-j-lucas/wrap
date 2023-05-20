@@ -868,7 +868,7 @@ static bool markdown_adjust( void ) {
         break;
     } // switch
 
-    if ( md->line_type == MD_FOOTNOTE_DEF && !md->fn_def_text ) {
+    if ( md->line_type == MD_FOOTNOTE_DEF && !md->footnote_def_has_text ) {
       //
       // For a footnote definition line that does not have text on the same
       // line:
