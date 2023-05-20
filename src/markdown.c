@@ -347,7 +347,7 @@ static char const* is_uri_scheme( char const *s ) {
       if ( *s == ':' )
         return s + 1;
       if ( !(isalnum( *s ) || *s == '.' || *s == '+' || *s == '-') )
-        return NULL;
+        break;
     } // while
   }
   return NULL;
