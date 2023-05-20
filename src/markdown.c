@@ -1126,8 +1126,15 @@ md_state_t const* markdown_parse( char *s ) {
       stack_pop();
       break;
 
-    default:
-      /* suppress warning */;
+    case MD_DL:
+    case MD_FOOTNOTE_DEF:
+    case MD_HTML_BLOCK:
+    case MD_NONE:
+    case MD_OL:
+    case MD_TEXT:
+    case MD_UL:
+      // nothing to do
+      break;
   } // switch
 
   /////////////////////////////////////////////////////////////////////////////

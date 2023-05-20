@@ -857,8 +857,15 @@ static bool markdown_adjust( void ) {
           FPUTS( input_buf, fout );
         }
         break;
-      default:
-        /* suppress warning */;
+      case MD_DL:
+      case MD_FOOTNOTE_DEF:
+      case MD_HEADER_LINE:
+      case MD_NONE:
+      case MD_OL:
+      case MD_TEXT:
+      case MD_UL:
+        // nothing to do
+        break;
     } // switch
 
     switch ( md->line_type ) {
@@ -881,6 +888,7 @@ static bool markdown_adjust( void ) {
       default:
         /* suppress warning */;
     } // switch
+
     prev_line_type = md->line_type;
   }
 
@@ -925,7 +933,8 @@ static bool markdown_adjust( void ) {
       opt_hang_spaces = md->indent_hang;
       return true;
 
-    default:
+    case MD_NONE:
+    case MD_TEXT:
       markdown_reset();
       return true;
   } // switch
