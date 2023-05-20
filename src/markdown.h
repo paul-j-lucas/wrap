@@ -71,14 +71,14 @@ typedef unsigned md_ol_t;               ///< Ordered list number.
  * Markdown parser state.
  */
 struct md_state {
-  md_line_t   line_type;
+  md_line_t   line_type;                ///< Current line type.
   md_seq_t    seq_num;
-  md_depth_t  depth;
-  bool        footnote_def_has_text;    // footnote def has text on line?
-  md_indent_t indent_left;
-  md_indent_t indent_hang;              // hang-indent for lists
-  char        ol_c;                     // ordered list character: . or )
-  md_ol_t     ol_num;                   // ordered list number
+  md_depth_t  depth;                    ///< Nesting depth.
+  bool        footnote_def_has_text;    ///< Footnote def has text on line?
+  md_indent_t indent_left;              ///< Left-indent for lines.
+  md_indent_t indent_hang;              ///< Hang-indent for lists.
+  char        ol_c;                     ///< Ordered list character: `.` or `)`.
+  md_ol_t     ol_num;                   ///< Ordered list number.
 };
 typedef struct md_state md_state_t;
 
