@@ -79,6 +79,10 @@
 /// Command-line option character as a single-character string literal.
 #define SOPT(X)                   STRINGIFY(OPT_##X)
 
+/// Command-line short option as a parenthesized, dashed string literal for the
+/// usage message.
+#define UOPT(X)                   " (-" SOPT(X) ") "
+
 /**
  * End-of-Line formats.
  */

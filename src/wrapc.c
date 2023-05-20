@@ -1196,53 +1196,49 @@ static size_t str_width( char const *s ) {
 static void usage( int status ) {
   fprintf( status == EX_OK ? stdout : stderr,
 "usage: " PACKAGE "c [options]\n"
-"       " PACKAGE "c -v\n"
 "options:\n"
-"  --alias=NAME           (-%c) Use alias from configuration file.\n"
-"  --align-column=NUM[,S] (-%c) Column to align end-of-line comments on.\n"
-"  --block-regex=REGEX    (-%c) Block leading regular expression.\n"
-"  --comment-chars=STR    (-%c) Comment delimiter characters.\n"
-"  --config=FILE          (-%c) The configuration file [default: ~/%s].\n"
-"  --doxygen              (-%c) Format Doxygen.\n"
-"  --eol=STR              (-%c)\n"
+"  --alias=NAME           " UOPT(ALIAS)
+                          "Use alias from configuration file.\n"
+"  --align-column=NUM[,S] " UOPT(ALIGN_COLUMN)
+                          "Column to align end-of-line comments on.\n"
+"  --block-regex=REGEX    " UOPT(BLOCK_REGEX)
+                          "Block leading regular expression.\n"
+"  --comment-chars=STR    " UOPT(COMMENT_CHARS)
+                          "Comment delimiter characters.\n"
+"  --config=FILE          " UOPT(CONFIG)
+                          "The configuration file [default: ~/" CONF_FILE_NAME_DEFAULT "].\n"
+"  --doxygen              " UOPT(DOXYGEN)
+                          "Format Doxygen.\n"
+"  --eol=STR              " UOPT(EOL) "\n"
 "      Set line-endings as input/Unix/Windows [default: input].\n"
-"  --eos-delimit          (-%c)\n"
+"  --eos-delimit          " UOPT(EOS_DELIMIT) "\n"
 "      Treat whitespace after end-of-sentence as a paragraph delimiter.\n"
-"  --eos-spaces=NUM       (-%c) Spaces after end-of-sentence [default: %d].\n"
-"  --file=FILE            (-%c) Read from this file [default: stdin].\n"
-"  --file-name=NAME       (-%c) Filename for stdin.\n"
-"  --markdown             (-%c) Format Markdown.\n"
-"  --no-config            (-%c) Suppress reading configuration file.\n"
-"  --no-hyphen            (-%c) Suppress wrapping at hyphen characters.\n"
-"  --output=FILE          (-%c) Write to this file [default: stdout].\n"
-"  --para-chars=STR       (-%c) Additional paragraph delimiter characters.\n"
-"  --tab-spaces=NUM       (-%c) Tab-spaces equivalence [default: %d].\n"
-"  --title                (-%c) Treat paragraph's first line as title.\n"
-"  --version              (-%c) Print version and exit.\n"
-"  --width=NUM|terminal   (-%c) Line width [default: %d].\n"
+"  --eos-spaces=NUM       " UOPT(EOS_SPACES)
+                          "Spaces after end-of-sentence [default: " STRINGIFY(EOS_SPACES_DEFAULT) "].\n"
+"  --file=FILE            " UOPT(FILE)
+                          "Read from this file [default: stdin].\n"
+"  --file-name=NAME       " UOPT(FILE_NAME)
+                          "Filename for stdin.\n"
+"  --markdown             " UOPT(MARKDOWN)
+                          "Format Markdown.\n"
+"  --no-config            " UOPT(NO_CONFIG)
+                          "Suppress reading configuration file.\n"
+"  --no-hyphen            " UOPT(NO_HYPHEN)
+                          "Suppress wrapping at hyphen characters.\n"
+"  --output=FILE          " UOPT(OUTPUT)
+                          "Write to this file [default: stdout].\n"
+"  --para-chars=STR       " UOPT(PARA_CHARS)
+                          "Additional paragraph delimiter characters.\n"
+"  --tab-spaces=NUM       " UOPT(TAB_SPACES)
+                          "Tab-spaces equivalence [default: " STRINGIFY(TAB_SPACES_DEFAULT) "].\n"
+"  --title                " UOPT(TITLE_LINE)
+                          "Treat paragraph's first line as title.\n"
+"  --version              " UOPT(VERSION)
+                          "Print version and exit.\n"
+"  --width=NUM|terminal   " UOPT(WIDTH) "Line width [default: " STRINGIFY(LINE_WIDTH_DEFAULT) "].\n"
 "\n"
+PACKAGE_NAME " home page: " PACKAGE_URL "\n"
 "Report bugs to: " PACKAGE_BUGREPORT "\n"
-PACKAGE_NAME " home page: " PACKAGE_URL "\n",
-    COPT(ALIAS),
-    COPT(ALIGN_COLUMN),
-    COPT(BLOCK_REGEX),
-    COPT(COMMENT_CHARS),
-    COPT(CONFIG), CONF_FILE_NAME_DEFAULT,
-    COPT(DOXYGEN),
-    COPT(EOL),
-    COPT(EOS_DELIMIT),
-    COPT(EOS_SPACES), EOS_SPACES_DEFAULT,
-    COPT(FILE),
-    COPT(FILE_NAME),
-    COPT(MARKDOWN),
-    COPT(NO_CONFIG),
-    COPT(NO_HYPHEN),
-    COPT(OUTPUT),
-    COPT(PARA_CHARS),
-    COPT(TAB_SPACES), TAB_SPACES_DEFAULT,
-    COPT(TITLE_LINE),
-    COPT(VERSION),
-    COPT(WIDTH), LINE_WIDTH_DEFAULT
   );
   exit( status );
 }

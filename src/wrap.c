@@ -998,80 +998,72 @@ static void put_tabs_spaces( size_t tabs, size_t spaces ) {
 static void usage( int status ) {
   fprintf( status == EX_OK ? stdout : stderr,
 "usage: " PACKAGE " [options]\n"
-"       " PACKAGE " -v\n"
 "options:\n"
-"  --alias=NAME           (-%c) Use alias from configuration file.\n"
-"  --all-newlines-delimit (-%c) Treat newlines as a paragraph delimiters.\n"
-"  --block-regex=REGEX    (-%c) Block leading regular expression.\n"
-"  --config=FILE          (-%c) The configuration file [default: ~/%s].\n"
-"  --dot-ignore           (-%c) Do not alter lines that begin with '.' (dot).\n"
-"  --eol=STR              (-%c)\n"
+"  --alias=NAME           " UOPT(ALIAS)
+                          "Use alias from configuration file.\n"
+"  --all-newlines-delimit " UOPT(ALL_NEWLINES_DELIMIT)
+                          "Treat newlines as a paragraph delimiters.\n"
+"  --block-regex=REGEX    " UOPT(BLOCK_REGEX)
+                          "Block leading regular expression.\n"
+"  --config=FILE          " UOPT(CONFIG)
+                          "The configuration file [default: ~/" CONF_FILE_NAME_DEFAULT "].\n"
+"  --dot-ignore           " UOPT(DOT_IGNORE)
+                          "Do not alter lines that begin with '.' (dot).\n"
+"  --eol=STR              " UOPT(EOL) "\n"
 "      Set line-endings as input/Unix/Windows [default: input].\n"
-"  --eos-delimit          (-%c)\n"
+"  --eos-delimit          " UOPT(EOS_DELIMIT) "\n"
 "      Treat whitespace after end-of-sentence as a paragraph delimiter.\n"
-"  --eos-spaces=NUM       (-%c) Spaces after end-of-sentence [default: %d].\n"
-"  --file=FILE            (-%c) Read from this file [default: stdin].\n"
-"  --file-name=NAME       (-%c) Filename for stdin.\n"
-"  --hang-spaces=NUM      (-%c)\n"
+"  --eos-spaces=NUM       " UOPT(EOS_SPACES)
+                          "Spaces after end-of-sentence [default: " STRINGIFY(EOS_SPACES_DEFAULT) "].\n"
+"  --file=FILE            " UOPT(FILE)
+                          "Read from this file [default: stdin].\n"
+"  --file-name=NAME       " UOPT(FILE_NAME)
+                          "Filename for stdin.\n"
+"  --hang-spaces=NUM      " UOPT(HANG_SPACES) "\n"
 "      Hang-indent spaces after tabs for all but first line of each paragraph.\n"
-"  --hang-tabs=NUM        (-%c)\n"
+"  --hang-tabs=NUM        " UOPT(HANG_TABS) "\n"
 "      Hang-indent tabs for all but first line of each paragraph.\n"
-"  --indent-spaces=NUM    (-%c)\n"
+"  --indent-spaces=NUM    " UOPT(INDENT_SPACES) "\n"
 "      Indent spaces after tabs for first line of each paragraph.\n"
-"  --indent-tabs=NUM      (-%c) Indent tabs for first line of each paragraph.\n"
-"  --lead-spaces=NUM      (-%c) Prepend leading spaces after tabs to each line.\n"
-"  --lead-string=STR      (-%c) String to prepend to every line.\n"
-"  --lead-tabs=NUM        (-%c) Prepend leading tabs to each line.\n"
-"  --markdown             (-%c) Format Markdown.\n"
-"  --mirror-spaces=NUM    (-%c) Mirror spaces.\n"
-"  --mirror-tabs=NUM      (-%c) Mirror tabs.\n"
-"  --no-config            (-%c) Suppress reading configuration file.\n"
-"  --no-hyphen            (-%c) Suppress wrapping at hyphen characters.\n"
-"  --no-newlines-delimit  (-%c) Do not treat newlines as paragraph delimiters.\n"
-"  --output=FILE          (-%c) Write to this file [default: stdout].\n"
-"  --para-chars=STR       (-%c) Additional paragraph delimiter characters.\n"
-"  --prototype            (-%c)\n"
+"  --indent-tabs=NUM      " UOPT(INDENT_TABS)
+                          "Indent tabs for first line of each paragraph.\n"
+"  --lead-spaces=NUM      " UOPT(LEAD_SPACES)
+                          "Prepend leading spaces after tabs to each line.\n"
+"  --lead-string=STR      " UOPT(LEAD_STRING)
+                          "String to prepend to every line.\n"
+"  --lead-tabs=NUM        " UOPT(LEAD_TABS)
+                          "Prepend leading tabs to each line.\n"
+"  --markdown             " UOPT(MARKDOWN)
+                          "Format Markdown.\n"
+"  --mirror-spaces=NUM    " UOPT(MIRROR_SPACES)
+                          "Mirror spaces.\n"
+"  --mirror-tabs=NUM      " UOPT(MIRROR_TABS)
+                          "Mirror tabs.\n"
+"  --no-config            " UOPT(NO_CONFIG)
+                          "Suppress reading configuration file.\n"
+"  --no-hyphen            " UOPT(NO_HYPHEN)
+                          "Suppress wrapping at hyphen characters.\n"
+"  --no-newlines-delimit  " UOPT(NO_NEWLINES_DELIMIT)
+                          "Do not treat newlines as paragraph delimiters.\n"
+"  --output=FILE          " UOPT(OUTPUT)
+                          "Write to this file [default: stdout].\n"
+"  --para-chars=STR       " UOPT(PARA_CHARS)
+                          "Additional paragraph delimiter characters.\n"
+"  --prototype            " UOPT(PROTOTYPE) "\n"
 "      Treat leading whitespace on first line as prototype.\n"
-"  --tab-spaces=NUM       (-%c) Tab-spaces equivalence [default: %d].\n"
-"  --title                (-%c) Treat paragraph's first line as title.\n"
-"  --version              (-%c) Print version and exit.\n"
-"  --whitespace-delimit   (-%c)\n"
+"  --tab-spaces=NUM       " UOPT(TAB_SPACES)
+                          "Tab-spaces equivalence [default: " STRINGIFY(TAB_SPACES_DEFAULT) "].\n"
+"  --title                " UOPT(TITLE_LINE)
+                          "Treat paragraph's first line as title.\n"
+"  --version              " UOPT(VERSION)
+                          "Print version and exit.\n"
+"  --whitespace-delimit   " UOPT(WHITESPACE_DELIMIT) "\n"
 "      Treat line beginning with whitespace as paragraph delimiter.\n"
-"  --width=NUM|terminal   (-%c) Line width [default: %d].\n"
+"  --width=NUM|terminal   " UOPT(WIDTH)
+                          "Line width [default: " STRINGIFY(LINE_WIDTH_DEFAULT) "].\n"
 "\n"
+PACKAGE_NAME " home page: " PACKAGE_URL "\n"
 "Report bugs to: " PACKAGE_BUGREPORT "\n"
-PACKAGE_NAME " home page: " PACKAGE_URL "\n",
-    COPT(ALIAS),
-    COPT(ALL_NEWLINES_DELIMIT),
-    COPT(BLOCK_REGEX),
-    COPT(CONFIG), CONF_FILE_NAME_DEFAULT,
-    COPT(DOT_IGNORE),
-    COPT(EOL),
-    COPT(EOS_DELIMIT),
-    COPT(EOS_SPACES), EOS_SPACES_DEFAULT,
-    COPT(FILE),
-    COPT(FILE_NAME),
-    COPT(HANG_SPACES),
-    COPT(HANG_TABS),
-    COPT(INDENT_SPACES),
-    COPT(INDENT_TABS),
-    COPT(LEAD_SPACES),
-    COPT(LEAD_STRING),
-    COPT(LEAD_TABS),
-    COPT(MARKDOWN),
-    COPT(MIRROR_SPACES),
-    COPT(MIRROR_TABS),
-    COPT(NO_CONFIG),
-    COPT(NO_HYPHEN),
-    COPT(NO_NEWLINES_DELIMIT),
-    COPT(OUTPUT),
-    COPT(PARA_CHARS),
-    COPT(PROTOTYPE),
-    COPT(TAB_SPACES), TAB_SPACES_DEFAULT,
-    COPT(TITLE_LINE),
-    COPT(VERSION),
-    COPT(WHITESPACE_DELIMIT),
-    COPT(WIDTH), LINE_WIDTH_DEFAULT
   );
   exit( status );
 }
