@@ -1,5 +1,6 @@
 2023-05-20  Paul J. Lucas <paul@lucasmail.org>
 
+   * options.c: Now skipping whitespace in option arguments.
    * markdown.c, markdown.h, wrap.c: s/fn_def_text/footnote_def_has_text/
    * wrap.c: Replaced `switch` with `if`.
    * markdown.c, wrap.c: Replaced default: with explicit cases.
