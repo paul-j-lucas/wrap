@@ -488,6 +488,8 @@ static void parse_options( int argc, char const *argv[],
 
     switch ( opt ) {
       case COPT(ALIAS):
+        if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
+          goto missing_arg;
         opt_alias = optarg;
         break;
       case COPT(ALIGN_COLUMN):
@@ -497,12 +499,18 @@ static void parse_options( int argc, char const *argv[],
         opt_newlines_delimit = 1;
         break;
       case COPT(BLOCK_REGEX):
+        if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
+          goto missing_arg;
         opt_block_regex = optarg;
         break;
       case COPT(COMMENT_CHARS):
+        if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
+          goto missing_arg;
         opt_comment_chars = optarg;
         break;
       case COPT(CONFIG):
+        if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
+          goto missing_arg;
         opt_conf_file = optarg;
         break;
       case COPT(DOT_IGNORE):
@@ -524,9 +532,13 @@ static void parse_options( int argc, char const *argv[],
         opt_eos_spaces = check_atou( optarg );
         break;
       case COPT(FILE):
+        if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
+          goto missing_arg;
         opt_fin = optarg;
         FALLTHROUGH;
       case COPT(FILE_NAME):
+        if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
+          goto missing_arg;
         opt_fin_name = base_name( optarg );
         break;
       case COPT(HANG_TABS):
@@ -545,6 +557,7 @@ static void parse_options( int argc, char const *argv[],
         opt_lead_spaces = check_atou( optarg );
         break;
       case COPT(LEAD_STRING):
+        // do NOT skip leading whitespace here
         opt_lead_string = optarg;
         break;
       case COPT(LEAD_TABS):
@@ -569,9 +582,13 @@ static void parse_options( int argc, char const *argv[],
         opt_newlines_delimit = SIZE_MAX;
         break;
       case COPT(OUTPUT):
+        if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
+          goto missing_arg;
         opt_fout = optarg;
         break;
       case COPT(PARA_CHARS):
+        if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
+          goto missing_arg;
         opt_para_delims = optarg;
         break;
       case COPT(PROTOTYPE):
