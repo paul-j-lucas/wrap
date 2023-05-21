@@ -1,5 +1,9 @@
 2023-05-20  Paul J. Lucas <paul@lucasmail.org>
 
+   * options.c: Consolidated long options.
+   * wrap.1, wrapc.1: Sorted options.
+   * options.c: Added {}.
+   * options.c: Renaming.
    * options.c: Sorted long options.
    * configure.ac, wrap.1, wrapc.1, options.c, options.h, wrap.c, wrapc.c:
      Added --help/-h option.
