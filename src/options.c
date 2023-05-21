@@ -125,7 +125,7 @@ static unsigned     parse_width( char const* );
 /**
  * Command-line options common to both **wrap** and **wrapc**.
  */
-#define COMMON_OPTS                                   \
+#define COMMON_OPTS_SHORT                             \
   SOPT(ALIAS)                 SOPT_REQUIRED_ARGUMENT  \
   SOPT(BLOCK_REGEX)           SOPT_REQUIRED_ARGUMENT  \
   SOPT(CONFIG)                SOPT_REQUIRED_ARGUMENT  \
@@ -149,13 +149,13 @@ static unsigned     parse_width( char const* );
 /**
  * Command-line options forbidden in configuration files.
  */
-#define CONF_FORBIDDEN_OPTS \
-  SOPT(ALIAS)               \
-  SOPT(CONFIG)              \
-  SOPT(FILE)                \
-  SOPT(FILE_NAME)           \
-  SOPT(NO_CONFIG)           \
-  SOPT(OUTPUT)              \
+#define CONF_FORBIDDEN_OPTS_SHORT \
+  SOPT(ALIAS)                     \
+  SOPT(CONFIG)                    \
+  SOPT(FILE)                      \
+  SOPT(FILE_NAME)                 \
+  SOPT(NO_CONFIG)                 \
+  SOPT(OUTPUT)                    \
   SOPT(VERSION)
 
 /**
@@ -165,7 +165,7 @@ static unsigned     parse_width( char const* );
  * with `--help` that is common to both **wrap** and **wrapc**.  There's
  * special-case code in parse_options() that disambiguates `-h`.
  */
-#define WRAP_SPECIFIC_OPTS                            \
+#define WRAP_SPECIFIC_OPTS_SHORT                      \
   SOPT(ALL_NEWLINES_DELIMIT)  SOPT_NO_ARGUMENT        \
   SOPT(ENABLE_IPC)            SOPT_NO_ARGUMENT        \
   SOPT(DOT_IGNORE)            SOPT_NO_ARGUMENT        \
@@ -185,7 +185,7 @@ static unsigned     parse_width( char const* );
 /**
  * Command-line options specific to **wrapc**.
  */
-#define WRAPC_SPECIFIC_OPTS                           \
+#define WRAPC_SPECIFIC_OPTS_SHORT                     \
   SOPT(ALIGN_COLUMN)          SOPT_REQUIRED_ARGUMENT  \
   SOPT(COMMENT_CHARS)         SOPT_REQUIRED_ARGUMENT
 
@@ -193,18 +193,24 @@ static unsigned     parse_width( char const* );
 // Each command forbids the others' specific options, but only on the command-
 // line and not in the conf file.
 //
-static char const *const CMDLINE_FORBIDDEN_OPTS[] = {
-  WRAPC_SPECIFIC_OPTS,                  // wrap
-  WRAP_SPECIFIC_OPTS                    // wrapc
+static char const *const CMDLINE_FORBIDDEN_OPTS_SHORT[] = {
+  WRAPC_SPECIFIC_OPTS_SHORT,            // wrap
+  WRAP_SPECIFIC_OPTS_SHORT              // wrapc
 };
 
 static char const *const OPTS_SHORT[] = {
   //
+  // wrap's options
+  //
   // wrap's options have to include wrapc's specific options so they're
   // accepted (but ignored) in conf files.
   //
-  ":" COMMON_OPTS WRAP_SPECIFIC_OPTS WRAPC_SPECIFIC_OPTS, // wrap
-  ":" COMMON_OPTS WRAPC_SPECIFIC_OPTS                     // wrapc
+  ":" COMMON_OPTS_SHORT WRAP_SPECIFIC_OPTS_SHORT WRAPC_SPECIFIC_OPTS_SHORT,
+
+  //
+  // wrapc's options
+  //
+  ":" COMMON_OPTS_SHORT WRAPC_SPECIFIC_OPTS_SHORT
 };
 
 static struct option const WRAP_OPTS_LONG[] = {
@@ -501,7 +507,7 @@ static void parse_options( int argc, char const *argv[],
       break;
     if ( opt != ':' ) {
       if ( line_no > 0 ) {                // we're parsing a conf file
-        if ( strchr( CONF_FORBIDDEN_OPTS, opt ) != NULL ) {
+        if ( strchr( CONF_FORBIDDEN_OPTS_SHORT, opt ) != NULL ) {
           fatal_error( EX_CONFIG,
             "%s:%u: %s option not allowed in configuration file\n",
             opt_conf_file, line_no, opt_format( STATIC_CAST( char, opt ) )
@@ -819,7 +825,7 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
 
   parse_options(
     argc, argv, OPTS_SHORT[ is_wrapc ], OPTS_LONG[ is_wrapc ],
-    CMDLINE_FORBIDDEN_OPTS[ is_wrapc ], usage, 0
+    CMDLINE_FORBIDDEN_OPTS_SHORT[ is_wrapc ], usage, 0
   );
   argc -= optind;
   argv += optind;
