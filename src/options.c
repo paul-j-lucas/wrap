@@ -744,14 +744,14 @@ static void parse_options( int argc, char const *argv[],
 invalid_opt:
   NO_OP;
   // Determine whether the invalid option was short or long.
-  char const *invalid_opt = argv[ optind - 1 ];
-  if ( invalid_opt != NULL && strncmp( invalid_opt, "--", 2 ) == 0 ) {
-    invalid_opt += 2;                   // skip over "--"
-    fatal_error( EX_USAGE, "\"%s\": invalid option\n", invalid_opt );
-  }
-  fatal_error( EX_USAGE,
-    "'%c': invalid option\n", STATIC_CAST( char, optopt )
-  );
+  char const *const invalid_opt = argv[ optind - 1 ];
+  EPRINTF( "%s: ", me );
+  if ( invalid_opt != NULL && strncmp( invalid_opt, "--", 2 ) == 0 )
+    EPRINTF( "\"%s\"", invalid_opt + 2/*skip over "--"*/ );
+  else
+    EPRINTF( "'%c'", STATIC_CAST( char, optopt ) );
+  EPRINTF( ": invalid option; use --help or -h for help\n" );
+  exit( EX_USAGE );
 
 missing_arg:
   fatal_error( EX_USAGE,
