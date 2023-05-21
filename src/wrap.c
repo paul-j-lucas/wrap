@@ -1023,6 +1023,8 @@ static void usage( int status ) {
 "      Hang-indent spaces after tabs for all but first line of each paragraph.\n"
 "  --hang-tabs=NUM        " UOPT(HANG_TABS) "\n"
 "      Hang-indent tabs for all but first line of each paragraph.\n"
+"  --help                 " UOPT(HELP)
+                          "Print this help and exit.\n"
 "  --indent-spaces=NUM    " UOPT(INDENT_SPACES) "\n"
 "      Indent spaces after tabs for first line of each paragraph.\n"
 "  --indent-tabs=NUM      " UOPT(INDENT_TABS)

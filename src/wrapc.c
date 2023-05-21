@@ -1219,6 +1219,8 @@ static void usage( int status ) {
                           "Read from this file [default: stdin].\n"
 "  --file-name=NAME       " UOPT(FILE_NAME)
                           "Filename for stdin.\n"
+"  --help                 " UOPT(HELP)
+                          "Print this help and exit.\n"
 "  --markdown             " UOPT(MARKDOWN)
                           "Format Markdown.\n"
 "  --no-config            " UOPT(NO_CONFIG)

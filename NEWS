@@ -5,6 +5,12 @@ See the end of the file for license conditions.
 
 -------------------------------------------------------------------------------
 
+* Changes in Wrap 5.8
+
+** `--help`/`-h` options
+Both **wrap** and **wrapc** now have these command-line options.
+
+
 * Changes in Wrap 5.7
 
 ** Doxygen `concept`

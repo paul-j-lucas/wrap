@@ -30,13 +30,14 @@
 // local
 #include "pjl_config.h"                 /* must go first */
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>                      /* for FILE */
 
-///////////////////////////////////////////////////////////////////////////////
-
+// in ascending option character ASCII order
 #define OPT_ALIAS                 a
 #define OPT_ALIGN_COLUMN          A
 #define OPT_BLOCK_REGEX           b
@@ -48,7 +49,8 @@
 #define OPT_EOS_SPACES            E
 #define OPT_FILE                  f
 #define OPT_FILE_NAME             F
-#define OPT_HANG_TABS             h
+#define OPT_HANG_TABS             h     /* ambiguous with OPT_HELP */
+#define OPT_HELP                  h     /* ambiguous with OPT_HANG_TABS */
 #define OPT_HANG_SPACES           H
 #define OPT_INDENT_TABS           i
 #define OPT_INDENT_SPACES         I
@@ -82,6 +84,10 @@
 /// Command-line short option as a parenthesized, dashed string literal for the
 /// usage message.
 #define UOPT(X)                   " (-" SOPT(X) ") "
+
+/// @endcond
+
+///////////////////////////////////////////////////////////////////////////////
 
 /**
  * End-of-Line formats.

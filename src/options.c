@@ -119,8 +119,12 @@ static unsigned     parse_width( char const* );
 /// @cond DOXYGEN_IGNORE
 #define SOPT_NO_ARGUMENT          /* nothing */
 #define SOPT_REQUIRED_ARGUMENT    ":"
+#define SOPT_OPTIONAL_ARGUMENT    "::"
 /// @endcond
 
+/**
+ * Command-line options common to both **wrap** and **wrapc**.
+ */
 #define COMMON_OPTS                                   \
   SOPT(ALIAS)                 SOPT_REQUIRED_ARGUMENT  \
   SOPT(BLOCK_REGEX)           SOPT_REQUIRED_ARGUMENT  \
@@ -131,6 +135,7 @@ static unsigned     parse_width( char const* );
   SOPT(EOS_SPACES)            SOPT_REQUIRED_ARGUMENT  \
   SOPT(FILE)                  SOPT_REQUIRED_ARGUMENT  \
   SOPT(FILE_NAME)             SOPT_REQUIRED_ARGUMENT  \
+  SOPT(HELP)                  SOPT_OPTIONAL_ARGUMENT  \
   SOPT(MARKDOWN)              SOPT_NO_ARGUMENT        \
   SOPT(NO_CONFIG)             SOPT_NO_ARGUMENT        \
   SOPT(NO_HYPHEN)             SOPT_NO_ARGUMENT        \
@@ -141,6 +146,9 @@ static unsigned     parse_width( char const* );
   SOPT(VERSION)               SOPT_NO_ARGUMENT        \
   SOPT(WIDTH)                 SOPT_REQUIRED_ARGUMENT
 
+/**
+ * Command-line options forbidden in configuration files.
+ */
 #define CONF_FORBIDDEN_OPTS \
   SOPT(ALIAS)               \
   SOPT(CONFIG)              \
@@ -150,23 +158,33 @@ static unsigned     parse_width( char const* );
   SOPT(OUTPUT)              \
   SOPT(VERSION)
 
+/**
+ * Command-line options specific to **wrap**.
+ *
+ * @note The short option for `--hang-tabs` isn't here because it shares it
+ * with `--help` that is common to both **wrap** and **wrapc**.  There's
+ * special-case code in parse_options() that disambiguates `-h`.
+ */
 #define WRAP_SPECIFIC_OPTS                            \
-  SOPT(DOT_IGNORE)            SOPT_NO_ARGUMENT        \
-  SOPT(HANG_TABS)             SOPT_REQUIRED_ARGUMENT  \
-  SOPT(HANG_SPACES)           SOPT_REQUIRED_ARGUMENT  \
-  SOPT(INDENT_TABS)           SOPT_REQUIRED_ARGUMENT  \
-  SOPT(INDENT_SPACES)         SOPT_REQUIRED_ARGUMENT  \
-  SOPT(LEAD_STRING)           SOPT_REQUIRED_ARGUMENT  \
-  SOPT(MIRROR_TABS)           SOPT_REQUIRED_ARGUMENT  \
-  SOPT(MIRROR_SPACES)         SOPT_REQUIRED_ARGUMENT  \
-  SOPT(NO_NEWLINES_DELIMIT)   SOPT_NO_ARGUMENT        \
   SOPT(ALL_NEWLINES_DELIMIT)  SOPT_NO_ARGUMENT        \
-  SOPT(PROTOTYPE)             SOPT_NO_ARGUMENT        \
+  SOPT(ENABLE_IPC)            SOPT_NO_ARGUMENT        \
+  SOPT(DOT_IGNORE)            SOPT_NO_ARGUMENT        \
+  SOPT(HANG_SPACES)           SOPT_REQUIRED_ARGUMENT  \
+/*SOPT(HANG_TABS)             SOPT_REQUIRED_ARGUMENT*/\
+  SOPT(INDENT_SPACES)         SOPT_REQUIRED_ARGUMENT  \
+  SOPT(INDENT_TABS)           SOPT_REQUIRED_ARGUMENT  \
   SOPT(LEAD_SPACES)           SOPT_REQUIRED_ARGUMENT  \
+  SOPT(LEAD_STRING)           SOPT_REQUIRED_ARGUMENT  \
   SOPT(LEAD_TABS)             SOPT_REQUIRED_ARGUMENT  \
-  SOPT(WHITESPACE_DELIMIT)    SOPT_NO_ARGUMENT        \
-  SOPT(ENABLE_IPC)            SOPT_NO_ARGUMENT
+  SOPT(MIRROR_SPACES)         SOPT_REQUIRED_ARGUMENT  \
+  SOPT(MIRROR_TABS)           SOPT_REQUIRED_ARGUMENT  \
+  SOPT(NO_NEWLINES_DELIMIT)   SOPT_NO_ARGUMENT        \
+  SOPT(PROTOTYPE)             SOPT_NO_ARGUMENT        \
+  SOPT(WHITESPACE_DELIMIT)    SOPT_NO_ARGUMENT
 
+/**
+ * Command-line options specific to **wrapc**.
+ */
 #define WRAPC_SPECIFIC_OPTS                           \
   SOPT(ALIGN_COLUMN)          SOPT_REQUIRED_ARGUMENT  \
   SOPT(COMMENT_CHARS)         SOPT_REQUIRED_ARGUMENT
@@ -203,6 +221,7 @@ static struct option const WRAP_OPTS_LONG[] = {
   { "file-name",            required_argument,  NULL, COPT(FILE_NAME)       },
   { "hang-tabs",            required_argument,  NULL, COPT(HANG_TABS)       },
   { "hang-spaces",          required_argument,  NULL, COPT(HANG_SPACES)     },
+  { "help",                 no_argument,        NULL, COPT(HELP)            },
   { "indent-tabs",          required_argument,  NULL, COPT(INDENT_TABS)     },
   { "indent-spaces",        required_argument,  NULL, COPT(INDENT_SPACES)   },
   { "eol",                  required_argument,  NULL, COPT(EOL)             },
@@ -239,6 +258,7 @@ static struct option const WRAPC_OPTS_LONG[] = {
   { "eos-spaces",           required_argument,  NULL, COPT(EOS_SPACES)    },
   { "file",                 required_argument,  NULL, COPT(FILE)          },
   { "file-name",            required_argument,  NULL, COPT(FILE_NAME)     },
+  { "help",                 no_argument,        NULL, COPT(HELP)          },
   { "eol",                  required_argument,  NULL, COPT(EOL)           },
   { "output",               required_argument,  NULL, COPT(OUTPUT)        },
   { "para-chars",           required_argument,  NULL, COPT(PARA_CHARS)    },
@@ -460,11 +480,15 @@ static void parse_options( int argc, char const *argv[],
                            char const short_opts[const],
                            struct option const long_opts[const],
                            char const cmdline_forbidden_opts[const],
-                           void (*usage)(int), unsigned line_no ) {
+                           /*_Noreturn*/ void (*usage)(int),
+                           unsigned line_no ) {
   assert( usage != NULL );
 
-  optind = opterr = 1;
+  opterr = 0;
+  optind = 1;
+
   int opt;
+  bool opt_help = false;
   bool opt_version = false;
   memset( opts_given, 0, sizeof opts_given );
 
@@ -475,15 +499,18 @@ static void parse_options( int argc, char const *argv[],
     );
     if ( opt == -1 )
       break;
-    if ( line_no > 0 ) {                // we're parsing a conf file
-      if ( strchr( CONF_FORBIDDEN_OPTS, opt ) != NULL )
-        fatal_error( EX_CONFIG,
-          "%s:%u: '%c': option not allowed in configuration file\n",
-          opt_conf_file, line_no, opt
-        );
-    }
-    else if ( strchr( cmdline_forbidden_opts, opt ) != NULL ) {
-      goto invalid_opt;
+    if ( opt != ':' ) {
+      if ( line_no > 0 ) {                // we're parsing a conf file
+        if ( strchr( CONF_FORBIDDEN_OPTS, opt ) != NULL ) {
+          fatal_error( EX_CONFIG,
+            "%s:%u: %s option not allowed in configuration file\n",
+            opt_conf_file, line_no, opt_format( STATIC_CAST( char, opt ) )
+          );
+        }
+      }
+      else if ( strchr( cmdline_forbidden_opts, opt ) != NULL ) {
+        goto invalid_opt;
+      }
     }
 
     switch ( opt ) {
@@ -542,7 +569,16 @@ static void parse_options( int argc, char const *argv[],
         opt_fin_name = base_name( optarg );
         break;
       case COPT(HANG_TABS):
-        opt_hang_tabs = check_atou( optarg );
+//    case COPT(HELP):
+        //
+        // The --hang-tabs and --help options share the same -h short option.
+        // We made its argument optional to disambiguate it: if it's absert,
+        // assume it's for --help; if present, assume it's for --hand-tabs.
+        //
+        if ( optarg == NULL )
+          opt_help = true;
+        else
+          opt_hang_tabs = check_atou( optarg );
         break;
       case COPT(HANG_SPACES):
         opt_hang_spaces = check_atou( optarg );
@@ -679,6 +715,11 @@ static void parse_options( int argc, char const *argv[],
     opt_check_exclusive( COPT(VERSION) );
   }
 
+  if ( opt_help ) {
+    (*usage)( EX_OK );
+    unreachable();
+  }
+
   if ( opt_version ) {
     puts( PACKAGE_STRING );
     exit( EX_OK );
@@ -694,7 +735,9 @@ invalid_opt:
     invalid_opt += 2;                   // skip over "--"
     fatal_error( EX_USAGE, "\"%s\": invalid option\n", invalid_opt );
   }
-  fatal_error( EX_USAGE, "'%c': invalid option\n", STATIC_CAST( char, optopt ) );
+  fatal_error( EX_USAGE,
+    "'%c': invalid option\n", STATIC_CAST( char, optopt )
+  );
 
 missing_arg:
   fatal_error( EX_USAGE,
