@@ -704,13 +704,6 @@ to read
 .BR ~/.wraprc )
 if warranted.
 .TP
-.BR \-\-no-config " | " \-C
-Suppresses reading of any configuration file,
-even one explicitly specified via either
-.BR \-\-config
-or
-.BR \-c .
-.TP
 .BR \-\-doxygen " | " \-x
 Formats text containing Doxygen commands.
 (May be combined with either the
@@ -718,29 +711,6 @@ Formats text containing Doxygen commands.
 or
 .B \-u
 option.)
-.TP
-.BR \-\-eos-delimit " | " \-e
-Treats whitespace after an end-of-sentence character as a paragraph delimiter.
-.TP
-.BI \-\-eos-spaces \f1=\fPn "\f1 | \fP" "" \-E " n"
-Specifies the number of spaces to emit or allow after an end-of-sentence
-(default is 2).
-.TP
-.BI \-\-file \f1=\fPf "\f1 | \fP" "" \-f " f"
-Reads from file
-.I f
-(default is standard input).
-.TP
-.BI \-\-file-name \f1=\fPf "\f1 | \fP" "" \-F " f"
-Sets the file-name to
-.I f
-as if it were being read from
-but still reads from standard input.
-(This allows the file-name to be matched against a pattern
-in a configuration file to use an alias
-while still allowing
-.B wrapc
-to be used as part of a shell pipeline.)
 .TP
 .BI \-\-eol \f1=\fPs "\f1 | \fP" "" \-l " s"
 Specifies the line-endings to use
@@ -766,6 +736,29 @@ or
 (Unix: LF);
 all case-insensitive.
 .TP
+.BR \-\-eos-delimit " | " \-e
+Treats whitespace after an end-of-sentence character as a paragraph delimiter.
+.TP
+.BI \-\-eos-spaces \f1=\fPn "\f1 | \fP" "" \-E " n"
+Specifies the number of spaces to emit or allow after an end-of-sentence
+(default is 2).
+.TP
+.BI \-\-file \f1=\fPf "\f1 | \fP" "" \-f " f"
+Reads from file
+.I f
+(default is standard input).
+.TP
+.BI \-\-file-name \f1=\fPf "\f1 | \fP" "" \-F " f"
+Sets the file-name to
+.I f
+as if it were being read from
+but still reads from standard input.
+(This allows the file-name to be matched against a pattern
+in a configuration file to use an alias
+while still allowing
+.B wrapc
+to be used as part of a shell pipeline.)
+.TP
 .BR \-\-help " | " \-h
 Prints a help message
 for command-line options
@@ -778,6 +771,13 @@ Formats Markdown text.
 or
 .B \-x
 option.)
+.TP
+.BR \-\-no-config " | " \-C
+Suppresses reading of any configuration file,
+even one explicitly specified via either
+.BR \-\-config
+or
+.BR \-c .
 .TP
 .BR \-\-no-hyphen " | "  \-y
 Suppresses special treatment of hyphens.

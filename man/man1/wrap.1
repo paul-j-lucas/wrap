@@ -200,6 +200,10 @@ or
 .B \-F
 options.
 .TP
+.BR \-\-all-newlines-delimit " | "  \-N
+Treats every newline as a paragraph delimiter.
+This option is useful for line-breaking code prior to printing.
+.TP
 .BI \-\-block-regex \f1=\fPs "\f1 | \fP" "" \-b " s"
 Specifies a ``block'' regular expression
 .I s
@@ -216,14 +220,6 @@ to read
 (default is
 .BR ~/.wraprc )
 if warranted.
-.TP
-.BR \-\-no-config " | " \-C
-Suppresses reading of any configuration file,
-even one explicitly specified via either
-.BR \-\-config
-or
-.BR \-c .
-.TP
 .BR \-\-dot-ignore " | " \-d
 Does not alter lines that begin with a
 .RB ` . '
@@ -315,6 +311,11 @@ Indents
 .I n
 more tabs for the first line of each paragraph.
 .TP
+.BI \-\-lead-spaces \f1=\fPn "\f1 | \fP" "" \-S " n"
+Prepends
+.I n
+leading spaces to each line after any leading tabs.
+.TP
 .BI \-\-lead-string \f1=\fPs "\f1 | \fP" "" \-L " s"
 Specifies a string
 .I s
@@ -324,15 +325,16 @@ The width of
 is subtracted from
 .IR line-width .
 .TP
-.BI \-\-lead-spaces \f1=\fPn "\f1 | \fP" "" \-S " n"
-Prepends
-.I n
-leading spaces to each line after any leading tabs.
-.TP
 .BI \-\-lead-tabs \f1=\fPn "\f1 | \fP" "" \-t " n"
 Prepends
 .I n
 leading tabs to each line.
+.TP
+.BR \-\-markdown " | " \-u
+Formats Markdown text
+(see
+.B MARKDOWN FORMATTING
+below).
 .TP
 .BI \-\-mirror-spaces \f1=\fPn "\f1 | \fP" "" \-M " n"
 Mirrors spaces; equivalent to:
@@ -348,21 +350,19 @@ Mirrors tabs; equivalent to:
 where
 .IR "m = line-width \- tab-spaces * n" .
 .TP
-.BR \-\-markdown " | " \-u
-Formats Markdown text
-(see
-.B MARKDOWN FORMATTING
-below).
+.BR \-\-no-config " | " \-C
+Suppresses reading of any configuration file,
+even one explicitly specified via either
+.BR \-\-config
+or
+.BR \-c .
+.TP
 .TP
 .BR \-\-no-hyphen " | "  \-y
 Suppresses wrapping at hyphen characters.
 .TP
 .BR \-\-no-newlines-delimit " | " \-n
 Does not treat newlines as paragraph delimiters.
-.TP
-.BR \-\-all-newlines-delimit " | "  \-N
-Treats every newline as a paragraph delimiter.
-This option is useful for line-breaking code prior to printing.
 .TP
 .BI \-\-output \f1=\fPf "\f1 | \fP" "" \-o " f"
 Writes to file
@@ -396,6 +396,9 @@ Prints the version number to
 .I stderr
 and exit.
 .TP
+.BR \-\-whitespace-delimit " | " \-W
+Treats a line beginning with whitespace as a paragraph delimiter.
+.TP
 .BI \-\-width \f1=\fPn "\f1 | \fP" "" \-w " n"
 Sets
 .I line-width
@@ -414,9 +417,6 @@ sets
 .I line-width
 to the width of the controlling terminal window,
 if any.
-.TP
-.BR \-\-whitespace-delimit " | " \-W
-Treats a line beginning with whitespace as a paragraph delimiter.
 .SH MARKDOWN FORMATTING
 Via either the
 .B \-\-markdown
