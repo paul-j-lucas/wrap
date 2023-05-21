@@ -836,11 +836,12 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
     alias_t const *alias = NULL;
     opt_conf_file = read_conf( opt_conf_file );
     if ( opt_alias != NULL ) {
-      if ( (alias = alias_find( opt_alias )) == NULL )
+      if ( (alias = alias_find( opt_alias )) == NULL ) {
         fatal_error( EX_USAGE,
           "\"%s\": no such alias in %s\n",
           opt_alias, opt_conf_file
         );
+      }
     }
     else if ( opt_fin_name != NULL ) {
       alias = pattern_find( opt_fin_name );
