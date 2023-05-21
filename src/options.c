@@ -846,11 +846,12 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
     else if ( opt_fin_name != NULL ) {
       alias = pattern_find( opt_fin_name );
     }
-    if ( alias != NULL )
+    if ( alias != NULL ) {
       parse_options(
         alias->argc, alias->argv, OPTS_SHORT[0], OPTS_LONG[0],
         /*cmdline_forbidden_opts=*/"", usage, alias->line_no
       );
+    }
   }
 
   if ( opt_fin != NULL && (fin = fopen( opt_fin, "r" )) == NULL )
