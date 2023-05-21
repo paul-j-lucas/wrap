@@ -123,7 +123,7 @@ static unsigned     parse_width( char const* );
 /// @endcond
 
 /**
- * Command-line options common to both **wrap** and **wrapc**.
+ * Command-line short options common to both **wrap** and **wrapc**.
  */
 #define COMMON_OPTS_SHORT                             \
   SOPT(ALIAS)                 SOPT_REQUIRED_ARGUMENT  \
@@ -159,7 +159,7 @@ static unsigned     parse_width( char const* );
   SOPT(VERSION)
 
 /**
- * Command-line options specific to **wrap**.
+ * Command-line short options specific to **wrap**.
  *
  * @note The short option for `--hang-tabs` isn't here because it shares it
  * with `--help` that is common to both **wrap** and **wrapc**.  There's
@@ -183,7 +183,7 @@ static unsigned     parse_width( char const* );
   SOPT(WHITESPACE_DELIMIT)    SOPT_NO_ARGUMENT
 
 /**
- * Command-line options specific to **wrapc**.
+ * Command-line short options specific to **wrapc**.
  */
 #define WRAPC_SPECIFIC_OPTS_SHORT                     \
   SOPT(ALIGN_COLUMN)          SOPT_REQUIRED_ARGUMENT  \
@@ -191,93 +191,101 @@ static unsigned     parse_width( char const* );
 
 //
 // Each command forbids the others' specific options, but only on the command-
-// line and not in the conf file.
+// line and not in configuration files.
 //
 static char const *const CMDLINE_FORBIDDEN_OPTS_SHORT[] = {
   WRAPC_SPECIFIC_OPTS_SHORT,            // wrap
   WRAP_SPECIFIC_OPTS_SHORT              // wrapc
 };
 
+/**
+ * Command-line short options array:
+ *
+ *  + 0 = wrap's options
+ *  + 1 = wrapc's options
+ */
 static char const *const OPTS_SHORT[] = {
-  //
-  // wrap's options
-  //
   // wrap's options have to include wrapc's specific options so they're
   // accepted (but ignored) in conf files.
-  //
   ":" COMMON_OPTS_SHORT WRAP_SPECIFIC_OPTS_SHORT WRAPC_SPECIFIC_OPTS_SHORT,
 
-  //
-  // wrapc's options
-  //
   ":" COMMON_OPTS_SHORT WRAPC_SPECIFIC_OPTS_SHORT
 };
 
+/**
+ * Command-line common long options.
+ */
+#define COMMON_OPTS_LONG                                                      \
+  { "alias",                required_argument,  NULL, COPT(ALIAS)         },  \
+  { "block-regex",          required_argument,  NULL, COPT(BLOCK_REGEX)   },  \
+  { "config",               required_argument,  NULL, COPT(CONFIG)        },  \
+  { "doxygen",              no_argument,        NULL, COPT(DOXYGEN)       },  \
+  { "eol",                  required_argument,  NULL, COPT(EOL)           },  \
+  { "eos-delimit",          no_argument,        NULL, COPT(EOS_DELIMIT)   },  \
+  { "eos-spaces",           required_argument,  NULL, COPT(EOS_SPACES)    },  \
+  { "file",                 required_argument,  NULL, COPT(FILE)          },  \
+  { "file-name",            required_argument,  NULL, COPT(FILE_NAME)     },  \
+  { "help",                 no_argument,        NULL, COPT(HELP)          },  \
+  { "markdown",             no_argument,        NULL, COPT(MARKDOWN)      },  \
+  { "no-config",            no_argument,        NULL, COPT(NO_CONFIG)     },  \
+  { "no-hyphen",            no_argument,        NULL, COPT(NO_HYPHEN)     },  \
+  { "output",               required_argument,  NULL, COPT(OUTPUT)        },  \
+  { "para-chars",           required_argument,  NULL, COPT(PARA_CHARS)    },  \
+  { "tab-spaces",           required_argument,  NULL, COPT(TAB_SPACES)    },  \
+  { "title-line",           no_argument,        NULL, COPT(TITLE_LINE)    },  \
+  { "version",              no_argument,        NULL, COPT(VERSION)       },  \
+  { "width",                required_argument,  NULL, COPT(WIDTH)         }
+
+/**
+ * Command-line wrapc-specific long options.
+ */
+#define WRAPC_SPECIFIC_OPTS_LONG                                              \
+  { "align-column",         required_argument,  NULL, COPT(ALIGN_COLUMN)  },  \
+  { "comment-chars",        required_argument,  NULL, COPT(COMMENT_CHARS) }
+
+/**
+ * Command-line wrap long options.
+ */
 static struct option const WRAP_OPTS_LONG[] = {
-  { "alias",                required_argument,  NULL, COPT(ALIAS)         },
-  { "align-column",         required_argument,  NULL, COPT(ALIGN_COLUMN)  },
+  COMMON_OPTS_LONG,
   { "all-newlines-delimit", no_argument,        NULL, COPT(ALL_NEWLINES_DELIMIT) },
-  { "block-regex",          required_argument,  NULL, COPT(BLOCK_REGEX)   },
-  { "comment-chars",        required_argument,  NULL, COPT(COMMENT_CHARS) },
-  { "config",               required_argument,  NULL, COPT(CONFIG)        },
   { "dot-ignore",           no_argument,        NULL, COPT(DOT_IGNORE)    },
-  { "doxygen",              no_argument,        NULL, COPT(DOXYGEN)       },
-  { "eol",                  required_argument,  NULL, COPT(EOL)           },
-  { "eos-delimit",          no_argument,        NULL, COPT(EOS_DELIMIT)   },
-  { "eos-spaces",           required_argument,  NULL, COPT(EOS_SPACES)    },
-  { "file",                 required_argument,  NULL, COPT(FILE)          },
-  { "file-name",            required_argument,  NULL, COPT(FILE_NAME)     },
   { "hang-spaces",          required_argument,  NULL, COPT(HANG_SPACES)   },
   { "hang-tabs",            required_argument,  NULL, COPT(HANG_TABS)     },
-  { "help",                 no_argument,        NULL, COPT(HELP)          },
   { "indent-spaces",        required_argument,  NULL, COPT(INDENT_SPACES) },
   { "indent-tabs",          required_argument,  NULL, COPT(INDENT_TABS)   },
   { "lead-spaces",          required_argument,  NULL, COPT(LEAD_SPACES)   },
   { "lead-string",          required_argument,  NULL, COPT(LEAD_STRING)   },
   { "lead-tabs",            required_argument,  NULL, COPT(LEAD_TABS)     },
-  { "markdown",             no_argument,        NULL, COPT(MARKDOWN)      },
   { "mirror-spaces",        required_argument,  NULL, COPT(MIRROR_SPACES) },
   { "mirror-tabs",          required_argument,  NULL, COPT(MIRROR_TABS)   },
-  { "no-config",            no_argument,        NULL, COPT(NO_CONFIG)     },
-  { "no-hyphen",            no_argument,        NULL, COPT(NO_HYPHEN)     },
   { "no-newlines-delimit",  no_argument,        NULL, COPT(NO_NEWLINES_DELIMIT) },
-  { "output",               required_argument,  NULL, COPT(OUTPUT)        },
-  { "para-chars",           required_argument,  NULL, COPT(PARA_CHARS)    },
   { "prototype",            no_argument,        NULL, COPT(PROTOTYPE)     },
-  { "tab-spaces",           required_argument,  NULL, COPT(TAB_SPACES)    },
-  { "title-line",           no_argument,        NULL, COPT(TITLE_LINE)    },
-  { "version",              no_argument,        NULL, COPT(VERSION)       },
   { "whitespace-delimit",   no_argument,        NULL, COPT(WHITESPACE_DELIMIT) },
-  { "width",                required_argument,  NULL, COPT(WIDTH)         },
   { "_ENABLE-IPC",          no_argument,        NULL, COPT(ENABLE_IPC)    },
+
+  // wrap's options have to include wrapc's specific options so they're
+  // accepted (but ignored) in conf files.
+  WRAPC_SPECIFIC_OPTS_LONG,
+
   { NULL,                   0,                  NULL, 0                   }
 };
 
+/**
+ * Command-line wrapc long options.
+ */
 static struct option const WRAPC_OPTS_LONG[] = {
-  { "alias",                required_argument,  NULL, COPT(ALIAS)         },
-  { "align-column",         required_argument,  NULL, COPT(ALIGN_COLUMN)  },
-  { "block-regex",          required_argument,  NULL, COPT(BLOCK_REGEX)   },
-  { "comment-chars",        required_argument,  NULL, COPT(COMMENT_CHARS) },
-  { "config",               required_argument,  NULL, COPT(CONFIG)        },
-  { "doxygen",              no_argument,        NULL, COPT(DOXYGEN)       },
-  { "eol",                  required_argument,  NULL, COPT(EOL)           },
-  { "eos-delimit",          no_argument,        NULL, COPT(EOS_DELIMIT)   },
-  { "eos-spaces",           required_argument,  NULL, COPT(EOS_SPACES)    },
-  { "file",                 required_argument,  NULL, COPT(FILE)          },
-  { "file-name",            required_argument,  NULL, COPT(FILE_NAME)     },
-  { "help",                 no_argument,        NULL, COPT(HELP)          },
-  { "markdown",             no_argument,        NULL, COPT(MARKDOWN)      },
-  { "no-config",            no_argument,        NULL, COPT(NO_CONFIG)     },
-  { "no-hyphen",            no_argument,        NULL, COPT(NO_HYPHEN)     },
-  { "output",               required_argument,  NULL, COPT(OUTPUT)        },
-  { "para-chars",           required_argument,  NULL, COPT(PARA_CHARS)    },
-  { "tab-spaces",           required_argument,  NULL, COPT(TAB_SPACES)    },
-  { "title-line",           no_argument,        NULL, COPT(TITLE_LINE)    },
-  { "version",              no_argument,        NULL, COPT(VERSION)       },
-  { "width",                required_argument,  NULL, COPT(WIDTH)         },
+  COMMON_OPTS_LONG,
+  WRAPC_SPECIFIC_OPTS_LONG,
   { NULL,                   0,                  NULL, 0                   }
 };
 
+/**
+ * Command-line long options array:
+ *
+ *  + 0 = wrap's options
+ *  + 1 = wrapc's options
+ */
 static struct option const *const OPTS_LONG[] = {
   WRAP_OPTS_LONG,
   WRAPC_OPTS_LONG
