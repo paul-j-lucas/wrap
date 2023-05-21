@@ -830,7 +830,7 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
   argc -= optind;
   argv += optind;
   if ( argc > 0 )
-    usage( EX_USAGE );
+    (*usage)( EX_USAGE );
 
   if ( !opt_no_conf && (opt_alias != NULL || opt_fin_name != NULL) ) {
     alias_t const *alias = NULL;
