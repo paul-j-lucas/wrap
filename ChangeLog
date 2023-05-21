@@ -1,5 +1,10 @@
 2023-05-20  Paul J. Lucas <paul@lucasmail.org>
 
+   * options.c: Sorted long options.
+   * configure.ac, wrap.1, wrapc.1, options.c, options.h, wrap.c, wrapc.c:
+     Added --help/-h option.
+   * options.c: Removed wrong call to fatal_error().
+   * options.h, pjl_config.h, wrap.c, wrapc.c: Added UOPT().
    * options.c: Now skipping whitespace in option arguments.
    * markdown.c, markdown.h, wrap.c: s/fn_def_text/footnote_def_has_text/
    * wrap.c: Replaced `switch` with `if`.
