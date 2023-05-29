@@ -1,3 +1,12 @@
+2023-05-29  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac, src/Makefile.am: Added WRAP_CFLAGS so as not to compile
+     GnuLib code with wrap CFLAGS.
+
+2023-05-21  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.c: Added "; use --help or -h for help".
+
 2023-05-20  Paul J. Lucas <paul@lucasmail.org>
 
    * options.c: Consolidated long options.
