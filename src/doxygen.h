@@ -98,7 +98,7 @@ NODISCARD
 dox_cmd_t const* dox_find_cmd( char const *s );
 
 /**
- * Attempts to parse a Doxygen at the start of \a s.
+ * Attempts to parse a Doxygen command at the start of \a s.
  *
  * @param s The string to parse.
  * @param dox_cmd_name If \a s starts with optional whitespace followed by a
