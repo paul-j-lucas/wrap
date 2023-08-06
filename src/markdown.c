@@ -231,7 +231,7 @@ static inline bool md_is_code_fence_end( char const *s,
  */
 NODISCARD
 static inline bool md_is_link_title( char const *s ) {
-  return *s == '"' || *s == '\'' || *s == '(';
+  return s[0] == '"' || s[0] == '\'' || s[0] == '(';
 }
 
 /**
