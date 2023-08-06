@@ -74,11 +74,11 @@ static bool is_begin_word_boundary( char const *s, char const *curr ) {
   if ( prev == NULL )
     return true;
 
-  char32_t const cp_curr = utf8_decode( curr );
-  char32_t const cp_prev = utf8_decode( prev );
+  char32_t const curr_cp = utf8_decode( curr );
+  char32_t const prev_cp = utf8_decode( prev );
 
-  return (cp_is_word_char( cp_curr ) ^ cp_is_word_char( cp_prev ))
-      || (cp_is_space( cp_curr ) ^ cp_is_space( cp_prev ));
+  return (cp_is_word_char( curr_cp ) ^ cp_is_word_char( prev_cp ))
+      || (cp_is_space( curr_cp ) ^ cp_is_space( prev_cp ));
 }
 
 ////////// extern functions ///////////////////////////////////////////////////
