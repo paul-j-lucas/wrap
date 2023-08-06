@@ -113,8 +113,8 @@ static bool is_eol_comment( char const *s ) {
   // Attempt to find the closing comment delimiter characters.
   //
   char const d2 = *s;                   // save second delimiter character
-  for ( char c_prev = '\0'; *++s != '\0'; c_prev = *s ) {
-    if ( c_prev == d2 && *s == closing ) {
+  for ( char prev_c = '\0'; *++s != '\0'; prev_c = *s ) {
+    if ( prev_c == d2 && *s == closing ) {
       //
       // We found the closing comment delimiter characters: now it's just like
       // the single-character comment delimiter case above.
