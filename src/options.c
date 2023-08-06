@@ -586,7 +586,7 @@ static void parse_options( int argc, char const *argv[],
 //    case COPT(HELP):
         //
         // The --hang-tabs and --help options share the same -h short option.
-        // We made its argument optional to disambiguate it: if it's absert,
+        // We made its argument optional to disambiguate it: if it's absent,
         // assume it's for --help; if present, assume it's for --hand-tabs.
         //
         if ( optarg == NULL )
