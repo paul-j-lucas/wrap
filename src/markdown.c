@@ -155,6 +155,9 @@ NODISCARD
 static md_line_t    md_nested_within( void );
 
 NODISCARD
+static unsigned     md_ol_digits( md_ol_t );
+
+NODISCARD
 static char const*  skip_html_tag( char const*, bool* );
 
 ////////// inline functions ///////////////////////////////////////////////////
@@ -811,15 +814,7 @@ static bool md_is_ol( char const *s, md_ol_t *ol_num, char *ol_c,
     *ol_c = d[0];
     *indent_hang = d[1] == '\t' ?
       MD_LIST_INDENT_MAX :
-      MD_OL_INDENT_MIN + is_space( d[2] ) +
-      (*ol_num >=        10 ? 1 : 0) +
-      (*ol_num >=       100 ? 1 : 0) +
-      (*ol_num >=      1000 ? 1 : 0) +
-      (*ol_num >=     10000 ? 1 : 0) +
-      (*ol_num >=    100000 ? 1 : 0) +
-      (*ol_num >=   1000000 ? 1 : 0) +
-      (*ol_num >=  10000000 ? 1 : 0) +
-      (*ol_num >= 100000000 ? 1 : 0);
+      MD_OL_INDENT_MIN + is_space( d[2] ) + md_ol_digits( *ol_num ) - 1;
     return true;
   }
   return false;
@@ -897,7 +892,7 @@ static bool md_is_Setext_header( char const *s ) {
 /**
  * Checks the innermost enclosing nestable line type, if any.
  *
- * @return Returns said line true or MD_NONE if none.
+ * @return Returns said line type or MD_NONE if none.
  */
 NODISCARD
 static md_line_t md_nested_within( void ) {
@@ -907,6 +902,19 @@ static md_line_t md_nested_within( void ) {
       return line_type;
   } // for
   return MD_NONE;
+}
+
+/**
+ * Gets the number of digits \a n would take to print.
+ *
+ * @return Returns said number of digits.
+ */
+NODISCARD
+static unsigned md_ol_digits( md_ol_t n ) {
+  char c;
+  int const len = snprintf( &c, 1, "%u", n );
+  PERROR_EXIT_IF( len < 0, EX_IOERR );
+  return STATIC_CAST( unsigned, len );
 }
 
 /**
@@ -922,13 +930,14 @@ static void md_renumber_ol( char *s, md_ol_t old_n, md_ol_t new_n ) {
   assert( s != NULL );
   if ( new_n != old_n ) {
     size_t const s_len = strlen( s );
-    size_t const old_digits =
-      STATIC_CAST( size_t, 1 + (old_n > 9) + (old_n > 99) );
+    size_t const old_digits = md_ol_digits( old_n );
 
     // convert new_n to a string
     char new_buf[11];                   // enough for sizeof(md_ol_t) == 4
-    snprintf( new_buf, sizeof new_buf, "%u", new_n );
-    size_t const new_digits = strlen( new_buf );
+    int const new_len = snprintf( new_buf, sizeof new_buf, "%u", new_n );
+    PERROR_EXIT_IF( new_len < 0, EX_IOERR );
+    size_t const new_digits = STATIC_CAST( size_t, new_len );
+    assert( new_digits < sizeof new_buf );
 
     // ensure there's the exact right amount of space for new_n
     if ( old_digits < new_digits )
