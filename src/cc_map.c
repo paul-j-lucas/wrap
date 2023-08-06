@@ -67,8 +67,8 @@ static inline void cc_map_init( void ) {
 NODISCARD
 static unsigned cc_set_add( cc_set_t cc_set, char c ) {
   unsigned added = 0;
-  if ( !cc_set[ (unsigned char)c ] ) {
-    cc_set[ (unsigned char)c ] = true;
+  if ( !cc_set[ STATIC_CAST( unsigned char, c ) ] ) {
+    cc_set[ STATIC_CAST( unsigned char, c ) ] = true;
     ++added;
     char const closing = closing_char( c );
     if ( closing != '\0' && !cc_set[ (unsigned char)closing ] ) {
@@ -109,7 +109,7 @@ char const* cc_map_compile( char const *in_cc ) {
       );
     char const cc1 = is_double_cc ? cc[1] : CC_SINGLE_CHAR;
 
-    unsigned char const *const ucc = (unsigned char*)cc;
+    unsigned char const *const ucc = STATIC_CAST( unsigned char*, cc );
     char *cc_map_entry = cc_map[ ucc[0] ];
     if ( cc_map_entry == NULL ) {
       cc_map_entry = MALLOC( char, 1 + 1/*null*/ );
