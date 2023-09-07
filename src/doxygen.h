@@ -64,9 +64,9 @@
 
 /**
  * Doxygen command maximum size.
- * (The longest command is currently `protectedsection`.)
+ * (The longest command is currently `hidecollaborationgraph`.)
  */
-#define DOX_CMD_NAME_SIZE_MAX     16
+#define DOX_CMD_NAME_SIZE_MAX     22
 
 /**
  * Bitmask for Doxygen command types.
