@@ -438,74 +438,78 @@ static pid_t read_source_write_wrap( void ) {
     if ( suffix_buf[0] != '\0' )
       chop_suffix( line );
 
-    if ( opt_doxygen ) {
-      char dox_cmd_name[ DOX_CMD_NAME_SIZE_MAX + 1 ];
-      if ( dox_parse_cmd_name( line, dox_cmd_name ) ) {
-        static dox_cmd_t const *prev_dox_cmd;
-        if ( prev_dox_cmd == NULL ) {
-          //
-          // See if it's a known Doxygen command.
-          //
-          dox_cmd_t const *const dox_cmd = dox_find_cmd( dox_cmd_name );
-          if ( dox_cmd != NULL ) {
-            if ( (dox_cmd->type & DOX_BOL) != 0 )
-              WIPC_SEND( fwrap, WIPC_CODE_DELIMIT_PARAGRAPH );
+    if ( !opt_doxygen ) {
+      FPUTS( line, fwrap );
+      continue;
+    }
 
-            if ( (dox_cmd->type & DOX_EOL) != 0 ) {
-              //
-              // The Doxygen command continues until the end of the line: treat
-              // it as preformatted.
-              //
-              WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_BEGIN );
-            }
+    char dox_cmd_name[ DOX_CMD_NAME_SIZE_MAX + 1 ];
+    if ( !dox_parse_cmd_name( line, dox_cmd_name ) ) {
+      FPUTS( line, fwrap );
+      continue;
+    }
 
-            FPUTS( line, fwrap );
-
-            if ( (dox_cmd->type & DOX_EOL) != 0 )
-              WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_END );
-
-            if ( (dox_cmd->type & DOX_PRE) != 0 ) {
-              //
-              // The Doxygen command is for a block of preformatted text (e.g.,
-              // @code, @dot, @verbatim, etc.): tell wrap to suspend wrapping
-              // and begin sending preformatted text through verbatim until we
-              // encounter the command's corresponding end command.
-              //
-              WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_BEGIN );
-              prev_dox_cmd = dox_cmd;
-            }
-
-            continue;
-          }
-          else {
-            //
-            // It's a Doxygen command we know nothing about (or something that
-            // looks like a Doxgen command, e.g., "\t"): just pass it along to
-            // wrap as-is and hope for the best.
-            //
-          }
-        }
-        else if ( strcmp( dox_cmd_name, prev_dox_cmd->end_name ) == 0 ) {
-          //
-          // We've encountered the previous Doxygen command's corresponding end
-          // command: put that line, then tell wrap to resume wrapping.
-          //
-          FPUTS( line, fwrap );
-          WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_END );
-          prev_dox_cmd = NULL;
-          continue;
-        }
-        else {
-          //
-          // It's not the corresponding end command for the previous Doxygen
-          // command that copies preformatted text: just pass it along to wrap
-          // as-is.
-          //
-        }
+    static dox_cmd_t const *prev_dox_cmd;
+    if ( prev_dox_cmd != NULL ) {
+      if ( strcmp( dox_cmd_name, prev_dox_cmd->end_name ) == 0 ) {
+        //
+        // We've encountered the previous Doxygen command's corresponding end
+        // command: put that line, then tell wrap to resume wrapping.
+        //
+        FPUTS( line, fwrap );
+        WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_END );
+        prev_dox_cmd = NULL;
       }
+      else {
+        //
+        // It's not the corresponding end command for the previous Doxygen
+        // command that copies preformatted text: just pass it along to wrap
+        // as-is.
+        //
+      }
+      continue;
+    }
+
+    //
+    // See if it's a known Doxygen command.
+    //
+    dox_cmd_t const *const dox_cmd = dox_find_cmd( dox_cmd_name );
+    if ( dox_cmd == NULL ) {
+      //
+      // It's a Doxygen command we know nothing about (or something that looks
+      // like a Doxgen command, e.g., "\t"): just pass it along to wrap as-is
+      // and hope for the best.
+      //
+      FPUTS( line, fwrap );
+      continue;
+    }
+
+    if ( (dox_cmd->type & DOX_BOL) != 0 )
+      WIPC_SEND( fwrap, WIPC_CODE_DELIMIT_PARAGRAPH );
+
+    if ( (dox_cmd->type & DOX_EOL) != 0 ) {
+      //
+      // The Doxygen command continues until the end of the line: treat it as
+      // preformatted.
+      //
+      WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_BEGIN );
     }
 
     FPUTS( line, fwrap );
+
+    if ( (dox_cmd->type & DOX_EOL) != 0 )
+      WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_END );
+
+    if ( (dox_cmd->type & DOX_PRE) != 0 ) {
+      //
+      // The Doxygen command is for a block of preformatted text (e.g., @code,
+      // @dot, @verbatim, etc.): tell wrap to suspend wrapping and begin
+      // sending preformatted text through verbatim until we encounter the
+      // command's corresponding end command.
+      //
+      WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_BEGIN );
+      prev_dox_cmd = dox_cmd;
+    }
   } // for
   exit( EX_OK );
 
