@@ -1013,11 +1013,11 @@ static void usage( int status ) {
 "  --alias=NAME           " UOPT(ALIAS)
                           "Use alias from configuration file.\n"
 "  --all-newlines-delimit " UOPT(ALL_NEWLINES_DELIMIT)
-                          "Treat newlines as a paragraph delimiters.\n"
+                          "Treat newlines as paragraph delimiters.\n"
 "  --block-regex=REGEX    " UOPT(BLOCK_REGEX)
                           "Block leading regular expression.\n"
 "  --config=FILE          " UOPT(CONFIG)
-                          "The configuration file [default: ~/" CONF_FILE_NAME_DEFAULT "].\n"
+                          "Configuration file path [default: ~/" CONF_FILE_NAME_DEFAULT "].\n"
 "  --dot-ignore           " UOPT(DOT_IGNORE)
                           "Do not alter lines that begin with '.' (dot).\n"
 "  --eol=STR              " UOPT(EOL) "\n"
@@ -1031,21 +1031,21 @@ static void usage( int status ) {
 "  --file-name=NAME       " UOPT(FILE_NAME)
                           "Filename for stdin.\n"
 "  --hang-spaces=NUM      " UOPT(HANG_SPACES) "\n"
-"      Hang-indent spaces after tabs for all but first line of each paragraph.\n"
+"      Hang-indent spaces after tabs for all but first line of every paragraph.\n"
 "  --hang-tabs=NUM        " UOPT(HANG_TABS) "\n"
-"      Hang-indent tabs for all but first line of each paragraph.\n"
+"      Hang-indent tabs for all but first line of every paragraph.\n"
 "  --help                 " UOPT(HELP)
                           "Print this help and exit.\n"
 "  --indent-spaces=NUM    " UOPT(INDENT_SPACES) "\n"
-"      Indent spaces after tabs for first line of each paragraph.\n"
+"      Indent spaces after tabs for first line of every paragraph.\n"
 "  --indent-tabs=NUM      " UOPT(INDENT_TABS)
-                          "Indent tabs for first line of each paragraph.\n"
+                          "Indent tabs for first line of every paragraph.\n"
 "  --lead-spaces=NUM      " UOPT(LEAD_SPACES)
-                          "Prepend leading spaces after tabs to each line.\n"
+                          "Prepend leading spaces after tabs to every line.\n"
 "  --lead-string=STR      " UOPT(LEAD_STRING)
                           "String to prepend to every line.\n"
 "  --lead-tabs=NUM        " UOPT(LEAD_TABS)
-                          "Prepend leading tabs to each line.\n"
+                          "Prepend leading tabs to every line.\n"
 "  --markdown             " UOPT(MARKDOWN)
                           "Format Markdown.\n"
 "  --mirror-spaces=NUM    " UOPT(MIRROR_SPACES)
@@ -1071,7 +1071,7 @@ static void usage( int status ) {
 "  --version              " UOPT(VERSION)
                           "Print version and exit.\n"
 "  --whitespace-delimit   " UOPT(WHITESPACE_DELIMIT) "\n"
-"      Treat line beginning with whitespace as paragraph delimiter.\n"
+"      Treat lines beginning with whitespace as paragraph delimiters.\n"
 "  --width=NUM|terminal   " UOPT(WIDTH)
                           "Line width [default: " STRINGIFY(LINE_WIDTH_DEFAULT) "].\n"
 "\n"
