@@ -1,5 +1,17 @@
 2023-09-18  Paul J. Lucas <paul@lucasmail.org>
 
+   * lib/Makefile.am, attribute.h, getopt-cdefs.in.h, intprops-internal.h,
+     mbrtoc32.c, mbtowc-lock.c, setlocale-lock.c, stddef.in.h, stdlib.in.h,
+     string.in.h, uchar.in.h, unistr/u-strlen.h, verify.h, wchar.in.h,
+     wctype.in.h, xalloc-oversized.h, absolute-header.m4, btowc.m4, fnmatch.m4,
+     getopt.m4, gnulib-common.m4, gnulib-comp.m4, iswdigit.m4, iswpunct.m4,
+     iswxdigit.m4, locale-fr.m4, locale-ja.m4, locale-zh.m4, locale_h.m4,
+     malloc.m4, mbrtoc32.m4, mbrtowc.m4, mbsinit.m4, mbsrtowcs.m4, memchr.m4,
+     setlocale_null.m4, stdint.m4, strerror.m4, threadlib.m4, wctype.m4,
+     wctype_h.m4: Updated GnuLib.
+   * configure.ac: Upped version to 5.9.1.
+   * wrapc.c: De-nested code.
+   * doxygen.c: Changed htmlonly to DOX_PRE; changed parblock to DOX_EOL.
    * wrap.c: Changed `if ( c == WIPC_CODE_HELLO )` to `while`.
    * common.h, wrap.c, wrapc.c: Converted WIPC_CODE_* into an enum.
    * common.h, wrap.c, wrapc.c: Renamed WIPC codes to include _CODE.
