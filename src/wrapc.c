@@ -571,7 +571,10 @@ static void read_wrap( void ) {
     char *line = line_buf;
 
     if ( line[0] == WIPC_CODE_HELLO ) {
-      switch ( line[1] ) {
+      switch ( STATIC_CAST( wipc_code_t, line[1] ) ) {
+        case WIPC_CODE_HELLO:
+          break;
+
         case WIPC_CODE_NEW_LEADER: {
           //
           // We've been told by child 1 (read_source_write_wrap(), via child 2,
@@ -601,15 +604,14 @@ static void read_wrap( void ) {
           //
           fcopy( fwrap, fout );
           goto done;
-
-        default:
-          //
-          // We got a DLE followed by an unexpected character: skip over the
-          // DLE and format the remaining buffer.
-          //
-          ++line;
-          --line_size;
       } // switch
+
+      //
+      // We got a HELLO followed by an unexpected character: skip over the
+      // HELLO and format the remaining buffer.
+      //
+      ++line;
+      --line_size;
     }
 
     if ( suffix_buf[0] != '\0' ) {

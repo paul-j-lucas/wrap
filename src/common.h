@@ -92,44 +92,6 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
 #define ASCII_SOH                 '\x01'
 
 /**
- * IPC code to in-band signal the start of an IPC message.  It _must_ be
- * immediately followed by another IPC code that indicates the type of message.
- * All IPC messages _must_ be terminated by a newline.
- */
-#define WIPC_CODE_HELLO                 ASCII_DLE
-
-/**
- * IPC code to trigger the delimiting of a paragraph.
- */
-#define WIPC_CODE_DELIMIT_PARAGRAPH     ASCII_DC2
-
-/**
- * IPC code to signal a change in the leading comment characters and/or
- * whitespace.  Its parameters are:
- *
- *      <line_width>|<line_prefix>
- */
-#define WIPC_CODE_NEW_LEADER            ASCII_SOH
-
-/**
- * IPC code to suspend wrapping and begin sending preformatted text through
- * verbatim.
- */
-#define WIPC_CODE_PREFORMATTED_BEGIN    ASCII_DC3
-
-/**
- * IPC code to end sending preformatted text through verbatim and resume
- * wrapping normally.
- */
-#define WIPC_CODE_PREFORMATTED_END      ASCII_DC1
-
-/**
- * IPC code to signal the end of the block of text to be wrapped.  Any text
- * sent after this is passed through verbatim.
- */
-#define WIPC_CODE_WRAP_END              ASCII_ETB
-
-/**
  * Sends a no-argument Interprocess Communication (IPC) message.
  * @hideinitializer
  */
@@ -147,6 +109,50 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
  * message.
  */
 #define WIPC_SEP                  "|"
+
+/**
+ * Interprocess Communication (IPC) command codes.
+ */
+enum wipc_code {
+  /**
+   * IPC code to in-band signal the start of an IPC message.  It _must_ be
+   * immediately followed by another IPC code that indicates the type of
+   * message.  All IPC messages _must_ be terminated by a newline.
+   */
+  WIPC_CODE_HELLO                 = ASCII_DLE,
+  
+  /**
+   * IPC code to trigger the delimiting of a paragraph.
+   */
+  WIPC_CODE_DELIMIT_PARAGRAPH     = ASCII_DC2,
+  
+  /**
+   * IPC code to signal a change in the leading comment characters and/or
+   * whitespace.  Its parameters are:
+   *
+   *      <line_width>|<line_prefix>
+   */
+  WIPC_CODE_NEW_LEADER            = ASCII_SOH,
+  
+  /**
+   * IPC code to suspend wrapping and begin sending preformatted text through
+   * verbatim.
+   */
+  WIPC_CODE_PREFORMATTED_BEGIN    = ASCII_DC3,
+  
+  /**
+   * IPC code to end sending preformatted text through verbatim and resume
+   * wrapping normally.
+   */
+  WIPC_CODE_PREFORMATTED_END      = ASCII_DC1,
+  
+  /**
+   * IPC code to signal the end of the block of text to be wrapped.  Any text
+   * sent after this is passed through verbatim.
+   */
+  WIPC_CODE_WRAP_END              = ASCII_ETB
+};
+typedef enum wipc_code wipc_code_t;
 
 ////////// extern functions ///////////////////////////////////////////////////
 

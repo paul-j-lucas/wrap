@@ -542,7 +542,13 @@ read_line:
     return c;
 
   if ( c == WIPC_CODE_HELLO ) {
-    switch ( c = *(*ppc)++ ) {
+    c = *(*ppc)++;
+    if ( c == '\0' )
+      return EOF;
+    switch ( STATIC_CAST( wipc_code_t, c ) ) {
+      case WIPC_CODE_HELLO:
+        goto read_line;
+
       case WIPC_CODE_DELIMIT_PARAGRAPH:
         consec_newlines = 0;
         delimit_paragraph();
@@ -602,9 +608,6 @@ read_line:
         WIPC_SEND( fout, WIPC_CODE_WRAP_END );
         fcopy( fin, fout );
         exit( EX_OK );
-
-      case '\0':
-        return EOF;
     } // switch
   }
 
