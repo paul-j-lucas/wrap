@@ -185,7 +185,7 @@ char32_t utf8_decode_impl( char const *s ) {
   assert( len >= 1 );
 
   char32_t cp = 0;
-  char8_t const *c8 = (char8_t const*)s;
+  char8_t const *c8 = POINTER_CAST( char8_t const*, s );
 
   switch ( len ) {
     case 6: cp += *c8++; cp <<= 6; FALLTHROUGH;

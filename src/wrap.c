@@ -729,8 +729,10 @@ static void init( int argc, char const *argv[] ) {
   }
 
   int const temp_width = STATIC_CAST( int, opt_line_width ) -
-    (int)(2 * (opt_mirror_tabs * opt_tab_spaces + opt_mirror_spaces) +
-          opt_lead_tabs * opt_tab_spaces + opt_lead_spaces);
+    STATIC_CAST( int,
+      2 * (opt_mirror_tabs * opt_tab_spaces + opt_mirror_spaces) +
+      opt_lead_tabs * opt_tab_spaces + opt_lead_spaces
+    );
 
   if ( temp_width < LINE_WIDTH_MINIMUM ) {
     fatal_error( EX_USAGE,

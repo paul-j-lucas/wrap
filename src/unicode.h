@@ -29,6 +29,7 @@
 
 // local
 #include "pjl_config.h"                 /* must go first */
+#include "util.h"
 
 // standard
 #include <inttypes.h>                   /* for uint*_t */
@@ -38,7 +39,6 @@
 #if HAVE_CHAR8_T || HAVE_CHAR32_T
 #include <uchar.h>
 #endif /* HAVE_CHAR8_T || HAVE_CHAR32_T */
-#include "util.h"
 #include <wctype.h>
 
 #if !HAVE_CHAR8_T
