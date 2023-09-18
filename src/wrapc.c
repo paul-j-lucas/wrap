@@ -572,7 +572,7 @@ static void read_wrap( void ) {
 
     if ( line[0] == WIPC_CODE_HELLO ) {
       switch ( STATIC_CAST( wipc_code_t, line[1] ) ) {
-        case WIPC_CODE_HELLO:
+        case WIPC_CODE_HELLO:           // shouldn't happen
           break;
 
         case WIPC_CODE_NEW_LEADER: {
@@ -607,8 +607,8 @@ static void read_wrap( void ) {
       } // switch
 
       //
-      // We got a HELLO followed by an unexpected character: skip over the
-      // HELLO and format the remaining buffer.
+      // We got a HELLO followed by an unknown WIPC code: skip over the HELLO
+      // and format the remaining buffer.
       //
       ++line;
       --line_size;
