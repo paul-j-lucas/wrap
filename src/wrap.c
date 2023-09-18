@@ -541,13 +541,13 @@ read_line:
   if ( !opt_data_link_esc )
     return c;
 
-  if ( c == WIPC_CODE_HELLO ) {
+  while ( c == WIPC_CODE_HELLO ) {
     c = *(*ppc)++;
     if ( c == '\0' )
       return EOF;
     switch ( STATIC_CAST( wipc_code_t, c ) ) {
-      case WIPC_CODE_HELLO:
-        goto read_line;
+      case WIPC_CODE_HELLO:             // shouldn't happen
+        break;
 
       case WIPC_CODE_DELIMIT_PARAGRAPH:
         consec_newlines = 0;
@@ -609,7 +609,7 @@ read_line:
         fcopy( fin, fout );
         exit( EX_OK );
     } // switch
-  }
+  } // while
 
   if ( is_preformatted ) {
     FPUTS( input_buf, fout );
