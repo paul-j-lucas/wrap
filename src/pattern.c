@@ -123,27 +123,30 @@ void pattern_parse( char const *line, char const *conf_file,
     fatal_error( EX_CONFIG, "%s:%u: '=' expected\n", conf_file, line_no );
 
   // part 3: =
-  if ( *line != '=' )
+  if ( *line != '=' ) {
     fatal_error( EX_CONFIG,
       "%s:%u: '%c': unexpected character; '=' expected\n",
       conf_file, line_no, *line
     );
+  }
   ++line;                               // skip '='
 
   // part 4: whitespace
   SKIP_CHARS( line, WS_STR );
-  if ( *line == '\0' )
+  if ( *line == '\0' ) {
     fatal_error( EX_CONFIG,
       "%s:%u: alias name expected after '='\n",
       conf_file, line_no
     );
+  }
 
   // part 5: alias
   alias_t const *const alias = alias_find( line );
-  if ( alias == NULL )
+  if ( alias == NULL ) {
     fatal_error( EX_CONFIG,
       "%s:%u: \"%s\": no such alias\n", conf_file, line_no, line
     );
+  }
   pattern->alias = alias;
 }
 

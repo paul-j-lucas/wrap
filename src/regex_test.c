@@ -62,11 +62,12 @@ int main( int argc, char const *argv[] ) {
 
   wregex_t re;
   int const regex_err_code = regex_compile( &re, WRAP_RE );
-  if ( regex_err_code != 0 )
+  if ( regex_err_code != 0 ) {
     fatal_error( EX_SOFTWARE,
       "internal regular expression error (%d): %s\n",
       regex_err_code, regex_error( &re, regex_err_code )
     );
+  }
 
   char line_buf[ 128 ];
   unsigned line_no = 0;
@@ -78,11 +79,12 @@ int main( int argc, char const *argv[] ) {
       continue;
 
     char *const sep = strchr( line_buf, TEST_SEP );
-    if ( sep == NULL )
+    if ( sep == NULL ) {
       fatal_error( EX_DATAERR,
         "%s:%u: missing separator '%c'\n",
         test_path, line_no, TEST_SEP
       );
+    }
 
     *sep = '\0';
     char const *const expected = line_buf;

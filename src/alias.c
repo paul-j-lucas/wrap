@@ -89,11 +89,12 @@ static void alias_check_dup( char const *conf_file, unsigned line_no ) {
     int i = STATIC_CAST( int, n_aliases ) - 1;
     char const *const last_name = aliases[i].argv[0];
     while ( --i >= 0 ) {
-      if ( strcmp( aliases[i].argv[0], last_name ) == 0 )
+      if ( strcmp( aliases[i].argv[0], last_name ) == 0 ) {
         fatal_error( EX_CONFIG,
           "%s:%u: \"%s\": duplicate alias name (first is on line %u)\n",
           conf_file, line_no, last_name, aliases[i].line_no
         );
+      }
     } // while
   }
 }
@@ -131,11 +132,12 @@ static void alias_import( alias_t *to_alias, char const **ps,
   ++*ps;                                // skip past '@'
   *ps += strcpy_set( from_name, sizeof from_name, ALIAS_NAME_CHARS, *ps );
   alias_t const *const from_alias = alias_find( from_name );
-  if ( from_alias == NULL )
+  if ( from_alias == NULL ) {
     fatal_error( EX_CONFIG,
       "%s:%u: \"@%s\": no such alias\n",
       conf_file, line_no, from_name
     );
+  }
   for ( int i = 1; i < from_alias->argc; ++i )
     to_alias->argv[ to_alias->argc++ ] = check_strdup( from_alias->argv[ i ] );
 }
@@ -271,22 +273,24 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
     fatal_error( EX_CONFIG, "%s:%u: '=' expected\n", conf_file, line_no );
 
   // part 3: =
-  if ( *line != '=' )
+  if ( *line != '=' ) {
     fatal_error( EX_CONFIG,
       "%s:%u: '%c': unexpected character; '=' expected\n",
       conf_file, line_no, *line
     );
+  }
   ++line;                               // skip '='
 
   // parts 4 & 5: whitespace, options
   for (;;) {
     SKIP_CHARS( line, WS_STR );
     if ( *line == '\0' ) {
-      if ( alias->argc == 1 )
+      if ( alias->argc == 1 ) {
         fatal_error( EX_CONFIG,
           "%s:%u: option(s) expected after '='\n",
           conf_file, line_no
         );
+      }
       break;
     }
 

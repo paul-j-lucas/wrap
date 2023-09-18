@@ -1077,11 +1077,12 @@ static void read_prototype( void ) {
     line_width -= 1/*space*/ + STATIC_CAST( int, suffix_len );
   }
 
-  if ( line_width < LINE_WIDTH_MINIMUM )
+  if ( line_width < LINE_WIDTH_MINIMUM ) {
     fatal_error( EX_USAGE,
       "line-width (%d) is too small (<%d)\n",
       line_width, LINE_WIDTH_MINIMUM
     );
+  }
   opt_line_width = STATIC_CAST( size_t, line_width );
 }
 

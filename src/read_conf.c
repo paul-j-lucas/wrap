@@ -186,11 +186,12 @@ char const* read_conf( char const *conf_file ) {
   while ( fgets( line_buf, sizeof line_buf, fconf ) != NULL ) {
     ++line_no;
     char *line = strip_comment( line_buf );
-    if ( line == NULL )
+    if ( line == NULL ) {
       fatal_error( EX_CONFIG,
         "%s:%u: \"%s\": unclosed quote\n",
         conf_file, line_no, trim_ws( line_buf )
       );
+    }
     line = trim_ws( line );
     if ( *line == '\0' )                // line was entirely whitespace
       continue;
@@ -198,11 +199,12 @@ char const* read_conf( char const *conf_file ) {
     // parse section line
     if ( line[0] == '[' ) {
       section = section_parse( line );
-      if ( section == SECTION_NONE )
+      if ( section == SECTION_NONE ) {
         fatal_error( EX_CONFIG,
           "%s:%u: \"%s\": invalid section\n",
           conf_file, line_no, line
         );
+      }
       continue;
     }
 

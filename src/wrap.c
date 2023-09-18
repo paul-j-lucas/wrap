@@ -538,78 +538,79 @@ read_line:
 
   int c = *(*ppc)++;
 
-  if ( opt_data_link_esc ) {
-    if ( c == WIPC_HELLO ) {
-      switch ( c = *(*ppc)++ ) {
-        case WIPC_DELIMIT_PARAGRAPH:
-          consec_newlines = 0;
-          delimit_paragraph();
-          WIPC_SEND( fout, WIPC_DELIMIT_PARAGRAPH );
-          goto read_line;
+  if ( !opt_data_link_esc )
+    return c;
 
-        case WIPC_NEW_LEADER: {
-          //
-          // We've been told by wrapc (child 1) that the comment characters
-          // and/or leading whitespace has changed: we have to echo it back to
-          // the other wrapc process (parent).
-          //
-          // If an output line has already been started, we have to defer the
-          // IPC until just after the line is sent; otherwise, we must send it
-          // immediately.
-          //
-          char *sep;
-          size_t const new_line_width = strtoul( *ppc, &sep, 10 );
-          if ( output_len > 0 ) {
-            WIPC_DEFERF(
-              ipc_buf, sizeof ipc_buf,
-              WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
-              new_line_width, sep + 1
-            );
-            ipc_width = new_line_width;
-          } else {
-            WIPC_SENDF(
-              fout,
-              WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
-              new_line_width, sep + 1
-            );
-            line_width = opt_line_width = new_line_width;
-          }
-          goto read_line;
+  if ( c == WIPC_HELLO ) {
+    switch ( c = *(*ppc)++ ) {
+      case WIPC_DELIMIT_PARAGRAPH:
+        consec_newlines = 0;
+        delimit_paragraph();
+        WIPC_SEND( fout, WIPC_DELIMIT_PARAGRAPH );
+        goto read_line;
+
+      case WIPC_NEW_LEADER: {
+        //
+        // We've been told by wrapc (child 1) that the comment characters
+        // and/or leading whitespace has changed: we have to echo it back to
+        // the other wrapc process (parent).
+        //
+        // If an output line has already been started, we have to defer the
+        // IPC until just after the line is sent; otherwise, we must send it
+        // immediately.
+        //
+        char *sep;
+        size_t const new_line_width = strtoul( *ppc, &sep, 10 );
+        if ( output_len > 0 ) {
+          WIPC_DEFERF(
+            ipc_buf, sizeof ipc_buf,
+            WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
+            new_line_width, sep + 1
+          );
+          ipc_width = new_line_width;
+        } else {
+          WIPC_SENDF(
+            fout,
+            WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
+            new_line_width, sep + 1
+          );
+          line_width = opt_line_width = new_line_width;
         }
+        goto read_line;
+      }
 
-        case WIPC_PREFORMATTED_BEGIN:
-          delimit_paragraph();
-          WIPC_SEND( fout, WIPC_PREFORMATTED_BEGIN );
-          is_preformatted = true;
-          goto read_line;
+      case WIPC_PREFORMATTED_BEGIN:
+        delimit_paragraph();
+        WIPC_SEND( fout, WIPC_PREFORMATTED_BEGIN );
+        is_preformatted = true;
+        goto read_line;
 
-        case WIPC_PREFORMATTED_END:
-          WIPC_SEND( fout, WIPC_PREFORMATTED_END );
-          is_preformatted = false;
-          goto read_line;
+      case WIPC_PREFORMATTED_END:
+        WIPC_SEND( fout, WIPC_PREFORMATTED_END );
+        is_preformatted = false;
+        goto read_line;
 
-        case WIPC_WRAP_END:
-          //
-          // We've been told by wrapc (child 1) that we've reached the end of
-          // the comment: dump any remaining buffer, propagate the interprocess
-          // message to the other wrapc process (parent), and pass text through
-          // verbatim.
-          //
-          consec_newlines = 0;
-          delimit_paragraph();
-          WIPC_SEND( fout, WIPC_WRAP_END );
-          fcopy( fin, fout );
-          exit( EX_OK );
+      case WIPC_WRAP_END:
+        //
+        // We've been told by wrapc (child 1) that we've reached the end of
+        // the comment: dump any remaining buffer, propagate the interprocess
+        // message to the other wrapc process (parent), and pass text through
+        // verbatim.
+        //
+        consec_newlines = 0;
+        delimit_paragraph();
+        WIPC_SEND( fout, WIPC_WRAP_END );
+        fcopy( fin, fout );
+        exit( EX_OK );
 
-        case '\0':
-          return EOF;
-      } // switch
-    }
+      case '\0':
+        return EOF;
+    } // switch
+  }
 
-    if ( is_preformatted ) {
-      FPUTS( input_buf, fout );
-      goto read_line;
-    }
+  if ( is_preformatted ) {
+    FPUTS( input_buf, fout );
+    goto read_line;
   }
 
   return c;
@@ -731,11 +732,12 @@ static void init( int argc, char const *argv[] ) {
     (int)(2 * (opt_mirror_tabs * opt_tab_spaces + opt_mirror_spaces) +
           opt_lead_tabs * opt_tab_spaces + opt_lead_spaces);
 
-  if ( temp_width < LINE_WIDTH_MINIMUM )
+  if ( temp_width < LINE_WIDTH_MINIMUM ) {
     fatal_error( EX_USAGE,
       "line-width (%d) is too small (<%d)\n",
       temp_width, LINE_WIDTH_MINIMUM
     );
+  }
   opt_line_width = line_width = STATIC_CAST( size_t, temp_width );
 
   opt_lead_tabs   += opt_mirror_tabs;
@@ -743,11 +745,12 @@ static void init( int argc, char const *argv[] ) {
 
   if ( !opt_no_hyphen ) {
     int const regex_err_code = regex_compile( &nonws_no_wrap_regex, WRAP_RE );
-    if ( regex_err_code != 0 )
+    if ( regex_err_code != 0 ) {
       fatal_error( EX_SOFTWARE,
         "internal regular expression error (%d): %s\n",
         regex_err_code, regex_error( &nonws_no_wrap_regex, regex_err_code )
       );
+    }
   }
 
   if ( opt_block_regex != NULL ) {
@@ -758,12 +761,13 @@ static void init( int argc, char const *argv[] ) {
       opt_block_regex = temp;
     }
     int const regex_err_code = regex_compile( &block_regex, opt_block_regex );
-    if ( regex_err_code != 0 )
+    if ( regex_err_code != 0 ) {
       fatal_error( EX_USAGE,
         "\"%s\": regular expression error (%d): %s\n",
         opt_block_regex, regex_err_code,
         regex_error( &block_regex, regex_err_code )
       );
+    }
   }
 
   size_t const bytes_read = buf_readline();
