@@ -592,6 +592,8 @@ read_line:
         goto read_line;
 
       case WIPC_CODE_PREFORMATTED_END:
+        consec_newlines = 1;
+        delimit_paragraph();
         WIPC_SEND( fout, WIPC_CODE_PREFORMATTED_END );
         is_preformatted = false;
         goto read_line;
