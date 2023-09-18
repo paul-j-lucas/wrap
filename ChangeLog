@@ -1,5 +1,6 @@
 2023-09-18  Paul J. Lucas <paul@lucasmail.org>
 
+   * wrap.c: Fixed wording in help message and made it more consistent.
    * lib/Makefile.am, attribute.h, getopt-cdefs.in.h, intprops-internal.h,
      mbrtoc32.c, mbtowc-lock.c, setlocale-lock.c, stddef.in.h, stdlib.in.h,
      string.in.h, uchar.in.h, unistr/u-strlen.h, verify.h, wchar.in.h,
