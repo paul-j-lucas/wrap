@@ -136,7 +136,7 @@ static dox_cmd_t const DOX_COMMANDS[] = {
   { "hiderefby",              DOX_INIT_EOL,     NULL },
   { "hiderefs",               DOX_INIT_EOL,     NULL },
   { "htmlinclude",            DOX_INIT_EOL,     NULL },
-  { "htmlonly",               DOX_INIT_PAR,     "endhtmlonly" },
+  { "htmlonly",               DOX_INIT_PRE,     "endhtmlonly" },
 
   { "idlexcept",              DOX_INIT_EOL,     NULL },
   { "if",                     DOX_INIT_EOL,     "endif" },
@@ -182,7 +182,7 @@ static dox_cmd_t const DOX_COMMANDS[] = {
   { "par",                    DOX_INIT_EOL,     NULL },
   { "paragraph",              DOX_INIT_EOL,     NULL },
   { "param",                  DOX_INIT_PAR,     NULL },
-  { "parblock",               DOX_INIT_EOL,     "endparblock" },
+  { "parblock",               DOX_INIT_EOL,     NULL },
   { "post",                   DOX_INIT_PAR,     NULL },
   { "pre",                    DOX_INIT_PAR,     NULL },
   { "private",                DOX_INIT_EOL,     NULL },
