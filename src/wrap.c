@@ -541,15 +541,15 @@ read_line:
   if ( !opt_data_link_esc )
     return c;
 
-  if ( c == WIPC_HELLO ) {
+  if ( c == WIPC_CODE_HELLO ) {
     switch ( c = *(*ppc)++ ) {
-      case WIPC_DELIMIT_PARAGRAPH:
+      case WIPC_CODE_DELIMIT_PARAGRAPH:
         consec_newlines = 0;
         delimit_paragraph();
-        WIPC_SEND( fout, WIPC_DELIMIT_PARAGRAPH );
+        WIPC_SEND( fout, WIPC_CODE_DELIMIT_PARAGRAPH );
         goto read_line;
 
-      case WIPC_NEW_LEADER: {
+      case WIPC_CODE_NEW_LEADER: {
         //
         // We've been told by wrapc (child 1) that the comment characters
         // and/or leading whitespace has changed: we have to echo it back to
@@ -564,14 +564,14 @@ read_line:
         if ( output_len > 0 ) {
           WIPC_DEFERF(
             ipc_buf, sizeof ipc_buf,
-            WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
+            WIPC_CODE_NEW_LEADER, "%zu" WIPC_SEP "%s",
             new_line_width, sep + 1
           );
           ipc_width = new_line_width;
         } else {
           WIPC_SENDF(
             fout,
-            WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s",
+            WIPC_CODE_NEW_LEADER, "%zu" WIPC_SEP "%s",
             new_line_width, sep + 1
           );
           line_width = opt_line_width = new_line_width;
@@ -579,18 +579,18 @@ read_line:
         goto read_line;
       }
 
-      case WIPC_PREFORMATTED_BEGIN:
+      case WIPC_CODE_PREFORMATTED_BEGIN:
         delimit_paragraph();
-        WIPC_SEND( fout, WIPC_PREFORMATTED_BEGIN );
+        WIPC_SEND( fout, WIPC_CODE_PREFORMATTED_BEGIN );
         is_preformatted = true;
         goto read_line;
 
-      case WIPC_PREFORMATTED_END:
-        WIPC_SEND( fout, WIPC_PREFORMATTED_END );
+      case WIPC_CODE_PREFORMATTED_END:
+        WIPC_SEND( fout, WIPC_CODE_PREFORMATTED_END );
         is_preformatted = false;
         goto read_line;
 
-      case WIPC_WRAP_END:
+      case WIPC_CODE_WRAP_END:
         //
         // We've been told by wrapc (child 1) that we've reached the end of
         // the comment: dump any remaining buffer, propagate the interprocess
@@ -599,7 +599,7 @@ read_line:
         //
         consec_newlines = 0;
         delimit_paragraph();
-        WIPC_SEND( fout, WIPC_WRAP_END );
+        WIPC_SEND( fout, WIPC_CODE_WRAP_END );
         fcopy( fin, fout );
         exit( EX_OK );
 
@@ -663,7 +663,7 @@ static size_t buf_readline( void ) {
     // However, don't pass either IPC lines or any lines while is_preformatted
     // is true through the Markdown parser.
     //
-    if ( input_buf[0] == WIPC_HELLO || is_preformatted )
+    if ( input_buf[0] == WIPC_CODE_HELLO || is_preformatted )
       break;
 
     if ( markdown_adjust() )

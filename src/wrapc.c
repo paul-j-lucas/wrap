@@ -427,7 +427,7 @@ static pid_t read_source_write_wrap( void ) {
         opt_line_width += prefix_len0 - prefix_len;
         set_prefix( CURR, prefix_len );
         WIPC_SENDF(
-          fwrap, WIPC_NEW_LEADER, "%zu" WIPC_SEP "%s\n",
+          fwrap, WIPC_CODE_NEW_LEADER, "%zu" WIPC_SEP "%s\n",
           opt_line_width, prefix_buf
         );
       }
@@ -449,20 +449,20 @@ static pid_t read_source_write_wrap( void ) {
           dox_cmd_t const *const dox_cmd = dox_find_cmd( dox_cmd_name );
           if ( dox_cmd != NULL ) {
             if ( (dox_cmd->type & DOX_BOL) != 0 )
-              WIPC_SEND( fwrap, WIPC_DELIMIT_PARAGRAPH );
+              WIPC_SEND( fwrap, WIPC_CODE_DELIMIT_PARAGRAPH );
 
             if ( (dox_cmd->type & DOX_EOL) != 0 ) {
               //
               // The Doxygen command continues until the end of the line: treat
               // it as preformatted.
               //
-              WIPC_SEND( fwrap, WIPC_PREFORMATTED_BEGIN );
+              WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_BEGIN );
             }
 
             FPUTS( line, fwrap );
 
             if ( (dox_cmd->type & DOX_EOL) != 0 )
-              WIPC_SEND( fwrap, WIPC_PREFORMATTED_END );
+              WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_END );
 
             if ( (dox_cmd->type & DOX_PRE) != 0 ) {
               //
@@ -471,7 +471,7 @@ static pid_t read_source_write_wrap( void ) {
               // and begin sending preformatted text through verbatim until we
               // encounter the command's corresponding end command.
               //
-              WIPC_SEND( fwrap, WIPC_PREFORMATTED_BEGIN );
+              WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_BEGIN );
               prev_dox_cmd = dox_cmd;
             }
 
@@ -491,7 +491,7 @@ static pid_t read_source_write_wrap( void ) {
           // command: put that line, then tell wrap to resume wrapping.
           //
           FPUTS( line, fwrap );
-          WIPC_SEND( fwrap, WIPC_PREFORMATTED_END );
+          WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_END );
           prev_dox_cmd = NULL;
           continue;
         }
@@ -515,7 +515,7 @@ verbatim:
   // ending wrapping, write any remaining lines, then just copy text through
   // verbatim.
   //
-  WIPC_SEND( fwrap, WIPC_WRAP_END );
+  WIPC_SEND( fwrap, WIPC_CODE_WRAP_END );
   FPUTS( CURR, fwrap );
   FPUTS( NEXT, fwrap );
   fcopy( fin, fwrap );
@@ -570,9 +570,9 @@ static void read_wrap( void ) {
     line_size = chop_eol( line_buf, line_size );
     char *line = line_buf;
 
-    if ( line[0] == WIPC_HELLO ) {
+    if ( line[0] == WIPC_CODE_HELLO ) {
       switch ( line[1] ) {
-        case WIPC_NEW_LEADER: {
+        case WIPC_CODE_NEW_LEADER: {
           //
           // We've been told by child 1 (read_source_write_wrap(), via child 2,
           // wrap) that the leading comment delimiter characters and/or
@@ -585,15 +585,15 @@ static void read_wrap( void ) {
           continue;
         }
 
-        case WIPC_DELIMIT_PARAGRAPH:
-        case WIPC_PREFORMATTED_BEGIN:
-        case WIPC_PREFORMATTED_END:
+        case WIPC_CODE_DELIMIT_PARAGRAPH:
+        case WIPC_CODE_PREFORMATTED_BEGIN:
+        case WIPC_CODE_PREFORMATTED_END:
           //
           // We only have to "eat" these and do nothing else.
           //
           continue;
 
-        case WIPC_WRAP_END:
+        case WIPC_CODE_WRAP_END:
           //
           // We've been told by child 1 (read_source_write_wrap(), via child 2,
           // wrap) that we've reached the end of the comment: dump any

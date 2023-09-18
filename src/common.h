@@ -96,12 +96,12 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
  * immediately followed by another IPC code that indicates the type of message.
  * All IPC messages _must_ be terminated by a newline.
  */
-#define WIPC_HELLO                ASCII_DLE
+#define WIPC_CODE_HELLO                 ASCII_DLE
 
 /**
  * IPC code to trigger the delimiting of a paragraph.
  */
-#define WIPC_DELIMIT_PARAGRAPH    ASCII_DC2
+#define WIPC_CODE_DELIMIT_PARAGRAPH     ASCII_DC2
 
 /**
  * IPC code to signal a change in the leading comment characters and/or
@@ -109,25 +109,25 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
  *
  *      <line_width>|<line_prefix>
  */
-#define WIPC_NEW_LEADER           ASCII_SOH
+#define WIPC_CODE_NEW_LEADER            ASCII_SOH
 
 /**
  * IPC code to suspend wrapping and begin sending preformatted text through
  * verbatim.
  */
-#define WIPC_PREFORMATTED_BEGIN   ASCII_DC3
+#define WIPC_CODE_PREFORMATTED_BEGIN    ASCII_DC3
 
 /**
  * IPC code to end sending preformatted text through verbatim and resume
  * wrapping normally.
  */
-#define WIPC_PREFORMATTED_END     ASCII_DC1
+#define WIPC_CODE_PREFORMATTED_END      ASCII_DC1
 
 /**
  * IPC code to signal the end of the block of text to be wrapped.  Any text
  * sent after this is passed through verbatim.
  */
-#define WIPC_WRAP_END             ASCII_ETB
+#define WIPC_CODE_WRAP_END              ASCII_ETB
 
 /**
  * Sends a no-argument Interprocess Communication (IPC) message.
@@ -140,7 +140,7 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
  * @hideinitializer
  */
 #define WIPC_SENDF(STREAM,CODE,FORMAT,...) \
-  FPRINTF( (STREAM), ("%c%c" FORMAT), WIPC_HELLO, (CODE), __VA_ARGS__ )
+  FPRINTF( (STREAM), ("%c%c" FORMAT), WIPC_CODE_HELLO, (CODE), __VA_ARGS__ )
 
 /**
  * Character used to separate parameters in an Interprocess Communication (IPC)
