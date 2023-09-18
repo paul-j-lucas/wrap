@@ -5,6 +5,12 @@ See the end of the file for license conditions.
 
 -------------------------------------------------------------------------------
 
+* Changes in Wrap 5.9.1
+
+** Blank line after Doxygen EOL command
+Fixed missing blank line after Doxygen EOL command.
+
+
 * Changes in Wrap 5.9
 
 ** Doxygen 1.9.8

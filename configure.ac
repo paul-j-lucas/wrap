@@ -21,7 +21,7 @@
 ##
 
 AC_PREREQ([2.69])
-AC_INIT([wrap], [5.9], [https://github.com/paul-j-lucas/wrap/issues],,[https://github.com/paul-j-lucas/wrap])
+AC_INIT([wrap], [5.9.1], [https://github.com/paul-j-lucas/wrap/issues],,[https://github.com/paul-j-lucas/wrap])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
