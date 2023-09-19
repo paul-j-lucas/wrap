@@ -35,7 +35,6 @@
 // standard
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
-#include <stdio.h>                      /* for FILE */
 
 // in ascending option character ASCII order
 #define OPT_ALIAS                 a
@@ -111,9 +110,7 @@ extern bool         opt_doxygen;        ///< Handle Doxygen commands?
 extern eol_t        opt_eol;            ///< End-of-line treatment.
 extern bool         opt_eos_delimit;    ///< End-of-sentence delimits para's?
 extern size_t       opt_eos_spaces;     ///< Spaces after end-of-sentence.
-extern char const  *opt_fin;            ///< File in path.
 extern char const  *opt_fin_name;       ///< File in name (only).
-extern char const  *opt_fout;           ///< File out path.
 extern size_t       opt_hang_spaces;    ///< Hanging-indent spaces.
 extern size_t       opt_hang_tabs;      ///< Hanging-indent tabs.
 extern size_t       opt_indt_spaces;    ///< Indent spaces.
@@ -134,10 +131,6 @@ extern char const  *opt_para_delims;    ///< Additional para delimiter chars.
 extern bool         opt_prototype;      ///< First line whitespace is prototype?
 extern size_t       opt_tab_spaces;
 extern bool         opt_title_line;     ///< 1st para line is title?
-
-// other extern variables
-extern FILE        *fin;                ///< File in.
-extern FILE        *fout;               ///< File out.
 
 ////////// extern functions ///////////////////////////////////////////////////
 

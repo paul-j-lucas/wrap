@@ -328,7 +328,7 @@ static pid_t read_source_write_wrap( void ) {
   close_pipe( pipes[ FROM_WRAP ] );
   close( pipes[ TO_WRAP ][ STDIN_FILENO ] );
   //
-  // Read from fin and write to pipes[TO_WRAP] (wrap).
+  // Read from stdin and write to pipes[TO_WRAP] (wrap).
   //
   FILE *const fwrap = fdopen( pipes[ TO_WRAP ][ STDOUT_FILENO ], "w" );
   if ( unlikely( fwrap == NULL ) ) {
@@ -346,7 +346,7 @@ static pid_t read_source_write_wrap( void ) {
     // For block comments, write the first line directly to the output.
     //
     adjust_comment_width( CURR );
-    FPUTS( CURR, fout );
+    PUTS( CURR );
     swap_line_bufs();
   }
 
@@ -362,7 +362,7 @@ static pid_t read_source_write_wrap( void ) {
     //
     // In order to know when a comment ends, we have to peek at the next line.
     //
-    PJL_IGNORE_RV( check_readline( NEXT, fin ) );
+    PJL_IGNORE_RV( check_readline( NEXT, stdin ) );
 
     if ( proto_is_comment && is_line_comment( CURR ) == NULL ) {
       //
@@ -522,7 +522,7 @@ verbatim:
   WIPC_SEND( fwrap, WIPC_CODE_WRAP_END );
   FPUTS( CURR, fwrap );
   FPUTS( NEXT, fwrap );
-  fcopy( fin, fwrap );
+  fcopy( stdin, fwrap );
   exit( EX_OK );
 }
 
@@ -538,7 +538,7 @@ static void read_wrap( void ) {
   close_pipe( pipes[ TO_WRAP ] );
   close( pipes[ FROM_WRAP ][ STDOUT_FILENO ] );
   //
-  // Read from pipes[FROM_WRAP] (wrap) and write to fout.
+  // Read from pipes[FROM_WRAP] (wrap) and write to stdout.
   //
   FILE *const fwrap = fdopen( pipes[ FROM_WRAP ][ STDIN_FILENO ], "r" );
   if ( unlikely( fwrap == NULL ) ) {
@@ -606,7 +606,7 @@ static void read_wrap( void ) {
           // wrap) that we've reached the end of the comment: dump any
           // remaining buffer and pass text through verbatim.
           //
-          fcopy( fwrap, fout );
+          fcopy( fwrap, stdout );
           goto done;
       } // switch
 
@@ -629,8 +629,8 @@ static void read_wrap( void ) {
     }
 
     // don't emit proto_tws for blank lines
-    FPRINTF(
-      fout, "%s%s%s%s%s",
+    PRINTF(
+      "%s%s%s%s%s",
       prefix_buf, is_blank_line( line ) ? "" : proto_tws, line, suffix_buf,
       eol()
     );
@@ -767,7 +767,7 @@ static void init( int argc, char const *argv[] ) {
   CURR = input_buf.dl_line[0];
   NEXT = input_buf.dl_line[1];
 
-  size_t const size = check_readline( CURR, fin );
+  size_t const size = check_readline( CURR, stdin );
   if ( size == 0 )
     exit( EX_OK );
 
@@ -1064,7 +1064,7 @@ static void read_prototype( void ) {
     // + The first line should not be altered.
     // + The second line becomes the prototype.
     //
-    PJL_IGNORE_RV( check_readline( NEXT, fin ) );
+    PJL_IGNORE_RV( check_readline( NEXT, stdin ) );
     proto = NEXT;
   }
 

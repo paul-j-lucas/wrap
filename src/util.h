@@ -187,6 +187,7 @@ _GL_INLINE_HEADER_BEGIN
  * @sa #FPRINTF()
  * @sa #FPUTS()
  * @sa #PERROR_EXIT_IF()
+ * @sa #PUTC()
  */
 #define FPUTC(C,STREAM) \
 	PERROR_EXIT_IF( putc( (C), (STREAM) ) == EOF, EX_IOERR )
@@ -201,6 +202,7 @@ _GL_INLINE_HEADER_BEGIN
  * @sa #FPRINTF()
  * @sa #FPUTC()
  * @sa #PERROR_EXIT_IF()
+ * @sa #PUTS()
  */
 #define FPUTS(S,STREAM) \
 	PERROR_EXIT_IF( fputs( (S), (STREAM) ) == EOF, EX_IOERR )
@@ -245,6 +247,8 @@ _GL_INLINE_HEADER_BEGIN
  * @param ... The `printf()` arguments.
  *
  * @sa #FPRINTF()
+ * @sa #PRINTF()
+ * @sa #EPUTC()
  */
 #define EPRINTF(...)              fprintf( stderr, __VA_ARGS__ )
 
@@ -254,7 +258,8 @@ _GL_INLINE_HEADER_BEGIN
  * @param C The character to print.
  *
  * @sa #EPRINTF()
- * @wa #FPUTC()
+ * @sa #FPUTC()
+ * @sa #PUTC()
  */
 #define EPUTC(C)                  FPUTC( C, stderr )
 
@@ -301,6 +306,44 @@ _GL_INLINE_HEADER_BEGIN
  * @sa #STATIC_CAST()
  */
 #define POINTER_CAST(T,EXPR)      ((T)(uintptr_t)(EXPR))
+
+/**
+ * Calls #FPRINTF() with `stdout`.
+ *
+ * @param ... The `fprintf()` arguments.
+ *
+ * @sa #EPRINTF()
+ * @sa #FPRINTF()
+ * @sa #PUTC()
+ * @sa #PUTS()
+ */
+#define PRINTF(...)               FPRINTF( stdout, __VA_ARGS__ )
+
+/**
+ * Calls #FPUTC() with `stdout`.
+ *
+ * @param C The character to print.
+ *
+ * @sa #EPUTC()
+ * @sa #FPUTC()
+ * @sa #PRINTF()
+ * @sa #PUTS()
+ */
+#define PUTC(C)                   FPUTC( (C), stdout )
+
+/**
+ * Calls #FPUTS() with `stdout`.
+ *
+ * @param S The C string to print.
+ *
+ * @note Unlike **puts**(3), does _not_ print a newline.
+ *
+ * @sa #EPUTS()
+ * @sa #FPUTS()
+ * @sa #PRINTF()
+ * @sa #PUTC()
+ */
+#define PUTS(S)                   FPUTS( (S), stdout )
 
 /**
  * Advances \a S over all \a CHARS.
@@ -478,6 +521,14 @@ void check_atexit( void (*cleanup_fn)(void) );
  */
 NODISCARD
 unsigned check_atou( char const *s );
+
+/**
+ * Calls **dup2**(2) and checks for failure.
+ *
+ * @param old_fd The old file descriptor to duplicate.
+ * @param new_fd The new file descriptor to duplicate to.
+ */
+void check_dup2( int old_fd, int new_fd );
 
 /**
  * Calls **realloc**(3) and checks for failure.

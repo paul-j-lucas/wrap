@@ -44,10 +44,6 @@ void common_cleanup( void ) {
   alias_cleanup();
   free_now();
   pattern_cleanup();
-  if ( fin != NULL )
-    PJL_IGNORE_RV( fclose( fin ) );
-  if ( fout != NULL )
-    PJL_IGNORE_RV( fclose( fout ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

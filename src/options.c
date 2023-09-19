@@ -78,9 +78,7 @@ eol_t               opt_eol = EOL_INPUT;
 bool                opt_eos_delimit;
 size_t              opt_eos_spaces = EOS_SPACES_DEFAULT;
 bool                opt_data_link_esc;
-char const         *opt_fin;
 char const         *opt_fin_name;
-char const         *opt_fout;
 size_t              opt_hang_spaces;
 size_t              opt_hang_tabs;
 size_t              opt_indt_spaces;
@@ -102,12 +100,10 @@ bool                opt_prototype;
 size_t              opt_tab_spaces = TAB_SPACES_DEFAULT;
 bool                opt_title_line;
 
-// other extern variables
-FILE               *fin;
-FILE               *fout;
-
 // local variables
-static bool         is_wrapc;           // are we wrapc?
+static char const  *fin_path = "-";     ///< File in path.
+static char const  *fout_path = "-";    ///< File out path.
+static bool         is_wrapc;           ///< Are we **wrapc**?
 static char         opts_given[ 128 ];
 
 // local functions
@@ -575,7 +571,7 @@ static void parse_options( int argc, char const *argv[],
       case COPT(FILE):
         if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
           goto missing_arg;
-        opt_fin = optarg;
+        fin_path = optarg;
         FALLTHROUGH;
       case COPT(FILE_NAME):
         if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
@@ -634,7 +630,7 @@ static void parse_options( int argc, char const *argv[],
       case COPT(OUTPUT):
         if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
           goto missing_arg;
-        opt_fout = optarg;
+        fout_path = optarg;
         break;
       case COPT(PARA_CHARS):
         if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
@@ -862,15 +858,21 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
     }
   }
 
-  if ( opt_fin != NULL && (fin = fopen( opt_fin, "r" )) == NULL )
-    fatal_error( EX_NOINPUT, "\"%s\": %s\n", opt_fin, STRERROR );
-  if ( opt_fout != NULL && (fout = fopen( opt_fout, "w" )) == NULL )
-    fatal_error( EX_CANTCREAT, "\"%s\": %s\n", opt_fout, STRERROR );
+  if ( strcmp( fin_path, "-" ) != 0 ) {
+    FILE *const fin = fopen( fin_path, "r" );
+    if ( fin == NULL )
+      fatal_error( EX_NOINPUT, "\"%s\": %s\n", fin_path, STRERROR );
+    check_dup2( fileno( fin ), STDIN_FILENO );
+    PJL_IGNORE_RV( fclose( fin ) );
+  }
 
-  if ( fin == NULL )
-    fin = stdin;
-  if ( fout == NULL )
-    fout = stdout;
+  if ( strcmp( fout_path, "-" ) != 0 ) {
+    FILE *const fout = fopen( fout_path, "w" );
+    if ( fout == NULL )
+      fatal_error( EX_CANTCREAT, "\"%s\": %s\n", fout_path, STRERROR );
+    check_dup2( fileno( fout ), STDOUT_FILENO );
+    PJL_IGNORE_RV( fclose( fout ) );
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

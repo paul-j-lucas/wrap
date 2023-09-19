@@ -147,7 +147,7 @@ static inline bool cp_is_para_delim( char32_t cp ) {
  * Prints an end-of-line and sends any pending IPC message to wrapc.
  */
 static inline void print_eol( void ) {
-  FPUTS( eol(), fout );
+  PUTS( eol() );
   wipc_send( ipc_buf );
 }
 
@@ -306,7 +306,7 @@ int main( int argc, char const *argv[] ) {
       if ( opt_lead_dot_ignore && cp == '.' ) {
         consec_newlines = 0;
         delimit_paragraph();
-        FPUTS( input_buf, fout );       // print the line as-is
+        PUTS( input_buf );              // print the line as-is
         //
         // Make state as if line never happened.
         //
@@ -485,7 +485,7 @@ int main( int argc, char const *argv[] ) {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  FERROR( fin );
+  FERROR( stdin );
   if ( output_len > 0 ) {               // print left-over text
     if ( !is_long_line )
       print_lead_chars();
@@ -552,7 +552,7 @@ read_line:
       case WIPC_CODE_DELIMIT_PARAGRAPH:
         consec_newlines = 0;
         delimit_paragraph();
-        WIPC_SEND( fout, WIPC_CODE_DELIMIT_PARAGRAPH );
+        WIPC_SEND( stdout, WIPC_CODE_DELIMIT_PARAGRAPH );
         goto read_line;
 
       case WIPC_CODE_NEW_LEADER: {
@@ -576,7 +576,7 @@ read_line:
           ipc_width = new_line_width;
         } else {
           WIPC_SENDF(
-            fout,
+            stdout,
             WIPC_CODE_NEW_LEADER, "%zu" WIPC_SEP "%s",
             new_line_width, sep + 1
           );
@@ -587,14 +587,14 @@ read_line:
 
       case WIPC_CODE_PREFORMATTED_BEGIN:
         delimit_paragraph();
-        WIPC_SEND( fout, WIPC_CODE_PREFORMATTED_BEGIN );
+        WIPC_SEND( stdout, WIPC_CODE_PREFORMATTED_BEGIN );
         is_preformatted = true;
         goto read_line;
 
       case WIPC_CODE_PREFORMATTED_END:
         consec_newlines = 1;
         delimit_paragraph();
-        WIPC_SEND( fout, WIPC_CODE_PREFORMATTED_END );
+        WIPC_SEND( stdout, WIPC_CODE_PREFORMATTED_END );
         is_preformatted = false;
         goto read_line;
 
@@ -607,14 +607,14 @@ read_line:
         //
         consec_newlines = 0;
         delimit_paragraph();
-        WIPC_SEND( fout, WIPC_CODE_WRAP_END );
-        fcopy( fin, fout );
+        WIPC_SEND( stdout, WIPC_CODE_WRAP_END );
+        fcopy( stdin, stdout );
         exit( EX_OK );
     } // switch
   } // while
 
   if ( is_preformatted ) {
-    FPUTS( input_buf, fout );
+    PUTS( input_buf );
     goto read_line;
   }
 
@@ -658,7 +658,7 @@ NODISCARD
 static size_t buf_readline( void ) {
   size_t bytes_read;
 
-  while ( (bytes_read = check_readline( input_buf, fin )) > 0 ) {
+  while ( (bytes_read = check_readline( input_buf, stdin )) > 0 ) {
     if ( !opt_markdown )
       break;
     //
@@ -865,7 +865,7 @@ static bool markdown_adjust( void ) {
           // Prevent blank lines immediately after these Markdown line types
           // from being swallowed by wrap by just printing them directly.
           //
-          FPUTS( input_buf, fout );
+          PUTS( input_buf );
         }
         break;
       case MD_DL:
@@ -890,7 +890,7 @@ static bool markdown_adjust( void ) {
       // print the marker line as-is "behind wrap's back" so it won't be
       // wrapped.
       //
-      FPUTS( input_buf, fout );
+      PUTS( input_buf );
       input_buf[0] = '\0';
     }
 
@@ -912,7 +912,7 @@ static bool markdown_adjust( void ) {
       //
       print_lead_chars();
       print_line( output_len, /*do_eol=*/true );
-      FPUTS( input_buf, fout );
+      PUTS( input_buf );
       return false;
 
     case MD_DL:
@@ -958,13 +958,13 @@ static void markdown_reset( void ) {
  */
 static void print_lead_chars( void ) {
   if ( proto_buf[0] != '\0' ) {
-    FPRINTF( fout, "%s%s", proto_buf, output_len > 0 ? proto_tws : "" );
+    PRINTF( "%s%s", proto_buf, output_len > 0 ? proto_tws : "" );
   }
   else if ( output_len > 0 ) {
     for ( size_t i = 0; i < opt_lead_tabs; ++i )
-      FPUTC( '\t', fout );
+      PUTC( '\t' );
     for ( size_t i = 0; i < opt_lead_spaces; ++i )
-      FPUTC( ' ', fout );
+      PUTC( ' ' );
   }
 }
 
@@ -978,7 +978,7 @@ static void print_lead_chars( void ) {
 static void print_line( size_t len, bool do_eol ) {
   output_buf[ len ] = '\0';
   if ( len > 0 ) {
-    FPUTS( output_buf, fout );
+    PUTS( output_buf );
     if ( do_eol )
       print_eol();
   }
@@ -1090,7 +1090,7 @@ PACKAGE_NAME " home page: " PACKAGE_URL "\n"
 static void wipc_send( char *msg ) {
   assert( msg != NULL );
   if ( msg[0] != '\0' ) {
-    WIPC_SENDF( fout, /*IPC_code=*/msg[0], "%s", msg + 1 );
+    WIPC_SENDF( stdout, /*IPC_code=*/msg[0], "%s", msg + 1 );
     msg[0] = '\0';
     if ( ipc_width > 0 ) {
       line_width = opt_line_width = ipc_width;
