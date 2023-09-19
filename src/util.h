@@ -121,8 +121,12 @@ _GL_INLINE_HEADER_BEGIN
  * Gets the number of elements of the given array.
  *
  * @param A The array to get the number of elements of.
+ *
+ * @note \a A _must_ be a statically allocated array.
  */
-#define ARRAY_SIZE(A)             (sizeof(A) / sizeof(A[0]))
+#define ARRAY_SIZE(A) (     \
+  sizeof(A) / sizeof(0[A])  \
+  * STATIC_ASSERT_EXPR( IS_ARRAY(A), #A " must be an array" ))
 
 #ifndef NDEBUG
 /**
@@ -282,6 +286,41 @@ _GL_INLINE_HEADER_BEGIN
 #ifdef __GNUC__
 
 /**
+ * Checks (at compile-time) whether \a A is an array.
+ *
+ * @param A The alleged array to check.
+ * @return Returns 1 (true) only if \a A is an array; 0 (false) otherwise.
+ *
+ * @sa #IS_POINTER()
+ */
+#define IS_ARRAY(A)               !IS_SAME_TYPE( (A), &(A)[0] )
+
+/**
+ * Checks (at compile-time) whether \a P is a pointer.
+ *
+ * @param P The alleged pointer to check.
+ * @return Returns 1 (true) only if \a P is a pointer; 0 (false) otherwise.
+ *
+ * @sa #IS_ARRAY()
+ */
+#define IS_POINTER(P)             IS_SAME_TYPE( (P), &(P)[0] )
+
+/**
+ * Checks (at compile-time) whether \a T1 and \a T2 are the same type.
+ *
+ * @param T1 The first type or expression.
+ * @param T2 The second type or expression.
+ * @return Returns 1 (true) only if \a T1 and \a T2 are the same type; 0
+ * (false) otherwise.
+ */
+#if defined(HAVE___BUILTIN_TYPES_COMPATIBLE_P) && defined(HAVE___TYPEOF__)
+# define IS_SAME_TYPE(T1,T2) \
+    __builtin_types_compatible_p( __typeof__(T1), __typeof__(T2) )
+#else
+# define IS_SAME_TYPE(T1,T2)      1
+#endif
+
+/**
  * Specifies that \a EXPR is \e very likely (as in 99.99% of the time) to be
  * non-zero (true) allowing the compiler to better order code blocks for
  * magrinally better performance.
@@ -436,6 +475,17 @@ _GL_INLINE_HEADER_BEGIN
  * @return Returns the updated \a S.
  */
 #define SKIP_CHARS(S,CHARS)       ((S) += strspn( (S), (CHARS) ))
+
+/**
+ * Like C11's `_Static_assert()` except that is can be used in an expression.
+ *
+ * @param EXPR The expression to check.
+ * @param MSG The string literal of the error message to print only if \a EXPR
+ * evaluates to 0 (false).
+ * @return Always returns 1.
+ */
+#define STATIC_ASSERT_EXPR(EXPR,MSG) \
+  (!!sizeof( struct { static_assert( (EXPR), MSG ); int required; } ))
 
 /**
  * C version of C++'s `static_cast`.
