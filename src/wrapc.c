@@ -697,9 +697,7 @@ done:
  * @param argv The command-line arguments from main().
  */
 static void init( int argc, char const *argv[] ) {
-  static bool initialized;
-  assert( !initialized );
-  initialized = true;
+  ASSERT_RUN_ONCE();
 
   atexit( common_cleanup );
   atexit( wrapc_cleanup );

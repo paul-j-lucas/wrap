@@ -124,6 +124,26 @@ _GL_INLINE_HEADER_BEGIN
  */
 #define ARRAY_SIZE(A)             (sizeof(A) / sizeof(A[0]))
 
+#ifndef NDEBUG
+/**
+ * Asserts that this line of code is run at most once &mdash; useful in
+ * initialization functions that must be called at most once.  For example:
+ *
+ *      void initialize() {
+ *        ASSERT_RUN_ONCE();
+ *        // ...
+ *      }
+ *
+ * @sa #RUN_ONCE
+ */
+#define ASSERT_RUN_ONCE() BLOCK(    \
+  static bool UNIQUE_NAME(called);  \
+  assert( !UNIQUE_NAME(called) );   \
+  UNIQUE_NAME(called) = true; )
+#else
+#define ASSERT_RUN_ONCE()         NO_OP
+#endif /* NDEBUG */
+
 /**
  * Embeds the given statements into a compound statement block.
  *
@@ -156,6 +176,35 @@ _GL_INLINE_HEADER_BEGIN
  * @sa #STATIC_CAST()
  */
 #define CONST_CAST(T,EXPR)        ((T)(EXPR))
+
+/**
+ * Calls **dup**(2), check for an error, and exits if there was one.
+ *
+ * @param FD The file descriptor to duplicate.
+ */
+#define DUP(FD)                   PERROR_EXIT_IF( dup( FD ) == -1, EX_OSERR )
+
+/**
+ * Shorthand for printing to standard error.
+ *
+ * @param ... The `printf()` arguments.
+ *
+ * @sa #FPRINTF()
+ * @sa #PRINTF()
+ * @sa #EPUTC()
+ */
+#define EPRINTF(...)              fprintf( stderr, __VA_ARGS__ )
+
+/**
+ * Shorthand for printing \a C to standard error.
+ *
+ * @param C The character to print.
+ *
+ * @sa #EPRINTF()
+ * @sa #FPUTC()
+ * @sa #PUTC()
+ */
+#define EPUTC(C)                  FPUTC( C, stderr )
 
 /**
  * Calls **ferror**(3) and exits if there was an error on \a STREAM.
@@ -198,7 +247,6 @@ _GL_INLINE_HEADER_BEGIN
  * @param S The C string to print.
  * @param STREAM The `FILE` stream to print to.
  *
- * @sa #EPUTS()
  * @sa #FPRINTF()
  * @sa #FPUTC()
  * @sa #PERROR_EXIT_IF()
@@ -218,33 +266,6 @@ _GL_INLINE_HEADER_BEGIN
 #define FREE(PTR)                 free( CONST_CAST( void*, (PTR) ) )
 
 /**
- * No-operation statement.  (Useful for a `goto` target.)
- */
-#define NO_OP                     ((void)0)
-
-/**
- * Shorthand for printing to standard error.
- *
- * @param ... The `printf()` arguments.
- *
- * @sa #FPRINTF()
- * @sa #PRINTF()
- * @sa #EPUTC()
- */
-#define EPRINTF(...)              fprintf( stderr, __VA_ARGS__ )
-
-/**
- * Shorthand for printing \a C to standard error.
- *
- * @param C The character to print.
- *
- * @sa #EPRINTF()
- * @sa #FPUTC()
- * @sa #PUTC()
- */
-#define EPUTC(C)                  FPUTC( C, stderr )
-
-/**
  * A special-case of fatal_error() that additionally prints the file and line
  * where an internal error occurred.
  *
@@ -257,6 +278,65 @@ _GL_INLINE_HEADER_BEGIN
  */
 #define INTERNAL_ERROR(FORMAT,...) \
   fatal_error( EX_SOFTWARE, "%s:%d: internal error: " FORMAT, __FILE__, __LINE__, __VA_ARGS__ )
+
+#ifdef __GNUC__
+
+/**
+ * Specifies that \a EXPR is \e very likely (as in 99.99% of the time) to be
+ * non-zero (true) allowing the compiler to better order code blocks for
+ * magrinally better performance.
+ *
+ * @see http://lwn.net/Articles/255364/
+ * @hideinitializer
+ */
+#define likely(EXPR)              __builtin_expect( !!(EXPR), 1 )
+
+/**
+ * Specifies that \a EXPR is \e very unlikely (as in .01% of the time) to be
+ * non-zero (true) allowing the compiler to better order code blocks for
+ * magrinally better performance.
+ *
+ * @see http://lwn.net/Articles/255364/
+ * @hideinitializer
+ */
+#define unlikely(EXPR)            __builtin_expect( !!(EXPR), 0 )
+
+#else
+# define likely(EXPR)             (EXPR)
+# define unlikely(EXPR)           (EXPR)
+#endif /* __GNUC__ */
+
+/**
+ * Convenience macro for calling check_realloc().
+ *
+ * @param TYPE The type to allocate.
+ * @param N The number of objects of \a TYPE to allocate.  It _must_ be &gt; 0.
+ * @return Returns a pointer to \a N uninitialized objects of \a TYPE.
+ *
+ * @sa check_realloc()
+ * @sa #REALLOC()
+ */
+#define MALLOC(TYPE,N)            check_realloc( NULL, sizeof(TYPE) * (N) )
+
+/// @cond DOXYGEN_IGNORE
+#define NAME2_HELPER(A,B)         A##B
+/// @endcond
+
+/**
+ * Concatenate \a A and \a B together to form a single token.
+ *
+ * @remarks This macro is needed instead of simply using `##` when either
+ * argument needs to be expanded first, e.g., `__LINE__`.
+ *
+ * @param A The first name.
+ * @param B The second name.
+ */
+#define NAME2(A,B)                NAME2_HELPER(A,B)
+
+/**
+ * No-operation statement.  (Useful for a `goto` target.)
+ */
+#define NO_OP                     ((void)0)
 
 /**
  * If \a EXPR is `true`, prints an error message for `errno` to standard error
@@ -271,6 +351,15 @@ _GL_INLINE_HEADER_BEGIN
  */
 #define PERROR_EXIT_IF( EXPR, STATUS ) \
   BLOCK( if ( unlikely( EXPR ) ) perror_exit( STATUS ); )
+
+/**
+ * Calls **pipe**(2), checks for an error, and exits if there was one.
+ *
+ * @param FDS An array of two integer file descriptors to create.
+ *
+ * @sa #PERROR_EXIT_IF()
+ */
+#define PIPE(FDS)                 PERROR_EXIT_IF( pipe( FDS ) == -1, EX_OSERR )
 
 /**
  * Cast either from or to a pointer type &mdash; similar to C++'s
@@ -319,12 +408,25 @@ _GL_INLINE_HEADER_BEGIN
  *
  * @note Unlike **puts**(3), does _not_ print a newline.
  *
- * @sa #EPUTS()
  * @sa #FPUTS()
  * @sa #PRINTF()
  * @sa #PUTC()
  */
 #define PUTS(S)                   FPUTS( (S), stdout )
+
+/**
+ * Convenience macro for calling check_realloc().
+ *
+ * @param PTR The pointer to memory to reallocate.  It is set to the newly
+ * reallocated memory.
+ * @param TYPE The type of object to reallocate.
+ * @param N The number of objects of \a TYPE to reallocate.
+ *
+ * @sa check_realloc()
+ * @sa #MALLOC()
+ */
+#define REALLOC(PTR,TYPE,N) \
+  (PTR) = check_realloc( (PTR), sizeof(TYPE) * (size_t)(N) )
 
 /**
  * Advances \a S over all \a CHARS.
@@ -368,74 +470,18 @@ _GL_INLINE_HEADER_BEGIN
  */
 #define STRINGIFY(X)              STRINGIFY_IMPL(X)
 
-#ifdef __GNUC__
-
 /**
- * Specifies that \a EXPR is \e very likely (as in 99.99% of the time) to be
- * non-zero (true) allowing the compiler to better order code blocks for
- * magrinally better performance.
+ * Synthesises a name prefixed by \a PREFIX unique to the line on which it's
+ * used.
  *
- * @see http://lwn.net/Articles/255364/
- * @hideinitializer
+ * @param PREFIX The prefix of the synthesized name.
+ *
+ * @warning All uses for a given \a PREFIX that refer to the same name _must_
+ * be on the same line.  This is not a problem within macro definitions, but
+ * won't work outside of them since there's no way to refer to a previously
+ * used unique name.
  */
-#define likely(EXPR)              __builtin_expect( !!(EXPR), 1 )
-
-/**
- * Specifies that \a EXPR is \e very unlikely (as in .01% of the time) to be
- * non-zero (true) allowing the compiler to better order code blocks for
- * magrinally better performance.
- *
- * @see http://lwn.net/Articles/255364/
- * @hideinitializer
- */
-#define unlikely(EXPR)            __builtin_expect( !!(EXPR), 0 )
-
-#else
-# define likely(EXPR)             (EXPR)
-# define unlikely(EXPR)           (EXPR)
-#endif /* __GNUC__ */
-
-/**
- * Convenience macro for calling check_realloc().
- *
- * @param TYPE The type to allocate.
- * @param N The number of objects of \a TYPE to allocate.  It _must_ be &gt; 0.
- * @return Returns a pointer to \a N uninitialized objects of \a TYPE.
- *
- * @sa check_realloc()
- * @sa #REALLOC()
- */
-#define MALLOC(TYPE,N)            check_realloc( NULL, sizeof(TYPE) * (N) )
-
-/**
- * Convenience macro for calling check_realloc().
- *
- * @param PTR The pointer to memory to reallocate.  It is set to the newly
- * reallocated memory.
- * @param TYPE The type of object to reallocate.
- * @param N The number of objects of \a TYPE to reallocate.
- *
- * @sa check_realloc()
- * @sa #MALLOC()
- */
-#define REALLOC(PTR,TYPE,N) \
-  (PTR) = check_realloc( (PTR), sizeof(TYPE) * (size_t)(N) )
-
-/**
- * Calls **dup**(2), check for an error, and exits if there was one.
- *
- * @param FD The file descriptor to duplicate.
- */
-#define DUP(FD)                   PERROR_EXIT_IF( dup( FD ) == -1, EX_OSERR )
-
-/**
- * Calls **pipe**(2), checks for an error, and exits if there was one.
- *
- * @param FDS An array of two integer file descriptors to create.
- *
- * @sa #PERROR_EXIT_IF()
- */
-#define PIPE(FDS)                 PERROR_EXIT_IF( pipe( FDS ) == -1, EX_OSERR )
+#define UNIQUE_NAME(PREFIX)       NAME2(NAME2(PREFIX,_),__LINE__)
 
 /**
  * Whitespace string: space and tab only.
