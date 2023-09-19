@@ -114,7 +114,7 @@ char const* cc_map_compile( char const *in_cc ) {
     unsigned char const *const ucc = STATIC_CAST( unsigned char*, cc );
     char *cc_map_entry = cc_map[ ucc[0] ];
     if ( cc_map_entry == NULL ) {
-      cc_map_entry = MALLOC( char, 1 + 1/*null*/ );
+      cc_map_entry = MALLOC( char, 1 + 1/*\0*/ );
       cc_map_entry[0] = cc1;
       cc_map_entry[1] = '\0';
     }
@@ -124,7 +124,7 @@ char const* cc_map_compile( char const *in_cc ) {
       // there.
       //
       size_t const len = strlen( cc_map_entry );
-      REALLOC( cc_map_entry, char, len + 1 + 1/*null*/ );
+      REALLOC( cc_map_entry, char, len + 1 + 1/*\0*/ );
       cc_map_entry[ len ] = cc1;
       cc_map_entry[ len + 1 ] = '\0';
     }
@@ -144,7 +144,7 @@ char const* cc_map_compile( char const *in_cc ) {
     );
   }
 
-  char *const out_cc = FREE_STRBUF_LATER( distinct_cc + 1/*null*/ );
+  char *const out_cc = free_later( MALLOC( char, distinct_cc + 1/*\0*/ ) );
   char *s = out_cc;
   for ( size_t i = 0; i < ARRAY_SIZE( cc_set ); ++i ) {
     if ( cc_set[i] )

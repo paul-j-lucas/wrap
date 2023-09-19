@@ -762,7 +762,8 @@ static void init( int argc, char const *argv[] ) {
 
   if ( opt_block_regex != NULL ) {
     if ( opt_block_regex[0] != '^' ) {
-      char *const temp = FREE_STRBUF_LATER( strlen( opt_block_regex ) + 1 );
+      char *const temp =
+        free_later( MALLOC( char, strlen( opt_block_regex ) + 1/*\0*/ ) );
       temp[0] = '^';
       strcpy( temp + 1, opt_block_regex );
       opt_block_regex = temp;

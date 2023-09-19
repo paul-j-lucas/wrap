@@ -218,25 +218,6 @@ _GL_INLINE_HEADER_BEGIN
 #define FREE(PTR)                 free( CONST_CAST( void*, (PTR) ) )
 
 /**
- * Allocates a new C string of size \a SIZE and marks it to be free'd later.
- *
- * @param SIZE The size of the string to allocate.
- * @return Returrns a pointer to the new string.
- *
- * @sa #FREE_STR_LATER()
- */
-#define FREE_STRBUF_LATER(SIZE)   FREE_STR_LATER( MALLOC( char, (SIZE) ) )
-
-/**
- * Calls free_later() with \a PTR.
- *
- * @return Returns \a PTR cast to `char*`.
- *
- * @sa free_later()
- */
-#define FREE_STR_LATER(PTR)       POINTER_CAST( char*, free_later( PTR ) )
-
-/**
  * No-operation statement.  (Useful for a `goto` target.)
  */
 #define NO_OP                     ((void)0)

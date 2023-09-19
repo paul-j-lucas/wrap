@@ -153,7 +153,7 @@ static char* arg_dup( char const **ps ) {
   assert( ps != NULL );
 
   char const *s = *ps;
-  char *const arg_buf = MALLOC( char, strlen( s ) + 1 );
+  char *const arg_buf = MALLOC( char, strlen( s ) + 1/*\0*/ );
   char *arg = arg_buf;
   char quote = '\0';
 

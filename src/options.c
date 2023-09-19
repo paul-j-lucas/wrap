@@ -456,7 +456,7 @@ static eol_t parse_eol( char const *s ) {
   } // for
 
   // name not found: construct valid name list for an error message
-  char *const values_buf = FREE_STRBUF_LATER( values_buf_size );
+  char *const values_buf = free_later( MALLOC( char, values_buf_size ) );
   char *pvalues = values_buf;
   for ( eol_map_t const *m = EOL_MAP; m->em_name != NULL; ++m ) {
     if ( pvalues > values_buf ) {
