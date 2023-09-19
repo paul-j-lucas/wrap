@@ -1,5 +1,6 @@
 2023-09-19  Paul J. Lucas <paul@lucasmail.org>
 
+   * configure.ac, util.h: Improced ARRAY_SIZE().
    * options.c, read_conf.c, regex_test.c, util.c, util.h, wrapc.c: Added () to
      STRERROR.
    * util.h, wrap.c, wrapc.c: Added ASSERT_RUN_ONCE(); sorted macros.
