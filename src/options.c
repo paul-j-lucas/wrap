@@ -488,11 +488,12 @@ static eol_t parse_eol( char const *s ) {
  * originating line number; zero otherwise.
  */
 static void parse_options( int argc, char const *argv[],
-                           char const short_opts[const],
-                           struct option const long_opts[const],
-                           char const cmdline_forbidden_opts[const],
+                           char const short_opts[const static 2],
+                           struct option const long_opts[const static 2],
+                           char const cmdline_forbidden_opts[const static 1],
                            /*_Noreturn*/ void (*usage)(int),
                            unsigned line_no ) {
+  assert( argv != NULL );
   assert( usage != NULL );
 
   opterr = 0;
