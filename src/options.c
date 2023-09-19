@@ -483,6 +483,7 @@ static eol_t parse_eol( char const *s ) {
  * @param cmdline_forbidden_opts The set of options that are forbidden on the
  * command line.
  * @param usage A pointer to a function that prints a usage message and exits.
+ * If called, it _must not_ return.
  * @param line_no When parsing options from a configuration file, the
  * originating line number; zero otherwise.
  */
