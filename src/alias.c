@@ -237,12 +237,12 @@ alias_t const* alias_find( char const *name ) {
 void dump_aliases( void ) {
   for ( size_t i = 0; i < n_aliases; ++i ) {
     if ( i == 0 )
-      printf( "[ALIASES]\n" );
+      puts( "[ALIASES]" );
     alias_t const *const alias = &aliases[i];
     printf( "%s =", alias->argv[0] );
     for ( int arg = 1; arg < alias->argc; ++arg )
       printf( " %s", alias->argv[ arg ] );
-    fputc( '\n', stdout );
+    putchar( '\n' );
   } // for
 }
 #endif /* NDEBUG */
