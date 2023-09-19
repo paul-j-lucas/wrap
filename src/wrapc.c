@@ -163,7 +163,10 @@ static size_t       str_width( char const* );
 _Noreturn
 static void         usage( int );
 static void         wait_for_child_processes( void );
-static void         wrap_dox_line( char const*, FILE* );
+
+NODISCARD
+static bool         wrap_dox_line( char const*, FILE* );
+
 static void         wrapc_cleanup( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
@@ -439,11 +442,10 @@ static pid_t read_source_write_wrap( void ) {
     if ( suffix_buf[0] != '\0' )
       chop_suffix( line );
 
-    if ( opt_doxygen )
-      wrap_dox_line( line, fwrap );
-    else
-      FPUTS( line, fwrap );
+    if ( opt_doxygen && wrap_dox_line( line, fwrap ) )
+      continue;
 
+    FPUTS( line, fwrap );
   } // for
   exit( EX_OK );
 
@@ -1215,15 +1217,18 @@ static void wait_for_child_processes( void ) {
 /**
  * If \a line starts with a Doxygen command, handle it.
  *
- * @param line The line of text to wrap.
- * @param fout The `FILE` to write to.
+ * @param line The line of text to check.
+ * @param fout The `FILE` to possibly write to.
+ * @return Returns `true` only if a Doxygen command was handled; `false`
+ * otherwise.
+ *
+ * @note The caller _must_ write \a line only if this function returns \a
+ * false.
  */
-static void wrap_dox_line( char const *line, FILE *fout ) {
+static bool wrap_dox_line( char const *line, FILE *fout ) {
   char dox_cmd_name[ DOX_CMD_NAME_SIZE_MAX + 1 ];
-  if ( !dox_parse_cmd_name( line, dox_cmd_name ) ) {
-    FPUTS( line, fout );
-    return;
-  }
+  if ( !dox_parse_cmd_name( line, dox_cmd_name ) )
+    return false;
 
   static dox_cmd_t const *prev_dox_cmd;
   if ( prev_dox_cmd != NULL ) {
@@ -1235,15 +1240,14 @@ static void wrap_dox_line( char const *line, FILE *fout ) {
       FPUTS( line, fout );
       WIPC_SEND( fout, WIPC_CODE_PREFORMATTED_END );
       prev_dox_cmd = NULL;
+      return true;
     }
-    else {
-      //
-      // It's not the corresponding end command for the previous Doxygen
-      // command that copies preformatted text: just pass it along to wrap as-
-      // is.
-      //
-    }
-    return;
+
+    //
+    // It's not the corresponding end command for the previous Doxygen command
+    // that copies preformatted text: just pass it along to wrap as-is.
+    //
+    return false;
   }
 
   //
@@ -1256,8 +1260,7 @@ static void wrap_dox_line( char const *line, FILE *fout ) {
     // like a Doxgen command, e.g., "\t"): just pass it along to wrap as-is
     // and hope for the best.
     //
-    FPUTS( line, fout );
-    return;
+    return false;
   }
 
   if ( (dox_cmd->type & DOX_BOL) != 0 )
@@ -1279,13 +1282,15 @@ static void wrap_dox_line( char const *line, FILE *fout ) {
   if ( (dox_cmd->type & DOX_PRE) != 0 ) {
     //
     // The Doxygen command is for a block of preformatted text (e.g., @code,
-    // @dot, @verbatim, etc.): tell wrap to suspend wrapping and begin
-    // sending preformatted text through verbatim until we encounter the
-    // command's corresponding end command.
+    // @dot, @verbatim, etc.): tell wrap to suspend wrapping and begin sending
+    // preformatted text through verbatim until we encounter the command's
+    // corresponding end command.
     //
     WIPC_SEND( fout, WIPC_CODE_PREFORMATTED_BEGIN );
     prev_dox_cmd = dox_cmd;
   }
+
+  return true;
 }
 
 /**
