@@ -20,5 +20,6 @@ Makefile
 /configure
 /conftest*
 /depcomp
+/docs
 /install-sh
 /missing

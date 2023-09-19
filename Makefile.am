@@ -19,8 +19,22 @@
 ##
 
 ACLOCAL_AMFLAGS = -I m4
-EXTRA_DIST = m4/gnulib-cache.m4 README.md
 SUBDIRS = lib src man test
+
+EXTRA_DIST =	bootstrap \
+		Doxyfile \
+		m4/gnulib-cache.m4 \
+		makedoc.sh \
+		README.md
+
+.PHONY: doc docs \
+	update-gnulib
+
+doc docs:
+	@./makedoc.sh
+
+clean-local:
+	rm -fr docs
 
 update-gnulib:
 	gnulib-tool --add-import
