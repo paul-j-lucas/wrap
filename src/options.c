@@ -829,12 +829,14 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
 
   parse_options(
     argc, argv, OPTS_SHORT[ is_wrapc ], OPTS_LONG[ is_wrapc ],
-    CMDLINE_FORBIDDEN_OPTS_SHORT[ is_wrapc ], usage, 0
+    CMDLINE_FORBIDDEN_OPTS_SHORT[ is_wrapc ], usage, /*line_no=*/0
   );
   argc -= optind;
   argv += optind;
-  if ( argc > 0 )
+  if ( argc > 0 ) {
     (*usage)( EX_USAGE );
+    unreachable();
+  }
 
   if ( !opt_no_conf && (opt_alias != NULL || opt_fin_name != NULL) ) {
     alias_t const *alias = NULL;
