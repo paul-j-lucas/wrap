@@ -1,5 +1,10 @@
 2023-09-18  Paul J. Lucas <paul@lucasmail.org>
 
+   * align.c, common.c, options.c, options.h, util.c, util.h, wrap.c, wrapc.c:
+     Eliminated fin and fout.
+   * doxygen.c: Unindented code.
+   * cc_map.c: Now using STATIC_CAST.
+   * alias.c: Using puts() and putchar().
    * wrap.c: Fixed wording in help message and made it more consistent.
    * lib/Makefile.am, attribute.h, getopt-cdefs.in.h, intprops-internal.h,
      mbrtoc32.c, mbtowc-lock.c, setlocale-lock.c, stddef.in.h, stdlib.in.h,
