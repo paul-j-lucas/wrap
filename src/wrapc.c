@@ -163,6 +163,7 @@ static size_t       str_width( char const* );
 _Noreturn
 static void         usage( int );
 static void         wait_for_child_processes( void );
+static void         wrap_dox_line( char const*, FILE* );
 static void         wrapc_cleanup( void );
 
 ////////// inline functions ///////////////////////////////////////////////////
@@ -229,7 +230,7 @@ int main( int argc, char const *argv[] ) {
 ////////// IPC functions //////////////////////////////////////////////////////
 
 /**
- * Forks and execs into wrap(1).
+ * Forks and execs into **wrap**(1).
  *
  * @param read_source_write_wrap_pid The process ID of read_source_write_wrap()
  * (in case we need to kill it).
@@ -311,7 +312,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 /**
  * Reads the source text to be wrapped and writes it, with the leading
  * whitespace and comment delimiter characters stripped from each line, to
- * wrap(1).
+ * **wrap**(1).
  *
  * @return Returns the child's process ID.
  */
@@ -438,78 +439,11 @@ static pid_t read_source_write_wrap( void ) {
     if ( suffix_buf[0] != '\0' )
       chop_suffix( line );
 
-    if ( !opt_doxygen ) {
+    if ( opt_doxygen )
+      wrap_dox_line( line, fwrap );
+    else
       FPUTS( line, fwrap );
-      continue;
-    }
 
-    char dox_cmd_name[ DOX_CMD_NAME_SIZE_MAX + 1 ];
-    if ( !dox_parse_cmd_name( line, dox_cmd_name ) ) {
-      FPUTS( line, fwrap );
-      continue;
-    }
-
-    static dox_cmd_t const *prev_dox_cmd;
-    if ( prev_dox_cmd != NULL ) {
-      if ( strcmp( dox_cmd_name, prev_dox_cmd->end_name ) == 0 ) {
-        //
-        // We've encountered the previous Doxygen command's corresponding end
-        // command: put that line, then tell wrap to resume wrapping.
-        //
-        FPUTS( line, fwrap );
-        WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_END );
-        prev_dox_cmd = NULL;
-      }
-      else {
-        //
-        // It's not the corresponding end command for the previous Doxygen
-        // command that copies preformatted text: just pass it along to wrap
-        // as-is.
-        //
-      }
-      continue;
-    }
-
-    //
-    // See if it's a known Doxygen command.
-    //
-    dox_cmd_t const *const dox_cmd = dox_find_cmd( dox_cmd_name );
-    if ( dox_cmd == NULL ) {
-      //
-      // It's a Doxygen command we know nothing about (or something that looks
-      // like a Doxgen command, e.g., "\t"): just pass it along to wrap as-is
-      // and hope for the best.
-      //
-      FPUTS( line, fwrap );
-      continue;
-    }
-
-    if ( (dox_cmd->type & DOX_BOL) != 0 )
-      WIPC_SEND( fwrap, WIPC_CODE_DELIMIT_PARAGRAPH );
-
-    if ( (dox_cmd->type & DOX_EOL) != 0 ) {
-      //
-      // The Doxygen command continues until the end of the line: treat it as
-      // preformatted.
-      //
-      WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_BEGIN );
-    }
-
-    FPUTS( line, fwrap );
-
-    if ( (dox_cmd->type & DOX_EOL) != 0 )
-      WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_END );
-
-    if ( (dox_cmd->type & DOX_PRE) != 0 ) {
-      //
-      // The Doxygen command is for a block of preformatted text (e.g., @code,
-      // @dot, @verbatim, etc.): tell wrap to suspend wrapping and begin
-      // sending preformatted text through verbatim until we encounter the
-      // command's corresponding end command.
-      //
-      WIPC_SEND( fwrap, WIPC_CODE_PREFORMATTED_BEGIN );
-      prev_dox_cmd = dox_cmd;
-    }
   } // for
   exit( EX_OK );
 
@@ -527,8 +461,8 @@ verbatim:
 }
 
 /**
- * Reads the output of wrap(1) and prepends the leading whitespace and comment
- * characters back to each line.
+ * Reads the output of **wrap**(1) and prepends the leading whitespace and
+ * comment characters back to each line.
  */
 static void read_wrap( void ) {
 #ifndef DEBUG_RSWW
@@ -1137,8 +1071,8 @@ static char* skip_n( char *s, size_t n ) {
 }
 
 /**
- * A special variant of strlen(3) that gets the length not including trailing
- * end-of-line characters, if any.
+ * A special variant of **strlen**(3) that gets the length not including
+ * trailing end-of-line characters, if any.
  *
  * @param s The null-terminated string to get the length of.
  * @return Returns said length.
@@ -1178,7 +1112,7 @@ static char const* str_status( int status ) {
 }
 
 /**
- * Computes the width of a string where tabs have a width of \c opt_tab_spaces
+ * Computes the width of a string where tabs have a width of opt_tab_spaces
  * spaces minus the number of spaces we're into a tab-stop; all others
  * characters have a width of 1.
  *
@@ -1276,6 +1210,82 @@ static void wait_for_child_processes( void ) {
     }
   } // for
 #endif /* DEBUG_RSWW */
+}
+
+/**
+ * If \a line starts with a Doxygen command, handle it.
+ *
+ * @param line The line of text to wrap.
+ * @param fout The `FILE` to write to.
+ */
+static void wrap_dox_line( char const *line, FILE *fout ) {
+  char dox_cmd_name[ DOX_CMD_NAME_SIZE_MAX + 1 ];
+  if ( !dox_parse_cmd_name( line, dox_cmd_name ) ) {
+    FPUTS( line, fout );
+    return;
+  }
+
+  static dox_cmd_t const *prev_dox_cmd;
+  if ( prev_dox_cmd != NULL ) {
+    if ( strcmp( dox_cmd_name, prev_dox_cmd->end_name ) == 0 ) {
+      //
+      // We've encountered the previous Doxygen command's corresponding end
+      // command: put that line, then tell wrap to resume wrapping.
+      //
+      FPUTS( line, fout );
+      WIPC_SEND( fout, WIPC_CODE_PREFORMATTED_END );
+      prev_dox_cmd = NULL;
+    }
+    else {
+      //
+      // It's not the corresponding end command for the previous Doxygen
+      // command that copies preformatted text: just pass it along to wrap as-
+      // is.
+      //
+    }
+    return;
+  }
+
+  //
+  // See if it's a known Doxygen command.
+  //
+  dox_cmd_t const *const dox_cmd = dox_find_cmd( dox_cmd_name );
+  if ( dox_cmd == NULL ) {
+    //
+    // It's a Doxygen command we know nothing about (or something that looks
+    // like a Doxgen command, e.g., "\t"): just pass it along to wrap as-is
+    // and hope for the best.
+    //
+    FPUTS( line, fout );
+    return;
+  }
+
+  if ( (dox_cmd->type & DOX_BOL) != 0 )
+    WIPC_SEND( fout, WIPC_CODE_DELIMIT_PARAGRAPH );
+
+  if ( (dox_cmd->type & DOX_EOL) != 0 ) {
+    //
+    // The Doxygen command continues until the end of the line: treat it as
+    // preformatted.
+    //
+    WIPC_SEND( fout, WIPC_CODE_PREFORMATTED_BEGIN );
+  }
+
+  FPUTS( line, fout );
+
+  if ( (dox_cmd->type & DOX_EOL) != 0 )
+    WIPC_SEND( fout, WIPC_CODE_PREFORMATTED_END );
+
+  if ( (dox_cmd->type & DOX_PRE) != 0 ) {
+    //
+    // The Doxygen command is for a block of preformatted text (e.g., @code,
+    // @dot, @verbatim, etc.): tell wrap to suspend wrapping and begin
+    // sending preformatted text through verbatim until we encounter the
+    // command's corresponding end command.
+    //
+    WIPC_SEND( fout, WIPC_CODE_PREFORMATTED_BEGIN );
+    prev_dox_cmd = dox_cmd;
+  }
 }
 
 /**
