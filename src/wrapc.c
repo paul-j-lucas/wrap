@@ -344,7 +344,7 @@ static pid_t read_source_write_wrap( void ) {
   FILE *const fwrap = fdopen( pipes[ TO_WRAP ][ STDOUT_FILENO ], "w" );
   if ( unlikely( fwrap == NULL ) ) {
     fatal_error( EX_OSERR,
-      "child can't open pipe for writing: %s\n", STRERROR
+      "child can't open pipe for writing: %s\n", STRERROR()
     );
   }
   wait_for_debugger_attach( "WRAPC_DEBUG_RSRW" );
@@ -486,7 +486,7 @@ static void read_wrap( void ) {
   FILE *const fwrap = fdopen( pipes[ FROM_WRAP ][ STDIN_FILENO ], "r" );
   if ( unlikely( fwrap == NULL ) ) {
     fatal_error( EX_OSERR,
-      "parent can't open pipe for reading: %s\n", STRERROR
+      "parent can't open pipe for reading: %s\n", STRERROR()
     );
   }
 

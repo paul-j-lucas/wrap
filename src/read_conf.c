@@ -176,7 +176,7 @@ char const* read_conf( char const *conf_file ) {
   FILE *const fconf = fopen( conf_file, "r" );
   if ( fconf == NULL ) {
     if ( is_explicit_conf_file )
-      fatal_error( EX_NOINPUT, "%s: %s\n", conf_file, STRERROR );
+      fatal_error( EX_NOINPUT, "%s: %s\n", conf_file, STRERROR() );
     return NULL;
   }
 
@@ -225,7 +225,7 @@ char const* read_conf( char const *conf_file ) {
   } // while
 
   if ( unlikely( ferror( fconf ) ) )
-    fatal_error( EX_IOERR, "%s: %s\n", conf_file, STRERROR );
+    fatal_error( EX_IOERR, "%s: %s\n", conf_file, STRERROR() );
   PJL_IGNORE_RV( fclose( fconf ) );
 
 #ifndef NDEBUG

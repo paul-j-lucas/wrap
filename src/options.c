@@ -865,7 +865,7 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
   if ( strcmp( fin_path, "-" ) != 0 ) {
     FILE *const fin = fopen( fin_path, "r" );
     if ( fin == NULL )
-      fatal_error( EX_NOINPUT, "\"%s\": %s\n", fin_path, STRERROR );
+      fatal_error( EX_NOINPUT, "\"%s\": %s\n", fin_path, STRERROR() );
     check_dup2( fileno( fin ), STDIN_FILENO );
     PJL_IGNORE_RV( fclose( fin ) );
   }
@@ -873,7 +873,7 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
   if ( strcmp( fout_path, "-" ) != 0 ) {
     FILE *const fout = fopen( fout_path, "w" );
     if ( fout == NULL )
-      fatal_error( EX_CANTCREAT, "\"%s\": %s\n", fout_path, STRERROR );
+      fatal_error( EX_CANTCREAT, "\"%s\": %s\n", fout_path, STRERROR() );
     check_dup2( fileno( fout ), STDOUT_FILENO );
     PJL_IGNORE_RV( fclose( fout ) );
   }

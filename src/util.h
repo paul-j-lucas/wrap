@@ -455,7 +455,7 @@ _GL_INLINE_HEADER_BEGIN
 /**
  * Shorthand for calling **strerror**(3) with `errno`.
  */
-#define STRERROR                  strerror( errno )
+#define STRERROR()                strerror( errno )
 
 /**
  * Macro that "string-ifies" its argument, e.g., <code>%STRINGIFY(x)</code>

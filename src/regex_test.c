@@ -56,7 +56,7 @@ int main( int argc, char const *argv[] ) {
   char const *const test_path = argv[1];
   FILE *const fin = fopen( test_path, "r" );
   if ( fin == NULL )
-    fatal_error( EX_NOINPUT, "\"%s\": %s\n", test_path, STRERROR );
+    fatal_error( EX_NOINPUT, "\"%s\": %s\n", test_path, STRERROR() );
 
   setlocale_utf8();
 
