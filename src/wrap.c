@@ -153,6 +153,13 @@ static inline void print_eol( void ) {
 
 ////////// main ///////////////////////////////////////////////////////////////
 
+/**
+ * The main entry point.
+ *
+ * @param argc The command-line argument count.
+ * @param argv The command-line argument values.
+ * @return Returns 0 on success, non-zero on failure.
+ */
 int main( int argc, char const *argv[] ) {
   wait_for_debugger_attach( "WRAP_DEBUG" );
   init( argc, argv );
