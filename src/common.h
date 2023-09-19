@@ -92,6 +92,12 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
 #define ASCII_SOH                 '\x01'
 
 /**
+ * Character used to separate parameters in an Interprocess Communication (IPC)
+ * message.
+ */
+#define WIPC_PARAM_SEP            "|"
+
+/**
  * Sends a no-argument Interprocess Communication (IPC) message.
  * @hideinitializer
  */
@@ -105,19 +111,18 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
   FPRINTF( (STREAM), ("%c%c" FORMAT), WIPC_CODE_HELLO, (CODE), __VA_ARGS__ )
 
 /**
- * Character used to separate parameters in an Interprocess Communication (IPC)
- * message.
- */
-#define WIPC_SEP                  "|"
-
-/**
  * Interprocess Communication (IPC) command codes.
+ *
+ * @remarks **wrap**(1) and **wrapc**(1) communicate using stdin and stdout via
+ * Unix pipes.  To distinguish an IPC message from ordinary text, all IPC
+ * messages start "in-band" with a character unlikely to appear otherwise:
+ * #ASCII_DLE via #WIPC_CODE_HELLO.
  */
 enum wipc_code {
   /**
-   * IPC code to in-band signal the start of an IPC message.  It _must_ be
-   * immediately followed by another IPC code that indicates the type of
-   * message.  All IPC messages _must_ be terminated by a newline.
+   * IPC code to signal the start of an IPC message.  It _must_ be immediately
+   * followed by another IPC code that indicates the type of message.  All IPC
+   * messages _must_ be terminated by a newline.
    */
   WIPC_CODE_HELLO                 = ASCII_DLE,
   
@@ -128,9 +133,16 @@ enum wipc_code {
   
   /**
    * IPC code to signal a change in the leading comment characters and/or
-   * whitespace.  Its parameters are:
+   * whitespace.
    *
-   *      <line_width>|<line_prefix>
+   * It has two parameters:
+   *
+   *  1. _line-width_
+   *  2. _line-prefix_
+   *
+   * Parameters are separated by #WIPC_PARAM_SEP.
+   *
+   * @sa #WIPC_PARAM_SEP
    */
   WIPC_CODE_NEW_LEADER            = ASCII_SOH,
   

@@ -173,8 +173,10 @@ static void         wrapc_cleanup( void );
 
 /**
  * Closes both ends of a pipe.
+ *
+ * @param pipe The pipe to close.
  */
-static inline void close_pipe( int pipe[2] ) {
+static inline void close_pipe( int pipe[const static 2] ) {
   PJL_IGNORE_RV( close( pipe[ STDIN_FILENO ] ) );
   PJL_IGNORE_RV( close( pipe[ STDOUT_FILENO ] ) );
 }
@@ -337,7 +339,7 @@ static pid_t read_source_write_wrap( void ) {
   // We don't use these here.
   //
   close_pipe( pipes[ FROM_WRAP ] );
-  close( pipes[ TO_WRAP ][ STDIN_FILENO ] );
+  PJL_IGNORE_RV( close( pipes[ TO_WRAP ][ STDIN_FILENO ] ) );
   //
   // Read from stdin and write to pipes[TO_WRAP] (wrap).
   //
@@ -438,7 +440,7 @@ static pid_t read_source_write_wrap( void ) {
         opt_line_width += prefix_len0 - prefix_len;
         set_prefix( CURR, prefix_len );
         WIPC_SENDF(
-          fwrap, WIPC_CODE_NEW_LEADER, "%zu" WIPC_SEP "%s\n",
+          fwrap, WIPC_CODE_NEW_LEADER, "%zu" WIPC_PARAM_SEP "%s\n",
           opt_line_width, prefix_buf
         );
       }
@@ -479,7 +481,7 @@ static void read_wrap( void ) {
   // We don't use these here.
   //
   close_pipe( pipes[ TO_WRAP ] );
-  close( pipes[ FROM_WRAP ][ STDOUT_FILENO ] );
+  PJL_IGNORE_RV( close( pipes[ FROM_WRAP ][ STDOUT_FILENO ] ) );
   //
   // Read from pipes[FROM_WRAP] (wrap) and write to stdout.
   //

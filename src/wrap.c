@@ -577,14 +577,14 @@ read_line:
         if ( output_len > 0 ) {
           WIPC_DEFERF(
             ipc_buf, sizeof ipc_buf,
-            WIPC_CODE_NEW_LEADER, "%zu" WIPC_SEP "%s",
+            WIPC_CODE_NEW_LEADER, "%zu" WIPC_PARAM_SEP "%s",
             new_line_width, sep + 1
           );
           ipc_width = new_line_width;
         } else {
           WIPC_SENDF(
             stdout,
-            WIPC_CODE_NEW_LEADER, "%zu" WIPC_SEP "%s",
+            WIPC_CODE_NEW_LEADER, "%zu" WIPC_PARAM_SEP "%s",
             new_line_width, sep + 1
           );
           line_width = opt_line_width = new_line_width;
