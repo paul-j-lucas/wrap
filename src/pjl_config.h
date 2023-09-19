@@ -49,7 +49,7 @@
  *
  * @note
  * There is no compiler attribute for this.  It's just a visual cue in code
- * that #NODISCARD wasn't forgotten.
+ * that `NODISCARD` wasn't forgotten.
  */
 #define PJL_DISCARD               /* nothing */
 

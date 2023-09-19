@@ -137,8 +137,6 @@ _GL_INLINE_HEADER_BEGIN
  *        ASSERT_RUN_ONCE();
  *        // ...
  *      }
- *
- * @sa #RUN_ONCE
  */
 #define ASSERT_RUN_ONCE() BLOCK(    \
   static bool UNIQUE_NAME(called);  \
@@ -222,9 +220,10 @@ _GL_INLINE_HEADER_BEGIN
 /**
  * Shorthand for printing to standard output.
  *
+ * @param STREAM The `FILE` stream to print to.
  * @param ... The `printf()` arguments.
  *
- * @sa #EFPRINTF()
+ * @sa #EPRINTF()
  * @sa #PERROR_EXIT_IF()
  */
 #define FPRINTF(STREAM,...) \
@@ -657,7 +656,6 @@ char closing_char( char c );
  * @sa #INTERNAL_ERROR()
  * @sa perror_exit()
  * @sa #PERROR_EXIT_IF()
- * @sa #UNEXPECTED_INT_VALUE()
  */
 PJL_PRINTF_LIKE_FUNC(2)
 _Noreturn void fatal_error( int status, char const *format, ... );
@@ -766,8 +764,8 @@ bool is_eol( char c ) {
 }
 
 /**
- * Checks whether \a c is either a space or a tab only since \r or \n mean the
- * end of a line.
+ * Checks whether \a c is either a space or a tab only since `\r` or `\n` mean
+ * the end of a line.
  *
  * @param c The character to check.
  * @return Returns `true` only if \a c is a space or a tab.
