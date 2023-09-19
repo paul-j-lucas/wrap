@@ -1,5 +1,6 @@
 2023-09-18  Paul J. Lucas <paul@lucasmail.org>
 
+   * options.c: Added `static 2` and assert().
    * options.c: Added comment; added unreachable.
    * align.c, common.c, options.c, options.h, util.c, util.h, wrap.c, wrapc.c:
      Eliminated fin and fout.
