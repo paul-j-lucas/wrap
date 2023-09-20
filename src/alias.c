@@ -103,7 +103,7 @@ static alias_t* alias_alloc( void ) {
 
 /**
  * Checks the most-recently-added alias against all previous aliases for a
- * duplicate name.
+ * duplicate name.  If a duplicate is found, prints an error message and exits.
  *
  * @param conf_file The configuration file path-name.
  * @param line_no The line-number within \a conf_file.
@@ -228,7 +228,7 @@ done:
 }
 
 /**
- * Performs a strcpy(3), but only while characters in \a src are in \a set.
+ * Performs a **strcpy**(3), but only while characters in \a src are in \a set.
  *
  * @param dest A pointer to the buffer to copy to.
  * @param dest_size The size of \a dest.
@@ -264,20 +264,6 @@ alias_t const* alias_find( char const *name ) {
       return &aliases[i];
   return NULL;
 }
-
-#ifndef NDEBUG
-void dump_aliases( void ) {
-  for ( size_t i = 0; i < n_aliases; ++i ) {
-    if ( i == 0 )
-      puts( "[ALIASES]" );
-    alias_t const *const alias = &aliases[i];
-    printf( "%s =", alias->argv[0] );
-    for ( int arg = 1; arg < alias->argc; ++arg )
-      printf( " %s", alias->argv[ arg ] );
-    putchar( '\n' );
-  } // for
-}
-#endif /* NDEBUG */
 
 void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
   assert( line != NULL );
@@ -341,6 +327,20 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
     REALLOC( alias->argv, char const*, alias->argc + 1 );
   alias->argv[ alias->argc ] = NULL;
 }
+
+#ifndef NDEBUG
+void dump_aliases( void ) {
+  for ( size_t i = 0; i < n_aliases; ++i ) {
+    if ( i == 0 )
+      puts( "[ALIASES]" );
+    alias_t const *const alias = &aliases[i];
+    printf( "%s =", alias->argv[0] );
+    for ( int arg = 1; arg < alias->argc; ++arg )
+      printf( " %s", alias->argv[ arg ] );
+    putchar( '\n' );
+  } // for
+}
+#endif /* NDEBUG */
 
 ///////////////////////////////////////////////////////////////////////////////
 
