@@ -57,7 +57,7 @@
 typedef bool cc_set_t[128];
 
 // extern variable definitions
-cc_map_t            cc_map;
+cc_map_t            cc_map;             ///< Comment delimeter character map.
 
 ////////// inline functions ///////////////////////////////////////////////////
 

@@ -84,7 +84,8 @@ bool cc_is_single( char const *cc_map_entry ) {
 
 /**
  * Compiles a set of comment delimiter characters into a string of distinct
- * comment delimiter characters and a cc_map_t used by align_eol_comments().
+ * comment delimiter characters and a \ref cc_map_t used by
+ * align_eol_comments().
  *
  * @param in_cc The comment delimiter characters to compile.  It is one or more
  * one- or two-character comment delimiters separated by either commas or
