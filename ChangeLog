@@ -1,5 +1,20 @@
+2023-09-20  Paul J. Lucas <paul@lucasmail.org>
+
+   * cc_map.h, common.c, common.h, options.h, unicode.c, unicode.h, util.c,
+     util.h: Fixed inline macros.
+   * wrapc.c: s/read_wrap/read_wrap_write_stdout/
+   * alias.c: Sorted functions.
+   * configure.ac: Added check for __builtin_expect.
+   * util.h: Now using HAVE___BUILTIN_EXPECT.
+
 2023-09-19  Paul J. Lucas <paul@lucasmail.org>
 
+   * alias.c, alias.h, common.c, pattern.c, pattern.h: Now using atexit() to
+     automatically call alias_cleanup() and pattern_cleanup().
+   * align.c, cc_map.c, cc_map.h, doxygen.c, doxygen.h, markdown.c, markdown.h,
+     options.c, options.h, util.c, util.h, wrap.c, wrapc.c: 1.
+     s/true_reset/true_clear/ 2. Added MEM_ZERO(), RUN_ONCE, and ATEXIT().
+   * Doxyfile, Makefile.am, makedoc.sh, wrap.css: Added "make doc" target.
    * configure.ac, util.h: Improced ARRAY_SIZE().
    * options.c, read_conf.c, regex_test.c, util.c, util.h, wrapc.c: Added () to
      STRERROR.
