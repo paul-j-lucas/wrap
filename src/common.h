@@ -62,6 +62,12 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
 ////////// Interprocess Communication (IPC) ///////////////////////////////////
 
 /**
+ * @defgroup ipc-group Interprocess Communication (IPC)
+ * Macros for interprocess communication between **wrap**(1) and **wrapc**(1).
+ * @{
+ */
+
+/**
  * Device Control code #1.
  */
 #define ASCII_DC1                 '\x11'
@@ -79,8 +85,8 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
 /**
  * From Wikipedia: The data link escape character (DLE) was intended to be a
  * signal to the other end of a data link that the following character is a
- * control character such as STX or ETX. For example a packet may be structured
- * in the following way (DLE)(STX)(PAYLOAD)(DLE)(ETX).
+ * control character such as STX or ETX. For example, a packet may be
+ * structured in the following way: (DLE)(STX) _payload_ (DLE)(ETX).
  */
 #define ASCII_DLE                 '\x10'
 
@@ -106,13 +112,23 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
 
 /**
  * Sends a no-argument Interprocess Communication (IPC) message.
- * @hideinitializer
+ *
+ * @param STREAM The `FILE` to send to.
+ * @param CODE The \ref wipc_code.
+ *
+ * @sa #WIPC_SENDF()
  */
 #define WIPC_SEND(STREAM,CODE)    WIPC_SENDF( STREAM, CODE, "%c", '\n' )
 
 /**
  * Formats and sends an Interprocess Communication (IPC) message.
- * @hideinitializer
+ *
+ * @param STREAM The `FILE` to send to.
+ * @param CODE The \ref wipc_code.
+ * @param FORMAT The `printf()` format string literal to use.
+ * @param ... The `printf()` arguments.
+ *
+ * @sa #WIPC_SEND()
  */
 #define WIPC_SENDF(STREAM,CODE,FORMAT,...) \
   FPRINTF( (STREAM), ("%c%c" FORMAT), WIPC_CODE_HELLO, (CODE), __VA_ARGS__ )
@@ -172,6 +188,8 @@ enum wipc_code {
   WIPC_CODE_WRAP_END              = ASCII_ETB
 };
 typedef enum wipc_code wipc_code_t;
+
+/** @} */
 
 ////////// extern functions ///////////////////////////////////////////////////
 

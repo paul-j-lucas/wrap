@@ -343,8 +343,7 @@ _GL_INLINE_HEADER_BEGIN
  * non-zero (true) allowing the compiler to better order code blocks for
  * magrinally better performance.
  *
- * @see http://lwn.net/Articles/255364/
- * @hideinitializer
+ * @sa [Memory part 5: What programmers can do](http://lwn.net/Articles/255364/)
  */
 #define likely(EXPR)              __builtin_expect( !!(EXPR), 1 )
 
@@ -353,8 +352,7 @@ _GL_INLINE_HEADER_BEGIN
  * non-zero (true) allowing the compiler to better order code blocks for
  * magrinally better performance.
  *
- * @see http://lwn.net/Articles/255364/
- * @hideinitializer
+ * @sa [Memory part 5: What programmers can do](http://lwn.net/Articles/255364/)
  */
 #define unlikely(EXPR)            __builtin_expect( !!(EXPR), 0 )
 
