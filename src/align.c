@@ -18,12 +18,19 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * Defines functions to align end-of-line comments to a particular column.
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
 #include "cc_map.h"
 #include "common.h"
 #include "options.h"
 #include "util.h"
+
+/// @cond DOXYGEN_IGNORE
 
 // standard
 #include <assert.h>
@@ -32,6 +39,8 @@
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <string.h>                     /* for str...() */
+
+/// @endcond
 
 ////////// local functions ////////////////////////////////////////////////////
 
