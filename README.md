@@ -111,3 +111,7 @@ you will also need
 then do:
 
     make doc                            # or: make docs
+
+**Paul J. Lucas**  
+San Francisco Bay Area, California, USA  
+20 September 2023
