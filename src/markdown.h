@@ -39,7 +39,7 @@
 /// @endcond
 
 /**
- * @defgroup markdown-group Reformatting Markdown
+ * @defgroup markdown-group Markdown Support
  * Macros, data structures, and functions for reformatting Markdown.
  * @{
  */

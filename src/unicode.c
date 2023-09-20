@@ -23,8 +23,17 @@
 #define W_UNICODE_INLINE _GL_EXTERN_INLINE
 #include "unicode.h"
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <assert.h>
+
+/// @endcond
+
+/**
+ * @addtogroup unicode-group
+ * @{
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -32,6 +41,9 @@ static char32_t const CP_SURROGATE_HIGH_START = 0x00D800u;
 static char32_t const CP_SURROGATE_LOW_END    = 0x00DFFFu;
 static char32_t const CP_VALID_MAX            = 0x10FFFFu;
 
+/**
+ * UTF-8 character length table indexed by the first octet of the character.
+ */
 char8_t const UTF8_LEN_TABLE[] = {
   /*      0 1 2 3 4 5 6 7 8 9 A B C D E F */
   /* 0 */ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -211,4 +223,7 @@ char const* utf8_rsync_impl( char const *buf, char const *pos ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
+
 /* vim:set et sw=2 ts=2: */

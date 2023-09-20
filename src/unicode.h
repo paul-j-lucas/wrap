@@ -31,6 +31,8 @@
 #include "pjl_config.h"                 /* must go first */
 #include "util.h"
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <inttypes.h>                   /* for uint*_t */
 #include <stdbool.h>
@@ -41,6 +43,13 @@
 #endif /* HAVE_CHAR8_T || HAVE_CHAR32_T */
 #include <wctype.h>
 
+/// @endcond
+
+_GL_INLINE_HEADER_BEGIN
+#ifndef W_UNICODE_INLINE
+# define W_UNICODE_INLINE _GL_INLINE
+#endif /* W_UNICODE_INLINE */
+
 #if !HAVE_CHAR8_T
 typedef uint8_t char8_t;                /* borrowed from C++20 */
 #endif /* !HAVE_CHAR8_T */
@@ -48,17 +57,25 @@ typedef uint8_t char8_t;                /* borrowed from C++20 */
 typedef uint32_t char32_t;              /* C11's char32_t */
 #endif /* !HAVE_CHAR32_T */
 
-_GL_INLINE_HEADER_BEGIN
-#ifndef W_UNICODE_INLINE
-# define W_UNICODE_INLINE _GL_INLINE
-#endif /* W_UNICODE_INLINE */
+/**
+ * @defgroup unicode-group Unicode Support
+ * Defines macros, types, and functions for working with Unicode.
+ * @{
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 
+/// Unicode byte order mark (BOM).
 #define CP_BYTE_ORDER_MARK        0x00FEFFu
+
+/// A UTF-32 version of `EOF`.
 #define CP_EOF                    ((char32_t)EOF)
+
+/// Value for invalid Unicode code-point.
 #define CP_INVALID                0x1FFFFFu
-#define UTF8_CHAR_SIZE_MAX        6     /**< Max bytes needed for UTF-8 char. */
+
+/// Max number of bytes needed for a UTF-8 character.
+#define UTF8_CHAR_SIZE_MAX        6
 
 /**
  * UTF-8 character.
@@ -245,6 +262,8 @@ char const* utf8_rsync( char const *buf, char const *pos ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 _GL_INLINE_HEADER_END
+
+/** @} */
 
 #endif /* wrap_unicode_H */
 /* vim:set et sw=2 ts=2: */

@@ -39,7 +39,7 @@
 /// @endcond
 
 /**
- * @defgroup doxygen-group Reformatting Doxygen
+ * @defgroup doxygen-group Doxygen Support
  * Macros, data structures, and functions for reformatting
  * [Doxygen](http://www.doxygen.org/).
  * @{
