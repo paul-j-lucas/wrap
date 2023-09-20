@@ -21,12 +21,19 @@
 #ifndef wrap_alias_H
 #define wrap_alias_H
 
+/**
+ * @file
+ * Declares a data structure for a **wrap** alias and functions to manipulate
+ * it.
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
 
 /**
- * @file
- * Contains a data structure for a wrap alias and functions to manipulate it.
+ * @defgroup alias-group Aliases
+ * A data structure and functions for **wrap** aliases.
+ * @{
  */
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -42,11 +49,6 @@ struct alias {
 typedef struct alias alias_t;
 
 ////////// extern functions ///////////////////////////////////////////////////
-
-/**
- * Cleans-up all alias data.
- */
-void alias_cleanup( void );
 
 /**
  * Attempts to find an alias from the internal list of aliases having the given
@@ -78,6 +80,8 @@ void dump_aliases( void );
 #endif /* NDEBUG */
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
 
 #endif /* wrap_alias_H */
 /* vim:set et sw=2 ts=2: */

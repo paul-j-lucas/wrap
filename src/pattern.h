@@ -23,12 +23,19 @@
 
 /**
  * @file
- * Contains a data structure for a wrap pattern and functions to manipulate it.
+ * Contains a data structure for a **wrap** filename pattern and functions to
+ * manipulate it.
  */
 
 // local
 #include "pjl_config.h"                 /* must go first */
 #include "alias.h"
+
+/**
+ * @defgroup patterns-group Filename Patterns
+ * TODO
+ * @{
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -53,11 +60,6 @@ void dump_patterns( void );
 #endif /* NDEBUG */
 
 /**
- * Cleans-up all pattern data.
- */
-void pattern_cleanup( void );
-
-/**
  * Attempts to find a pattern from the internal list of patterns that matches
  * the given file-name and return the alias associated with that pattern.
  *
@@ -79,6 +81,8 @@ alias_t const* pattern_find( char const *file_name );
 void pattern_parse( char const *line, char const *conf_file, unsigned line_no );
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
 
 #endif /* wrap_pattern_H */
 /* vim:set et sw=2 ts=2: */

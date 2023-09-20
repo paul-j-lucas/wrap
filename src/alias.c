@@ -47,6 +47,9 @@ static alias_t     *aliases = NULL;     // global list of aliases
 static size_t       n_aliases = 0;      // number of aliases
 
 // local functions
+static void   alias_cleanup( void );
+static void   alias_free( alias_t* );
+
 NODISCARD
 static size_t strcpy_set( char*, size_t, char const*, char const* );
 
@@ -59,6 +62,8 @@ static size_t strcpy_set( char*, size_t, char const*, char const* );
  */
 NODISCARD
 static alias_t* alias_alloc( void ) {
+  RUN_ONCE ATEXIT( &alias_cleanup );
+
   static size_t n_aliases_alloc = 0;    // number of aliases allocated
 
   if ( n_aliases_alloc == 0 ) {
@@ -97,6 +102,15 @@ static void alias_check_dup( char const *conf_file, unsigned line_no ) {
       }
     } // while
   }
+}
+
+/**
+ * Cleans-up all alias data.
+ */
+void alias_cleanup( void ) {
+  while ( n_aliases > 0 )
+    alias_free( &aliases[ --n_aliases ] );
+  free( aliases );
 }
 
 /**
@@ -218,12 +232,6 @@ static size_t strcpy_set( char *dest, size_t dest_size, char const *set,
 }
 
 ////////// extern functions ///////////////////////////////////////////////////
-
-void alias_cleanup( void ) {
-  while ( n_aliases > 0 )
-    alias_free( &aliases[ --n_aliases ] );
-  FREE( aliases );
-}
 
 alias_t const* alias_find( char const *name ) {
   assert( name != NULL );

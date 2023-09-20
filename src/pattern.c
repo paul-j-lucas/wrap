@@ -42,6 +42,20 @@ static size_t const PATTERN_ALLOC_INCREMENT = 10;
 static size_t       n_patterns = 0;     // number of patterns
 static pattern_t   *patterns = NULL;    // global list of patterns
 
+// local functions
+static void   pattern_cleanup( void );
+
+////////// inline functions ///////////////////////////////////////////////////
+
+/**
+ * Frees all memory used by a pattern.
+ *
+ * @param pattern The pattern to free.
+ */
+static inline void pattern_free( pattern_t *pattern ) {
+  FREE( pattern->pattern );
+}
+
 ////////// local functions ////////////////////////////////////////////////////
 
 /**
@@ -51,6 +65,8 @@ static pattern_t   *patterns = NULL;    // global list of patterns
  */
 NODISCARD
 static pattern_t* pattern_alloc( void ) {
+  RUN_ONCE ATEXIT( &pattern_cleanup );
+
   static size_t n_patterns_alloc = 0;   // number of patterns allocated
 
   if ( n_patterns_alloc == 0 ) {
@@ -65,13 +81,12 @@ static pattern_t* pattern_alloc( void ) {
 }
 
 /**
- * Frees all memory used by a pattern.
- *
- * @param pattern The pattern to free.
+ * Cleans-up all pattern data.
  */
-static void pattern_free( pattern_t *pattern ) {
-  assert( pattern != NULL );
-  FREE( pattern->pattern );
+static void pattern_cleanup( void ) {
+  while ( n_patterns > 0 )
+    pattern_free( &patterns[ --n_patterns ] );
+  free( patterns );
 }
 
 ////////// extern functions ///////////////////////////////////////////////////
@@ -86,12 +101,6 @@ void dump_patterns( void ) {
   } // for
 }
 #endif /* NDEBUG */
-
-void pattern_cleanup( void ) {
-  while ( n_patterns > 0 )
-    pattern_free( &patterns[ --n_patterns ] );
-  FREE( patterns );
-}
 
 alias_t const* pattern_find( char const *file_name ) {
   assert( file_name != NULL );

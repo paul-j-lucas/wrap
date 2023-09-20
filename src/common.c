@@ -22,9 +22,7 @@
 #include "pjl_config.h"                 /* must go first */
 #define W_COMMON_INLINE _GL_EXTERN_INLINE
 #include "common.h"
-#include "alias.h"
 #include "options.h"
-#include "pattern.h"
 #include "util.h"
 
 // standard
@@ -41,9 +39,7 @@ size_t check_readline( line_buf_t line, FILE *ffrom ) {
 }
 
 void common_cleanup( void ) {
-  alias_cleanup();
   free_now();
-  pattern_cleanup();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
