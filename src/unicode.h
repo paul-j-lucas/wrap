@@ -129,7 +129,7 @@ bool cp_is_eos( char32_t cp );
 /**
  * Checks whether \a cp is an "end-of-sentence-extender" Unicode character,
  * that is a character that extends being in the end-of-sentence state, e.g.,
- * a ')' following a '.'.
+ * a `)` following a period.
  *
  * @param cp The Unicode code-point to check.
  * @return Returns `true` only if \a cp is an end-of-sentence-extender
