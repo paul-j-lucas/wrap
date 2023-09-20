@@ -110,7 +110,7 @@ static void path_append( char *path, char const *component ) {
  * Parses a section name.
  *
  * @param s The line containing the section name to parse.
- * @return Returns the corresponding section name or SECTION_NONE.
+ * @return Returns the corresponding section name or #SECTION_NONE.
  */
 NODISCARD
 static section_t section_parse( char const *s ) {

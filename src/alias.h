@@ -23,27 +23,30 @@
 
 /**
  * @file
- * Declares a data structure for a **wrap** alias and functions to manipulate
- * it.
+ * Declares a data structure for a **wrap** alias in configuration files and
+ * functions to manipulate it.
  */
 
 // local
 #include "pjl_config.h"                 /* must go first */
 
 /**
+ * @ingroup config-file-group
  * @defgroup alias-group Aliases
- * A data structure and functions for **wrap** aliases.
+ * A data structure and functions for **wrap** aliases within configuration
+ * files.
  * @{
  */
 
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Contains a configuration file alias and its associated command-line options.
+ * Contains a **wrap** configuration file alias and its associated command-line
+ * options.
  */
 struct alias {
   int           argc;                   ///< Number of arguments + 1.
-  char const  **argv;                   ///< argv[0] = alias name.
+  char const  **argv;                   ///< `argv[0]` = alias name.
   unsigned      line_no;                ///< Line in conf. file defined on.
 };
 typedef struct alias alias_t;

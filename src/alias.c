@@ -18,11 +18,18 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * Defines functions to manipulate an \ref alias in configuration files.
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
 #include "alias.h"
 #include "common.h"
 #include "util.h"
+
+/// @cond DOXYGEN_IGNORE
 
 // standard
 #include <assert.h>
@@ -31,20 +38,37 @@
 #include <stdlib.h>
 #include <string.h>
 
+/// @endcond
+
+/**
+ * @addtogroup alias-group
+ * @{
+ */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 // local constant definitions
+
+/// Number of aliases to allocate by default.
 static size_t const ALIAS_ALLOC_DEFAULT         = 10;
+
+/// Number of aliases to increment by.
 static size_t const ALIAS_ALLOC_INCREMENT       = 10;
+
+/// Number of alias arguments to allocate by default.
 static size_t const ALIAS_ARGV_ALLOC_DEFAULT    = 10;
+
+/// Number of alias arguments to increment by.
 static size_t const ALIAS_ARGV_ALLOC_INCREMENT  = 10;
+
+/// Characters allowable in alias names.
 static char const   ALIAS_NAME_CHARS[]          = "abcdefghijklmnopqrstuvwxyz"
                                                   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                                   "0123456789+-.:_";
 
 // local variable definitions
-static alias_t     *aliases = NULL;     // global list of aliases
-static size_t       n_aliases = 0;      // number of aliases
+static alias_t     *aliases = NULL;     ///< Global list of aliases.
+static size_t       n_aliases = 0;      ///< Number of aliases in global list.
 
 // local functions
 static void   alias_cleanup( void );
@@ -319,4 +343,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
+
 /* vim:set et sw=2 ts=2: */

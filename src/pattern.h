@@ -23,8 +23,8 @@
 
 /**
  * @file
- * Contains a data structure for a **wrap** filename pattern and functions to
- * manipulate it.
+ * Declares a data structure for a **wrap** filename pattern in configuration
+ * files and functions to manipulate it.
  */
 
 // local
@@ -32,20 +32,22 @@
 #include "alias.h"
 
 /**
+ * @ingroup config-file-group
  * @defgroup patterns-group Filename Patterns
- * TODO
+ * A data structure and functions for **wrap** filename patterns within
+ * configuration files.
  * @{
  */
 
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Contains a filename pattern and the configuration file alias to which it
- * maps.
+ * Contains a **wrap** configuration file filename pattern and the \ref alias
+ * to which it maps.
  */
 struct pattern {
-  char const     *pattern;
-  alias_t const  *alias;
+  char const     *pattern;              ///< File-name pattern.
+  alias_t const  *alias;                ///< Alias to which the pattern maps.
 };
 typedef struct pattern pattern_t;
 
@@ -61,10 +63,10 @@ void dump_patterns( void );
 
 /**
  * Attempts to find a pattern from the internal list of patterns that matches
- * the given file-name and return the alias associated with that pattern.
+ * the given file-name and return the \ref alias associated with that pattern.
  *
  * @param file_name The file-name to match.
- * @return Returns the alias associated with the pattern that matches
+ * @return Returns the \ref alias associated with the pattern that matches
  * \a file_name or NULL if no matching pattern is found.
  */
 NODISCARD

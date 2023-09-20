@@ -24,6 +24,8 @@
 #include "common.h"
 #include "util.h"
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <assert.h>
 #include <fnmatch.h>
@@ -31,6 +33,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/// @endcond
+
+/**
+ * @addtogroup patterns-group
+ * @{
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -160,4 +169,7 @@ void pattern_parse( char const *line, char const *conf_file,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
+
 /* vim:set et sw=2 ts=2: */
