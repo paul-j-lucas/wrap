@@ -172,11 +172,14 @@ bool cp_is_space( char32_t cp ) {
 
 /**
  * Decodes a UTF-8 encoded character into its corresponding Unicode code-point.
- * (This inline version is optimized for the common case of ASCII.)
+ *
+ * @note This inline version is optimized for the common case of ASCII.
  *
  * @param s A pointer to the first byte of the UTF-8 encoded character.
  * @return Returns said code-point or \ref #CP_INVALID if the UTF-8 byte
  * sequence is invalid.
+ *
+ * @sa utf8_decode_impl()
  */
 NODISCARD W_UNICODE_H_INLINE
 char32_t utf8_decode( char const *s ) {
@@ -243,14 +246,17 @@ size_t utf8_copy_char( char *dest, char const *src ) {
 /**
  * Given a pointer to any byte within a UTF-8 encoded string, synchronizes in
  * reverse to find the first byte of the UTF-8 character byte sequence the
- * pointer is pointing within.  (This inline version is optimized for the
- * common case of ASCII.)
+ * pointer is pointing within.
+ *
+ * @note This inline version is optimized for the common case of ASCII.
  *
  * @param buf A pointer to the beginning of the buffer.
  * @param pos A pointer to any byte with the buffer.
  * @return Returns a pointer less than or equal to \a pos that points to the
  * first byte of a UTF-8 encoded character byte sequence or NULL if there is
  * none.
+ *
+ * @sa utf8_rsync_impl()
  */
 NODISCARD W_UNICODE_H_INLINE
 char const* utf8_rsync( char const *buf, char const *pos ) {

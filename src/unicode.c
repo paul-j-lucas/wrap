@@ -18,6 +18,12 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * Contains constants for Unicode code-points as well as functions for
+ * manipulating them.
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
 #define W_UNICODE_H_INLINE _GL_EXTERN_INLINE
@@ -37,8 +43,13 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+/// Unicode code-point surrogate high start.
 static char32_t const CP_SURROGATE_HIGH_START = 0x00D800u;
+
+/// Unicode code-point surrogate low end.
 static char32_t const CP_SURROGATE_LOW_END    = 0x00DFFFu;
+
+/// Maximum valid Unicode code-point.
 static char32_t const CP_VALID_MAX            = 0x10FFFFu;
 
 /**
@@ -191,6 +202,17 @@ bool cp_is_hyphen( char32_t cp ) {
   } // switch
 }
 
+/**
+ * Decodes a UTF-8 encoded character into its corresponding Unicode code-point.
+ *
+ * @note This out-of-line version is for non-ASCII characters.
+ *
+ * @param s A pointer to the first byte of the UTF-8 encoded character.
+ * @return Returns said code-point or \ref #CP_INVALID if the UTF-8 byte
+ * sequence is invalid.
+ *
+ * @sa utf8_decode()
+ */
 char32_t utf8_decode_impl( char const *s ) {
   assert( s != NULL );
   size_t const len = utf8_len( *s );
@@ -216,6 +238,21 @@ char32_t utf8_decode_impl( char const *s ) {
   return cp_is_valid( cp ) ? cp : CP_INVALID;
 }
 
+/**
+ * Given a pointer to any byte within a UTF-8 encoded string, synchronizes in
+ * reverse to find the first byte of the UTF-8 character byte sequence the
+ * pointer is pointing within.
+ *
+ * @note This out-of-line version is for non-ASCII characters.
+ *
+ * @param buf A pointer to the beginning of the buffer.
+ * @param pos A pointer to any byte with the buffer.
+ * @return Returns a pointer less than or equal to \a pos that points to the
+ * first byte of a UTF-8 encoded character byte sequence or NULL if there is
+ * none.
+ *
+ * @sa utf8_rsync()
+ */
 char const* utf8_rsync_impl( char const *buf, char const *pos ) {
   while ( pos > buf && utf8_is_cont( *pos ) )
     --pos;
