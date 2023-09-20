@@ -20,7 +20,7 @@
 
 // local
 #include "pjl_config.h"                 /* must go first */
-#define W_UNICODE_INLINE _GL_EXTERN_INLINE
+#define W_UNICODE_H_INLINE _GL_EXTERN_INLINE
 #include "unicode.h"
 
 /// @cond DOXYGEN_IGNORE

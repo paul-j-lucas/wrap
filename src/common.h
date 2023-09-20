@@ -40,9 +40,9 @@
 /// @endcond
 
 _GL_INLINE_HEADER_BEGIN
-#ifndef W_COMMON_INLINE
-# define W_COMMON_INLINE _GL_INLINE
-#endif /* W_COMMON_INLINE */
+#ifndef W_COMMON_H_INLINE
+# define W_COMMON_H_INLINE _GL_INLINE
+#endif /* W_COMMON_H_INLINE */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -184,7 +184,7 @@ typedef enum wipc_code wipc_code_t;
  * @param width The line width so far.
  * @return Returns said width.
  */
-NODISCARD W_COMMON_INLINE
+NODISCARD W_COMMON_H_INLINE
 size_t char_width( char c, size_t width ) {
   return c == '\t' ? opt_tab_spaces - width % opt_tab_spaces : 1;
 }
@@ -210,7 +210,7 @@ void common_cleanup( void );
  *
  * @return Returns said end-of-line string.
  */
-NODISCARD W_COMMON_INLINE
+NODISCARD W_COMMON_H_INLINE
 char const* eol( void ) {
   return (char const*)"\r\n" + (opt_eol != EOL_WINDOWS);
 }

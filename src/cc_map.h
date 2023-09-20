@@ -39,9 +39,9 @@
 /// @endcond
 
 _GL_INLINE_HEADER_BEGIN
-#ifndef W_CC_MAP_INLINE
-# define W_CC_MAP_INLINE _GL_INLINE
-#endif /* W_CC_MAP_INLINE */
+#ifndef W_CC_MAP_H_INLINE
+# define W_CC_MAP_H_INLINE _GL_INLINE
+#endif /* W_CC_MAP_H_INLINE */
 
 /**
  * @defgroup cc-map-group Comment Delimiter Character Map
@@ -77,7 +77,7 @@ typedef char* cc_map_t[128];
  * @return Returns `true` only if \a cc_map_entry is a single comment delimiter
  * character.
  */
-NODISCARD W_CC_MAP_INLINE
+NODISCARD W_CC_MAP_H_INLINE
 bool cc_is_single( char const *cc_map_entry ) {
   return strchr( cc_map_entry, CC_SINGLE_CHAR ) != NULL;
 }
@@ -101,7 +101,7 @@ char const* cc_map_compile( char const *in_cc );
  * @return Returns said entry or null if \a c is not a comment delimiter
  * character.
  */
-NODISCARD W_CC_MAP_INLINE
+NODISCARD W_CC_MAP_H_INLINE
 char const* cc_map_get( char c ) {
   extern cc_map_t cc_map;
   return cc_map[ (unsigned char)c ];

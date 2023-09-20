@@ -87,8 +87,8 @@
 /// @endcond
 
 /**
- * @defgroup options-group Wrap Options
- * Global variable and functions for **wrap** options.
+ * @defgroup options-group Wrap & Wrapc Options
+ * Global variable and functions for **wrap** and **wrapc** options.
  * @{
  */
 

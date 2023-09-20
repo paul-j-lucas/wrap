@@ -44,9 +44,9 @@
 /// @endcond
 
 _GL_INLINE_HEADER_BEGIN
-#ifndef W_UTIL_INLINE
-# define W_UTIL_INLINE _GL_INLINE
-#endif /* W_UTIL_INLINE */
+#ifndef W_UTIL_H_INLINE
+# define W_UTIL_H_INLINE _GL_INLINE
+#endif /* W_UTIL_H_INLINE */
 
 /**
  * @defgroup util-group Utility Macros & Functions
@@ -783,7 +783,7 @@ bool is_any( char const *s, char const *const matches[const] );
  * @param s The null-terminated string to check.
  * @return Returns `true` only if \a s is a blank line.
  */
-NODISCARD W_UTIL_INLINE
+NODISCARD W_UTIL_H_INLINE
 bool is_blank_line( char const *s ) {
   SKIP_CHARS( s, WS_STRN );
   return *s == '\0';
@@ -795,7 +795,7 @@ bool is_blank_line( char const *s ) {
  * @param s The null-terminated string to check.
  * @return Returns `true` only if \a s contains only digits.
  */
-NODISCARD W_UTIL_INLINE
+NODISCARD W_UTIL_H_INLINE
 bool is_digits( char const *s ) {
   return s[ strspn( s, "0123456789" ) ] == '\0';
 }
@@ -806,7 +806,7 @@ bool is_digits( char const *s ) {
  * @param c The character to check.
  * @return Returns `true` only if it is.
  */
-NODISCARD W_UTIL_INLINE
+NODISCARD W_UTIL_H_INLINE
 bool is_eol( char c ) {
   return c == '\n' || c == '\r';
 }
@@ -818,7 +818,7 @@ bool is_eol( char c ) {
  * @param c The character to check.
  * @return Returns `true` only if \a c is a space or a tab.
  */
-NODISCARD W_UTIL_INLINE
+NODISCARD W_UTIL_H_INLINE
 bool is_space( char c ) {
   return c == ' ' || c == '\t';
 }
@@ -831,7 +831,7 @@ bool is_space( char c ) {
  * @param buf_len The length of \a buf.
  * @return Returns `true` only if \a buf ends with `{CR}{LF}`.
  */
-NODISCARD W_UTIL_INLINE
+NODISCARD W_UTIL_H_INLINE
 bool is_windows_eol( char const buf[const], size_t buf_len ) {
   return buf_len >= 2 && buf[ buf_len - 2 ] == '\r';
 }
@@ -891,7 +891,7 @@ size_t strrspn( char const *s, char const *set );
  *
  * @sa true_clear()
  */
-NODISCARD W_UTIL_INLINE
+NODISCARD W_UTIL_H_INLINE
 bool true_or_set( bool *flag ) {
   return *flag || !(*flag = true);
 }
@@ -905,7 +905,7 @@ bool true_or_set( bool *flag ) {
  *
  * @sa true_or_set()
  */
-NODISCARD W_UTIL_INLINE
+NODISCARD W_UTIL_H_INLINE
 bool true_clear( bool *flag ) {
   return *flag && !(*flag = false);
 }
