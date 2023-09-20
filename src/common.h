@@ -23,17 +23,21 @@
 
 /**
  * @file
- * Contains constants, macros, typedefs, and functions common to both wrap and
- * wrapc.
+ * Contains constants, macros, typedefs, and functions common to both **wrap**
+ * and **wrapc**.
  */
 
 // local
 #include "pjl_config.h"                 /* must go first */
 #include "options.h"                    /* for opt_eol */
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>                      /* for FILE */
+
+/// @endcond
 
 _GL_INLINE_HEADER_BEGIN
 #ifndef W_COMMON_INLINE
@@ -50,6 +54,9 @@ _GL_INLINE_HEADER_BEGIN
 #define NEWLINES_DELIMIT_DEFAULT  2     /* # newlines that delimit a para */
 #define TAB_SPACES_DEFAULT        8     /* number of spaces a tab equals */
 
+/**
+ * Line buffer.
+ */
 typedef char line_buf_t[ LINE_BUF_SIZE ];
 
 ////////// Interprocess Communication (IPC) ///////////////////////////////////

@@ -30,9 +30,13 @@
 // local
 #include "pjl_config.h"                 /* must go first */
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <stdbool.h>
 #include <string.h>
+
+/// @endcond
 
 _GL_INLINE_HEADER_BEGIN
 #ifndef W_CC_MAP_INLINE

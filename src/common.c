@@ -22,11 +22,14 @@
 #include "pjl_config.h"                 /* must go first */
 #define W_COMMON_INLINE _GL_EXTERN_INLINE
 #include "common.h"
-#include "options.h"
 #include "util.h"
+
+/// @cond DOXYGEN_IGNORE
 
 // standard
 #include <assert.h>
+
+/// @endcond
 
 ////////// extern functions ///////////////////////////////////////////////////
 

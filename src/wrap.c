@@ -18,6 +18,11 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * Implements **wrap**.
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
 #include "alias.h"
@@ -28,6 +33,8 @@
 #include "unicode.h"
 #include "util.h"
 #include "wregex.h"
+
+/// @cond DOXYGEN_IGNORE
 
 // standard
 #include <assert.h>
@@ -40,6 +47,14 @@
 #include <sysexits.h>
 #include <unistd.h>
 
+/// @endcond
+
+/**
+ * @defgroup wrap-group Wrap
+ * Implements the **wrap** command.
+ * @{
+ */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 #define WIPC_DEFER(BUF,SIZE,CODE) WPIC_DEFERF( BUF, SIZE, CODE, "%c", '\n' )
@@ -51,9 +66,9 @@
  * Hyphenation states.
  */
 enum hyphen {                           // H = hyphen-adjacent char
-  HYPHEN_NO,
-  HYPHEN_MAYBE,                         // encountered H-
-  HYPHEN_YES                            // encountered H-H
+  HYPHEN_NO,                            ///< Didn't encounter a hyphen.
+  HYPHEN_MAYBE,                         ///< Encountered `H-`.
+  HYPHEN_YES                            ///< Encountered `H-H`.
 };
 typedef enum hyphen hyphen_t;
 
@@ -61,9 +76,13 @@ typedef enum hyphen hyphen_t;
  * Line indentation type.
  */
 enum indent {
-  INDENT_NONE,
-  INDENT_LINE,                          // indent only first line of paragraph
-  INDENT_HANG                           // indent all lines but first
+  INDENT_NONE,                          ///< No indentation.
+
+  /// Indent only first line of a paragraph.
+  INDENT_LINE,
+
+  /// Indent all lines but first of a paragraph.
+  INDENT_HANG
 };
 typedef enum indent indent_t;
 
@@ -71,20 +90,20 @@ typedef enum indent indent_t;
 char const         *me;                 // executable name
 
 // local variable definitions
-static wregex_t     block_regex;        // compiled from opt_block_regex
+static wregex_t     block_regex;        ///< Compiled from opt_block_regex.
 static line_buf_t   input_buf;
-static line_buf_t   ipc_buf;            // deferred IPC message
-static size_t       ipc_width;          // deferred IPC line width
-static size_t       line_width;         // max width of line
-static line_buf_t   output_buf;
-static size_t       output_len;         // number of characters in buffer
-static size_t       output_width;       // actual width of buffer
-static line_buf_t   proto_buf;
+static line_buf_t   ipc_buf;            ///< Deferred IPC message.
+static size_t       ipc_width;          ///< Deferred IPC line width.
+static size_t       line_width;         ///< Maximum width of a line.
+static line_buf_t   output_buf;         ///< Output buffer.
+static size_t       output_len;         ///< Number of characters in output_buf.
+static size_t       output_width;       ///< Actual width of output_buf.
+static line_buf_t   proto_buf;          ///< Prototype buffer.
 static line_buf_t   proto_tws;          // prototype trailing whitespace, if any
 
 // local variable definitions specific to wrap state
-static size_t       consec_newlines;    // number of consecutive newlines
-static bool         encountered_nonws;  // encountered a non-whitespace char?
+static size_t       consec_newlines;    ///< Number of consecutive newlines.
+static bool         encountered_nonws;  ///< Encountered a non-whitespace char?
 static hyphen_t     hyphen;
 static indent_t     indent = INDENT_LINE;
 static bool         is_long_line;       // line longer than line_width?
@@ -92,7 +111,7 @@ static bool         is_preformatted;    // passing through preformatted text?
 static size_t       nonws_no_wrap_range[2];
 static wregex_t     nonws_no_wrap_regex;
 static size_t       put_spaces;         // number of spaces to put between words
-static bool         was_eos_char;       // prev char an end-of-sentence char?
+static bool         was_eos_char;       ///< Prev char an end-of-sentence char?
 
 // local functions
 NODISCARD
@@ -1113,4 +1132,7 @@ static void wrap_cleanup( void ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
+
 /* vim:set et sw=2 ts=2: */

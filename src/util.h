@@ -29,6 +29,8 @@
 // local
 #include "pjl_config.h"                 /* must go first */
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <errno.h>
 #include <stdbool.h>
@@ -38,6 +40,8 @@
 #include <stdlib.h>                     /* for exit(3) */
 #include <string.h>                     /* for strspn(3) */
 #include <sysexits.h>
+
+/// @endcond
 
 _GL_INLINE_HEADER_BEGIN
 #ifndef W_UTIL_INLINE

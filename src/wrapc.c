@@ -18,6 +18,11 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * Implements **wrapc**.
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
 #include "alias.h"
@@ -28,6 +33,8 @@
 #include "options.h"
 #include "pattern.h"
 #include "util.h"
+
+/// @cond DOXYGEN_IGNORE
 
 // standard
 #include <assert.h>
@@ -42,6 +49,14 @@
 #include <sys/wait.h>                   /* for wait() */
 #include <sysexits.h>
 #include <unistd.h>                     /* for close(), fork(), ... */
+
+/// @endcond
+
+/**
+ * @defgroup wrapc-group Wrapc
+ * Implements **wrapc**.
+ * @{
+ */
 
 /**
  * Aligns end-of-line comments to a particular column.
@@ -85,8 +100,8 @@ typedef enum delim delim_t;
  */
 struct dual_line {
   line_buf_t  dl_line[2];
-  char       *dl_curr;                  // pointer to current line
-  char       *dl_next;                  // pointer to next line
+  char       *dl_curr;                  ///< Pointer to current line.
+  char       *dl_next;                  ///< Pointer to next line.
 };
 typedef struct dual_line dual_line_t;
 
@@ -97,13 +112,13 @@ char const         *me;                 // executable name
 static size_t const ARG_BUF_SIZE = 25;  // max wrap(1) command-line arg size
 
 // local variable definitions
-static char         close_cc[2];        // closing comment delimiter char(s)
-static delim_t      delim;              // comment delimiter type
-static dual_line_t  input_buf;
-static line_buf_t   prefix_buf;         // characters stripped/prepended
-static size_t       prefix_len0;        // length of prefix_buf
-static line_buf_t   suffix_buf;         // characters stripped/appended
-static size_t       suffix_len;         // length of suffix_buf
+static char         close_cc[2];        ///< Closing comment delimiter char(s).
+static delim_t      delim;              ///< Comment delimiter type.
+static dual_line_t  input_buf;          ///< Input buffer.
+static line_buf_t   prefix_buf;         ///< Characters stripped/prepended.
+static size_t       prefix_len0;        ///< Length of prefix_buf
+static line_buf_t   suffix_buf;         ///< Characters stripped/appended.
+static size_t       suffix_len;         ///< Length of suffix_buf.
 //
 // Two pipes:
 // + pipes[0][0] -> wrap(1)                   [child 2]
@@ -116,8 +131,8 @@ static int          pipes[2][2];
 #define CURR        input_buf.dl_curr   /* current line */
 #define NEXT        input_buf.dl_next   /* next line */
 
-#define TO_WRAP     0                   /* to refer to pipes[0] */
-#define FROM_WRAP   1                   /* to refer to pipes[1] */
+#define TO_WRAP     0                   /** To refer to pipes[0]. */
+#define FROM_WRAP   1                   /** To refer to pipes[1]. */
 
 // local functions
 static void         adjust_comment_width( char* );
@@ -1297,4 +1312,7 @@ static bool wrap_dox_line( char const *line, FILE *fout ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
+
 /* vim:set et sw=2 ts=2: */
