@@ -27,6 +27,8 @@
 #include "read_conf.h"
 #include "util.h"
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <assert.h>
 #include <ctype.h>
@@ -34,7 +36,13 @@
 #include <getopt.h>
 #include <inttypes.h>                   /* for SIZE_MAX */
 #include <stdbool.h>
-#include <string.h>                     /* for memset(3) */
+
+/// @endcond
+
+/**
+ * @addtogroup options-group
+ * @{
+ */
 
 #define OPT_BUF_SIZE              32    /* used for opt_format() */
 
@@ -502,7 +510,7 @@ static void parse_options( int argc, char const *argv[],
   int opt;
   bool opt_help = false;
   bool opt_version = false;
-  memset( opts_given, 0, sizeof opts_given );
+  MEM_ZERO( &opts_given );
 
   for (;;) {
     opt = getopt_long(
@@ -880,4 +888,7 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
+
 /* vim:set et sw=2 ts=2: */

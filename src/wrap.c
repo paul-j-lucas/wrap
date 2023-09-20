@@ -201,7 +201,7 @@ int main( int argc, char const *argv[] ) {
         delimit_paragraph();
         continue;
       }
-      if ( output_len > 0 && true_reset( &next_line_is_title ) ) {
+      if ( output_len > 0 && true_clear( &next_line_is_title ) ) {
         //
         // The first line of the next paragraph is title line and the buffer
         // isn't empty (there is a title): print the title.
@@ -697,7 +697,7 @@ static void delimit_paragraph( void ) {
     // been handling a "long line," it's now finally ended; otherwise, print
     // the leading characters.
     //
-    if ( !true_reset( &is_long_line ) )
+    if ( !true_clear( &is_long_line ) )
       print_lead_chars();
     print_line( output_len, /*do_eol=*/true );
   } else if ( is_long_line ) {
@@ -726,9 +726,8 @@ static void delimit_paragraph( void ) {
  */
 static void init( int argc, char const *argv[] ) {
   ASSERT_RUN_ONCE();
-
-  atexit( common_cleanup );
-  atexit( wrap_cleanup );
+  ATEXIT( common_cleanup );
+  ATEXIT( wrap_cleanup );
 
   options_init( argc, argv, usage );
   setlocale_utf8();
@@ -1109,7 +1108,6 @@ static void wipc_send( char *msg ) {
  * Cleans up wrap data.
  */
 static void wrap_cleanup( void ) {
-  markdown_cleanup();
   regex_free( &block_regex );
   regex_free( &nonws_no_wrap_regex );
 }

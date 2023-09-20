@@ -23,16 +23,26 @@
 
 /**
  * @file
- * Contains constants, enums, typedefs, data structures, and functions for
+ * Declares macros, enums, typedefs, data structures, and functions for
  * parsing Markdown.
  */
 
 // local
 #include "pjl_config.h"                 /* must go first */
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
+
+/// @endcond
+
+/**
+ * @defgroup markdown-group Reformatting Markdown
+ * Macros, data structures, and functions for reformatting Markdown.
+ * @{
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -41,8 +51,9 @@
 
 /**
  * Markdown line types.
- * (The values are arbitrary: they are mnemonic and useful when cast to `char`
- * and printed for debugging).
+ *
+ * @note The values are arbitrary. They are mnemonic and useful when cast to
+ * `char` and printed for debugging.
  */
 enum md_line {
   MD_NONE         = '0',                ///< None.
@@ -72,7 +83,7 @@ typedef unsigned md_ol_t;               ///< Ordered list number.
  */
 struct md_state {
   md_line_t   line_type;                ///< Current line type.
-  md_seq_t    seq_num;
+  md_seq_t    seq_num;                  ///< Sequence number.
   md_depth_t  depth;                    ///< Nesting depth.
   bool        footnote_def_has_text;    ///< Footnote def has text on line?
   md_indent_t indent_left;              ///< Left-indent for lines.
@@ -90,11 +101,6 @@ typedef struct md_state md_state_t;
 void markdown_init( void );
 
 /**
- * Cleans-up all Markdown data.
- */
-void markdown_cleanup( void );
-
-/**
  * Parses a line of Markdown text.  Note that this isn't a full Markdown parser
  * since it only really classifies entire lines of text.  Wrapping text only
  * needs to parse block elements (headers, lists, code blocks, horizontal
@@ -107,6 +113,8 @@ NODISCARD
 md_state_t const* markdown_parse( char *s );
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
 
 #endif /* wrap_markdown_H */
 /* vim:set et sw=2 ts=2: */

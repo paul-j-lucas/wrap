@@ -21,12 +21,29 @@
 #ifndef wrap_doxygen_H
 #define wrap_doxygen_H
 
+/**
+ * @file
+ * Declares macros, data structures, and functions for reformatting
+ * [Doxygen](http://www.doxygen.org/).
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
+
+/// @cond DOXYGEN_IGNORE
 
 // standard
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
+
+/// @endcond
+
+/**
+ * @defgroup doxygen-group Reformatting Doxygen
+ * Macros, data structures, and functions for reformatting
+ * [Doxygen](http://www.doxygen.org/).
+ * @{
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -74,9 +91,9 @@
 typedef unsigned dox_cmd_type_t;
 
 /**
- * Contains information about a Doxygen command.
+ * Contains information about a [Doxygen](http://www.doxygen.org/) command.
  *
- * @see http://www.doxygen.org/manual/commands.html
+ * @sa [Special Commands](https://www.doxygen.nl/manual/commands.html)
  */
 struct dox_cmd {
   char const     *name;                 ///< Command's name.
@@ -110,6 +127,8 @@ NODISCARD
 bool dox_parse_cmd_name( char const *s, char *dox_cmd_name );
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
 
 #endif /* wrap_doxygen_H */
 /* vim:set et sw=2 ts=2: */

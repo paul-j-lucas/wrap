@@ -18,10 +18,17 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * Defines utility data structures, variables, and functions.
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
 #define W_UTIL_INLINE _GL_EXTERN_INLINE
 #include "util.h"
+
+/// @cond DOXYGEN_IGNORE
 
 // standard
 #include <assert.h>
@@ -50,6 +57,13 @@
 # endif
 # include <term.h>                      /* for setupterm(3) */
 #endif /* WITH_WIDTH_TERM */
+
+/// @endcond
+
+/**
+ * @addtogroup util-group
+ * @{
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -368,4 +382,7 @@ void wait_for_debugger_attach( char const *env_var ) {
 #endif /* NDEBUG */
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
+
 /* vim:set et sw=2 ts=2: */

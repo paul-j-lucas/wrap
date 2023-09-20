@@ -39,6 +39,13 @@ _GL_INLINE_HEADER_BEGIN
 # define W_CC_MAP_INLINE _GL_INLINE
 #endif /* W_CC_MAP_INLINE */
 
+/**
+ * @defgroup cc-map-group Comment Delimiter Character Map
+ * Declares a \ref cc_map_t "comment delimiter character map" and related
+ * functions.
+ * @{
+ */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 #define CC_SINGLE_CHAR            ' '
@@ -49,9 +56,9 @@ _GL_INLINE_HEADER_BEGIN
  *  + NULL, that character is not a comment delimiter character.
  *
  *  + A non-empty string, that character followed by each character (except
- *    space) in said string forms a two-character comment delimiter, e.g., "//"
- *    or "(*".  A space means it forms a single comment character delimiter,
- *    e.g., "#".
+ *    space) in said string forms a two-character comment delimiter, e.g., `//`
+ *    or `(*`.  A space means it forms a single comment character delimiter,
+ *    e.g., `#`.
  */
 typedef char* cc_map_t[128];
 
@@ -96,14 +103,11 @@ char const* cc_map_get( char c ) {
   return cc_map[ (unsigned char)c ];
 }
 
-/**
- * Frees the memory used by the comment delimiter character map.
- */
-void cc_map_free( void );
-
 ///////////////////////////////////////////////////////////////////////////////
 
 _GL_INLINE_HEADER_END
+
+/** @} */
 
 #endif /* wrap_cc_map_H */
 /* vim:set et sw=2 ts=2: */

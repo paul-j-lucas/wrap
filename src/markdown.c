@@ -18,6 +18,11 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * Defines macros, data structures, and functions for reformatting Markdown.
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
 #include "markdown.h"
@@ -25,12 +30,21 @@
 #include "options.h"
 #include "util.h"
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <assert.h>
 #include <ctype.h>
 #include <stddef.h>                     /* for size_t */
 #include <stdlib.h>
 #include <string.h>
+
+/// @endcond
+
+/**
+ * @addtogroup markdown-group
+ * @{
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -354,6 +368,13 @@ static char const* is_uri_scheme( char const *s ) {
     } // while
   }
   return NULL;
+}
+
+/**
+ * Cleans-up all Markdown data.
+ */
+static void markdown_cleanup( void ) {
+  FREE( stack );
 }
 
 /**
@@ -1045,11 +1066,9 @@ static void stack_push( md_line_t line_type, md_indent_t indent_left,
 
 ////////// extern functions ///////////////////////////////////////////////////
 
-void markdown_cleanup( void ) {
-  FREE( stack );
-}
-
 void markdown_init( void ) {
+  RUN_ONCE ATEXIT( &markdown_cleanup );
+
   curr_html_state = HTML_NONE;
   prev_code_fence_end = false;
   prev_link_label_has_title = false;
@@ -1406,4 +1425,7 @@ md_state_t const* markdown_parse( char *s ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
+
 /* vim:set et sw=2 ts=2: */

@@ -18,13 +18,28 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * Defines macros, data structures, and functions for reformatting
+ * [Doxygen](http://www.doxygen.org/).
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
 #include "doxygen.h"
 #include "util.h"
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <assert.h>
+
+/// @endcond
+
+/**
+ * @addtogroup doxygen-group
+ * @{
+ */
 
 /**
  * Valid characters comprising a Doxygen command.
@@ -39,6 +54,10 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Array of all [Doxygen
+ * commands](https://www.doxygen.nl/manual/commands.html).
+ */
 static dox_cmd_t const DOX_COMMANDS[] = {
 
   { "a",                      DOX_INIT_INLINE,  NULL },
@@ -309,4 +328,7 @@ bool dox_parse_cmd_name( char const *s, char *dox_cmd_name ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
+
 /* vim:set et sw=2 ts=2: */

@@ -27,6 +27,8 @@
 #include "options.h"
 #include "util.h"
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <assert.h>
 #include <ctype.h>
@@ -34,6 +36,13 @@
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <string.h>                     /* for str...() */
+
+/// @endcond
+
+/**
+ * @addtogroup @cc-map-group
+ * @{
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -49,12 +58,24 @@ cc_map_t            cc_map;
 
 /**
  * Initializes the comment character map.
+ *
+ * @sa cc_map_free()
  */
 static inline void cc_map_init( void ) {
-  memset( cc_map, 0, sizeof cc_map );
+  MEM_ZERO( &cc_map );
 }
 
 ////////// local functions ////////////////////////////////////////////////////
+
+/**
+ * Frees the memory used by the comment delimiter character map.
+ *
+ * @sa cc_map_init()
+ */
+static void cc_map_free( void ) {
+  for ( size_t i = 0; i < ARRAY_SIZE( cc_map ); ++i )
+    FREE( cc_map[i] );
+}
 
 /**
  * Adds a comment delimiter character, and its corresponding closing comment
@@ -83,6 +104,8 @@ static unsigned cc_set_add( cc_set_t cc_set, char c ) {
 
 char const* cc_map_compile( char const *in_cc ) {
   assert( in_cc != NULL );
+
+  RUN_ONCE ATEXIT( &cc_map_free );
 
   cc_set_t cc_set = { false };
   unsigned distinct_cc = 0;             // distinct comment characters
@@ -165,10 +188,8 @@ char const* cc_map_compile( char const *in_cc ) {
   return out_cc;
 }
 
-void cc_map_free( void ) {
-  for ( size_t i = 0; i < ARRAY_SIZE( cc_map ); ++i )
-    FREE( cc_map[i] );
-}
-
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
+
 /* vim:set et sw=2 ts=2: */

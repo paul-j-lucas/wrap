@@ -167,8 +167,6 @@ static void         wait_for_child_processes( void );
 NODISCARD
 static bool         wrap_dox_line( char const*, FILE* );
 
-static void         wrapc_cleanup( void );
-
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
@@ -700,9 +698,7 @@ done:
  */
 static void init( int argc, char const *argv[] ) {
   ASSERT_RUN_ONCE();
-
-  atexit( common_cleanup );
-  atexit( wrapc_cleanup );
+  ATEXIT( common_cleanup );
 
   options_init( argc, argv, usage );
   opt_comment_chars = cc_map_compile( opt_comment_chars );
@@ -1298,13 +1294,6 @@ static bool wrap_dox_line( char const *line, FILE *fout ) {
   }
 
   return true;
-}
-
-/**
- * Cleans up wrapc data.
- */
-static void wrapc_cleanup( void ) {
-  cc_map_free();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

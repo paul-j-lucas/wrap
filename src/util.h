@@ -23,7 +23,7 @@
 
 /**
  * @file
- * Contains utility constants, macros, and functions.
+ * Declares utility constants, macros, and functions.
  */
 
 // local
@@ -43,6 +43,12 @@ _GL_INLINE_HEADER_BEGIN
 #ifndef W_UTIL_INLINE
 # define W_UTIL_INLINE _GL_INLINE
 #endif /* W_UTIL_INLINE */
+
+/**
+ * @defgroup util-group Utility Macros & Functions
+ * Utility macros, constants, and functions.
+ * @{
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -137,6 +143,8 @@ _GL_INLINE_HEADER_BEGIN
  *        ASSERT_RUN_ONCE();
  *        // ...
  *      }
+ *
+ * @sa #RUN_ONCE
  */
 #define ASSERT_RUN_ONCE() BLOCK(    \
   static bool UNIQUE_NAME(called);  \
@@ -145,6 +153,13 @@ _GL_INLINE_HEADER_BEGIN
 #else
 #define ASSERT_RUN_ONCE()         NO_OP
 #endif /* NDEBUG */
+
+/**
+ * Calls **atexit**(3) and checks for failure.
+ *
+ * @param FN The pointer to the function to call **atexit**(3) with.
+ */
+#define ATEXIT(FN)                PERROR_EXIT_IF( atexit( FN ) != 0, EX_OSERR )
 
 /**
  * Embeds the given statements into a compound statement block.
@@ -356,6 +371,17 @@ _GL_INLINE_HEADER_BEGIN
  */
 #define MALLOC(TYPE,N)            check_realloc( NULL, sizeof(TYPE) * (N) )
 
+/**
+ * Zeros the memory pointed to by \a PTR.  The number of bytes to zero is given
+ * by `sizeof *(PTR)`.
+ *
+ * @param PTR The pointer to the start of memory to zero.  \a PTR must be a
+ * pointer.  If it's an array, it'll generate a compile-time error.
+ */
+#define MEM_ZERO(PTR) BLOCK(                                    \
+  static_assert( IS_POINTER(PTR), #PTR " must be a pointer" );  \
+  memset( (PTR), 0, sizeof *(PTR) ); )
+
 /// @cond DOXYGEN_IGNORE
 #define NAME2_HELPER(A,B)         A##B
 /// @endcond
@@ -465,6 +491,24 @@ _GL_INLINE_HEADER_BEGIN
  */
 #define REALLOC(PTR,TYPE,N) \
   (PTR) = check_realloc( (PTR), sizeof(TYPE) * (size_t)(N) )
+
+/**
+ * Runs a statement at most once even if control passes through it more than
+ * once.  For example:
+ *
+ *      RUN_ONCE initialize();
+ *
+ * or:
+ *
+ *      RUN_ONCE {
+ *        // ...
+ *      }
+ *
+ * @sa #ASSERT_RUN_ONCE()
+ */
+#define RUN_ONCE                      \
+  static bool UNIQUE_NAME(run_once);  \
+  if ( likely( true_or_set( &UNIQUE_NAME(run_once) ) ) ) ; else
 
 /**
  * Advances \a S over all \a CHARS.
@@ -835,14 +879,30 @@ NODISCARD
 size_t strrspn( char const *s, char const *set );
 
 /**
+ * Checks \a flag: if `false`, sets it to `true`.
+ *
+ * @param flag A pointer to the Boolean flag to be tested and, if `false`, sets
+ * it to `true`.
+ * @return Returns `true` only if \a flag was `true` initially.
+ *
+ * @sa true_clear()
+ */
+NODISCARD W_UTIL_INLINE
+bool true_or_set( bool *flag ) {
+  return *flag || !(*flag = true);
+}
+
+/**
  * Checks the flag: if `true`, resets the flag to `false`.
  *
  * @param flag A pointer to the Boolean flag to be tested and, if `true`, set
  * to \c false.
  * @return Returns `true` only if \a *flag is `true`.
+ *
+ * @sa true_or_set()
  */
 NODISCARD W_UTIL_INLINE
-bool true_reset( bool *flag ) {
+bool true_clear( bool *flag ) {
   return *flag && !(*flag = false);
 }
 
@@ -859,6 +919,8 @@ void wait_for_debugger_attach( char const *env_var );
 #endif /* NDEBUG */
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
 
 _GL_INLINE_HEADER_END
 

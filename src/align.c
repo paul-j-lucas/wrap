@@ -142,8 +142,8 @@ void align_eol_comments( char input_buf[const] ) {
     unsigned    token_count = 0;
 
     for ( char const *s = input_buf; *s != '\0' && !is_eol( *s ); ++s ) {
-      bool const was_backslash = true_reset( &is_backslash );
-      bool const was_word = true_reset( &is_word );
+      bool const was_backslash = true_clear( &is_backslash );
+      bool const was_word = true_clear( &is_word );
 
       switch ( *s ) {
         case '"':

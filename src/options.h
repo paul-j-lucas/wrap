@@ -86,15 +86,21 @@
 
 /// @endcond
 
+/**
+ * @defgroup options-group Wrap Options
+ * Global variable and functions for **wrap** options.
+ * @{
+ */
+
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
  * End-of-Line formats.
  */
 enum eol {
-  EOL_INPUT   = 'i',                    ///< Do whatever the input does.
-  EOL_UNIX    = 'u',                    ///< \\n
-  EOL_WINDOWS = 'w'                     ///< \\r\\n
+  EOL_INPUT   = 'i',                    ///< Whatever newlines the input uses.
+  EOL_UNIX    = 'u',                    ///< Unix newlines: `\n`.
+  EOL_WINDOWS = 'w'                     ///< Windows newlines: `\r\n`.
 };
 typedef enum eol eol_t;
 
@@ -135,7 +141,7 @@ extern bool         opt_title_line;     ///< 1st para line is title?
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
- * Formats an option as <code>[--%s/]-%c</code> where `%s` is the long option
+ * Formats an option as <code>[--%%s/]-%%c</code> where `%s` is the long option
  * (if any) and `%c` is the short option.
  *
  * @param short_opt The short option (along with its corresponding long option,
@@ -160,6 +166,8 @@ char const* opt_format( char short_opt );
 void options_init( int argc, char const *argv[], void (*usage)(int) );
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
 
 #endif /* wrap_options_H */
 /* vim:set et sw=2 ts=2: */
