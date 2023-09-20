@@ -18,6 +18,11 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * Defines functions common to both **wrap**(1) and **wrapc**(1).
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
 #define W_COMMON_H_INLINE _GL_EXTERN_INLINE

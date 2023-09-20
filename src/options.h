@@ -23,8 +23,9 @@
 
 /**
  * @file
- * Contains constants, enums, and variables for all wrap and wrapc command-line
- * and configuration file options as well as a function to read and parse them.
+ * Declares constants, enums, and variables for all **wrap**(1) and
+ * **wrapc**(1) command-line and configuration file options as well as a
+ * function to read and parse them.
  */
 
 // local

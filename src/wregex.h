@@ -23,7 +23,7 @@
 
 /**
  * @file
- * Contains macros for e-mail and URI regular expressions as well as a wrapper
+ * Declares macros for e-mail and URI regular expressions as well as a wrapper
  * API around POSIX regex (that could easily be swapped out for, say, PCRE2).
  */
 

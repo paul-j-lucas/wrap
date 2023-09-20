@@ -20,7 +20,7 @@
 
 /**
  * @file
- * Implements **wrap**.
+ * Implements **wrap**(1).
  */
 
 // local

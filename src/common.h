@@ -23,8 +23,8 @@
 
 /**
  * @file
- * Contains constants, macros, typedefs, and functions common to both **wrap**
- * and **wrapc**.
+ * Declares constants, macros, typedefs, and functions common to both
+ * **wrap**(1) and **wrapc**(1).
  */
 
 // local

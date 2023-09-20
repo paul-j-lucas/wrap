@@ -20,7 +20,7 @@
 
 /**
  * @file
- * Defines the function to read a **wrap** configuration file.
+ * Defines the function to read a **wrap**(1) configuration file.
  */
 
 // local

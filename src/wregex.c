@@ -18,6 +18,11 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * Defines functions for manipulating regular expressions.
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
 #include "wregex.h"

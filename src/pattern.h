@@ -23,8 +23,8 @@
 
 /**
  * @file
- * Declares a data structure for a **wrap** filename pattern in configuration
- * files and functions to manipulate it.
+ * Declares a data structure for a **wrap** configuration file filename pattern
+ * and functions to manipulate it.
  */
 
 // local

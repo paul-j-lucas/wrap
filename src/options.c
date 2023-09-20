@@ -18,6 +18,12 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * Defines variables for all **wrap**(1) and **wrapc**(1) command-line and
+ * configuration file options as well as functions to read and parse them.
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
 #include "options.h"
