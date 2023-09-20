@@ -1,5 +1,7 @@
 # wrap
 
+## Introduction
+
 **wrap** is a filter for reformatting text
 by wrapping and filling lines
 to a given line-width.
@@ -100,4 +102,12 @@ you can generate `configure` yourself by doing:
 
     ./bootstrap
 
-Then follow the generic installation instructions given in `INSTALL`.
+Then follow the generic installation instructions given in
+[`INSTALL`](https://github.com/paul-j-lucas/wrap/blob/master/INSTALL).
+
+If you would like to generate the developer documentation,
+you will also need
+[Doxygen](http://www.doxygen.org/);
+then do:
+
+    make doc                            # or: make docs
