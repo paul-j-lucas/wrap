@@ -123,7 +123,7 @@ static size_t       suffix_len;         ///< Length of suffix_buf.
 // Two pipes:
 // + pipes[0][0] -> wrap(1)                   [child 2]
 //           [1] <- read_source_write_wrap()  [child 1]
-// + pipes[1][0] -> read_wrap()               [parent]
+// + pipes[1][0] -> read_wrap_write_stdout()  [parent]
 //           [1] <- wrap(1)                   [child 2]
 //
 static int          pipes[2][2];
@@ -157,7 +157,7 @@ static void         read_prototype( void );
 NODISCARD
 static pid_t        read_source_write_wrap( void );
 
-static void         read_wrap( void );
+static void         read_wrap_write_stdout( void );
 static void         set_prefix( char const*, size_t );
 
 NODISCARD
@@ -246,7 +246,7 @@ int main( int argc, char const *argv[] ) {
     PIPE( pipes[ TO_WRAP ] );
     PIPE( pipes[ FROM_WRAP ] );
     fork_exec_wrap( read_source_write_wrap() );
-    read_wrap();
+    read_wrap_write_stdout();
     wait_for_child_processes();
   }
   exit( EX_OK );
@@ -325,7 +325,8 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 
   //
   // Read from pipes[TO_WRAP] (read_source_write_wrap() in child 1) and write
-  // to pipes[FROM_WRAP] (read_wrap() in parent); exec into wrap(1).
+  // to pipes[FROM_WRAP] (read_wrap_write_stdout() in parent); exec into
+  // wrap(1).
   //
   REDIRECT( STDIN_FILENO, TO_WRAP );
   REDIRECT( STDOUT_FILENO, FROM_WRAP );
@@ -340,6 +341,8 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
  * **wrap**(1).
  *
  * @return Returns the child's process ID.
+ *
+ * @sa read_wrap_write_stdout()
  */
 NODISCARD
 static pid_t read_source_write_wrap( void ) {
@@ -485,10 +488,12 @@ verbatim:
 }
 
 /**
- * Reads the output of **wrap**(1) and prepends the leading whitespace and
- * comment characters back to each line.
+ * Reads the output of **wrap**(1), prepends the leading whitespace and comment
+ * characters back to each line, and writes to stdout.
+ *
+ * @sa read_source_write_wrap()
  */
-static void read_wrap( void ) {
+static void read_wrap_write_stdout( void ) {
 #ifndef DEBUG_RSWW
   //
   // We don't use these here.
