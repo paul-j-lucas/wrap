@@ -23,27 +23,34 @@
 
 /**
  * @file
- * Declares the function to read wrap configuration files.
+ * Declares the function to read a **wrap** configuration files.
  */
 
 #include "pjl_config.h"                 /* must go first */
 
+/**
+ * @defgroup config-file-group Configuration File
+ * Function to read **wrap** a configuration file.
+ * @{
+ */
+
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
- * Reads the configuration file.
+ * Reads a **wrap** configuration file.
  *
- * @param conf_file The full-path of the configuration file to read.
- * If NULL, then the user's home directory is checked for the presence of the
- * default configuration file.
- * If found, that file is read.
- * @return Returns the full-path of the configuration file that was read or
+ * @param conf_file The full path of the configuration file to read.  If NULL,
+ * then the user's home directory is checked for the presence of the default
+ * configuration file.  If found, that file is read.
+ * @return Returns the full path of the configuration file that was read or
  * NULL if none.
  */
 NODISCARD
 char const* read_conf( char const *conf_file );
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
 
 #endif /* wrap_read_conf_H */
 /* vim:set et sw=2 ts=2: */

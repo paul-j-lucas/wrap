@@ -18,12 +18,19 @@
 **      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * Defines the function to read a **wrap** configuration file.
+ */
+
 // local
 #include "pjl_config.h"                 /* must go first */
 #include "alias.h"
 #include "common.h"
 #include "pattern.h"
 #include "util.h"
+
+/// @cond DOXYGEN_IGNORE
 
 // standard
 #include <assert.h>
@@ -40,13 +47,22 @@
 #include <string.h>
 #include <unistd.h>                     /* for geteuid() */
 
+/// @endcond
+
+/**
+ * @addtogroup config-file-group
+ * @{
+ */
+
+///////////////////////////////////////////////////////////////////////////////
+
 /** 
  * Configuration file section.
  */
 enum section {
-  SECTION_NONE,
-  SECTION_ALIASES,
-  SECTION_PATTERNS
+  SECTION_NONE,                         ///< No section.
+  SECTION_ALIASES,                      ///< `[ALIASES]` section.
+  SECTION_PATTERNS                      ///< `[PATTERNS]` section.
 };
 typedef enum section section_t;
 
@@ -240,4 +256,7 @@ char const* read_conf( char const *conf_file ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
+
 /* vim:set et sw=2 ts=2: */
