@@ -297,8 +297,6 @@ _GL_INLINE_HEADER_BEGIN
 #define INTERNAL_ERROR(FORMAT,...) \
   fatal_error( EX_SOFTWARE, "%s:%d: internal error: " FORMAT, __FILE__, __LINE__, __VA_ARGS__ )
 
-#ifdef __GNUC__
-
 /**
  * Checks (at compile-time) whether \a A is an array.
  *
@@ -334,6 +332,8 @@ _GL_INLINE_HEADER_BEGIN
 # define IS_SAME_TYPE(T1,T2)      1
 #endif
 
+#ifdef HAVE___BUILTIN_EXPECT
+
 /**
  * Specifies that \a EXPR is \e very likely (as in 99.99% of the time) to be
  * non-zero (true) allowing the compiler to better order code blocks for
@@ -357,7 +357,7 @@ _GL_INLINE_HEADER_BEGIN
 #else
 # define likely(EXPR)             (EXPR)
 # define unlikely(EXPR)           (EXPR)
-#endif /* __GNUC__ */
+#endif /* HAVE___BUILTIN_EXPECT */
 
 /**
  * Convenience macro for calling check_realloc().
