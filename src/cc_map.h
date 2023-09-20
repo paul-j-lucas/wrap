@@ -52,6 +52,10 @@ _GL_INLINE_HEADER_BEGIN
 
 ///////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Presence of this within a comment delimiter character map entry means the
+ * delimeter is a single comment delimiter character.
+ */
 #define CC_SINGLE_CHAR            ' '
 
 /**

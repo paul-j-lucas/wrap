@@ -125,7 +125,7 @@ char const* cc_map_compile( char const *in_cc ) {
       fatal_error( EX_USAGE,
         "\"%s\": invalid value for %s;\n\tmust only be either:"
         " punctuation or whitespace characters\n",
-        in_cc, opt_format( 'D' )
+        in_cc, opt_format( COPT(COMMENT_CHARS) )
       );
     }
 
@@ -134,7 +134,7 @@ char const* cc_map_compile( char const *in_cc ) {
       fatal_error( EX_USAGE,
         "\"%s\": invalid value for %s: \"%c%c%c\":"
         " more than two consecutive comment characters\n",
-        in_cc, opt_format( 'D' ), cc[0], cc[1], cc[2]
+        in_cc, opt_format( COPT(COMMENT_CHARS) ), cc[0], cc[1], cc[2]
       );
     }
     char const cc1 = is_double_cc ? cc[1] : CC_SINGLE_CHAR;
@@ -168,7 +168,7 @@ char const* cc_map_compile( char const *in_cc ) {
   if ( distinct_cc == 0 ) {
     fatal_error( EX_USAGE,
       "value for %s must not be only whitespace or commas\n",
-      opt_format( 'D' )
+      opt_format( COPT(COMMENT_CHARS) )
     );
   }
 
