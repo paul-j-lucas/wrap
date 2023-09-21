@@ -117,7 +117,7 @@ bool                opt_title_line;
 // local variables
 static char const  *fin_path = "-";     ///< File in path.
 static char const  *fout_path = "-";    ///< File out path.
-static bool         is_wrapc;           ///< Are we **wrapc**?
+static bool         is_wrapc;           ///< Are we **wrapc**(1)?
 static char         opts_given[ 128 ];
 
 // local functions
@@ -133,7 +133,7 @@ static unsigned     parse_width( char const* );
 /// @endcond
 
 /**
- * Command-line short options common to both **wrap** and **wrapc**.
+ * Command-line short options common to both **wrap**(1) and **wrapc**(1).
  */
 #define COMMON_OPTS_SHORT                             \
   SOPT(ALIAS)                 SOPT_REQUIRED_ARGUMENT  \
@@ -169,10 +169,10 @@ static unsigned     parse_width( char const* );
   SOPT(VERSION)
 
 /**
- * Command-line short options specific to **wrap**.
+ * Command-line short options specific to **wrap**(1).
  *
  * @note The short option for `--hang-tabs` isn't here because it shares it
- * with `--help` that is common to both **wrap** and **wrapc**.  There's
+ * with `--help` that is common to both **wrap**(1) and **wrapc**(1).  There's
  * special-case code in parse_options() that disambiguates `-h`.
  */
 #define WRAP_SPECIFIC_OPTS_SHORT                      \
@@ -193,7 +193,7 @@ static unsigned     parse_width( char const* );
   SOPT(WHITESPACE_DELIMIT)    SOPT_NO_ARGUMENT
 
 /**
- * Command-line short options specific to **wrapc**.
+ * Command-line short options specific to **wrapc**(1).
  */
 #define WRAPC_SPECIFIC_OPTS_SHORT                     \
   SOPT(ALIGN_COLUMN)          SOPT_REQUIRED_ARGUMENT  \

@@ -23,8 +23,8 @@
 
 /**
  * @file
- * Declares a data structure for a **wrap** configuration file filename pattern
- * and functions to manipulate it.
+ * Declares a data structure for a **wrap**(1) configuration file filename
+ * pattern and functions to manipulate it.
  */
 
 // local
@@ -34,7 +34,7 @@
 /**
  * @ingroup config-file-group
  * @defgroup patterns-group Filename Patterns
- * A data structure and functions for **wrap** filename patterns within
+ * A data structure and functions for **wrap**(1) filename patterns within
  * configuration files.
  * @{
  */
@@ -42,8 +42,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Contains a **wrap** configuration file filename pattern and the \ref alias
- * to which it maps.
+ * Contains a **wrap**(1) configuration file filename pattern and the \ref
+ * alias to which it maps.
  */
 struct pattern {
   char const     *pattern;              ///< File-name pattern.

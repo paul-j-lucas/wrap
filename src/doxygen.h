@@ -24,7 +24,7 @@
 /**
  * @file
  * Declares macros, data structures, and functions for reformatting
- * [Doxygen](http://www.doxygen.org/).
+ * [Doxygen](http://www.doxygen.org/) within source code comments.
  */
 
 // local
@@ -39,9 +39,10 @@
 /// @endcond
 
 /**
+ * @ingroup wrapc-group
  * @defgroup doxygen-group Doxygen Support
  * Macros, data structures, and functions for reformatting
- * [Doxygen](http://www.doxygen.org/).
+ * [Doxygen](http://www.doxygen.org/) within source code comments.
  * @{
  */
 

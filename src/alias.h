@@ -23,7 +23,7 @@
 
 /**
  * @file
- * Declares a data structure for a **wrap** alias in configuration files and
+ * Declares a data structure for a **wrap**(1) alias in configuration files and
  * functions to manipulate it.
  */
 
@@ -33,7 +33,7 @@
 /**
  * @ingroup config-file-group
  * @defgroup alias-group Aliases
- * A data structure and functions for **wrap** aliases within configuration
+ * A data structure and functions for **wrap**(1) aliases within configuration
  * files.
  * @{
  */
@@ -41,8 +41,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Contains a **wrap** configuration file alias and its associated command-line
- * options.
+ * Contains a **wrap**(1) configuration file alias and its associated command-
+ * line options.
  */
 struct alias {
   int           argc;                   ///< Number of arguments + 1.

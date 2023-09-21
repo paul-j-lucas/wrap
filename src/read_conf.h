@@ -23,21 +23,21 @@
 
 /**
  * @file
- * Declares the function to read a **wrap** configuration files.
+ * Declares the function to read a **wrap**(1) configuration files.
  */
 
 #include "pjl_config.h"                 /* must go first */
 
 /**
  * @defgroup config-file-group Configuration File
- * Function to read **wrap** a configuration file.
+ * Function to read **wrap**(1) a configuration file.
  * @{
  */
 
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
- * Reads a **wrap** configuration file.
+ * Reads a **wrap**(1) configuration file.
  *
  * @param conf_file The full path of the configuration file to read.  If NULL,
  * then the user's home directory is checked for the presence of the default

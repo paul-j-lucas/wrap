@@ -164,7 +164,7 @@ static inline bool cp_is_para_delim( char32_t cp ) {
 }
 
 /**
- * Prints an end-of-line and sends any pending IPC message to **wrapc**.
+ * Prints an end-of-line and sends any pending IPC message to **wrapc**(1).
  */
 static inline void print_eol( void ) {
   PUTS( eol() );
@@ -1108,7 +1108,7 @@ PACKAGE_NAME " home page: " PACKAGE_URL "\n"
 
 /**
  * Sends an already formatted IPC (interprocess communication) message (if not
- * empty) to **wrapc**.
+ * empty) to **wrapc**(1).
  *
  * @param msg The message to send.  If sent, the buffer is truncated.
  */

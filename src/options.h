@@ -89,7 +89,7 @@
 
 /**
  * @defgroup options-group Options
- * Global variable and functions for **wrap** and **wrapc** options.
+ * Global variable and functions for **wrap**(1) and **wrapc**(1) options.
  * @{
  */
 
