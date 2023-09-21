@@ -46,8 +46,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define MD_SEQ_NUM_INIT           1     /**< First Markdown state seq number. */
-#define MD_TAB_SPACES             4     /**< Number of spaces a tab equals. */
+#define MD_SEQ_NUM_INIT           1u    /**< First Markdown state seq number. */
+#define MD_TAB_SPACES             4u    /**< Number of spaces a tab equals. */
 
 /**
  * Markdown line types.
