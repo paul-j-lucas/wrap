@@ -44,6 +44,7 @@ _GL_INLINE_HEADER_BEGIN
 #endif /* W_CC_MAP_H_INLINE */
 
 /**
+ * @ingroup wrapc-group
  * @defgroup cc-map-group Comment Delimiter Character Map
  * Declares a \ref cc_map_t "comment delimiter character map" and related
  * functions.

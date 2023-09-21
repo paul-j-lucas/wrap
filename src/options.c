@@ -71,7 +71,7 @@ static char const   COMMENT_CHARS_DEFAULT[] =
             //    PL/I, Pure, Rust, Scala, SQL, Swift
   "/+" ","  // D
   "//" ","  // C, Objective C, C#, C++, D, F#, Go, Kotlin, Java, Pike, Pure,
-            //    Rust, Scala, Swift
+            //    Rust, Scala, Swift, Zig
   ";"  ","  // Assembly, Clojure, Lisp, Scheme
   "<#" ","  // PowerShell
   ">"  ","  // Quoted e-mail

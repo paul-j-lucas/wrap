@@ -48,8 +48,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Doxygen command maximum size.
- * (The longest command is currently `hidecollaborationgraph`.)
+ * Doxygen command name maximum size.
+ *
+ * @remarks The longest command name is currently `hidecollaborationgraph`.
  */
 #define DOX_CMD_NAME_SIZE_MAX     22
 

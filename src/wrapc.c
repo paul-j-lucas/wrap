@@ -54,7 +54,8 @@
 
 /**
  * @defgroup wrapc-group Wrapc
- * Implements **wrapc**.
+ * Implements **wrapc**(1), a filter for reformatting source code comments (or
+ * quoted e-mail) by wrapping and filling lines to a given line-width.
  * @{
  */
 

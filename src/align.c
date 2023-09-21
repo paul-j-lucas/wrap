@@ -42,6 +42,14 @@
 
 /// @endcond
 
+/**
+ * @ingroup wrapc-group
+ * @defgroup align-group End-of-Line Comment Alignment
+ * Defines functions for aligning comments at the end of source code lines to a
+ * particular column.
+ * @{
+ */
+
 ////////// local functions ////////////////////////////////////////////////////
 
 /**
@@ -289,4 +297,7 @@ print_line:
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
+
 /* vim:set et sw=2 ts=2: */

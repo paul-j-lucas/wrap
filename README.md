@@ -84,8 +84,9 @@ Swift,
 Tcl,
 TeX,
 VHDL,
+XQuery,
 and
-XQuery.
+Zig.
 
 ## Installation
 

@@ -51,7 +51,8 @@
 
 /**
  * @defgroup wrap-group Wrap
- * Implements the **wrap** command.
+ * Implements the **wrap**(1), a a filter for reformatting text by wrapping and
+ * filling lines to a given line-width.
  * @{
  */
 
