@@ -34,6 +34,12 @@
 // standard
 #include <assert.h>
 
+#define DOX_INIT_INLINE            DOX_INLINE
+#define DOX_INIT_BOL               DOX_BOL
+#define DOX_INIT_EOL              (DOX_BOL | DOX_EOL)
+#define DOX_INIT_PAR              (DOX_BOL | DOX_PAR)
+#define DOX_INIT_PRE              (DOX_INIT_PAR | DOX_PRE)
+
 /// @endcond
 
 /**
@@ -45,12 +51,6 @@
  * Valid characters comprising a Doxygen command.
  */
 #define DOX_CMD_CHARS             "abcdefghijklmnopqrstuvwxyz()[]{}"
-
-#define DOX_INIT_INLINE            DOX_INLINE
-#define DOX_INIT_BOL               DOX_BOL
-#define DOX_INIT_EOL              (DOX_BOL | DOX_EOL)
-#define DOX_INIT_PAR              (DOX_BOL | DOX_PAR)
-#define DOX_INIT_PRE              (DOX_INIT_PAR | DOX_PRE)
 
 ///////////////////////////////////////////////////////////////////////////////
 

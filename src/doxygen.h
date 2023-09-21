@@ -58,35 +58,140 @@
  */
 enum dox_cmd_type {
   /**
-   * Doxygen command is "inline" and needs no special treatment.  Examples
-   * include `\a`, `\b`, and `\c`.
+   * Doxygen command is "inline" and needs no special treatment; examples
+   * include [`\a`](https://www.doxygen.nl/manual/commands.html#cmda),
+   * [`\b`](https://www.doxygen.nl/manual/commands.html#cmdb), and
+   * [`\c`](https://www.doxygen.nl/manual/commands.html#cmdc).
    */
   DOX_INLINE  = (1u << 0),
 
   /**
-   * Doxygen command should be at the beginning of a line.  Examples include
-   * `\pure`.
+   * Doxygen command should be at the beginning of a line (but isn't forced to
+   * be); examples include
+   * [`\pure`](https://www.doxygen.nl/manual/commands.html#cmdpure).
+   *
+   * @remarks
+   * @parblock
+   * Unlike #DOX_INLINE, `DOX_BOL` commands are prevented from being wrapped
+   * onto the previous line.  For example, this text:
+   *
+   *      Lorem ipsum dolor sit amet,
+   *      \pure ligula suspendisse nulla pretium,
+   *      rhoncus tempor fermentum,
+   *      enim integer ad vestibulum volutpat.
+   *
+   * will be wrapped as:
+   *
+   *      Lorem ipsum dolor sit amet,
+   *      \pure ligula suspendisse nulla pretium, rhoncus tempor fermentum,
+   *      enim integer ad vestibulum volutpat.
+   *
+   * that is:
+   *
+   *  + The `\pure` will _not_ be wrapped onto the end of the previous line
+   *    (after the "amet") like a #DOX_INLINE command will be --- it is kept at
+   *    the beginning of the line.
+   *
+   *  + However, the rest of the text on the same line as `\pure` as well as
+   *    subsequent lines will be wrapped normally.
+   * @endparblock
    */
   DOX_BOL     = (1u << 1),
 
   /**
-   * Like #DOX_BOL, but Doxygen command continues until the end of the line.
-   * Examples include `\def`, `\hideinitializer`, and `\sa`.
+   * Like #DOX_BOL, but the Doxygen command continues until the end of the
+   * line; examples include
+   * [`\def`](https://www.doxygen.nl/manual/commands.html#cmddef),
+   * [`\hideinitializer`](https://www.doxygen.nl/manual/commands.html#cmdhideinitializer),
+   * and [`\sa`](https://www.doxygen.nl/manual/commands.html#cmdsa).
+   *
+   * @remarks
+   * @parblock
+   * Like #DOX_BOL commands, `DOX_EOL` commands are prevented from being wrapped
+   * onto the previous line.  However, unlike #DOX_BOL commands, `DOX_EOL`
+   * commands are _not_ wrapped (are kept verbatim) until the end of the same
+   * line.  For example, this text:
+   *
+   *      Lorem ipsum dolor sit amet,
+   *      \def ligula suspendisse nulla pretium,
+   *      rhoncus tempor fermentum,
+   *      enim integer ad vestibulum volutpat.
+   *
+   * will be wrapped as:
+   *
+   *      Lorem ipsum dolor sit amet,
+   *      \def ligula suspendisse nulla pretium,
+   *      rhoncus tempor fermentum, enim integer ad vestibulum volutpat.
+   *
+   * that is:
+   *
+   *  + The `\def` will _not_ be wrapped onto the end of the previous line
+   *    (after the "amet") like a #DOX_INLINE command will be --- it is kept at
+   *    the beginning of the line.
+   *
+   *  + The text on the same line as `\def` will _not_ be wrapped at all.
+   *
+   *  + The text on the line after `\def` will _not_ be wrapped onto the end of
+   *    the `\def` line, but otherwise will be wrapped normally.
+   * @endparblock
    */
   DOX_EOL     = (1u << 2),
 
   /**
-   * Like #DOX_BOL, but Doxygen command continues until either the end of the
-   * paragraph; or, if it has a corresponding end command, until said command.
-   * Examples include `\brief`, `\details`, and `\param`.
+   * Like #DOX_BOL, but the Doxygen command continues until either the end of
+   * the paragraph; or, if it has a corresponding end command, until said
+   * command; examples include
+   * [`\brief`](https://www.doxygen.nl/manual/commands.html#cmdnrief),
+   * [`\details`](https://www.doxygen.nl/manual/commands.html#cmddetails), and
+   * [`\param`](https://www.doxygen.nl/manual/commands.html#cmdparam).
+   *
+   * @remarks This is a conceptually different command type, but it's treated
+   * exactly the same as #DOX_BOL.
    */
   DOX_PAR     = (1u << 3),
 
   /**
-   * Like #DOX_PAR, but doxygen command continues until its corresponding end
-   * command and all text in between shall be considered preformatted and
-   * passed through verbatim.  Examples include `\code`, `\latexonly`, and
-   * `\verbatim`.
+   * Like #DOX_PAR, but the Doxygen command continues until its corresponding
+   * end command and all text in between is considered preformatted and passed
+   * through verbatim; examples include
+   * [<tt>\\code</tt>](https://www.doxygen.nl/manual/commands.html#cmdcode),
+   * [<tt>\\latexonly</tt>](https://www.doxygen.nl/manual/commands.html#cmdlatexonly),
+   * and
+   * [<tt>\\verbatim</tt>](https://www.doxygen.nl/manual/commands.html#cmdverbatim).
+   * For example, the text:
+   *
+   *      Lorem ipsum dolor sit amet,
+   *      ligula suspendisse nulla pretium,
+   *      \code
+   *      #include <stdio.h>
+   *
+   *      int main() {
+   *          printf( "hello, world!\n" );
+   *      }
+   *      \endcode
+   *      rhoncus tempor fermentum,
+   *      enim integer ad vestibulum volutpat.
+   *
+   * will be wrapped as:
+   *
+   *      Lorem ipsum dolor sit amet, ligula suspendisse nulla pretium,
+   *      \code
+   *      #include <stdio.h>
+   *
+   *      int main() {
+   *          printf( "hello, world!\n" );
+   *      }
+   *      \endcode
+   *      rhoncus tempor fermentum, enim integer ad vestibulum volutpat.
+   *
+   * that is:
+   *
+   *  + The text both before <tt>\\code</tt> and after <tt>\\endcode</tt> will
+   *    be wrapped normally.
+   *
+   *  + However, the text between <tt>\\code</tt> and <tt>\\endcode</tt>
+   *    (including those lines themselves) will _not_ be wrapped at all and
+   *    passed through verbatim.
    */
   DOX_PRE     = (1u << 4),
 };

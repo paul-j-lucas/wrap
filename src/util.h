@@ -140,7 +140,7 @@ _GL_INLINE_HEADER_BEGIN
 
 #ifndef NDEBUG
 /**
- * Asserts that this line of code is run at most once &mdash; useful in
+ * Asserts that this line of code is run at most once --- useful in
  * initialization functions that must be called at most once.  For example:
  *
  *      void initialize() {
@@ -428,7 +428,7 @@ _GL_INLINE_HEADER_BEGIN
 #define PIPE(FDS)                 PERROR_EXIT_IF( pipe( FDS ) == -1, EX_OSERR )
 
 /**
- * Cast either from or to a pointer type &mdash; similar to C++'s
+ * Cast either from or to a pointer type --- similar to C++'s
  * `reinterpret_cast`, but for pointers only.
  *
  * @param T The type to cast to.
