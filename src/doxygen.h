@@ -48,47 +48,49 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Doxygen command is "inline" and needs no special treatment.  Examples
- * include \c \\a, \c \\b, and \c \\c.
- */
-#define DOX_INLINE  (1u << 0)
-
-/**
- * Doxygen command should be at the beginning of a line.  Examples include \c
- * \\copybrief, \c \\copydetails, and \c \\copydoc.
- */
-#define DOX_BOL     (1u << 1)
-
-/**
- * Doxygen command continues until the end of the line.  Examples include \c
- * \\def, \c \\hideinitializer, and \c \\sa.
- */
-#define DOX_EOL     (1u << 2)
-
-/**
- * Doxygen command continues until either the end of the paragraph; or, if it
- * has a corresponding end command, until said command.  Examples include \c
- * \\brief, \c \\details, and \c \\param.
- */
-#define DOX_PAR     (1u << 3)
-
-/**
- * Doxygen command continues until its corresponding end command and all text
- * in between shall be considered preformatted and passed through verbatim.
- * Examples include \c \\code, \c \\latexonly, and \c \\verbatim.
- */
-#define DOX_PRE     (1u << 4)
-
-/**
  * Doxygen command maximum size.
  * (The longest command is currently `hidecollaborationgraph`.)
  */
 #define DOX_CMD_NAME_SIZE_MAX     22
 
 /**
- * Bitmask for Doxygen command types.
+ * Doxygen command type.
  */
-typedef unsigned dox_cmd_type_t;
+enum dox_cmd_type {
+  /**
+   * Doxygen command is "inline" and needs no special treatment.  Examples
+   * include \c \\a, \c \\b, and \c \\c.
+   */
+  DOX_INLINE  = (1u << 0),
+  
+  /**
+   * Doxygen command should be at the beginning of a line.  Examples include \c
+   * \\copybrief, \c \\copydetails, and \c \\copydoc.
+   */
+  DOX_BOL     = (1u << 1),
+  
+  /**
+   * Like #DOX_BOL, but Doxygen command continues until the end of the line.
+   * Examples include \c \\def, \c \\hideinitializer, and \c \\sa.
+   */
+  DOX_EOL     = (1u << 2),
+  
+  /**
+   * Like #DOX_BOL, but Doxygen command continues until either the end of the
+   * paragraph; or, if it has a corresponding end command, until said command.
+   * Examples include \c \\brief, \c \\details, and \c \\param.
+   */
+  DOX_PAR     = (1u << 3),
+  
+  /**
+   * Like #DOX_PAR, but doxygen command continues until its corresponding end
+   * command and all text in between shall be considered preformatted and
+   * passed through verbatim.  Examples include \c \\code, \c \\latexonly, and
+   * \c \\verbatim.
+   */
+  DOX_PRE     = (1u << 4),
+};
+typedef enum dox_cmd_type dox_cmd_type_t;
 
 /**
  * Contains information about a [Doxygen](http://www.doxygen.org/) command.
