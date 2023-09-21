@@ -1,5 +1,6 @@
 2023-09-21  Paul J. Lucas <paul@lucasmail.org>
 
+   * wrapc.1: Added mention of Zig.
    * doxygen.c: Now doing ++s.
    * doxygen.c: Changed @copy* commands to be EOL.
    * doxygen.h: Converted dox_cmd_type_t to an enum.
