@@ -48,9 +48,9 @@
 
 #define DOX_INIT_INLINE            DOX_INLINE
 #define DOX_INIT_BOL               DOX_BOL
-#define DOX_INIT_EOL              (DOX_EOL | DOX_INIT_BOL)
-#define DOX_INIT_PAR              (DOX_PAR | DOX_INIT_BOL)
-#define DOX_INIT_PRE              (DOX_PRE | DOX_INIT_PAR)
+#define DOX_INIT_EOL              (DOX_BOL | DOX_EOL)
+#define DOX_INIT_PAR              (DOX_BOL | DOX_PAR)
+#define DOX_INIT_PRE              (DOX_INIT_PAR | DOX_PRE)
 
 ///////////////////////////////////////////////////////////////////////////////
 
