@@ -59,34 +59,34 @@
 enum dox_cmd_type {
   /**
    * Doxygen command is "inline" and needs no special treatment.  Examples
-   * include \c \\a, \c \\b, and \c \\c.
+   * include `\a`, `\b`, and `\c`.
    */
   DOX_INLINE  = (1u << 0),
   
   /**
-   * Doxygen command should be at the beginning of a line.  Examples include \c
-   * \\copybrief, \c \\copydetails, and \c \\copydoc.
+   * Doxygen command should be at the beginning of a line.  Examples include 
+   * `\pure`.
    */
   DOX_BOL     = (1u << 1),
   
   /**
    * Like #DOX_BOL, but Doxygen command continues until the end of the line.
-   * Examples include \c \\def, \c \\hideinitializer, and \c \\sa.
+   * Examples include `\def`, `\hideinitializer`, and `\sa`.
    */
   DOX_EOL     = (1u << 2),
   
   /**
    * Like #DOX_BOL, but Doxygen command continues until either the end of the
    * paragraph; or, if it has a corresponding end command, until said command.
-   * Examples include \c \\brief, \c \\details, and \c \\param.
+   * Examples include `\brief`, `\details`, and `\param`.
    */
   DOX_PAR     = (1u << 3),
   
   /**
    * Like #DOX_PAR, but doxygen command continues until its corresponding end
    * command and all text in between shall be considered preformatted and
-   * passed through verbatim.  Examples include \c \\code, \c \\latexonly, and
-   * \c \\verbatim.
+   * passed through verbatim.  Examples include `\code`, `\latexonly`, and
+   * `\verbatim`.
    */
   DOX_PRE     = (1u << 4),
 };
