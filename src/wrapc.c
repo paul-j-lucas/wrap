@@ -138,8 +138,8 @@ static size_t       suffix_len;         ///< Length of suffix_buf.
  *     writes to `pipe[0][1]` connected to child 2.
  *
  *  2. Child 2 exec's itself into **wrap**(1), reads text from stdin via
- *     `pipes[0][0]` from child 1, reformats it, and writes to stdout via
- *     `pipe[1][1]` connected to the parent.
+ *     `pipes[0][0]` connected to child 1, reformats it, and writes to stdout
+ *     via `pipe[1][1]` connected to the parent.
  *
  * The parent process reads from `pipes[1][0]` connected to child 2, prepends
  * the original comment delimiter characters, and writes to stdout via
