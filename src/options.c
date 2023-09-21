@@ -50,7 +50,7 @@
  * @{
  */
 
-#define OPT_BUF_SIZE              32    /* used for opt_format() */
+#define OPT_BUF_SIZE              32    /**< Used by opt_format(). */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -79,6 +79,9 @@ static char const   COMMENT_CHARS_DEFAULT[] =
   "{-" ","  // Haskell
   "\\" ","  // Forth
   ;
+
+/// @cond DOXYGEN_IGNORE
+/// Otherwise Doxygen generates two entries for each option.
 
 // extern option variables
 char const         *opt_alias;
@@ -114,11 +117,13 @@ bool                opt_prototype;
 size_t              opt_tab_spaces = TAB_SPACES_DEFAULT;
 bool                opt_title_line;
 
+/// @endcond
+
 // local variables
 static char const  *fin_path = "-";     ///< File in path.
 static char const  *fout_path = "-";    ///< File out path.
 static bool         is_wrapc;           ///< Are we **wrapc**(1)?
-static char         opts_given[ 128 ];
+static bool         opts_given[ 128 ];  ///< Options given indexed by `char`.
 
 // local functions
 NODISCARD
