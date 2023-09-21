@@ -20,7 +20,8 @@
 
 /**
  * @file
- * Defines macros, data structures, and functions for reformatting Markdown.
+ * Defines macros, types, data structures, and functions for reformatting
+ * Markdown.
  */
 
 // local

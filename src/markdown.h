@@ -23,8 +23,8 @@
 
 /**
  * @file
- * Declares macros, enums, typedefs, data structures, and functions for
- * parsing Markdown.
+ * Declares macros, types, data structures, and functions for reformatting
+ * Markdown.
  */
 
 // local
@@ -40,7 +40,7 @@
 
 /**
  * @defgroup markdown-group Markdown Support
- * Macros, data structures, and functions for reformatting Markdown.
+ * Macros, types, data structures, and functions for reformatting Markdown.
  * @{
  */
 
@@ -83,9 +83,52 @@ typedef unsigned md_ol_t;               ///< Ordered list number.
  */
 struct md_state {
   md_line_t   line_type;                ///< Current line type.
-  md_seq_t    seq_num;                  ///< Sequence number.
-  md_depth_t  depth;                    ///< Nesting depth.
-  bool        footnote_def_has_text;    ///< Footnote def has text on line?
+
+  /**
+   * Sequence number.
+   *
+   * @remarks This is an arbitrary number. It increases when either the list
+   * type changes or, for ordered lists only, additionally when the list
+   * character changes to be able to know when a new list starts.  For example,
+   * in:
+   *
+   *      1. First list, first item.
+   *      1. First list, second item.
+   *      1) Second list, first item.
+   *
+   * the line type of all the lines is #MD_OL and the `seq_num` of the first
+   * two lines is the same, but the `seq_num` of the third line is different.
+   */
+  md_seq_t    seq_num;
+
+  /**
+   * Nesting depth.
+   *
+   * @remarks This is for things like lists within lists or code blocks within
+   * lists.
+   */
+  md_depth_t  depth;
+
+  /**
+   * Only when \ref line_type is #MD_FOOTNOTE_DEF, this indicates whether the
+   * footnote has additional text on the _same_ line beyond the marker.  For
+   * example, in:
+   *
+   *      [^1]: This is a footnote.
+   *
+   * this would be `true` whereas in:
+   *
+   *      [^lorum]:
+   *          Lorem ipsum dolor sit amet, ligula suspendisse nulla pretium,
+   *          rhoncus tempor fermentum, enim integer ad vestibulum volutpat.
+   *
+   *          Nisl rhoncus turpis est, vel elit, congue wisi enim nunc
+   *          ultricies sit, magna tincidunt.
+   *
+   * this would be `false`.
+   */
+  bool        footnote_def_has_text;
+
   md_indent_t indent_left;              ///< Left-indent for lines.
   md_indent_t indent_hang;              ///< Hang-indent for lists.
   char        ol_c;                     ///< Ordered list character: `.` or `)`.
