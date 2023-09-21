@@ -317,9 +317,9 @@ bool dox_parse_cmd_name( char const *s, char *dox_cmd_name ) {
   if ( !(s[0] == '@' || s[0] == '\\') )
     return false;
 
-  size_t const len = strspn( s + 1, DOX_CMD_CHARS );
+  size_t const len = strspn( ++s, DOX_CMD_CHARS );
   if ( len > 0 && len <= DOX_CMD_NAME_SIZE_MAX ) {
-    strncpy( dox_cmd_name, s + 1, len );
+    strncpy( dox_cmd_name, s, len );
     dox_cmd_name[ len ] = '\0';
     return true;
   }
