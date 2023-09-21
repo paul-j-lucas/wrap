@@ -213,29 +213,31 @@ static char const *const HTML_BLOCK_ELEMENT[] = {
 static html_state_t   curr_html_state;  ///< Current HTML state.
 static md_state_t    *md_stack;         ///< Global stack of Markdown states.
 static md_stack_pos_t md_stack_top;     ///< Index of the top \ref md_stack.
-static md_seq_t       next_seq_num;
+static md_seq_t       next_seq_num;     ///< Next sequence number.
 static bool           prev_blank_line;  ///< Previous blank line.
+
+/// Previous value for `code_fence_end` in markdown_parse().
 static bool           prev_code_fence_end;
+
+/// Previous value for `link_lable_has_title` in markdown_parse().
 static bool           prev_link_label_has_title;
 
 // local functions
 NODISCARD
-static bool         md_is_code_fence( char const*, md_code_fence_t* );
+static bool           md_is_code_fence( char const*, md_code_fence_t* ),
+                      md_is_dl_ul_helper( char const*, md_indent_t* );
 
 NODISCARD
-static bool         md_is_dl_ul_helper( char const*, md_indent_t* );
+static html_state_t   md_is_html_tag( char const*, bool* );
 
 NODISCARD
-static html_state_t md_is_html_tag( char const*, bool* );
+static md_line_t      md_nested_within( void );
 
 NODISCARD
-static md_line_t    md_nested_within( void );
+static unsigned       md_ol_digits( md_ol_t );
 
 NODISCARD
-static unsigned     md_ol_digits( md_ol_t );
-
-NODISCARD
-static char const*  skip_html_tag( char const*, bool* );
+static char const*    skip_html_tag( char const*, bool* );
 
 ////////// inline functions ///////////////////////////////////////////////////
 
