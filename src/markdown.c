@@ -48,13 +48,32 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Calls \ref md_stack_clear(), \ref md_stack_push( \a TOKEN ), and returns \a
+ * TOKEN.
+ *
+ * @param TOKEN The token to push and return.
+ */
 #define CLEAR_RETURN(TOKEN) \
-  BLOCK( stack_clear(); stack_push( (TOKEN), 0, 0 ); return &TOP; )
+  BLOCK( md_stack_clear(); md_stack_push( (TOKEN), 0, 0 ); return &MD_TOP; )
 
+/**
+ * Declares \a NAME as a local, `const` `bool` variable, initializes it with a
+ * variable named `prev_`<i>NAME</i>, and sets `prev_`<i>NAME</i> to `false`.
+ *
+ * @param NAME The name of the local variable.
+ */
 #define PREV_BOOL(NAME)           \
   bool const NAME = prev_##NAME;  \
   prev_##NAME = false
 
+/**
+ * Compares \a S to \a STRLIT for equality.
+ *
+ * @param S The null-terminated string to check.
+ * @param STRLIT The C string literal to check against.
+ * @return Returns `true` only if \a S equals \a STRLIT.
+ */
 #define STRN_EQ_LIT(S,STRLIT) \
   (strncmp( (S), (STRLIT ""), sizeof( STRLIT "" ) - 1 ) == 0)
 
@@ -68,7 +87,7 @@
  * @note This is a macro instead of an inline function so it'll be an lvalue
  * reference.
  */
-#define STACK(N)            (stack[ stack_top - (N) ])
+#define MD_STACK(N)               (md_stack[ md_stack_top - (N) ])
 
 /**
  * Gets an lvalue reference to the top Markdown state on the stack.
@@ -78,21 +97,38 @@
  * @note This is a macro instead of an inline function so it'll be an lvalue
  * reference.
  */
-#define TOP                 STACK(0)
+#define MD_TOP                    MD_STACK(0)
 
 /**
- * HTML markup types.  Every type that is not NONE nor ELEMENT is a "special"
+ * HTML markup types.
+ *
+ * @remarks Every type that is not #HTML_NONE nor #HTML_ELEMENT is a "special"
  * type in that it (a) has a unique terminator and (b) does not nest.
  */
 enum html_state {
+  /// No state.
   HTML_NONE,
-  HTML_CDATA,                           // <![CDATA[ ... ]]>
-  HTML_COMMENT,                         // <!-- ... -->
-  HTML_DOCTYPE,                         // <!DOCTYPE ... >
-  HTML_ELEMENT,                         // <tag> ... </tag>
-  HTML_PI,                              // <? ... ?>
-  HTML_PRE,                             // <pre>, <script>, or <style>
-  HTML_END                              // ending HTML block
+
+  /// <tt>&lt;![CDATA[</tt>...<tt>]]&gt;</tt>
+  HTML_CDATA,
+
+  /// <tt>&lt;!-\-</tt> ... <tt>-\-&gt;</tt>
+  HTML_COMMENT,
+
+  /// <tt>&lt;!DOCTYPE</tt> ...<tt>&gt;</tt>
+  HTML_DOCTYPE,
+
+  /// <tt>&lt;</tt> _tag_ <tt>&gt;</tt> ... <tt>&lt;/</tt> _tag_ <tt>&gt;</tt>
+  HTML_ELEMENT,
+
+  /// <tt>&lt;?</tt> ... <tt>?&gt;</tt>
+  HTML_PI,
+
+  /// <tt>&lt;pre&gt;</tt>, <tt>&lt;script&gt;</tt>, or <tt>&lt;style&gt;</tt>
+  HTML_PRE,
+
+  /// Ending HTML block.
+  HTML_END
 };
 typedef enum html_state html_state_t;
 
@@ -100,27 +136,53 @@ typedef enum html_state html_state_t;
  * PHP Markdown Extra code fence info.
  */
 struct md_code_fence {
-  char    cf_c;                         // character of the fence: ~ or `
-  size_t  cf_len;                       // length of the fence
+  char    cf_c;                         ///< Character of the fence: ~ or `.
+  size_t  cf_len;                       ///< Length of the fence.
 };
 typedef struct md_code_fence md_code_fence_t;
 
-typedef ssize_t stack_pos_t;
+typedef ssize_t md_stack_pos_t;         ///< Markdown stack position type.
 
 // local constant definitions
-#define             HTML_ELEMENT_CHAR_MAX    10   /* "blockquote" */
-static size_t const MD_ATX_CHAR_MAX        =  6;  // max num of # in atx header
-static size_t const MD_CODE_FENCE_CHAR_MIN =  3;  // min num of ~~~ or ```
-static size_t const MD_CODE_INDENT_MIN     =  4;  // min indent for code
-static size_t const MD_FOOTNOTE_INDENT     =  4;
-static size_t const MD_HR_CHAR_MIN         =  3;  // min num of ***, ---, or ___
-static size_t const MD_LINK_INDENT_MAX     =  3;  // max indent for [id]: URI
-static size_t const MD_LIST_INDENT_MAX     =  4;  // max indent for all lists
-static size_t const MD_DL_UL_INDENT_MIN    =  2;  // unordered list min indent
-static size_t const MD_OL_CHAR_MAX         =  9;  // ordered list max digits
-static size_t const MD_OL_INDENT_MIN       =  3;  // ordered list min indent
-static size_t const STATE_ALLOC_DEFAULT    =  5;
-static size_t const STATE_ALLOC_INCREMENT  =  5;
+
+/// HTML element name maximum length.
+#define HTML_ELEMENT_CHAR_MAX    10
+
+/// Maximum number of `#` in an atx header.
+#define MD_ATX_CHAR_MAX           6
+
+/// Minimum number of `~~~` or <tt>```</tt> characters for a code fence.
+#define MD_CODE_FENCE_CHAR_MIN    3
+
+/// Minimum indent for code.
+#define MD_CODE_INDENT_MIN        4
+
+/// Unordered list minimum indent.
+#define MD_DL_UL_INDENT_MIN       2
+
+/// Footnote indent.
+#define MD_FOOTNOTE_INDENT        4
+
+/// Minimum number of `***`, `---`, or `___` characters for a horizontal rule.
+#define MD_HR_CHAR_MIN            3
+
+/// Maximum indent for `[id]:' _URI_.
+#define MD_LINK_INDENT_MAX        3
+
+/// Maximum indent for all lists.
+#define MD_LIST_INDENT_MAX        4
+
+/// Ordered list maximum number of digits.
+#define MD_OL_DIGIT_MAX           9
+
+/// Ordered list minimum indent.
+#define MD_OL_INDENT_MIN          3
+
+/// Number of md_state objects to allocate by default.
+#define MD_STATE_ALLOC_DEFAULT    5
+
+/// Number of md_state objects to increment by.
+#define MD_STATE_ALLOC_INCREMENT  5
 
 /**
  * Block-level HTML 5 elements.
@@ -147,13 +209,13 @@ static char const *const HTML_BLOCK_ELEMENT[] = {
 };
 
 // local variable definitions
-static html_state_t curr_html_state;
-static md_seq_t     next_seq_num;
-static bool         prev_blank_line;
-static bool         prev_code_fence_end;
-static bool         prev_link_label_has_title;
-static md_state_t  *stack;              // global stack of states
-static stack_pos_t  stack_top;          // index of the top of the stack
+static html_state_t   curr_html_state;  ///< Current HTML state.
+static md_state_t    *md_stack;         ///< Global stack of Markdown states.
+static md_stack_pos_t md_stack_top;     ///< Index of the top \ref md_stack.
+static md_seq_t       next_seq_num;
+static bool           prev_blank_line;  ///< Previous blank line.
+static bool           prev_code_fence_end;
+static bool           prev_link_label_has_title;
 
 // local functions
 NODISCARD
@@ -187,7 +249,7 @@ NODISCARD
 static inline bool is_html_block_element( char const *s ) {
   return NULL != bsearch(
     s, HTML_BLOCK_ELEMENT, ARRAY_SIZE( HTML_BLOCK_ELEMENT ),
-    sizeof(char const*), &bsearch_str_strptr_cmp
+    sizeof( HTML_BLOCK_ELEMENT[0] ), &bsearch_str_strptr_cmp
   );
 }
 
@@ -265,8 +327,8 @@ static inline bool md_is_ol_sep_char( char c ) {
 /**
  * Clears the Markdown stack down to the initial element.
  */
-static inline void stack_clear( void ) {
-  stack_top = 0;
+static inline void md_stack_clear( void ) {
+  md_stack_top = 0;
 }
 
 /**
@@ -275,8 +337,8 @@ static inline void stack_clear( void ) {
  * @return Returns `true` only if it is.
  */
 NODISCARD
-static inline bool stack_empty( void ) {
-  return stack_top < 0;
+static inline bool md_stack_empty( void ) {
+  return md_stack_top < 0;
 }
 
 /**
@@ -285,8 +347,8 @@ static inline bool stack_empty( void ) {
  * @return Returns said size.
  */
 NODISCARD
-static inline size_t stack_size( void ) {
-  return STATIC_CAST( size_t, stack_top + 1 );
+static inline size_t md_stack_size( void ) {
+  return STATIC_CAST( size_t, md_stack_top + 1 );
 }
 
 /**
@@ -297,8 +359,8 @@ static inline size_t stack_size( void ) {
  * @return Returns `true` only if it is.
  */
 NODISCARD
-static inline bool top_is( md_line_t line_type ) {
-  return TOP.line_type == line_type;
+static inline bool md_top_is( md_line_t line_type ) {
+  return MD_TOP.line_type == line_type;
 }
 
 /**
@@ -308,7 +370,7 @@ static inline bool top_is( md_line_t line_type ) {
  */
 NODISCARD
 static inline md_indent_t md_code_indent_min( void ) {
-  return (stack_size() - top_is( MD_CODE )) * MD_CODE_INDENT_MIN;
+  return (md_stack_size() - md_top_is( MD_CODE )) * MD_CODE_INDENT_MIN;
 }
 
 ////////// local functions ////////////////////////////////////////////////////
@@ -348,10 +410,10 @@ done:
 }
 
 /**
- * Checks whether the given string is a URI scheme followed by a ':'.
+ * Checks whether the given string is a URI scheme followed by a `:`.
  *
  * @param s The null-terminated string to check.
- * @return Returns a pointer within \a s just after the ':' if \a s is a URI
+ * @return Returns a pointer within \a s just after the `:` if \a s is a URI
  * scheme or null otherwise.
  *
  * @sa [RFC 3986: Uniform Resource Identifier (URI): Generic Syntax](https://datatracker.ietf.org/doc/html/rfc3986)
@@ -374,15 +436,15 @@ static char const* is_uri_scheme( char const *s ) {
  * Cleans-up all Markdown data.
  */
 static void markdown_cleanup( void ) {
-  FREE( stack );
+  FREE( md_stack );
 }
 
 /**
  * Given an indent, gets its preferred divisor.
  *
  * @remarks Markdown allows 3, but prefers 4, spaces per indent.  For example,
- * for \a indent values of 3, 6, 7, or 9 spaces, returns 3; for value of 4, 5,
- * 8, or 12, returns 4.
+ * for \a indent_left values of 3, 6, 7, or 9 spaces, returns 3; for value of
+ * 4, 5, 8, or 12, returns 4.
  * @par
  * As a special case, we also allow 2 spaces per indent for definition and
  * unordered lists.
@@ -425,13 +487,11 @@ static bool md_is_atx_header( char const *s ) {
 
 /**
  * Checks whether the line is a PHP Markdown Extra code fence, a series of 3 or
- * more `~` or \c ` characters.
+ * more `~` or <tt>\`</tt> characters.
  *
  * @param s The null-terminated line to check.
- * @param fence A pointer to the `struct` containing the fence info: if
- * `fence->cf_c`, return new fence info; otherwise checks to see if \a s
- * matches the existing fence info.
-
+ * @param fence The \ref md_code_fence to use: if `fence->cf_c`, return new
+ * fence info; otherwise checks to see if \a s matches the existing fence info.
  * @return Returns `true` only if it is.
  */
 NODISCARD
@@ -830,7 +890,7 @@ static bool md_is_ol( char const *s, md_ol_t *ol_num, char *ol_c,
     *ol_num = *ol_num * 10 + STATIC_CAST( unsigned, *d - '0' );
 
   size_t const len = STATIC_CAST( size_t, d - s );
-  if ( len >= 1 && len <= MD_OL_CHAR_MAX && md_is_ol_sep_char( d[0] ) &&
+  if ( len >= 1 && len <= MD_OL_DIGIT_MAX && md_is_ol_sep_char( d[0] ) &&
        is_space( d[1] ) ) {
     *ol_c = d[0];
     *indent_hang = d[1] == '\t' ?
@@ -917,8 +977,8 @@ static bool md_is_Setext_header( char const *s ) {
  */
 NODISCARD
 static md_line_t md_nested_within( void ) {
-  for ( stack_pos_t pos = stack_top; pos >= 0; --pos ) {
-    md_line_t const line_type = STACK(pos).line_type;
+  for ( md_stack_pos_t pos = md_stack_top; pos >= 0; --pos ) {
+    md_line_t const line_type = MD_STACK(pos).line_type;
     if ( md_is_nestable( line_type ) )
       return line_type;
   } // for
@@ -1022,10 +1082,10 @@ static char const* skip_html_tag( char const *s, bool *is_end_tag ) {
 /**
  * Pops a Markdown state from the stack.
  */
-static void stack_pop( void ) {
+static void md_stack_pop( void ) {
   MD_DEBUG( "%s()\n", __func__ );
-  assert( !stack_empty() );
-  --stack_top;
+  assert( !md_stack_empty() );
+  --md_stack_top;
 }
 
 /**
@@ -1035,33 +1095,35 @@ static void stack_pop( void ) {
  * @param indent_left The left indent (in spaces).
  * @param indent_hang The indent relative to \a indent_left for a hang-indent.
  */
-static void stack_push( md_line_t line_type, md_indent_t indent_left,
-                        md_indent_t indent_hang ) {
-  static size_t stack_capacity = 0;
+static void md_stack_push( md_line_t line_type, md_indent_t indent_left,
+                           md_indent_t indent_hang ) {
+  static size_t md_stack_capacity = 0;
 
   MD_DEBUG(
     "%s(): T=%c L=%u H=%u\n",
     __func__, line_type, indent_left, indent_hang
   );
 
-  ++stack_top;
-  if ( stack_capacity == 0 ) {
-    stack_capacity = STATE_ALLOC_DEFAULT;
-    stack = MALLOC( md_state_t, stack_capacity );
-  } else if ( STATIC_CAST( size_t, stack_top ) >= stack_capacity ) {
-    stack_capacity += STATE_ALLOC_INCREMENT;
-    REALLOC( stack, md_state_t, stack_capacity );
+  ++md_stack_top;
+  if ( md_stack_capacity == 0 ) {
+    md_stack_capacity = MD_STATE_ALLOC_DEFAULT;
+    md_stack = MALLOC( md_state_t, md_stack_capacity );
+  } else if ( STATIC_CAST( size_t, md_stack_top ) >= md_stack_capacity ) {
+    md_stack_capacity += MD_STATE_ALLOC_INCREMENT;
+    REALLOC( md_stack, md_state_t, md_stack_capacity );
   }
-  PERROR_EXIT_IF( stack == NULL, EX_OSERR );
+  PERROR_EXIT_IF( md_stack == NULL, EX_OSERR );
 
-  md_state_t *const top = &TOP;
-  top->line_type   = line_type;
-  top->seq_num     = ++next_seq_num;
-  top->depth       = stack_size() > 0 ? stack_size() - 1 : 0;
-  top->indent_left = indent_left;
-  top->indent_hang = indent_hang;
-  top->ol_c        = '\0';
-  top->ol_num      = 0;
+  md_state_t *const top = &MD_TOP;
+  *top = (md_state_t){
+    .line_type   = line_type,
+    .seq_num     = ++next_seq_num,
+    .depth       = md_stack_size() > 0 ? md_stack_size() - 1 : 0,
+    .indent_left = indent_left,
+    .indent_hang = indent_hang,
+    .ol_c        = '\0',
+    .ol_num      = 0
+  };
 }
 
 ////////// extern functions ///////////////////////////////////////////////////
@@ -1081,8 +1143,8 @@ void markdown_init( void ) {
   //
   // Initialize the stack so that it always contains at least one element.
   //
-  stack_top = -1;
-  stack_push( MD_TEXT, 0, 0 );
+  md_stack_top = -1;
+  md_stack_push( MD_TEXT, 0, 0 );
 }
 
 md_state_t const* markdown_parse( char *s ) {
@@ -1097,14 +1159,14 @@ md_state_t const* markdown_parse( char *s ) {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  switch ( TOP.line_type ) {
+  switch ( MD_TOP.line_type ) {
     case MD_CODE:
       //
       // Check to see whether we've hit the end of a PHP Markdown Extra code
       // fence.
       //
       if ( code_fence_end )
-        stack_pop();
+        md_stack_pop();
       else if ( code_fence.cf_c != '\0' ) {
         //
         // If code_fence.cf_c is set, that distinguishes a code fence from
@@ -1116,7 +1178,7 @@ md_state_t const* markdown_parse( char *s ) {
         // As long as we're in the MD_CODE state, we can just return without
         // further checks.
         //
-        return &TOP;
+        return &MD_TOP;
       }
       break;
 
@@ -1128,7 +1190,7 @@ md_state_t const* markdown_parse( char *s ) {
       // These tokens are "one-shot," i.e., they never span multipe lines, so
       // pop them off the stack.
       //
-      stack_pop();
+      md_stack_pop();
       break;
 
     case MD_LINK_LABEL:
@@ -1136,8 +1198,8 @@ md_state_t const* markdown_parse( char *s ) {
       // Markdown link label title attributes.
       //
       if ( !link_label_has_title && md_is_link_title( nws ) )
-        return &TOP;
-      stack_pop();
+        return &MD_TOP;
+      md_stack_pop();
       break;
 
     case MD_TABLE:
@@ -1149,9 +1211,9 @@ md_state_t const* markdown_parse( char *s ) {
         // As long as we're in the MD_TABLE state and lines continue to be
         // table lines, we can just return without further checks.
         //
-        return &TOP;
+        return &MD_TOP;
       }
-      stack_pop();
+      md_stack_pop();
       break;
 
     case MD_DL:
@@ -1179,22 +1241,22 @@ md_state_t const* markdown_parse( char *s ) {
   PREV_BOOL( blank_line );
   if ( nws[0] == '\0' ) {               // blank line
     prev_blank_line = true;
-    return &TOP;
+    return &MD_TOP;
   }
 
   /////////////////////////////////////////////////////////////////////////////
 
-  if ( top_is( MD_HTML_BLOCK ) ) {
+  if ( md_top_is( MD_HTML_BLOCK ) ) {
     //
     // HTML blocks.
     //
     switch ( curr_html_state ) {
       case HTML_ELEMENT:
         if ( blank_line )
-          stack_pop();
-        return &TOP;
+          md_stack_pop();
+        return &MD_TOP;
       case HTML_END:
-        stack_pop();
+        md_stack_pop();
         break;
       default:
         if ( md_is_html_end( curr_html_state, s ) )
@@ -1203,7 +1265,7 @@ md_state_t const* markdown_parse( char *s ) {
         // As long as we're in the MD_HTML_BLOCK state, we can just return
         // without further checks.
         //
-        return &TOP;
+        return &MD_TOP;
     } // switch
   }
   else {
@@ -1212,13 +1274,13 @@ md_state_t const* markdown_parse( char *s ) {
     //
     md_indent_t const code_indent_min = md_code_indent_min();
     if ( indent_left >= code_indent_min ) {
-      if ( !top_is( MD_CODE ) )
-        stack_push( MD_CODE, code_indent_min, 0 );
+      if ( !md_top_is( MD_CODE ) )
+        md_stack_push( MD_CODE, code_indent_min, 0 );
       //
       // As long as we're in the MD_CODE state, we can just return without
       // further checks.
       //
-      return &TOP;
+      return &MD_TOP;
     }
   }
 
@@ -1250,10 +1312,10 @@ md_state_t const* markdown_parse( char *s ) {
       if ( indent_left <= MD_LINK_INDENT_MAX ) {
         bool def_has_text;
         if ( md_is_footnote_def( nws, &def_has_text ) ) {
-          stack_clear();
-          stack_push( MD_FOOTNOTE_DEF, 0, MD_FOOTNOTE_INDENT );
-          TOP.footnote_def_has_text = def_has_text;
-          return &TOP;
+          md_stack_clear();
+          md_stack_push( MD_FOOTNOTE_DEF, 0, MD_FOOTNOTE_INDENT );
+          MD_TOP.footnote_def_has_text = def_has_text;
+          return &MD_TOP;
         }
         if ( md_is_link_label( nws, &prev_link_label_has_title ) )
           CLEAR_RETURN( MD_LINK_LABEL );
@@ -1275,8 +1337,8 @@ md_state_t const* markdown_parse( char *s ) {
       if ( curr_html_state != HTML_NONE ) {
         if ( is_end_tag )               // HTML ends on same line as it begins
           curr_html_state = HTML_END;
-        stack_push( MD_HTML_BLOCK, indent_left, 0 );
-        return &TOP;
+        md_stack_push( MD_HTML_BLOCK, indent_left, 0 );
+        return &MD_TOP;
       }
       break;
     }
@@ -1345,7 +1407,7 @@ md_state_t const* markdown_parse( char *s ) {
   // of the current line.
   //
   md_depth_t depth = indent_left / md_indent_divisor( indent_left );
-  if ( (!blank_line && md_is_nestable( TOP.line_type )) ||
+  if ( (!blank_line && md_is_nestable( MD_TOP.line_type )) ||
        md_is_nestable( curr_line_type ) ) {
     ++depth;
   }
@@ -1353,31 +1415,32 @@ md_state_t const* markdown_parse( char *s ) {
   //
   // Pop states for decreases in indentation.
   //
-  MD_DEBUG( "pop stack? D=%u TOP.D=%u\n", depth, TOP.depth );
-  while ( depth < TOP.depth ) {
-    MD_DEBUG( "+ D=%u < TOP.D=%u => ", depth, TOP.depth );
-    stack_pop();
+  MD_DEBUG( "pop stack? D=%u MD_TOP.D=%u\n", depth, MD_TOP.depth );
+  while ( depth < MD_TOP.depth ) {
+    MD_DEBUG( "+ D=%u < MD_TOP.D=%u => ", depth, MD_TOP.depth );
+    md_stack_pop();
   } // while
 
-  md_indent_t const nested_indent_min = TOP.depth * MD_LIST_INDENT_MAX;
+  md_indent_t const nested_indent_min = MD_TOP.depth * MD_LIST_INDENT_MAX;
   bool const is_nested = indent_left >= nested_indent_min;
-  bool const is_same_type_not_nested = top_is( curr_line_type ) && !is_nested;
+  bool const is_same_type_not_nested =
+    md_top_is( curr_line_type ) && !is_nested;
 
   switch ( curr_line_type ) {
 
     case MD_NONE:
       if ( blank_line && md_is_table( s ) ) {
-        assert( !top_is( MD_TABLE ) );
+        assert( !md_top_is( MD_TABLE ) );
         if ( is_nested )
-          stack_push( MD_TABLE, indent_left, 0 );
+          md_stack_push( MD_TABLE, indent_left, 0 );
       }
       break;
 
     case MD_OL: {
-      bool const ol_same_char = TOP.ol_c == ol_c;
+      bool const ol_same_char = MD_TOP.ol_c == ol_c;
       if ( is_same_type_not_nested && ol_same_char ) {
-        TOP.seq_num = ++next_seq_num;   // reuse current state
-        md_ol_t const next_ol_num = ++TOP.ol_num;
+        MD_TOP.seq_num = ++next_seq_num;  // reuse current state
+        md_ol_t const next_ol_num = ++MD_TOP.ol_num;
         if ( next_ol_num ==        10 ||
              next_ol_num ==       100 ||
              next_ol_num ==      1000 ||
@@ -1386,7 +1449,7 @@ md_state_t const* markdown_parse( char *s ) {
              next_ol_num ==   1000000 ||
              next_ol_num ==  10000000 ||
              next_ol_num == 100000000 ) {
-          ++TOP.indent_hang;            // digits just got 1 wider
+          ++MD_TOP.indent_hang;         // digits just got 1 wider
         }
         md_renumber_ol( nws, ol_num, next_ol_num );
       } else {
@@ -1400,11 +1463,11 @@ md_state_t const* markdown_parse( char *s ) {
           // Just get rid of the current list (effectively replacing it with
           // the new list).
           //
-          stack_pop();
+          md_stack_pop();
         }
-        stack_push( MD_OL, indent_left, indent_hang );
-        TOP.ol_c   = ol_c;
-        TOP.ol_num = ol_num;
+        md_stack_push( MD_OL, indent_left, indent_hang );
+        MD_TOP.ol_c   = ol_c;
+        MD_TOP.ol_num = ol_num;
       }
       break;
     }
@@ -1412,16 +1475,16 @@ md_state_t const* markdown_parse( char *s ) {
     case MD_DL:
     case MD_UL:
       if ( is_same_type_not_nested )
-        TOP.seq_num = ++next_seq_num;   // reuse current state
+        MD_TOP.seq_num = ++next_seq_num;  // reuse current state
       else
-        stack_push( curr_line_type, indent_left, indent_hang );
+        md_stack_push( curr_line_type, indent_left, indent_hang );
       break;
 
     default:
       /* suppress warning */;
   } // switch
 
-  return &TOP;
+  return &MD_TOP;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
