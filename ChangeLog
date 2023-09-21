@@ -1,5 +1,14 @@
+2023-09-21  Paul J. Lucas <paul@lucasmail.org>
+
+   * doxygen.c: Now doing ++s.
+   * doxygen.c: Changed @copy* commands to be EOL.
+   * doxygen.h: Converted dox_cmd_type_t to an enum.
+   * markdown.h: Added 'u' suffix.
+   * markdown.c, markdown.h, wrap.c: s/TAB_SPACES_MARKDOWN/MD_TAB_SPACES/
+
 2023-09-20  Paul J. Lucas <paul@lucasmail.org>
 
+   * cc_map.c, cc_map.h: s/'D'/COPT(COMMENT_CHARS)/
    * cc_map.h, common.c, common.h, options.h, unicode.c, unicode.h, util.c,
      util.h: Fixed inline macros.
    * wrapc.c: s/read_wrap/read_wrap_write_stdout/
