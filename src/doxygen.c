@@ -83,9 +83,9 @@ static dox_cmd_t const DOX_COMMANDS[] = {
   { "collaborationgraph",     DOX_INIT_EOL,     NULL },
   { "concept",                DOX_INIT_EOL,     NULL },
   { "cond",                   DOX_INIT_PAR,     "endcond" },
-  { "copybrief",              DOX_INIT_BOL,     NULL },
-  { "copydetails",            DOX_INIT_BOL,     NULL },
-  { "copydoc",                DOX_INIT_BOL,     NULL },
+  { "copybrief",              DOX_INIT_EOL,     NULL },
+  { "copydetails",            DOX_INIT_EOL,     NULL },
+  { "copydoc",                DOX_INIT_EOL,     NULL },
   { "copyright",              DOX_INIT_PAR,     NULL },
 
   { "date",                   DOX_INIT_PAR,     NULL },
@@ -284,7 +284,7 @@ static dox_cmd_t const DOX_COMMANDS[] = {
 ////////// local functions ////////////////////////////////////////////////////
 
 /**
- * Comparison function for bsearch(3) that compares a string key against an
+ * Comparison function for **bsearch**(3) that compares a string key against an
  * element of array of dox_cmd_t.
  *
  * @param key A pointer to the string being searched for.
@@ -305,7 +305,7 @@ static int bsearch_str_dox_cmp( void const *key, void const *elt ) {
 dox_cmd_t const* dox_find_cmd( char const *s ) {
   return bsearch(
     s, DOX_COMMANDS, ARRAY_SIZE( DOX_COMMANDS ),
-    sizeof( dox_cmd_t ), &bsearch_str_dox_cmp
+    sizeof( DOX_COMMANDS[0] ), &bsearch_str_dox_cmp
   );
 }
 
