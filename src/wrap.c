@@ -753,7 +753,7 @@ static void init( int argc, char const *argv[] ) {
 
   if ( opt_markdown ) {
     markdown_init();
-    opt_tab_spaces = TAB_SPACES_MARKDOWN;
+    opt_tab_spaces = MD_TAB_SPACES;
   }
 
   int const temp_width = STATIC_CAST( int, opt_line_width ) -

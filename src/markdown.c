@@ -58,26 +58,6 @@
   BLOCK( md_stack_clear(); md_stack_push( (TOKEN), 0, 0 ); return &MD_TOP; )
 
 /**
- * Declares \a NAME as a local, `const` `bool` variable, initializes it with a
- * variable named `prev_`<i>NAME</i>, and sets `prev_`<i>NAME</i> to `false`.
- *
- * @param NAME The name of the local variable.
- */
-#define PREV_BOOL(NAME)           \
-  bool const NAME = prev_##NAME;  \
-  prev_##NAME = false
-
-/**
- * Compares \a S to \a STRLIT for equality.
- *
- * @param S The null-terminated string to check.
- * @param STRLIT The C string literal to check against.
- * @return Returns `true` only if \a S equals \a STRLIT.
- */
-#define STRN_EQ_LIT(S,STRLIT) \
-  (strncmp( (S), (STRLIT ""), sizeof( STRLIT "" ) - 1 ) == 0)
-
-/**
  * Gets an lvalue reference to the Nth Markdown state down from the top of the
  * stack.
  *
@@ -98,6 +78,26 @@
  * reference.
  */
 #define MD_TOP                    MD_STACK(0)
+
+/**
+ * Declares \a NAME as a local, `const` `bool` variable, initializes it with a
+ * variable named `prev_`<i>NAME</i>, and sets `prev_`<i>NAME</i> to `false`.
+ *
+ * @param NAME The name of the local variable.
+ */
+#define PREV_BOOL(NAME)           \
+  bool const NAME = prev_##NAME;  \
+  prev_##NAME = false
+
+/**
+ * Compares \a S to \a STRLIT for equality.
+ *
+ * @param S The null-terminated string to check.
+ * @param STRLIT The C string literal to check against.
+ * @return Returns `true` only if \a S equals \a STRLIT.
+ */
+#define STRN_EQ_LIT(S,STRLIT) \
+  (strncmp( (S), (STRLIT ""), sizeof( STRLIT "" ) - 1 ) == 0)
 
 /**
  * HTML markup types.
@@ -136,8 +136,8 @@ typedef enum html_state html_state_t;
  * PHP Markdown Extra code fence info.
  */
 struct md_code_fence {
-  char    cf_c;                         ///< Character of the fence: ~ or `.
-  size_t  cf_len;                       ///< Length of the fence.
+  char    cf_c;                 ///< Character of the fence: `~` or <tt>`</tt>.
+  size_t  cf_len;               ///< Length of the fence.
 };
 typedef struct md_code_fence md_code_fence_t;
 
@@ -392,7 +392,7 @@ static char* first_non_whitespace( char *s, md_indent_t *indent_left ) {
   for ( size_t tab_pos = 0; *s != '\0'; ++s, ++tab_pos ) {
     switch ( *s ) {
       case '\t':
-        *indent_left += TAB_SPACES_MARKDOWN - tab_pos % TAB_SPACES_MARKDOWN;
+        *indent_left += MD_TAB_SPACES - tab_pos % MD_TAB_SPACES;
         break;
       case '\r':
       case '\n':
@@ -723,7 +723,7 @@ static bool md_is_html_end( html_state_t html_state, char const *s ) {
  * @param is_end_tag A pointer to the variable to receive whether the HTML tag
  * is an end tag.
  * @return Returns the HTML type only if the line is a block-level HTML tag or
- * special markup or HTML_NONE if not.
+ * special markup or #HTML_NONE if not.
  */
 NODISCARD
 static html_state_t md_is_html_tag( char const *s, bool *is_end_tag ) {
