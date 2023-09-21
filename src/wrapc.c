@@ -120,13 +120,32 @@ static line_buf_t   prefix_buf;         ///< Characters stripped/prepended.
 static size_t       prefix_len0;        ///< Length of prefix_buf
 static line_buf_t   suffix_buf;         ///< Characters stripped/appended.
 static size_t       suffix_len;         ///< Length of suffix_buf.
-//
-// Two pipes:
-// + pipes[0][0] -> wrap(1)                   [child 2]
-//           [1] <- read_source_write_wrap()  [child 1]
-// + pipes[1][0] -> read_wrap_write_stdout()  [parent]
-//           [1] <- wrap(1)                   [child 2]
-//
+/**
+ * Two pipes:
+ *
+ *      pipes[0][1] <- read_source_write_wrap()  [child 1]
+ *              [0] -> wrap(1)                   [child 2]
+ *
+ *      pipes[1][1] <- wrap(1)                   [child 2]
+ *              [0] -> read_wrap_write_stdout()  [parent]
+ *
+ * @remarks
+ * @parblock
+ * **wrapc**(1) forks twice:
+ *
+ *  1. Child 1, via read_source_write_wrap(), reads the original source from
+ *     stdin, strips leading whitespace and comment delimiter characters, and
+ *     writes to `pipe[0][1]` connected to child 2.
+ *
+ *  2. Child 2 exec's itself into **wrap**(1), reads text from stdin via
+ *     `pipes[0][0]` from child 1, reformats it, and writes to stdout via
+ *     `pipe[1][1]` connected to the parent.
+ *
+ * The parent process reads from `pipes[1][0]` connected to child 2, prepends
+ * the original comment delimiter characters, and writes to stdout via
+ * read_wrap_write_stdout().
+ * @endparblock
+ */
 static int          pipes[2][2];
 
 #define CURR        input_buf.dl_curr   /* current line */
