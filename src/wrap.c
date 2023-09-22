@@ -135,6 +135,7 @@ static void         put_tabs_spaces( size_t, size_t );
 _Noreturn
 static void         usage( int );
 
+static void         wipc_parse( char const** );
 static void         wipc_send( char* );
 static void         wrap_cleanup( void );
 
@@ -568,79 +569,10 @@ read_line:
   if ( !opt_data_link_esc )
     return c;
 
-  while ( c == WIPC_CODE_HELLO ) {
-    c = *(*ppc)++;
-    if ( c == '\0' )
-      return EOF;
-    switch ( STATIC_CAST( wipc_code_t, c ) ) {
-      case WIPC_CODE_HELLO:             // shouldn't happen
-        break;
-
-      case WIPC_CODE_DELIMIT_PARAGRAPH:
-        consec_newlines = 0;
-        delimit_paragraph();
-        WIPC_SEND( stdout, WIPC_CODE_DELIMIT_PARAGRAPH );
-        break;
-
-      case WIPC_CODE_NEW_LEADER: {
-        //
-        // We've been told by wrapc (child 1) that the comment characters
-        // and/or leading whitespace has changed: we have to echo it back to
-        // the other wrapc process (parent).
-        //
-        // If an output line has already been started, we have to defer the
-        // IPC until just after the line is sent; otherwise, we must send it
-        // immediately.
-        //
-        char *sep;
-        size_t const new_line_width = strtoul( *ppc, &sep, 10 );
-        if ( output_len > 0 ) {
-          WIPC_DEFERF(
-            ipc_buf, sizeof ipc_buf,
-            WIPC_CODE_NEW_LEADER, "%zu" WIPC_PARAM_SEP "%s",
-            new_line_width, sep + 1
-          );
-          ipc_width = new_line_width;
-        } else {
-          WIPC_SENDF(
-            stdout,
-            WIPC_CODE_NEW_LEADER, "%zu" WIPC_PARAM_SEP "%s",
-            new_line_width, sep + 1
-          );
-          line_width = opt_line_width = new_line_width;
-        }
-        break;
-      }
-
-      case WIPC_CODE_PREFORMATTED_BEGIN:
-        delimit_paragraph();
-        WIPC_SEND( stdout, WIPC_CODE_PREFORMATTED_BEGIN );
-        is_preformatted = true;
-        break;
-
-      case WIPC_CODE_PREFORMATTED_END:
-        consec_newlines = 1;
-        delimit_paragraph();
-        WIPC_SEND( stdout, WIPC_CODE_PREFORMATTED_END );
-        is_preformatted = false;
-        break;
-
-      case WIPC_CODE_WRAP_END:
-        //
-        // We've been told by wrapc (child 1) that we've reached the end of
-        // the comment: dump any remaining buffer, propagate the interprocess
-        // message to the other wrapc process (parent), and pass text through
-        // verbatim.
-        //
-        consec_newlines = 0;
-        delimit_paragraph();
-        WIPC_SEND( stdout, WIPC_CODE_WRAP_END );
-        fcopy( stdin, stdout );
-        exit( EX_OK );
-    } // switch
-
-    goto read_line;                     // unknown IPC code: ignore it
-  } // while
+  if ( c == WIPC_CODE_HELLO ) {
+    wipc_parse( ppc );
+    goto read_line;
+  }
 
   if ( is_preformatted ) {
     PUTS( input_buf );
@@ -1106,6 +1038,87 @@ PACKAGE_NAME " home page: " PACKAGE_URL "\n"
 "Report bugs to: " PACKAGE_BUGREPORT "\n"
   );
   exit( status );
+}
+
+/**
+ * Parses an IPC code.
+ *
+ * @param ppc A pointer to the pointer to character to advance.  It must be
+ * positioned at the IPC code after #WIPC_CODE_HELLO.
+ */
+static void wipc_parse( char const **ppc ) {
+  assert( ppc != NULL );
+  assert( *ppc != NULL );
+
+  char const c = *(*ppc)++;
+  if ( unlikely( c == '\0' ) )
+    return;
+
+  switch ( STATIC_CAST( wipc_code_t, c ) ) {
+    case WIPC_CODE_HELLO:               // shouldn't happen
+      break;
+
+    case WIPC_CODE_DELIMIT_PARAGRAPH:
+      consec_newlines = 0;
+      delimit_paragraph();
+      WIPC_SEND( stdout, WIPC_CODE_DELIMIT_PARAGRAPH );
+      break;
+
+    case WIPC_CODE_NEW_LEADER: {
+      //
+      // We've been told by wrapc (child 1) that the comment characters and/or
+      // leading whitespace has changed: we have to echo it back to the other
+      // wrapc process (parent).
+      //
+      // If an output line has already been started, we have to defer the IPC
+      // until just after the line is sent; otherwise, we must send it
+      // immediately.
+      //
+      char *sep;
+      size_t const new_line_width = strtoul( *ppc, &sep, 10 );
+      if ( output_len > 0 ) {
+        WIPC_DEFERF(
+          ipc_buf, sizeof ipc_buf,
+          WIPC_CODE_NEW_LEADER, "%zu" WIPC_PARAM_SEP "%s",
+          new_line_width, sep + 1
+        );
+        ipc_width = new_line_width;
+      } else {
+        WIPC_SENDF(
+          stdout,
+          WIPC_CODE_NEW_LEADER, "%zu" WIPC_PARAM_SEP "%s",
+          new_line_width, sep + 1
+        );
+        line_width = opt_line_width = new_line_width;
+      }
+      break;
+    }
+
+    case WIPC_CODE_PREFORMATTED_BEGIN:
+      delimit_paragraph();
+      WIPC_SEND( stdout, WIPC_CODE_PREFORMATTED_BEGIN );
+      is_preformatted = true;
+      break;
+
+    case WIPC_CODE_PREFORMATTED_END:
+      consec_newlines = 1;
+      delimit_paragraph();
+      WIPC_SEND( stdout, WIPC_CODE_PREFORMATTED_END );
+      is_preformatted = false;
+      break;
+
+    case WIPC_CODE_WRAP_END:
+      //
+      // We've been told by wrapc (child 1) that we've reached the end of the
+      // comment: dump any remaining buffer, propagate the interprocess message
+      // to the other wrapc process (parent), and pass text through verbatim.
+      //
+      consec_newlines = 0;
+      delimit_paragraph();
+      WIPC_SEND( stdout, WIPC_CODE_WRAP_END );
+      fcopy( stdin, stdout );
+      exit( EX_OK );
+  } // switch
 }
 
 /**
