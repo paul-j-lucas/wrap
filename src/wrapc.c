@@ -124,11 +124,11 @@ char const         *me;                 // executable name
 // local variable definitions
 static char         close_cc[2];        ///< Closing comment delimiter char(s).
 static delim_t      delim;              ///< Comment delimiter type.
-static dual_line_t  input_buf;          ///< Input buffer.
+static dual_line_t  input_lines;        ///< Input lines.
 static line_buf_t   prefix_buf;         ///< Characters stripped/prepended.
-static size_t       prefix_len0;        ///< Length of prefix_buf
+static size_t       prefix_len;         ///< Length of \ref prefix_buf.
 static line_buf_t   suffix_buf;         ///< Characters stripped/appended.
-static size_t       suffix_len;         ///< Length of suffix_buf.
+static size_t       suffix_len;         ///< Length of \ref suffix_buf.
 /**
  * Two pipes:
  *
@@ -157,8 +157,8 @@ static size_t       suffix_len;         ///< Length of suffix_buf.
  */
 static int          pipes[2][2];
 
-#define CURR        input_buf.dl_curr   /**< Shorthand for current line. */
-#define NEXT        input_buf.dl_next   /**< Shorthand for next line. */
+#define CURR        input_lines.dl_curr /**< Shorthand for current line. */
+#define NEXT        input_lines.dl_next /**< Shorthand for next line. */
 
 #define TO_WRAP     0                   /**< To refer to \ref pipes[0]. */
 #define FROM_WRAP   1                   /**< To refer to \ref pipes[1]. */
@@ -451,9 +451,9 @@ static pid_t read_source_write_wrap( void ) {
       goto verbatim;
     }
 
-    size_t prefix_len = prefix_span( CURR );
+    size_t curr_prefix_len = prefix_span( CURR );
     if ( opt_doxygen || opt_markdown ) {
-      if ( prefix_len > prefix_len0 ) {
+      if ( curr_prefix_len > prefix_len ) {
         //
         // We can't strip all whitespace after the comment delimiter characters
         // because:
@@ -464,9 +464,10 @@ static pid_t read_source_write_wrap( void ) {
         // Hence we strip only the length of the initial prototype -- but only
         // if it's less.
         //
-        prefix_len = prefix_len0;
+        curr_prefix_len = prefix_len;
       }
-      else if ( prefix_len < prefix_len0 && !is_eol( CURR[ prefix_len ] ) ) {
+      else if ( curr_prefix_len < prefix_len &&
+                !is_eol( CURR[ curr_prefix_len ] ) ) {
         //
         // The leading comment delimiter characters and/or whitespace length
         // has decreased.  This can happen in a case like:
@@ -482,8 +483,8 @@ static pid_t read_source_write_wrap( void ) {
         // We therefore have to increase opt_line_width by the delta and also
         // notify both wrap(1) and the other wrapc(1) processes of the changes.
         //
-        opt_line_width += prefix_len0 - prefix_len;
-        set_prefix( CURR, prefix_len );
+        opt_line_width += prefix_len - curr_prefix_len;
+        set_prefix( CURR, curr_prefix_len );
         WIPC_SENDF(
           fwrap, WIPC_CODE_NEW_LEADER, "%zu" WIPC_PARAM_SEP "%s\n",
           opt_line_width, prefix_buf
@@ -492,7 +493,7 @@ static pid_t read_source_write_wrap( void ) {
     }
 
     // Skip over the prefix and chop off the suffix.
-    char *const line = skip_n( CURR, prefix_len );
+    char *const line = skip_n( CURR, curr_prefix_len );
     if ( suffix_buf[0] != '\0' )
       chop_suffix( line );
 
@@ -555,7 +556,7 @@ static void read_wrap_write_stdout( void ) {
   // above, the second line would become "# " containing a trailing whitespace.
   //
   line_buf_t proto_tws;                 // prototype trailing whitespace, if any
-  split_tws( prefix_buf, prefix_len0, proto_tws );
+  split_tws( prefix_buf, prefix_len, proto_tws );
 
   line_buf_t line_buf;
 
@@ -579,8 +580,8 @@ static void read_wrap_write_stdout( void ) {
           //
           char *sep;
           opt_line_width = strtoul( line + 2, &sep, 10 );
-          prefix_len0 = strcpy_len( prefix_buf, sep + 1 );
-          split_tws( prefix_buf, prefix_len0, proto_tws );
+          prefix_len = strcpy_len( prefix_buf, sep + 1 );
+          split_tws( prefix_buf, prefix_len, proto_tws );
           continue;
         }
 
@@ -644,7 +645,7 @@ done:
 static void adjust_comment_width( char *s ) {
   assert( s != NULL );
   size_t const delim_len = suffix_buf[0] ? suffix_len : 1 + !!close_cc[1];
-  size_t const width = opt_line_width + prefix_len0 + suffix_len;
+  size_t const width = opt_line_width + prefix_len + suffix_len;
   size_t s_len = strlen_no_eol( s );
 
   if ( s_len > width ) {
@@ -748,8 +749,8 @@ static void init( int argc, char const *argv[] ) {
   options_init( argc, argv, usage );
   opt_comment_chars = cc_map_compile( opt_comment_chars );
 
-  CURR = input_buf.dl_line[0];
-  NEXT = input_buf.dl_line[1];
+  CURR = input_lines.dl_line[0];
+  NEXT = input_lines.dl_line[1];
 
   size_t const size = check_readline( CURR, stdin );
   if ( size == 0 )
@@ -1081,7 +1082,7 @@ static void set_prefix( char const *prefix, size_t len ) {
   assert( prefix != NULL );
   strncpy( prefix_buf, prefix, len );
   prefix_buf[ len ] = '\0';
-  prefix_len0 = len;
+  prefix_len = len;
 }
 
 /**
