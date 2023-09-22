@@ -199,13 +199,6 @@ _GL_INLINE_HEADER_BEGIN
 #define CONST_CAST(T,EXPR)        ((T)(EXPR))
 
 /**
- * Calls **dup**(2), check for an error, and exits if there was one.
- *
- * @param FD The file descriptor to duplicate.
- */
-#define DUP(FD)                   PERROR_EXIT_IF( dup( FD ) == -1, EX_OSERR )
-
-/**
  * Calls **dup2**(2) and checks for failure.
  *
  * @param OLD_FD The old file descriptor to duplicate.
