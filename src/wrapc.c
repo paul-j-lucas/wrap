@@ -80,7 +80,7 @@
  * @param P The pipe index, 0 or 1, to redirect to.
  */
 #define REDIRECT(FD,P) \
-  BLOCK( check_dup2( pipes[P][FD], FD ); close_pipe( pipes[P] ); )
+  BLOCK( DUP2( pipes[P][FD], FD ); close_pipe( pipes[P] ); )
 
 /**
  * Aligns end-of-line comments to a particular column.

@@ -111,11 +111,6 @@ unsigned check_atou( char const *s ) {
   return STATIC_CAST( unsigned, rv );
 }
 
-void check_dup2( int old_fd, int new_fd ) {
-  int const dup_fd = dup2( old_fd, new_fd );
-  PERROR_EXIT_IF( dup_fd != new_fd, EX_OSERR );
-}
-
 void* check_realloc( void *p, size_t size ) {
   assert( size > 0 );
   p = p != NULL ? realloc( p, size ) : malloc( size );

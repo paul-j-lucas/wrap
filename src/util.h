@@ -206,6 +206,15 @@ _GL_INLINE_HEADER_BEGIN
 #define DUP(FD)                   PERROR_EXIT_IF( dup( FD ) == -1, EX_OSERR )
 
 /**
+ * Calls **dup2**(2) and checks for failure.
+ *
+ * @param OLD_FD The old file descriptor to duplicate.
+ * @param NEW_FD The new file descriptor to duplicate to.
+ */
+#define DUP2(OLD_FD,NEW_FD) \
+  PERROR_EXIT_IF( dup2( (OLD_FD), (NEW_FD) ) != (NEW_FD), EX_OSERR )
+
+/**
  * Shorthand for printing to standard error.
  *
  * @param ... The `printf()` arguments.
@@ -643,14 +652,6 @@ void check_atexit( void (*cleanup_fn)(void) );
  */
 NODISCARD
 unsigned check_atou( char const *s );
-
-/**
- * Calls **dup2**(2) and checks for failure.
- *
- * @param old_fd The old file descriptor to duplicate.
- * @param new_fd The new file descriptor to duplicate to.
- */
-void check_dup2( int old_fd, int new_fd );
 
 /**
  * Calls **realloc**(3) and checks for failure.
