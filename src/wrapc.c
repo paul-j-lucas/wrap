@@ -105,7 +105,7 @@ typedef enum delim delim_t;
  * @param P The pipe index, 0 or 1, to redirect to.
  */
 #define REDIRECT(FD,P) \
-  BLOCK( close( FD ); DUP( pipes[P][FD] ); close_pipe( pipes[P] ); )
+  BLOCK( check_dup2( pipes[P][FD], FD ); close_pipe( pipes[P] ); )
 
 /**
  * Contains the current and next lines of input so the next line can be peeked
