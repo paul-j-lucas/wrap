@@ -92,25 +92,23 @@ char const         *me;                 // executable name
 
 // local variable definitions
 static wregex_t     block_regex;        ///< Compiled from opt_block_regex.
+static size_t       consec_newlines;    ///< Number of consecutive newlines.
+static bool         encountered_nonws;  ///< Encountered a non-whitespace char?
+static hyphen_t     hyphen;             ///< Hyphen state.
+static indent_t     indent = INDENT_LINE;
 static line_buf_t   input_buf;          ///< Input buffer.
 static line_buf_t   ipc_buf;            ///< Deferred IPC message.
 static size_t       ipc_width;          ///< Deferred IPC line width.
+static bool         is_long_line;       ///< Line longer than line_width?
+static bool         is_preformatted;    ///< Passing through preformatted text?
 static size_t       line_width;         ///< Maximum width of a line.
+static size_t       nonws_no_wrap_range[2];
+static wregex_t     nonws_no_wrap_regex;
 static line_buf_t   output_buf;         ///< Output buffer.
 static size_t       output_len;         ///< Number of characters in output_buf.
 static size_t       output_width;       ///< Actual width of output_buf.
 static line_buf_t   proto_buf;          ///< Prototype buffer.
 static line_buf_t   proto_tws;          // prototype trailing whitespace, if any
-
-// local variable definitions specific to wrap state
-static size_t       consec_newlines;    ///< Number of consecutive newlines.
-static bool         encountered_nonws;  ///< Encountered a non-whitespace char?
-static hyphen_t     hyphen;             ///< Hyphen state.
-static indent_t     indent = INDENT_LINE;
-static bool         is_long_line;       ///< Line longer than line_width?
-static bool         is_preformatted;    ///< Passing through preformatted text?
-static size_t       nonws_no_wrap_range[2];
-static wregex_t     nonws_no_wrap_regex;
 static size_t       put_spaces;         ///< Spaces to put between words.
 static bool         was_eos_char;       ///< Prev char an end-of-sentence char?
 
@@ -391,14 +389,14 @@ int main( int argc, char const *argv[] ) {
     ///////////////////////////////////////////////////////////////////////////
 
     switch ( indent ) {
+      case INDENT_NONE:
+        break;
       case INDENT_HANG:
         put_tabs_spaces( opt_hang_tabs, opt_hang_spaces );
         break;
       case INDENT_LINE:
         put_tabs_spaces( opt_indt_tabs, opt_indt_spaces );
         break;
-      case INDENT_NONE:
-        /* suppress warning */;
     } // switch
     indent = INDENT_NONE;
 
