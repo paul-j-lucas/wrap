@@ -50,6 +50,17 @@
 #include <sysexits.h>
 #include <unistd.h>                     /* for close(), fork(), ... */
 
+/*
+ * Uncomment the line below to debug read_source_write_wrap() (RSWW) by not
+ * forking or exec'ing and just writing to stdout directly.
+ */
+//#define DEBUG_RSWW
+
+#ifdef DEBUG_RSWW
+# undef PIPE
+# define PIPE(P) NO_OP
+#endif /* DEBUG_RSWW */
+
 /// @endcond
 
 /**
@@ -58,6 +69,9 @@
  * quoted e-mail) by wrapping and filling lines to a given line-width.
  * @{
  */
+
+/// Maximum **wrap**(1) command-line argument size.
+#define ARG_BUF_SIZE              25
 
 /**
  * Aligns end-of-line comments to a particular column.
@@ -73,25 +87,26 @@ void align_eol_comments( char input_buf[const] );
  * Types of comment delimiters.
  */
 enum delim {
+  /// No delimiter.
   DELIM_NONE,
-  DELIM_EOL,                            // e.g., "#" or "//" (to end-of-line)
-  DELIM_SINGLE,                         // e.g., "{" (Pascal)
-  DELIM_DOUBLE,                         // e.g., "/*" (but not "//")
+
+  /// To-end-of-line comment delimiter, e.g., `#` or `//`.
+  DELIM_EOL,
+
+  /// Single character comment delimiter, e.g., `{` (Pascal).
+  DELIM_SINGLE,
+
+  /// Double character comment delimiter, e.g., `/*` (but not `//`).
+  DELIM_DOUBLE,
 };
 typedef enum delim delim_t;
 
 /**
- * Uncomment the line below to debug read_source_write_wrap() (RSWW) by not
- * forking or exec'ing and just writing to stdout directly.
+ * Redirects \a FD file-descriptor to/from pipe \a P.
+ *
+ * @param FD The file descriptor to redirect.
+ * @param P The pipe index, 0 or 1, to redirect to.
  */
-//#define DEBUG_RSWW
-
-#ifdef DEBUG_RSWW
-# undef PIPE
-# define PIPE(P) NO_OP
-#endif /* DEBUG_RSWW */
-
-// Redirects file-descriptor FD to/from pipe P.
 #define REDIRECT(FD,P) \
   BLOCK( close( FD ); DUP( pipes[P][FD] ); close_pipe( pipes[P] ); )
 
@@ -100,7 +115,7 @@ typedef enum delim delim_t;
  * at to determine how to proceed.
  */
 struct dual_line {
-  line_buf_t  dl_line[2];
+  line_buf_t  dl_line[2];               ///< Two lines.
   char       *dl_curr;                  ///< Pointer to current line.
   char       *dl_next;                  ///< Pointer to next line.
 };
@@ -108,9 +123,6 @@ typedef struct dual_line dual_line_t;
 
 // extern variable definitions
 char const         *me;                 // executable name
-
-// local constant definitions
-static size_t const ARG_BUF_SIZE = 25;  // max wrap(1) command-line arg size
 
 // local variable definitions
 static char         close_cc[2];        ///< Closing comment delimiter char(s).
