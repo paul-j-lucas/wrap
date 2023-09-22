@@ -87,9 +87,6 @@ void align_eol_comments( char input_buf[const] );
  * Types of comment delimiters.
  */
 enum delim {
-  /// No delimiter.
-  DELIM_NONE,
-
   /// To-end-of-line comment delimiter, e.g., `#` or `//`.
   DELIM_EOL,
 
@@ -668,8 +665,6 @@ static void adjust_comment_width( char *s ) {
     // "inserting" a multiple of the first comment delimiter character.
     //
     switch ( delim ) {
-      case DELIM_NONE:
-        break;
       case DELIM_EOL:
         for ( ; s_len < width; ++s_len )
           s[ s_len ] = close_cc[0];
@@ -701,8 +696,6 @@ static void chop_suffix( char *s ) {
 
   for ( ; (cc = strchr( cc, suffix_buf[0] )) != NULL; ++cc ) {
     switch ( delim ) {
-      case DELIM_NONE:
-        break;
       case DELIM_EOL: {
         //
         // We've found the terminator character, but it may be the first in a
@@ -812,9 +805,6 @@ static char const* is_terminated_comment( char *s ) {
 
   if ( (s = CONST_CAST(char*, is_line_comment( s ))) != NULL ) {
     switch ( delim ) {
-      case DELIM_NONE:
-        break;
-
       case DELIM_EOL:
         while ( *++s != '\0' && *s == close_cc[0] )
           /* empty */;
@@ -1022,8 +1012,6 @@ static void read_prototype( void ) {
     // character(s) in order.
     //
     switch ( delim ) {
-      case DELIM_NONE:
-        break;
       case DELIM_EOL:
         close_cc[0] = cc_buf[0];        // e.g., "#"
         break;
