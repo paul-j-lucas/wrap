@@ -157,11 +157,11 @@ static size_t       suffix_len;         ///< Length of suffix_buf.
  */
 static int          pipes[2][2];
 
-#define CURR        input_buf.dl_curr   /* current line */
-#define NEXT        input_buf.dl_next   /* next line */
+#define CURR        input_buf.dl_curr   /**< Shorthand for current line. */
+#define NEXT        input_buf.dl_next   /**< Shorthand for next line. */
 
-#define TO_WRAP     0                   /** To refer to pipes[0]. */
-#define FROM_WRAP   1                   /** To refer to pipes[1]. */
+#define TO_WRAP     0                   /**< To refer to \ref pipes[0]. */
+#define FROM_WRAP   1                   /**< To refer to \ref pipes[1]. */
 
 // local functions
 static void         adjust_comment_width( char* );
