@@ -1041,7 +1041,7 @@ PACKAGE_NAME " home page: " PACKAGE_URL "\n"
 }
 
 /**
- * Parses an IPC code.
+ * Parses a \ref wipc_code.
  *
  * @param ppc A pointer to the pointer to character to advance.  It must be
  * positioned at the IPC code after #WIPC_CODE_HELLO.
