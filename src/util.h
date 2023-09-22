@@ -236,7 +236,8 @@ _GL_INLINE_HEADER_BEGIN
  *
  * @sa #PERROR_EXIT_IF()
  */
-#define FERROR(STREAM)            PERROR_EXIT_IF( ferror( STREAM ), EX_IOERR )
+#define FERROR(STREAM) \
+  PERROR_EXIT_IF( ferror( STREAM ) != 0, EX_IOERR )
 
 /**
  * Shorthand for printing to standard output.
