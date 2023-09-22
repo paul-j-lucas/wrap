@@ -92,7 +92,7 @@ char const         *me;                 // executable name
 
 // local variable definitions
 static wregex_t     block_regex;        ///< Compiled from opt_block_regex.
-static line_buf_t   input_buf;
+static line_buf_t   input_buf;          ///< Input buffer.
 static line_buf_t   ipc_buf;            ///< Deferred IPC message.
 static size_t       ipc_width;          ///< Deferred IPC line width.
 static size_t       line_width;         ///< Maximum width of a line.
@@ -105,13 +105,13 @@ static line_buf_t   proto_tws;          // prototype trailing whitespace, if any
 // local variable definitions specific to wrap state
 static size_t       consec_newlines;    ///< Number of consecutive newlines.
 static bool         encountered_nonws;  ///< Encountered a non-whitespace char?
-static hyphen_t     hyphen;
+static hyphen_t     hyphen;             ///< Hyphen state.
 static indent_t     indent = INDENT_LINE;
-static bool         is_long_line;       // line longer than line_width?
-static bool         is_preformatted;    // passing through preformatted text?
+static bool         is_long_line;       ///< Line longer than line_width?
+static bool         is_preformatted;    ///< Passing through preformatted text?
 static size_t       nonws_no_wrap_range[2];
 static wregex_t     nonws_no_wrap_regex;
-static size_t       put_spaces;         // number of spaces to put between words
+static size_t       put_spaces;         ///< Spaces to put between words.
 static bool         was_eos_char;       ///< Prev char an end-of-sentence char?
 
 // local functions
