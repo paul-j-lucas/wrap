@@ -562,7 +562,7 @@ read_line:
     }
   }
 
-  int c = *(*ppc)++;
+  int const c = *(*ppc)++;
 
   if ( !opt_data_link_esc )
     return c;
