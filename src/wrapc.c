@@ -74,6 +74,15 @@
 #define ARG_BUF_SIZE              25
 
 /**
+ * Redirects \a FD file-descriptor to/from pipe \a P.
+ *
+ * @param FD The file descriptor to redirect.
+ * @param P The pipe index, 0 or 1, to redirect to.
+ */
+#define REDIRECT(FD,P) \
+  BLOCK( check_dup2( pipes[P][FD], FD ); close_pipe( pipes[P] ); )
+
+/**
  * Aligns end-of-line comments to a particular column.
  *
  * @param input_buf The input buffer to use.  It must contain the first line of
@@ -97,15 +106,6 @@ enum delim {
   DELIM_DOUBLE,
 };
 typedef enum delim delim_t;
-
-/**
- * Redirects \a FD file-descriptor to/from pipe \a P.
- *
- * @param FD The file descriptor to redirect.
- * @param P The pipe index, 0 or 1, to redirect to.
- */
-#define REDIRECT(FD,P) \
-  BLOCK( check_dup2( pipes[P][FD], FD ); close_pipe( pipes[P] ); )
 
 /**
  * Contains the current and next lines of input so the next line can be peeked
