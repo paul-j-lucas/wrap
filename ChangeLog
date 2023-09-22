@@ -1,5 +1,7 @@
 2023-09-21  Paul J. Lucas <paul@lucasmail.org>
 
+   * wrap.c: Factored out wipc_parse().
+   * wrap.c: Now ignoring unknown IPC codes.
    * wrapc.1: Added mention of Zig.
    * doxygen.c: Now doing ++s.
    * doxygen.c: Changed @copy* commands to be EOL.
