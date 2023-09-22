@@ -1,3 +1,11 @@
+2023-09-22  Paul J. Lucas <paul@lucasmail.org>
+
+   * util.h: Removed DUP().
+   * options.c, util.c, util.h, wrapc.c: Replaced check_dup2() by DUP2().
+   * wrap.c: Added `const`.
+   * wrapc.c: Now using dup2().
+   * wrapc.c: Eliminated DELIM_NONE.
+
 2023-09-21  Paul J. Lucas <paul@lucasmail.org>
 
    * wrap.c: Factored out wipc_parse().
