@@ -580,7 +580,7 @@ read_line:
         consec_newlines = 0;
         delimit_paragraph();
         WIPC_SEND( stdout, WIPC_CODE_DELIMIT_PARAGRAPH );
-        goto read_line;
+        break;
 
       case WIPC_CODE_NEW_LEADER: {
         //
@@ -609,21 +609,21 @@ read_line:
           );
           line_width = opt_line_width = new_line_width;
         }
-        goto read_line;
+        break;
       }
 
       case WIPC_CODE_PREFORMATTED_BEGIN:
         delimit_paragraph();
         WIPC_SEND( stdout, WIPC_CODE_PREFORMATTED_BEGIN );
         is_preformatted = true;
-        goto read_line;
+        break;
 
       case WIPC_CODE_PREFORMATTED_END:
         consec_newlines = 1;
         delimit_paragraph();
         WIPC_SEND( stdout, WIPC_CODE_PREFORMATTED_END );
         is_preformatted = false;
-        goto read_line;
+        break;
 
       case WIPC_CODE_WRAP_END:
         //
@@ -638,6 +638,8 @@ read_line:
         fcopy( stdin, stdout );
         exit( EX_OK );
     } // switch
+
+    goto read_line;                     // unknown IPC code: ignore it
   } // while
 
   if ( is_preformatted ) {
