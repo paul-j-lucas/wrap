@@ -1,5 +1,10 @@
+2023-09-23  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Now using SOPT(xxx) in fork_exec_wrap().
+
 2023-09-22  Paul J. Lucas <paul@lucasmail.org>
 
+   * util.h: Added explicit != 0 check.
    * util.h: Removed DUP().
    * options.c, util.c, util.h, wrapc.c: Replaced check_dup2() by DUP2().
    * wrap.c: Added `const`.
