@@ -334,22 +334,22 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   // Quoting string arguments is unnecessary since no shell is involved.
 
   /*  0 */    ARG_DUP(                  PACKAGE );
-  /*  1 */ IF_ARG_FMT( opt_alias      , "-a%s"  );
-  /*  2 */ IF_ARG_FMT( opt_block_regex, "-b%s"  );
-  /*  3 */ IF_ARG_FMT( opt_conf_file  , "-c%s"  );
-  /*  4 */ IF_ARG_DUP( opt_no_conf    , "-C"    );
-  /*  5 */ IF_ARG_DUP( opt_eos_delimit, "-e"    );
-  /*  6 */ IF_ARG_FMT( opt_eos_spaces , "-E%zu" );
-  /*  7 */ IF_ARG_FMT( opt_fin_name   , "-F%s"  );
-  /*  8 */    ARG_FMT( opt_eol        , "-l%c"  );
-  /*  9 */ IF_ARG_FMT( opt_para_delims, "-p%s"  );
-  /* 10 */ IF_ARG_DUP( opt_markdown   , "-u"    );
-         else ARG_FMT( opt_tab_spaces , "-s%zu" );
-  /* 11 */ IF_ARG_DUP( opt_title_line , "-T"    );
-  /* 12 */    ARG_FMT( opt_line_width , "-w%zu" );
-  /* 13 */ IF_ARG_DUP( opt_doxygen    , "-x"    );
-  /* 14 */ IF_ARG_DUP( opt_no_hyphen  , "-y"    );
-  /* 15 */    ARG_DUP(                  "-Z"    );
+  /*  1 */ IF_ARG_FMT( opt_alias      , "-" SOPT(ALIAS)       "%s"  );
+  /*  2 */ IF_ARG_FMT( opt_block_regex, "-" SOPT(BLOCK_REGEX) "%s"  );
+  /*  3 */ IF_ARG_FMT( opt_conf_file  , "-" SOPT(CONFIG)      "%s"  );
+  /*  4 */ IF_ARG_DUP( opt_no_conf    , "-" SOPT(NO_CONFIG)         );
+  /*  5 */ IF_ARG_DUP( opt_eos_delimit, "-" SOPT(EOS_DELIMIT)       );
+  /*  6 */ IF_ARG_FMT( opt_eos_spaces , "-" SOPT(EOS_SPACES)  "%zu" );
+  /*  7 */ IF_ARG_FMT( opt_fin_name   , "-" SOPT(FILE_NAME)   "%s"  );
+  /*  8 */    ARG_FMT( opt_eol        , "-" SOPT(EOL)         "%c"  );
+  /*  9 */ IF_ARG_FMT( opt_para_delims, "-" SOPT(PARA_CHARS)  "%s"  );
+  /* 10 */ IF_ARG_DUP( opt_markdown   , "-" SOPT(MARKDOWN)          );
+         else ARG_FMT( opt_tab_spaces , "-" SOPT(TAB_SPACES)  "%zu" );
+  /* 11 */ IF_ARG_DUP( opt_title_line , "-" SOPT(TITLE_LINE)        );
+  /* 12 */    ARG_FMT( opt_line_width , "-" SOPT(WIDTH)       "%zu" );
+  /* 13 */ IF_ARG_DUP( opt_doxygen    , "-" SOPT(DOXYGEN)           );
+  /* 14 */ IF_ARG_DUP( opt_no_hyphen  , "-" SOPT(NO_HYPHEN)         );
+  /* 15 */    ARG_DUP(                  "-" SOPT(ENABLE_IPC)        );
   /* 16 */    ARG_END;
 
   //
