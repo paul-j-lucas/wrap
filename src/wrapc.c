@@ -284,7 +284,7 @@ int main( int argc, char const *argv[] ) {
 ////////// IPC functions //////////////////////////////////////////////////////
 
 /**
- * Forks and execs into **wrap**(1).
+ * Forks (becomming child 2) and execs into **wrap**(1).
  *
  * @param read_source_write_wrap_pid The process ID of read_source_write_wrap()
  * (in case we need to kill it).
@@ -365,9 +365,9 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 }
 
 /**
- * Reads the source text to be wrapped and writes it, with the leading
- * whitespace and comment delimiter characters stripped from each line, to
- * **wrap**(1).
+ * Forks (becomming child 1), but does not exec, and reads the source text to
+ * be wrapped and writes it, with the leading whitespace and comment delimiter
+ * characters stripped from each line, to **wrap**(1) (child 2).
  *
  * @return Returns the child's process ID.
  *
@@ -518,8 +518,9 @@ verbatim:
 }
 
 /**
- * Reads the output of **wrap**(1), prepends the leading whitespace and comment
- * characters back to each line, and writes to stdout.
+ * As the parent process, reads the output of **wrap**(1) (child 2), prepends
+ * the leading whitespace and comment characters back to each line, and writes
+ * to stdout.
  *
  * @sa read_source_write_wrap()
  */
