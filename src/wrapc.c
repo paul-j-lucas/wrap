@@ -476,7 +476,7 @@ static pid_t read_source_write_wrap( void ) {
         //      *
         //      * Not part of the list item.
         //
-        // where the list item was indented 2 spaces after the * but the
+        // where the list item was indented 2 spaces after the + but the
         // regular text was indented only 1 space.  If this check were not
         // done, then the "Not" text would end up also being indented 2 spaces.
         //
