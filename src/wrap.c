@@ -888,7 +888,7 @@ static bool markdown_adjust( void ) {
         //
         // Same line type, but new line: hang indent.
         //
-        put_tabs_spaces( 0, md->indent_hang );
+        put_tabs_spaces( /*tabs=*/0, md->indent_hang );
       }
       line_width = opt_line_width - md->indent_left;
       opt_lead_spaces = md->indent_left;
