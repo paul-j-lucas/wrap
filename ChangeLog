@@ -1,3 +1,9 @@
+2023-10-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.c: Renaming.
+   * markdown.c, wrap.c, wrapc.c: Now using NO_OP for declarations after case
+     labels.
+
 2023-09-23  Paul J. Lucas <paul@lucasmail.org>
 
    * wrapc.c: Now using SOPT(xxx) in fork_exec_wrap().
@@ -60,15 +66,6 @@
    * cc_map.c: Now using STATIC_CAST.
    * alias.c: Using puts() and putchar().
    * wrap.c: Fixed wording in help message and made it more consistent.
-   * lib/Makefile.am, attribute.h, getopt-cdefs.in.h, intprops-internal.h,
-     mbrtoc32.c, mbtowc-lock.c, setlocale-lock.c, stddef.in.h, stdlib.in.h,
-     string.in.h, uchar.in.h, unistr/u-strlen.h, verify.h, wchar.in.h,
-     wctype.in.h, xalloc-oversized.h, absolute-header.m4, btowc.m4, fnmatch.m4,
-     getopt.m4, gnulib-common.m4, gnulib-comp.m4, iswdigit.m4, iswpunct.m4,
-     iswxdigit.m4, locale-fr.m4, locale-ja.m4, locale-zh.m4, locale_h.m4,
-     malloc.m4, mbrtoc32.m4, mbrtowc.m4, mbsinit.m4, mbsrtowcs.m4, memchr.m4,
-     setlocale_null.m4, stdint.m4, strerror.m4, threadlib.m4, wctype.m4,
-     wctype_h.m4: Updated GnuLib.
    * configure.ac: Upped version to 5.9.1.
    * wrapc.c: De-nested code.
    * doxygen.c: Changed htmlonly to DOX_PRE; changed parblock to DOX_EOL.
@@ -89,10 +86,6 @@
      wregex.c, wregex.h: Updated copyright year.
    * configure.ac: Upped version.
 
-2023-08-07  Paul J. Lucas <paul@lucasmail.org>
-
-   * gnulib-comp.m4: Updated Gnulib.
-
 2023-08-06  Paul J. Lucas <paul@lucasmail.org>
 
    * markdown.c: Added md_ol_digits(); now using snprintf() return value for
@@ -104,48 +97,6 @@
 2023-08-05  Paul J. Lucas <paul@lucasmail.org>
 
    * wregex.c: Renaming.
-
-2023-08-03  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, btoc32.c, btowc.c, c32_apply_type_test.c,
-     c32_get_type_test.c, c32is-impl.h, c32isalnum.c, c32isalpha.c,
-     c32isblank.c, c32iscntrl.c, c32isdigit.c, c32isgraph.c, c32islower.c,
-     c32isprint.c, c32ispunct.c, c32isspace.c, c32isupper.c, c32isxdigit.c,
-     c32to-impl.h, c32tolower.c, fnmatch.c, fnmatch.in.h, fnmatch_loop.c,
-     iswblank.c, iswctype-impl.h, iswctype.c, iswdigit.c, iswxdigit.c,
-     localcharset.h, mbrtoc32.c, mbsinit.c, mbsrtoc32s-state.c, mbsrtoc32s.c,
-     mbsrtowcs-impl.h, mbsrtowcs-state.c, mbsrtowcs.c, mbszero.c,
-     mbtowc-impl.h, mbtowc-lock.h, uchar.in.h, unicase.in.h,
-     unicase/simple-mapping.h, unicase/tolower.c, unicase/tolower.h,
-     unictype.in.h, unictype/bitmap.h, unictype/ctype_alnum.c,
-     unictype/ctype_alnum.h, unictype/ctype_alpha.c, unictype/ctype_alpha.h,
-     unictype/ctype_blank.c, unictype/ctype_blank.h, unictype/ctype_cntrl.c,
-     unictype/ctype_cntrl.h, unictype/ctype_digit.c, unictype/ctype_digit.h,
-     unictype/ctype_graph.c, unictype/ctype_graph.h, unictype/ctype_lower.c,
-     unictype/ctype_lower.h, unictype/ctype_print.c, unictype/ctype_print.h,
-     unictype/ctype_punct.c, unictype/ctype_punct.h, unictype/ctype_space.c,
-     unictype/ctype_space.h, unictype/ctype_upper.c, unictype/ctype_upper.h,
-     unictype/ctype_xdigit.c, unictype/ctype_xdigit.h, uninorm.in.h,
-     unistr.in.h, unistr/u-cpy.h, unistr/u-pcpy.h, unistr/u-strcat.h,
-     unistr/u-strlen.h, unistr/u32-chr.c, unistr/u32-cpy.c, unistr/u32-pcpy.c,
-     unistr/u32-strcat.c, unistr/u32-strlen.c, unitypes.in.h, wchar.in.h,
-     wctype-impl.h, wctype.c, wctype.in.h, fnmatch.m4, gnulib-comp.m4,
-     inline.m4, iswblank.m4, iswctype.m4, iswdigit.m4, iswxdigit.m4,
-     libunistring-base.m4, locale-fr.m4, locale-ja.m4, locale-zh.m4,
-     mbrtoc32.m4, mbrtowc.m4, musl.m4, uchar_h.m4, unicase_h.m4, unictype_h.m4,
-     uninorm_h.m4, wchar_h.m4, wctype.m4, wctype_h.m4: Updated GnuLib.
-
-2023-06-20  Paul J. Lucas <paul@lucasmail.org>
-
-   * limits.in.h, wchar.in.h, locale-fr.m4, mbrtowc.m4, mbsrtowcs.m4: Updated
-     GnuLib.
-
-2023-05-29  Paul J. Lucas <paul@lucasmail.org>
-
-   * flexmember.h, limits.in.h, gnulib-common.m4, limits-h.m4, ssize_t.m4:
-     Updated GnuLib.
-   * configure.ac, src/Makefile.am: Added WRAP_CFLAGS so as not to compile
-     GnuLib code with wrap CFLAGS.
 
 2023-05-21  Paul J. Lucas <paul@lucasmail.org>
 
@@ -192,23 +143,9 @@
 
 2023-05-03  Paul J. Lucas <paul@lucasmail.org>
 
-   * lib/Makefile.am, c++defs.h, ctype.in.h, fnmatch.in.h, inttypes.h,
-     inttypes.in.h, limits.in.h, locale.in.h, stdlib.in.h, string.in.h,
-     sys_types.in.h, unistd.in.h, verify.h, wchar.in.h, wctype.in.h,
-     extern-inline.m4, gnulib-common.m4, limits-h.m4, locale-fr.m4,
-     locale-ja.m4, locale-zh.m4, stdlib_h.m4, threadlib.m4, wchar_h.m4: Updated
-     GnuLib.
    * options.c: Eliminated *_OPTION() macros.
    * options.c: Added opt_check_exclusive().
    * doxygen.c: Made @par be EOL.
-
-2023-04-13  Paul J. Lucas <paul@lucasmail.org>
-
-   * pjl_config.h: Fix for updated GnuLib !_GL_CONFIG_H_INCLUDED.
-   * attribute.h, ctype.in.h, flexmember.h, fnmatch.in.h, inttypes.h,
-     inttypes.in.h, locale.in.h, stddef.in.h, stdlib.in.h, stdnoreturn.in.h,
-     strerror-override.h, string.in.h, strnlen1.h, unistd.in.h, wchar.in.h,
-     wctype.in.h, gnulib-common.m4, mbrtowc.m4: Updated GnuLib.
 
 2023-04-12  Paul J. Lucas <paul@lucasmail.org>
 
@@ -216,79 +153,14 @@
      regex_test.c, util.c, util.h, wrap.c, wrapc.c, wregex.c:
      s/FATAL_ERR()/fatal_error()/
 
-2023-04-09  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, locale.in.h, stdlib.in.h, gnulib-common.m4, stdlib_h.m4:
-     Updated GnuLib.
-
 2023-04-05  Paul J. Lucas <paul@lucasmail.org>
 
    * wrap.c: Added missing "void".
-   * lib/Makefile.am, btowc.c, fnmatch.c, getopt-pfx-core.h, hard-locale.h,
-     limits.in.h, setlocale_null.c, stddef.in.h, stdlib.in.h, string.in.h,
-     unistd.in.h, verify.h, wchar.in.h, assert_h.m4, btowc.m4, fnmatch.m4,
-     gnulib-common.m4, limits-h.m4, malloc.m4, mbrtowc.m4, mbsrtowcs.m4,
-     setlocale_null.m4, stddef_h.m4, stdlib_h.m4, strerror.m4, wchar_h.m4:
-     Updated GnuLib.
-
-2023-01-31  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, cdefs.h, inttypes.h, inttypes.in.h, libc-config.h,
-     locale.in.h, stdlib.in.h, string.in.h, unistd.in.h, wchar.in.h,
-     gnulib-common.m4, gnulib-comp.m4, inttypes.m4, mbtowc.m4, mempcpy.m4,
-     stddef_h.m4, stdlib_h.m4, string_h.m4, threadlib.m4, unistd_h.m4,
-     wchar_h.m4, wmempcpy.m4: Updated Gnulib.
 
 2023-01-26  Paul J. Lucas <paul@lucasmail.org>
 
    * doxygen.c, util.c: Renaming.
    * markdown.c: c/cur_/curr_/
-
-2023-01-22  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, _Noreturn.h, hard-locale.c, stdlib.in.h, verify.h,
-     assert_h.m4, gnulib-common.m4, gnulib-comp.m4, mbrtowc.m4, mbtowc.m4,
-     mempcpy.m4, setlocale_null.m4, stdlib_h.m4, threadlib.m4, wmempcpy.m4:
-     Updated Gnulib.
-
-2023-01-07  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, _Noreturn.h, alloca.in.h, arg-nonnull.h, assert.in.h,
-     attribute.h, btowc.c, c++defs.h, cdefs.h, ctype.in.h, errno.in.h,
-     flexmember.h, fnmatch.c, fnmatch.in.h, fnmatch_loop.c, getopt-cdefs.in.h,
-     getopt-core.h, getopt-ext.h, getopt-pfx-core.h, getopt-pfx-ext.h,
-     getopt.c, getopt.in.h, getopt1.c, getopt_int.h, gettext.h, hard-locale.c,
-     hard-locale.h, idx.h, intprops-internal.h, intprops.h, inttypes.h,
-     inttypes.in.h, isblank.c, lc-charset-dispatch.c, lc-charset-dispatch.h,
-     libc-config.h, limits.in.h, localcharset.c, localcharset.h, locale.in.h,
-     malloc.c, mbrtowc-impl-utf8.h, mbrtowc-impl.h, mbrtowc.c, mbsinit.c,
-     mbsrtowcs-impl.h, mbsrtowcs-state.c, mbsrtowcs.c, mbtowc-impl.h,
-     mbtowc-lock.c, mbtowc-lock.h, mbtowc.c, memchr.c, memchr.valgrind,
-     mempcpy.c, setlocale-lock.c, setlocale_null.c, setlocale_null.h,
-     stdckdint.in.h, stddef.in.h, stdint.in.h, stdlib.in.h, stdnoreturn.in.h,
-     strdup.c, streq.h, strerror-override.c, strerror-override.h, strerror.c,
-     string.in.h, strndup.c, strnlen.c, strnlen1.c, strnlen1.h, sys_types.in.h,
-     sysexits.in.h, unistd.c, unistd.in.h, verify.h, warn-on-use.h, wchar.in.h,
-     wctype-h.c, wctype.in.h, windows-initguard.h, wmemchr-impl.h, wmemchr.c,
-     wmempcpy.c, xalloc-oversized.h, 00gnulib.m4, __inline.m4,
-     absolute-header.m4, alloca.m4, assert_h.m4, btowc.m4, builtin-expect.m4,
-     c-bool.m4, codeset.m4, ctype_h.m4, errno_h.m4, extensions.m4,
-     extern-inline.m4, flexmember.m4, fnmatch.m4, fnmatch_h.m4, getopt.m4,
-     gnulib-cache.m4, gnulib-common.m4, gnulib-comp.m4, gnulib-tool.m4,
-     include_next.m4, inttypes.m4, isblank.m4, limits-h.m4, localcharset.m4,
-     locale-fr.m4, locale-ja.m4, locale-zh.m4, locale_h.m4, malloc.m4,
-     mbrtowc.m4, mbsinit.m4, mbsrtowcs.m4, mbstate_t.m4, mbtowc.m4, memchr.m4,
-     mempcpy.m4, mmap-anon.m4, multiarch.m4, nocrash.m4, off_t.m4, pid_t.m4,
-     setlocale_null.m4, ssize_t.m4, std-gnu11.m4, stddef_h.m4, stdint.m4,
-     stdlib_h.m4, stdnoreturn.m4, strdup.m4, strerror.m4, string_h.m4,
-     strndup.m4, strnlen.m4, sys_socket_h.m4, sys_types_h.m4, sysexits.m4,
-     threadlib.m4, unistd_h.m4, vararrays.m4, visibility.m4, warn-on-use.m4,
-     wchar_h.m4, wchar_t.m4, wctype_h.m4, wint_t.m4, wmemchr.m4, wmempcpy.m4,
-     zzgnulib.m4: Updated Gnulib.
-
-2022-12-09  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, string.in.h, verify.h, string_h.m4: Updated Gnulib.
 
 2022-12-06  Paul J. Lucas <paul@lucasmail.org>
 
@@ -314,11 +186,6 @@
 2022-11-08  Paul J. Lucas <paul@lucasmail.org>
 
    * wrap.c: s/for/while/
-   * lib/Makefile.am, assert.in.h, fnmatch.c, fnmatch_loop.c, hard-locale.h,
-     intprops-internal.h, intprops.h, mbrtowc.c, mbsinit.c, stdckdint.in.h,
-     stdlib.in.h, strerror.c, string.in.h, unistd.in.h, verify.h, wchar.in.h,
-     assert_h.m4, c-bool.m4, gnulib-common.m4, gnulib-comp.m4, warn-on-use.m4:
-     Updated Gnulib.
    * configure.ac: Reworked configure.ac to check for optional
      headers/libraries only when appropriate.
 
@@ -346,55 +213,10 @@
 2022-07-15  Paul J. Lucas <paul@lucasmail.org>
 
    * pjl_config.h: s/__attribute__((unused))/MAYBE_UNUSED/
-   * lib/Makefile.am, cdefs.h, libc-config.h, stdlib.in.h, string.in.h,
-     verify.h, wchar.in.h, extern-inline.m4, gnulib-common.m4: Updated GnuLib.
    * alias.c, alias.h, align.c, cc_map.c, cc_map.h, common.h, doxygen.c,
      doxygen.h, markdown.c, markdown.h, options.c, options.h, pattern.c,
      pattern.h, pjl_config.h, read_conf.c, read_conf.h, unicode.c, unicode.h,
      util.h, wrap.c, wrapc.c, wregex.c, wregex.h: Now using attribute.h.
-
-2022-01-16  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, _Noreturn.h, alloca.in.h, arg-nonnull.h, attribute.h,
-     btowc.c, c++defs.h, cdefs.h, ctype.in.h, errno.in.h, flexmember.h,
-     fnmatch.c, fnmatch.in.h, fnmatch_loop.c, getopt-cdefs.in.h, getopt-core.h,
-     getopt-ext.h, getopt-pfx-core.h, getopt-pfx-ext.h, getopt.c, getopt.in.h,
-     getopt1.c, getopt_int.h, gettext.h, hard-locale.c, hard-locale.h, idx.h,
-     intprops.h, inttypes.h, inttypes.in.h, isblank.c, lc-charset-dispatch.c,
-     lc-charset-dispatch.h, libc-config.h, limits.in.h, localcharset.c,
-     localcharset.h, locale.in.h, malloc.c, mbrtowc-impl-utf8.h,
-     mbrtowc-impl.h, mbrtowc.c, mbsinit.c, mbsrtowcs-impl.h, mbsrtowcs-state.c,
-     mbsrtowcs.c, mbtowc-impl.h, mbtowc-lock.c, mbtowc-lock.h, mbtowc.c,
-     memchr.c, memchr.valgrind, mempcpy.c, setlocale-lock.c, setlocale_null.c,
-     setlocale_null.h, stdbool.in.h, stddef.in.h, stdint.in.h, stdlib.in.h,
-     stdnoreturn.in.h, strdup.c, streq.h, strerror-override.c,
-     strerror-override.h, strerror.c, string.in.h, strndup.c, strnlen.c,
-     strnlen1.c, strnlen1.h, sys_types.in.h, sysexits.in.h, unistd.c,
-     unistd.in.h, verify.h, warn-on-use.h, wchar.in.h, wctype-h.c, wctype.in.h,
-     windows-initguard.h, wmemchr-impl.h, wmemchr.c, wmempcpy.c,
-     xalloc-oversized.h, 00gnulib.m4, __inline.m4, absolute-header.m4,
-     alloca.m4, btowc.m4, builtin-expect.m4, codeset.m4, ctype_h.m4,
-     errno_h.m4, extensions.m4, extern-inline.m4, flexmember.m4, fnmatch.m4,
-     fnmatch_h.m4, getopt.m4, gnulib-cache.m4, gnulib-common.m4,
-     gnulib-comp.m4, gnulib-tool.m4, include_next.m4, inttypes.m4, isblank.m4,
-     limits-h.m4, localcharset.m4, locale-fr.m4, locale-ja.m4, locale-zh.m4,
-     locale_h.m4, malloc.m4, mbrtowc.m4, mbsinit.m4, mbsrtowcs.m4,
-     mbstate_t.m4, mbtowc.m4, memchr.m4, mempcpy.m4, mmap-anon.m4,
-     multiarch.m4, nocrash.m4, off_t.m4, pid_t.m4, setlocale_null.m4,
-     ssize_t.m4, std-gnu11.m4, stdbool.m4, stddef_h.m4, stdint.m4, stdlib_h.m4,
-     stdnoreturn.m4, strdup.m4, strerror.m4, string_h.m4, strndup.m4,
-     strnlen.m4, sys_socket_h.m4, sys_types_h.m4, sysexits.m4, threadlib.m4,
-     unistd_h.m4, vararrays.m4, visibility.m4, warn-on-use.m4, wchar_h.m4,
-     wchar_t.m4, wctype_h.m4, wint_t.m4, wmemchr.m4, wmempcpy.m4, zzgnulib.m4:
-     Updated Gnulib.
-
-2021-12-19  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, _Noreturn.h, attribute.h, cdefs.h, getopt.c, gettext.h,
-     idx.h, intprops.h, libc-config.h, limits.in.h, stdlib.in.h, string.in.h,
-     verify.h, wchar.in.h, extern-inline.m4, gnulib-common.m4, gnulib-comp.m4,
-     limits-h.m4, string_h.m4, threadlib.m4, vararrays.m4, wchar_h.m4: Updated
-     Gnulib.
 
 2021-09-04  Paul J. Lucas <paul@lucasmail.org>
 
@@ -405,98 +227,18 @@
 
    * run_test.sh: Now distinguishing failed from error.
 
-2021-07-02  Paul J. Lucas <paul@lucasmail.org>
-
-   * strerror-override.c, strerror-override.h, unistd.in.h: Updated GnuLib.
-
-2021-06-15  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, _Noreturn.h, alloca.in.h, arg-nonnull.h, attribute.h,
-     btowc.c, c++defs.h, cdefs.h, ctype.in.h, errno.in.h, flexmember.h,
-     fnmatch.c, fnmatch.in.h, fnmatch_loop.c, getopt-cdefs.in.h, getopt-core.h,
-     getopt-ext.h, getopt-pfx-core.h, getopt-pfx-ext.h, getopt.c, getopt.in.h,
-     getopt1.c, getopt_int.h, gettext.h, hard-locale.c, hard-locale.h, idx.h,
-     intprops.h, inttypes.h, inttypes.in.h, isblank.c, lc-charset-dispatch.c,
-     lc-charset-dispatch.h, libc-config.h, limits.in.h, localcharset.c,
-     localcharset.h, locale.in.h, malloc.c, mbrtowc-impl-utf8.h,
-     mbrtowc-impl.h, mbrtowc.c, mbsinit.c, mbsrtowcs-impl.h, mbsrtowcs-state.c,
-     mbsrtowcs.c, mbtowc-impl.h, mbtowc-lock.c, mbtowc-lock.h, mbtowc.c,
-     memchr.c, memchr.valgrind, mempcpy.c, setlocale-lock.c, setlocale_null.c,
-     setlocale_null.h, stdbool.in.h, stddef.in.h, stdint.in.h, stdlib.in.h,
-     stdnoreturn.in.h, strdup.c, streq.h, strerror-override.c,
-     strerror-override.h, strerror.c, string.in.h, strndup.c, strnlen.c,
-     strnlen1.c, strnlen1.h, sys_types.in.h, sysexits.in.h, unistd.c,
-     unistd.in.h, verify.h, warn-on-use.h, wchar.in.h, wctype-h.c, wctype.in.h,
-     windows-initguard.h, wmemchr-impl.h, wmemchr.c, wmempcpy.c,
-     xalloc-oversized.h, gnulib-common.m4, gnulib-comp.m4, malloc.m4,
-     unistd_h.m4, visibility.m4: Updated GnuLib.
-
 2021-04-27  Paul J. Lucas <paul@lucasmail.org>
 
-   * lib/Makefile.am, cdefs.h, libc-config.h, malloc.c, stdlib.in.h,
-     xalloc-oversized.h, stdlib_h.m4: Updated Gnulib.
    * configure.ac: Replaced obsolete AC_PROG_CC_C99 with AC_PROG_CC.
-
-2021-04-21  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, malloc.c, stdint.in.h, wchar.in.h, wctype.in.h,
-     xalloc-oversized.h, fnmatch_h.m4, gnulib-common.m4, gnulib-comp.m4,
-     inttypes.m4, locale_h.m4, malloc.m4, memchr.m4, mempcpy.m4, stddef_h.m4,
-     stdint.m4, stdlib_h.m4, strdup.m4, strerror.m4, string_h.m4, strndup.m4,
-     strnlen.m4, sys_socket_h.m4, sys_types_h.m4, unistd_h.m4, wchar_h.m4,
-     wctype_h.m4, wint_t.m4: Updated Gnulib.
-
-2021-04-05  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, cdefs.h, intprops.h, lc-charset-dispatch.c,
-     libc-config.h, mbrtowc-impl-utf8.h, mbtowc-lock.h, stddef.in.h,
-     stdlib.in.h, sysexits.in.h, malloc.m4, setlocale_null.m4, stdlib_h.m4,
-     threadlib.m4, visibility.m4: Updated GnuLib.
 
 2021-02-06  Paul J. Lucas <paul@lucasmail.org>
 
-   * lib/Makefile.am, _Noreturn.h, alloca.in.h, arg-nonnull.h, attribute.h,
-     btowc.c, c++defs.h, cdefs.h, ctype.in.h, errno.in.h, flexmember.h,
-     fnmatch.c, fnmatch.in.h, fnmatch_loop.c, getopt-cdefs.in.h, getopt-core.h,
-     getopt-ext.h, getopt-pfx-core.h, getopt-pfx-ext.h, getopt.c, getopt.in.h,
-     getopt1.c, getopt_int.h, gettext.h, hard-locale.c, hard-locale.h, idx.h,
-     intprops.h, inttypes.h, inttypes.in.h, isblank.c, lc-charset-dispatch.c,
-     lc-charset-dispatch.h, libc-config.h, limits.in.h, localcharset.c,
-     localcharset.h, locale.in.h, malloc.c, mbrtowc-impl-utf8.h,
-     mbrtowc-impl.h, mbrtowc.c, mbsinit.c, mbsrtowcs-impl.h, mbsrtowcs-state.c,
-     mbsrtowcs.c, mbtowc-impl.h, mbtowc-lock.c, mbtowc-lock.h, mbtowc.c,
-     memchr.c, memchr.valgrind, mempcpy.c, setlocale-lock.c, setlocale_null.c,
-     setlocale_null.h, stdbool.in.h, stddef.in.h, stdint.in.h, stdlib.in.h,
-     stdnoreturn.in.h, strdup.c, streq.h, strerror-override.c,
-     strerror-override.h, strerror.c, string.in.h, strndup.c, strnlen.c,
-     strnlen1.c, strnlen1.h, sys_types.in.h, sysexits.in.h, unistd.in.h,
-     verify.h, warn-on-use.h, wchar.in.h, wctype.in.h, windows-initguard.h,
-     wmemchr-impl.h, wmemchr.c, wmempcpy.c, 00gnulib.m4, __inline.m4,
-     absolute-header.m4, alloca.m4, btowc.m4, builtin-expect.m4, codeset.m4,
-     ctype.m4, errno_h.m4, extensions.m4, extern-inline.m4, flexmember.m4,
-     fnmatch.m4, fnmatch_h.m4, getopt.m4, gnulib-cache.m4, gnulib-common.m4,
-     gnulib-comp.m4, gnulib-tool.m4, include_next.m4, inttypes.m4, isblank.m4,
-     limits-h.m4, localcharset.m4, locale-fr.m4, locale-ja.m4, locale-zh.m4,
-     locale_h.m4, malloc.m4, mbrtowc.m4, mbsinit.m4, mbsrtowcs.m4,
-     mbstate_t.m4, mbtowc.m4, memchr.m4, mempcpy.m4, mmap-anon.m4,
-     multiarch.m4, nocrash.m4, off_t.m4, pid_t.m4, setlocale_null.m4,
-     ssize_t.m4, std-gnu11.m4, stdbool.m4, stddef_h.m4, stdint.m4, stdlib_h.m4,
-     stdnoreturn.m4, strdup.m4, strerror.m4, string_h.m4, strndup.m4,
-     strnlen.m4, sys_socket_h.m4, sys_types_h.m4, sysexits.m4, threadlib.m4,
-     unistd_h.m4, visibility.m4, warn-on-use.m4, wchar_h.m4, wchar_t.m4,
-     wctype_h.m4, wint_t.m4, wmemchr.m4, wmempcpy.m4, zzgnulib.m4: Updated
-     Gnulib.
    * configure.ac: Now using AX_CHECK_COMPILE_FLAG instead of
      AX_CFLAGS_GCC_OPTION.
 
 2020-12-21  Paul J. Lucas <paul@lucasmail.org>
 
    * idx.h: Added idx.h.
-   * lib/Makefile.am, intprops.h, stdint.in.h, stdlib.in.h, string.in.h,
-     wchar.in.h, wctype.in.h, alloca.m4, btowc.m4, extensions.m4,
-     gnulib-common.m4, mbrtowc.m4, mbsinit.m4, mbsrtowcs.m4, mbstate_t.m4,
-     pid_t.m4, stdint.m4, stdlib_h.m4, sys_types_h.m4, wchar_h.m4, wctype_h.m4,
-     wint_t.m4, wmemchr.m4: Updated Gnulib.
 
 2020-12-16  Paul J. Lucas <paul@lucasmail.org>
 
@@ -504,10 +246,6 @@
 
 2020-12-11  Paul J. Lucas <paul@lucasmail.org>
 
-   * lib/Makefile.am, c++defs.h, fnmatch.c, fnmatch_loop.c, intprops.h,
-     inttypes.h, stdlib.in.h, string.in.h, unistd.in.h, wchar.in.h,
-     gnulib-comp.m4, memchr.m4, std-gnu11.m4, stdlib_h.m4, threadlib.m4,
-     unistd_h.m4, wchar_h.m4: Updated GnuLib.
    * Makefile.am: Added update-gnulib target.
    * markdown.c: Fixed #include order.
 
@@ -530,16 +268,6 @@
      s/wrap.h/pjl_config.h/
    * configure.ac, unicode.c, unicode.h: Now using char8_t.
 
-2020-11-24  Paul J. Lucas <paul@lucasmail.org>
-
-   * unistd.in.h, unistd_h.m4: Updated Gnulib.
-
-2020-11-09  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, attribute.h, stdlib.in.h, alloca.m4, extensions.m4,
-     gnulib-common.m4, malloc.m4, mmap-anon.m4, pid_t.m4, stdlib_h.m4,
-     sys_types_h.m4, threadlib.m4, wchar_h.m4: Updated Gnulib.
-
 2020-10-11  Paul J. Lucas <paul@lucasmail.org>
 
    * ax_append_flag.m4, ax_check_compile_flag.m4: Updated m4 macros.
@@ -549,18 +277,6 @@
    * lib/Makefile.am, stdnoreturn.in.h, gnulib-cache.m4, gnulib-comp.m4,
      stdnoreturn.m4, regex_test.c, util.h, wrap.c, wrap.h, wrapc.c: Now using
      Gunlib's stdnoreturn.h.
-
-2020-09-23  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, alloca.in.h, arg-nonnull.h, c++defs.h, cdefs.h,
-     fnmatch.c, fnmatch_loop.c, getopt-cdefs.in.h, intprops.h, inttypes.h,
-     inttypes.in.h, stddef.in.h, stdint.in.h, stdlib.in.h, streq.h,
-     string.in.h, unistd.in.h, verify.h, warn-on-use.h, wchar.in.h,
-     00gnulib.m4, absolute-header.m4, alloca.m4, gnulib-common.m4,
-     gnulib-comp.m4, include_next.m4, inttypes.m4, locale-fr.m4, locale-ja.m4,
-     locale-zh.m4, memchr.m4, multiarch.m4, pid_t.m4, setlocale_null.m4,
-     std-gnu11.m4, stddef_h.m4, stdint.m4, strdup.m4, string_h.m4, unistd_h.m4,
-     warn-on-use.m4, wctype_h.m4, wint_t.m4: Updated Gnulib.
 
 2020-08-26  Paul J. Lucas <paul@lucasmail.org>
 
@@ -573,15 +289,6 @@
 2020-08-02  Paul J. Lucas <paul@lucasmail.org>
 
    * wrapc.1: Added mention of Chapel and Dart.
-
-2020-06-30  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, btowc.c, cdefs.h, ctype.in.h, fnmatch.c, fnmatch_loop.c,
-     getopt.c, isblank.c, libc-config.h, mbtowc-impl.h, mbtowc.c, mempcpy.c,
-     unistd.in.h, verify.h, wchar.in.h, wmemchr-impl.h, wmemchr.c, wmempcpy.c,
-     __inline.m4, btowc.m4, ctype.m4, fnmatch.m4, gnulib-comp.m4, isblank.m4,
-     mbtowc.m4, mempcpy.m4, std-gnu11.m4, unistd_h.m4, wchar_h.m4, wmemchr.m4,
-     wmempcpy.m4: Updated Gnulib.
 
 2020-06-10  Paul J. Lucas <paul@lucasmail.org>
 
@@ -609,33 +316,6 @@
 
 2020-05-14  Paul J. Lucas <paul@lucasmail.org>
 
-   * lib/Makefile.am, _Noreturn.h, alloca.in.h, arg-nonnull.h, attribute.h,
-     c++defs.h, errno.in.h, flexmember.h, fnmatch.c, fnmatch.in.h,
-     fnmatch_loop.c, getopt-cdefs.in.h, getopt-core.h, getopt-ext.h,
-     getopt-pfx-core.h, getopt-pfx-ext.h, getopt.c, getopt.in.h, getopt1.c,
-     getopt_int.h, gettext.h, hard-locale.c, hard-locale.h, intprops.h,
-     inttypes.h, inttypes.in.h, lc-charset-dispatch.c, lc-charset-dispatch.h,
-     limits.in.h, localcharset.c, localcharset.h, locale.in.h, malloc.c,
-     mbrtowc-impl-utf8.h, mbrtowc-impl.h, mbrtowc.c, mbsinit.c,
-     mbsrtowcs-impl.h, mbsrtowcs-state.c, mbsrtowcs.c, mbtowc-lock.c,
-     mbtowc-lock.h, memchr.c, memchr.valgrind, setlocale-lock.c,
-     setlocale_null.c, setlocale_null.h, stdbool.in.h, stddef.in.h,
-     stdint.in.h, stdlib.in.h, strdup.c, streq.h, strerror-override.c,
-     strerror-override.h, strerror.c, string.in.h, strndup.c, strnlen.c,
-     strnlen1.c, strnlen1.h, sys_types.in.h, sysexits.in.h, unistd.in.h,
-     verify.h, warn-on-use.h, wchar.in.h, wctype.in.h, windows-initguard.h,
-     00gnulib.m4, absolute-header.m4, alloca.m4, builtin-expect.m4, codeset.m4,
-     errno_h.m4, extensions.m4, extern-inline.m4, flexmember.m4, fnmatch.m4,
-     fnmatch_h.m4, getopt.m4, gnulib-cache.m4, gnulib-common.m4,
-     gnulib-comp.m4, gnulib-tool.m4, include_next.m4, inttypes.m4, limits-h.m4,
-     localcharset.m4, locale-fr.m4, locale-ja.m4, locale-zh.m4, locale_h.m4,
-     malloc.m4, mbrtowc.m4, mbsinit.m4, mbsrtowcs.m4, mbstate_t.m4, memchr.m4,
-     mmap-anon.m4, multiarch.m4, nocrash.m4, off_t.m4, setlocale_null.m4,
-     ssize_t.m4, stdbool.m4, stddef_h.m4, stdint.m4, stdlib_h.m4, strdup.m4,
-     strerror.m4, string_h.m4, strndup.m4, strnlen.m4, sys_socket_h.m4,
-     sys_types_h.m4, sysexits.m4, threadlib.m4, unistd_h.m4, visibility.m4,
-     warn-on-use.m4, wchar_h.m4, wchar_t.m4, wctype_h.m4, wint_t.m4,
-     zzgnulib.m4: Updated Gnulib.
    * configure.ac, markdown.c, options.c, unicode.c, wrap.h: Fixed fallthrough
      warning.
 
@@ -738,9 +418,6 @@
 
    * unicode.h: Fixed comment.
    * unicode.h: FIxed typo.
-   * lib/Makefile.am, _Noreturn.h, alloca.c, alloca.in.h, gettext.h,
-     stdlib.in.h, unistd.in.h, alloca.m4, fnmatch.m4, gnulib-common.m4,
-     malloc.m4, memchr.m4, stdlib_h.m4, strerror.m4: Updated Gnulib.
 
 2019-03-30  Paul J. Lucas <paul@lucasmail.org>
 
@@ -775,27 +452,6 @@
 
 2019-01-11  Paul J. Lucas <paul@lucasmail.org>
 
-   * lib/Makefile.am, alloca.in.h, arg-nonnull.h, c++defs.h, errno.in.h,
-     flexmember.h, fnmatch.c, fnmatch.in.h, fnmatch_loop.c, getopt-cdefs.in.h,
-     getopt-core.h, getopt-ext.h, getopt-pfx-core.h, getopt-pfx-ext.h,
-     getopt.c, getopt.in.h, getopt1.c, getopt_int.h, gettext.h, hard-locale.c,
-     hard-locale.h, intprops.h, localcharset.c, localcharset.h, malloc.c,
-     mbrtowc.c, mbsinit.c, mbsrtowcs-impl.h, mbsrtowcs-state.c, mbsrtowcs.c,
-     memchr.c, stdbool.in.h, stddef.in.h, stdlib.in.h, strdup.c, streq.h,
-     strerror-override.c, strerror-override.h, strerror.c, string.in.h,
-     strndup.c, strnlen.c, strnlen1.c, strnlen1.h, sys_types.in.h,
-     sysexits.in.h, unistd.in.h, verify.h, warn-on-use.h, wchar.in.h,
-     wctype.in.h, 00gnulib.m4, absolute-header.m4, alloca.m4,
-     builtin-expect.m4, codeset.m4, errno_h.m4, extensions.m4,
-     extern-inline.m4, flexmember.m4, fnmatch.m4, fnmatch_h.m4, getopt.m4,
-     gnulib-cache.m4, gnulib-common.m4, gnulib-comp.m4, gnulib-tool.m4,
-     include_next.m4, localcharset.m4, locale-fr.m4, locale-ja.m4,
-     locale-zh.m4, malloc.m4, mbrtowc.m4, mbsinit.m4, mbsrtowcs.m4,
-     mbstate_t.m4, memchr.m4, mmap-anon.m4, nocrash.m4, off_t.m4, ssize_t.m4,
-     stdbool.m4, stddef_h.m4, stdlib_h.m4, strdup.m4, strerror.m4, string_h.m4,
-     strndup.m4, strnlen.m4, sys_socket_h.m4, sys_types_h.m4, sysexits.m4,
-     unistd_h.m4, warn-on-use.m4, wchar_h.m4, wchar_t.m4, wctype_h.m4,
-     wint_t.m4: Updated Gnulib.
    * doxygen.c, doxygen.h, wrap.h: Updated copyright year to 2019, part 2.
    * Makefile.am, configure.ac, man/Makefile.am, man/man1/Makefile.am, wrap.1,
      man/man5/Makefile.am, wraprc.5, src/Makefile.am, alias.c, alias.h,
@@ -863,13 +519,6 @@
 2018-08-29  Paul J. Lucas <paul@lucasmail.org>
 
    * wrapc.1, options.c: Now mentioning Crystal.
-
-2018-08-14  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, fnmatch.in.h, localcharset.c, localcharset.h, mbrtowc.c,
-     unistd.in.h, verify.h, warn-on-use.h, extern-inline.m4, fnmatch.m4,
-     fnmatch_h.m4, gnulib-cache.m4, gnulib-common.m4, gnulib-comp.m4,
-     localcharset.m4, mbrtowc.m4, warn-on-use.m4, wchar_h.m4: Updated Gnulib.
 
 2018-08-13  Paul J. Lucas <paul@lucasmail.org>
 
@@ -1187,15 +836,10 @@
 
 2017-01-21  Paul J. Lucas <paul@lucasmail.org>
 
-   * lib/Makefile.am, malloc.c, strdup.c, gnulib-cache.m4, gnulib-comp.m4,
-     malloc.m4, strdup.m4: Added strdup-posix to Gnulib.
    * wraprc.5: Mention the characters comprising alias names.
    * configure.ac, wrap.1, wrapc.1, options.c: Added long command-line options.
    * wregex.c: Added missing header.
    * options.c, options.h: Made COMMENT_CHARS_DEFAULT a constant.
-   * lib/Makefile.am, errno.in.h, intprops.h, strerror-override.c,
-     strerror-override.h, strerror.c, errno_h.m4, gnulib-cache.m4,
-     gnulib-comp.m4, strerror.m4, sys_socket_h.m4: Updated Gnulib.
 
 2017-01-20  Paul J. Lucas <paul@lucasmail.org>
 
@@ -1278,12 +922,6 @@
    * unicode.c: s/#define/static codepoint_t const/
    * wrap.c: Made 'pc' local to main().
    * unicode.h, wrap.c: Added utf8c_t.
-
-2016-12-31  Paul J. Lucas <paul@lucasmail.org>
-
-   * lib/Makefile.am, c++defs.h, fnmatch.c, getopt.in.h, localcharset.c,
-     unistd.in.h, wchar.in.h, wctype.in.h, builtin-expect.m4, gnulib-comp.m4,
-     mbrtowc.m4, unistd_h.m4, wint_t.m4, snippet/c++defs.h: Gnulib update.
 
 2016-12-28  Paul J. Lucas <paul@lucasmail.org>
 
@@ -2267,8 +1905,6 @@
 
 2015-12-11  Paul J. Lucas <paul@lucasmail.org>
 
-   * lib/Makefile.am, fnmatch.m4, gnulib-cache.m4, gnulib-common.m4,
-     gnulib-comp.m4, mbrtowc.m4: Updated Gnulib.
    * configure.ac, lib/Makefile.am, alloca.c, alloca.in.h, config.charset,
      fnmatch.c, fnmatch.in.h, fnmatch_loop.c, localcharset.c, localcharset.h,
      mbrtowc.c, mbsinit.c, mbsrtowcs-impl.h, mbsrtowcs-state.c, mbsrtowcs.c,
@@ -2280,16 +1916,6 @@
      mbsrtowcs.m4, mbstate_t.m4, memchr.m4, mmap-anon.m4, stdbool.m4,
      wchar_h.m4, wctype_h.m4, wint_t.m4, src/Makefile.am, pattern.h,
      read_conf.c, util.h, wrap.c: Now using gnulib fnmatch().
-
-2015-11-28  Paul J. Lucas <paul@lucasmail.org>
-
-   * Makefile.am, configure.ac, lib/Makefile.am, dummy.c, stddef.in.h,
-     string.in.h, strndup.c, strnlen.c, 00gnulib.m4, absolute-header.m4,
-     extensions.m4, extern-inline.m4, gnulib-cache.m4, gnulib-common.m4,
-     gnulib-comp.m4, gnulib-tool.m4, include_next.m4, onceonly.m4, stddef_h.m4,
-     string_h.m4, strndup.m4, strnlen.m4, warn-on-use.m4, wchar_t.m4,
-     snippet/arg-nonnull.h, snippet/c++defs.h, snippet/warn-on-use.h: Initial
-     file for Gnulib.
 
 2015-11-10  Paul J. Lucas <paul@lucasmail.org>
 
