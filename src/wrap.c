@@ -126,8 +126,8 @@ NODISCARD
 static bool         markdown_adjust( void );
 
 static void         markdown_reset( void );
-static void         print_lead_chars( void );
-static void         print_line( size_t, bool );
+static void         put_lead_chars( void );
+static void         put_line( size_t, bool );
 static void         put_tabs_spaces( size_t, size_t );
 
 _Noreturn
@@ -459,24 +459,24 @@ int main( int argc, char const *argv[] ) {
       // character at which to wrap; therefore, we've got a "long line."
       //
       if ( !is_long_line )
-        print_lead_chars();
-      print_line( output_len, /*do_eol=*/false );
+        put_lead_chars();
+      put_line( output_len, /*do_eol=*/false );
       is_long_line = true;
       continue;
     }
 
     //
-    // A call to print_line() will terminate output_buf with a NULL at wrap_pos
+    // A call to put_line() will terminate output_buf with a NULL at wrap_pos
     // that is ordinarily at a space and so doesn't need to be preserved.
     // However, when wrapping at a hyphen, it's at the character past the
     // hyphen that must be preserved in the output so we keep a copy of it to
-    // be restored after the call to print_line().
+    // be restored after the call to put_line().
     //
     char const c_past_hyphen = output_buf[ wrap_pos ];
 
     size_t const prev_output_len = output_len;
-    print_lead_chars();
-    print_line( wrap_pos, /*do_eol=*/true );
+    put_lead_chars();
+    put_line( wrap_pos, /*do_eol=*/true );
 
     if ( hyphen != HYPHEN_NO ) {
       //
@@ -514,8 +514,8 @@ int main( int argc, char const *argv[] ) {
   FERROR( stdin );
   if ( output_len > 0 ) {               // print left-over text
     if ( !is_long_line )
-      print_lead_chars();
-    print_line( output_len, /*do_eol=*/true );
+      put_lead_chars();
+    put_line( output_len, /*do_eol=*/true );
   }
   exit( EX_OK );
 }
@@ -650,8 +650,8 @@ static void delimit_paragraph( void ) {
     // the leading characters.
     //
     if ( !true_clear( &is_long_line ) )
-      print_lead_chars();
-    print_line( output_len, /*do_eol=*/true );
+      put_lead_chars();
+    put_line( output_len, /*do_eol=*/true );
   } else if ( is_long_line ) {
     print_eol();                      // delimit the "long line"
   }
@@ -664,7 +664,7 @@ static void delimit_paragraph( void ) {
 
   if ( consec_newlines == 2 ||
       (consec_newlines > 2 && opt_newlines_delimit == 1) ) {
-    print_lead_chars();
+    put_lead_chars();
     print_eol();
   }
 }
@@ -867,8 +867,8 @@ static bool markdown_adjust( void ) {
       // Flush output_buf and print the Markdown line as-is "behind wrap's
       // back" because these line types are never wrapped.
       //
-      print_lead_chars();
-      print_line( output_len, /*do_eol=*/true );
+      put_lead_chars();
+      put_line( output_len, /*do_eol=*/true );
       PUTS( input_buf );
       return false;
 
@@ -880,8 +880,8 @@ static bool markdown_adjust( void ) {
         //
         // We're changing line types: flush output_buf.
         //
-        print_lead_chars();
-        print_line( output_len, /*do_eol=*/true );
+        put_lead_chars();
+        put_line( output_len, /*do_eol=*/true );
         prev_seq_num = md->seq_num;
       }
       else if ( output_len == 0 && !is_blank_line( input_buf ) ) {
@@ -913,7 +913,7 @@ static void markdown_reset( void ) {
 /**
  * Prints the leading characters for lines.
  */
-static void print_lead_chars( void ) {
+static void put_lead_chars( void ) {
   if ( proto_buf[0] != '\0' ) {
     PRINTF( "%s%s", proto_buf, output_len > 0 ? proto_tws : "" );
   }
@@ -932,7 +932,7 @@ static void print_lead_chars( void ) {
  * @param len The length of the output buffer.
  * @param do_eol If `true`, prints and end-of-line afterwards.
  */
-static void print_line( size_t len, bool do_eol ) {
+static void put_line( size_t len, bool do_eol ) {
   output_buf[ len ] = '\0';
   if ( len > 0 ) {
     PUTS( output_buf );
