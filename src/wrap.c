@@ -165,7 +165,7 @@ static inline bool cp_is_para_delim( char32_t cp ) {
 /**
  * Prints an end-of-line and sends any pending IPC message to **wrapc**(1).
  */
-static inline void print_eol( void ) {
+static inline void put_eol( void ) {
   PUTS( eol() );
   wipc_send( ipc_buf );
 }
@@ -653,7 +653,7 @@ static void delimit_paragraph( void ) {
       put_lead_chars();
     put_line( output_len, /*do_eol=*/true );
   } else if ( is_long_line ) {
-    print_eol();                      // delimit the "long line"
+    put_eol();                          // delimit the "long line"
   }
 
   encountered_nonws = false;
@@ -665,7 +665,7 @@ static void delimit_paragraph( void ) {
   if ( consec_newlines == 2 ||
       (consec_newlines > 2 && opt_newlines_delimit == 1) ) {
     put_lead_chars();
-    print_eol();
+    put_eol();
   }
 }
 
@@ -937,7 +937,7 @@ static void put_line( size_t len, bool do_eol ) {
   if ( len > 0 ) {
     PUTS( output_buf );
     if ( do_eol )
-      print_eol();
+      put_eol();
   }
   output_len = output_width = 0;
 }
