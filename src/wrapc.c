@@ -588,7 +588,8 @@ static void read_wrap_write_stdout( void ) {
         case WIPC_CODE_HELLO:           // shouldn't happen
           break;
 
-        case WIPC_CODE_NEW_LEADER: {
+        case WIPC_CODE_NEW_LEADER:
+          NO_OP;
           //
           // We've been told by child 1 (read_source_write_wrap(), via child 2,
           // wrap) that the leading comment delimiter characters and/or
@@ -599,7 +600,6 @@ static void read_wrap_write_stdout( void ) {
           prefix_len = strcpy_len( prefix_buf, sep + 1 );
           split_tws( prefix_buf, prefix_len, proto_tws );
           continue;
-        }
 
         case WIPC_CODE_DELIMIT_PARAGRAPH:
         case WIPC_CODE_PREFORMATTED_BEGIN:
@@ -713,7 +713,8 @@ static void chop_suffix( char *s ) {
 
   for ( ; (cc = strchr( cc, suffix_buf[0] )) != NULL; ++cc ) {
     switch ( delim ) {
-      case DELIM_EOL: {
+      case DELIM_EOL:
+        NO_OP;
         //
         // We've found the terminator character, but it may be the first in a
         // sequence of them, e.g.:
@@ -736,7 +737,6 @@ static void chop_suffix( char *s ) {
           goto done;
         cc = after_cc - 1;
         break;
-      }
       case DELIM_SINGLE:
         goto done;
       case DELIM_DOUBLE:
