@@ -96,13 +96,28 @@ void align_eol_comments( char input_buf[const] );
  * Types of comment delimiters.
  */
 enum delim {
-  /// To-end-of-line comment delimiter, e.g., `#` or `//`.
+  ///
+  /// To-end-of-line comment delimiter.
+  ///
+  /// @remarks This can be either single-character, e.g., `#`, or double-
+  /// character where the characters are the same, e.g., `//`.
+  ///
   DELIM_EOL,
 
-  /// Single character comment delimiter, e.g., `{` (Pascal).
+  ///
+  /// Single character comment delimiter.
+  ///
+  /// @remarks The character begins the comment that typically has a
+  /// _different_ character that ends the comment, e.g., `{` and `}` in Pascal.
+  ///
   DELIM_SINGLE,
 
-  /// Double character comment delimiter, e.g., `/*` (but not `//`).
+  ///
+  /// Double character comment delimiter.
+  ///
+  /// @remarks Two _different_ characters begin the comment that typically has
+  /// the same characters reversed that end the comment, e.g., `/*` and `*/`.
+  ///
   DELIM_DOUBLE,
 };
 typedef enum delim delim_t;
