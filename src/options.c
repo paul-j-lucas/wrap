@@ -845,7 +845,9 @@ char const* opt_format( char short_opt ) {
 }
 
 void options_init( int argc, char const *argv[], void (*usage)(int) ) {
+  ASSERT_RUN_ONCE();
   assert( usage != NULL );
+
   me = base_name( argv[0] );
   is_wrapc = strcmp( me, PACKAGE "c" ) == 0;
 
