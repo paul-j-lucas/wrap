@@ -212,9 +212,10 @@ _GL_INLINE_HEADER_BEGIN
  *
  * @param ... The `printf()` arguments.
  *
+ * @sa #EPUTC()
+ * @sa #EPUTS()
  * @sa #FPRINTF()
  * @sa #PRINTF()
- * @sa #EPUTC()
  */
 #define EPRINTF(...)              fprintf( stderr, __VA_ARGS__ )
 
@@ -224,10 +225,23 @@ _GL_INLINE_HEADER_BEGIN
  * @param C The character to print.
  *
  * @sa #EPRINTF()
+ * @sa #EPUTS()
  * @sa #FPUTC()
  * @sa #PUTC()
  */
 #define EPUTC(C)                  FPUTC( C, stderr )
+
+/**
+ * Shorthand for printing a C string to standard error.
+ *
+ * @param S The C string to print.
+ *
+ * @sa #EPRINTF()
+ * @sa #EPUTC()
+ * @sa #FPUTS()
+ * @sa #PUTS()
+ */
+#define EPUTS(S)                  fputs( (S), stderr )
 
 /**
  * Calls **ferror**(3) and exits if there was an error on \a STREAM.
@@ -246,7 +260,8 @@ _GL_INLINE_HEADER_BEGIN
  * @param ... The `printf()` arguments.
  *
  * @sa #EPRINTF()
- * @sa #PERROR_EXIT_IF()
+ * @sa #FPUTC()
+ * @sa #FPUTS()
  */
 #define FPRINTF(STREAM,...) \
 	PERROR_EXIT_IF( fprintf( (STREAM), __VA_ARGS__ ) < 0, EX_IOERR )
@@ -260,7 +275,6 @@ _GL_INLINE_HEADER_BEGIN
  * @sa #EPUTC()
  * @sa #FPRINTF()
  * @sa #FPUTS()
- * @sa #PERROR_EXIT_IF()
  * @sa #PUTC()
  */
 #define FPUTC(C,STREAM) \
@@ -272,9 +286,9 @@ _GL_INLINE_HEADER_BEGIN
  * @param S The C string to print.
  * @param STREAM The `FILE` stream to print to.
  *
+ * @sa #EPUTS()
  * @sa #FPRINTF()
  * @sa #FPUTC()
- * @sa #PERROR_EXIT_IF()
  * @sa #PUTS()
  */
 #define FPUTS(S,STREAM) \

@@ -768,7 +768,7 @@ invalid_opt:
     EPRINTF( "\"%s\"", invalid_opt + 2/*skip over "--"*/ );
   else
     EPRINTF( "'%c'", STATIC_CAST( char, optopt ) );
-  EPRINTF( ": invalid option; use --help or -h for help\n" );
+  EPUTS( ": invalid option; use --help or -h for help\n" );
   exit( EX_USAGE );
 
 missing_arg:
