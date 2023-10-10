@@ -644,13 +644,6 @@ NODISCARD
 int bsearch_str_strptr_cmp( void const *key, void const *str_ptr );
 
 /**
- * Calls **atexit**(3) and checks for failure.
- *
- * @param cleanup_fn The pointer to the function to call **atexit**(3) with.
- */
-void check_atexit( void (*cleanup_fn)(void) );
-
-/**
  * Converts an ASCII string to an unsigned integer.
  * Unlike **atoi**(3), insists that all characters in \a s are digits.
  * If conversion fails, prints an error message and exits.

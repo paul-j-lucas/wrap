@@ -96,11 +96,6 @@ int bsearch_str_strptr_cmp( void const *key, void const *str_ptr ) {
   return strcmp( key_s, elt_s );
 }
 
-void check_atexit( void (*cleanup_fn)(void) ) {
-  assert( cleanup_fn != NULL );
-  PERROR_EXIT_IF( atexit( cleanup_fn ) != 0, EX_OSERR );
-}
-
 unsigned check_atou( char const *s ) {
   assert( s != NULL );
   if ( !is_digits( s ) )
