@@ -42,6 +42,7 @@
 #include <getopt.h>
 #include <inttypes.h>                   /* for SIZE_MAX */
 #include <stdbool.h>
+#include <unistd.h>
 
 /// @endcond
 
