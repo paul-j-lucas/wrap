@@ -1,3 +1,10 @@
+2023-10-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * util.c, util.h: Eliminated check_atexit().
+   * util.c, util.h: Made is_any() matches parameter be const static 2.
+   * options.c, util.h: Added EPUTS().
+   * options.c: Added ASSERT_RUN_ONCE().
+
 2023-10-09  Paul J. Lucas <paul@lucasmail.org>
 
    * options.c: Added missing #include <unistd.h> for dup2(); fixes #6.
