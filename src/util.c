@@ -301,7 +301,7 @@ bool is_affirmative( char const *s ) {
 }
 #endif /* NDEBUG */
 
-bool is_any( char const *s, char const *const matches[const] ) {
+bool is_any( char const *s, char const *const matches[const static 2] ) {
   if ( s != NULL ) {
     for ( char const *const *match = matches; *match != NULL; ++match ) {
       if ( strcasecmp( s, *match ) == 0 )

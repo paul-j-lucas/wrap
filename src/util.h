@@ -781,7 +781,7 @@ bool is_affirmative( char const *s );
  * @return Returns `true` only if \a s is among \a matches.
  */
 NODISCARD
-bool is_any( char const *s, char const *const matches[const] );
+bool is_any( char const *s, char const *const matches[const static 2] );
 
 /**
  * Checks whether \a s is a blank line, that is a line consisting only of
