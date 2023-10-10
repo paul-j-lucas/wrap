@@ -634,8 +634,10 @@ static size_t buf_readline( void ) {
       break;
   } // while
 
+#ifdef DEBUG_MARKDOWN
   if ( bytes_read == 0 )
     MD_DEBUG( "====================\n" );
+#endif /* DEBUG_MARKDOWN */
   return bytes_read;
 }
 
