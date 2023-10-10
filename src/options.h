@@ -106,13 +106,13 @@ enum eol {
 typedef enum eol eol_t;
 
 // extern option variables
-extern char const  *opt_alias;
+extern char const  *opt_alias;          ///< Alias name to use.
 extern char         opt_align_char;     ///< Use this to pad comment alignment.
 extern size_t       opt_align_column;   ///< Align comment on given column.
 extern char const  *opt_block_regex;    ///< Block regular expression.
 extern char const  *opt_comment_chars;  ///< Chars that delimit comments.
 extern char const  *opt_conf_file;      ///< Configuration file path.
-extern bool         opt_data_link_esc;  ///< Respond to in-band control.
+extern bool         opt_data_link_esc;  ///< Respond to in-band control?
 extern bool         opt_doxygen;        ///< Handle Doxygen commands?
 extern eol_t        opt_eol;            ///< End-of-line treatment.
 extern bool         opt_eos_delimit;    ///< End-of-sentence delimits para's?
@@ -123,21 +123,24 @@ extern size_t       opt_hang_tabs;      ///< Hanging-indent tabs.
 extern size_t       opt_indt_spaces;    ///< Indent spaces.
 extern size_t       opt_indt_tabs;      ///< Indent tabs.
 extern bool         opt_lead_dot_ignore;///< Ignore lines starting with '.'?
-extern size_t       opt_lead_spaces;
-extern char const  *opt_lead_string;
-extern size_t       opt_lead_tabs;
+extern size_t       opt_lead_spaces;    ///< Number of leading spaces.
+extern char const  *opt_lead_string;    ///< Leading string.
+extern size_t       opt_lead_tabs;      ///< Number of leading tabs.
 extern bool         opt_lead_ws_delimit;///< Leading whitespace delimit para's?
-extern size_t       opt_line_width;
-extern bool         opt_markdown;
-extern size_t       opt_mirror_spaces;
-extern size_t       opt_mirror_tabs;
+extern size_t       opt_line_width;     ///< Maximum line width.
+extern bool         opt_markdown;       ///< Recognize and reformat Markdown?
+extern size_t       opt_mirror_spaces;  ///< Mirror spaces?
+extern size_t       opt_mirror_tabs;    ///< Mirror tabs?
+
+/// Number of consecutive newlines that delimit a paragraph.
 extern size_t       opt_newlines_delimit;
-extern bool         opt_no_conf;        ///< Do not read conf file.
+
+extern bool         opt_no_conf;        ///< Do not read configuration file.
 extern bool         opt_no_hyphen;      ///< Do not treat hyphens specially.
 extern char const  *opt_para_delims;    ///< Additional para delimiter chars.
 extern bool         opt_prototype;      ///< First line whitespace is prototype?
-extern size_t       opt_tab_spaces;
-extern bool         opt_title_line;     ///< 1st para line is title?
+extern size_t       opt_tab_spaces;     ///< Number of spaces 1 tab equals.
+extern bool         opt_title_line;     ///< First line of paragraph is title?
 
 ////////// extern functions ///////////////////////////////////////////////////
 
