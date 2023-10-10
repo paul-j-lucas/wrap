@@ -177,7 +177,7 @@ static unsigned     parse_width( char const* );
 /**
  * Command-line short options specific to **wrap**(1).
  *
- * @note The short option for `--hang-tabs` isn't here because it shares it
+ * @note The short option for `--hang-tabs` isn't here because it shares `-h`
  * with `--help` that is common to both **wrap**(1) and **wrapc**(1).  There's
  * special-case code in parse_options() that disambiguates `-h`.
  */
