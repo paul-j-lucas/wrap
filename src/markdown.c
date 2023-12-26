@@ -212,7 +212,7 @@ static char const *const HTML_BLOCK_ELEMENT[] = {
 // local variable definitions
 static html_state_t   curr_html_state;  ///< Current HTML state.
 static md_state_t    *md_stack;         ///< Global stack of Markdown states.
-static md_stack_pos_t md_stack_top;     ///< Index of the top \ref md_stack.
+static md_stack_pos_t md_stack_top;     ///< Top of \ref md_stack.
 static md_seq_t       next_seq_num;     ///< Next sequence number.
 static bool           prev_blank_line;  ///< Previous blank line.
 
