@@ -1,5 +1,14 @@
+2024-01-10  Paul J. Lucas <paul@lucasmail.org>
+
+   * Doxyfile, util.h: Better handling of IS_SAME_TYPE().
+
+2023-12-03  larryhynes <larryhynes@users.noreply.github.com>
+
+   * wrapc.1: wrapc.1: correct tiny typo
+
 2023-10-10  Paul J. Lucas <paul@lucasmail.org>
 
+   * wrap.c: Added #ifdef DEBUG_MARKDOWN.
    * util.c, util.h: Eliminated check_atexit().
    * util.c, util.h: Made is_any() matches parameter be const static 2.
    * options.c, util.h: Added EPUTS().
