@@ -24,7 +24,8 @@ PROJECT_BRIEF           = "A filter for reformatting text by wrapping and fillin
 INPUT                   = README.md src
 FILE_PATTERNS           = *.c *.h *.md
 FILTER_PATTERNS         = "*.h=sed s/[A-Z][A-Z_]*[A-Z]_H_INLINE/inline/"
-PREDEFINED              = __GNUC__
+PREDEFINED              = __GNUC__ \
+                          WITH_IS_SAME_TYPE
 EXCLUDE                 = src/config.h
 OUTPUT_DIRECTORY        = docs
 HTML_EXTRA_STYLESHEET   = wrap.css
