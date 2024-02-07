@@ -1,3 +1,7 @@
+2024-02-07  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.c: Now using simpler freopen().
+
 2024-01-10  Paul J. Lucas <paul@lucasmail.org>
 
    * Doxyfile, util.h: Better handling of IS_SAME_TYPE().
