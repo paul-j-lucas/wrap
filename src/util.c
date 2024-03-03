@@ -90,12 +90,6 @@ char const* base_name( char const *path_name ) {
   return path_name;
 }
 
-int bsearch_str_strptr_cmp( void const *key, void const *str_ptr ) {
-  char const *const key_s = key;
-  char const *const elt_s = *POINTER_CAST( char const**, str_ptr );
-  return strcmp( key_s, elt_s );
-}
-
 unsigned check_atou( char const *s ) {
   assert( s != NULL );
   if ( !is_digits( s ) )

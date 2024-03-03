@@ -239,6 +239,9 @@ static unsigned       md_ol_digits( md_ol_t );
 NODISCARD
 static char const*    skip_html_tag( char const*, bool* );
 
+NODISCARD
+static int            str_ptr_cmp( char const**, char const** );
+
 ////////// inline functions ///////////////////////////////////////////////////
 
 /**
@@ -251,8 +254,9 @@ static char const*    skip_html_tag( char const*, bool* );
 NODISCARD
 static inline bool is_html_block_element( char const *s ) {
   return NULL != bsearch(
-    s, HTML_BLOCK_ELEMENT, ARRAY_SIZE( HTML_BLOCK_ELEMENT ),
-    sizeof( HTML_BLOCK_ELEMENT[0] ), &bsearch_str_strptr_cmp
+    &s, HTML_BLOCK_ELEMENT, ARRAY_SIZE( HTML_BLOCK_ELEMENT ),
+    sizeof( HTML_BLOCK_ELEMENT[0] ),
+    POINTER_CAST( bsearch_cmp_fn_t, &str_ptr_cmp )
   );
 }
 
@@ -1127,6 +1131,19 @@ static void md_stack_push( md_line_t line_type, md_indent_t indent_left,
     .ol_c        = '\0',
     .ol_num      = 0
   };
+}
+
+/**
+ * Compares two string pointers by comparing the string pointed to.
+ *
+ * @param i_sptr The first string pointer to compare.
+ * @param j_sptr The first string pointer to compare.
+ * @return Returns a number less than 0, 0, or greater than 0 if \a *i_sptr is
+ * less than, equal to, or greater than \a *j_sptr, respectively.
+ */
+NODISCARD
+static int str_ptr_cmp( char const **i_sptr, char const **j_sptr ) {
+  return strcmp( *i_sptr, *j_sptr );
 }
 
 ////////// extern functions ///////////////////////////////////////////////////
