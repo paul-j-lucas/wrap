@@ -294,18 +294,18 @@ static dox_cmd_t const DOX_COMMANDS[] = {
  * respectively.
  */
 NODISCARD
-static int bsearch_str_dox_cmp( void const *key, void const *elt ) {
-  char const *const key_s = key;
-  dox_cmd_t const *const elt_dox = elt;
-  return strcmp( key_s, elt_dox->name );
+static int dox_cmd_cmp( dox_cmd_t const *i_dox, dox_cmd_t const *j_dox ) {
+  return strcmp( i_dox->name, j_dox->name );
 }
 
 ////////// extern functions ///////////////////////////////////////////////////
 
 dox_cmd_t const* dox_find_cmd( char const *s ) {
+  dox_cmd_t const find_dox = { .name = s };
   return bsearch(
-    s, DOX_COMMANDS, ARRAY_SIZE( DOX_COMMANDS ),
-    sizeof( DOX_COMMANDS[0] ), &bsearch_str_dox_cmp
+    &find_dox, DOX_COMMANDS,
+    ARRAY_SIZE( DOX_COMMANDS ), sizeof( DOX_COMMANDS[0] ),
+    POINTER_CAST( bsearch_cmp_fn_t, &dox_cmd_cmp )
   );
 }
 
