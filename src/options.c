@@ -604,7 +604,7 @@ static void parse_options( int argc, char const *argv[],
         //
         // The --hang-tabs and --help options share the same -h short option.
         // We made its argument optional to disambiguate it: if it's absent,
-        // assume it's for --help; if present, assume it's for --hand-tabs.
+        // assume it's for --help; if present, assume it's for --hang-tabs.
         //
         if ( optarg == NULL )
           opt_help = true;
