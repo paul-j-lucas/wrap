@@ -68,7 +68,7 @@
 
 #ifdef HAVE___TYPEOF__
 /**
- * Ignore the return value of a function even if it was declared with
+ * Discard the return value of a function even if it was declared with
  * `NODISCARD`.
  *
  * @param FN_CALL The function call.
