@@ -336,7 +336,7 @@ int main( int argc, char const *argv[] ) {
         //
         // Make state as if line never happened.
         //
-        PJL_IGNORE_RV( buf_readline() );
+        PJL_DISCARD_RV( buf_readline() );
         pb = input_buf;
         cp = '\n';                      // so cp_prev will become this (again)
         continue;

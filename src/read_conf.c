@@ -242,7 +242,7 @@ char const* read_conf( char const *conf_file ) {
 
   if ( unlikely( ferror( fconf ) ) )
     fatal_error( EX_IOERR, "%s: %s\n", conf_file, STRERROR() );
-  PJL_IGNORE_RV( fclose( fconf ) );
+  fclose( fconf );
 
 #ifndef NDEBUG
   if ( is_affirmative( getenv( "WRAP_DUMP_CONF" ) ) ) {

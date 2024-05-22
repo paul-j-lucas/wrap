@@ -234,8 +234,8 @@ static bool         wrap_dox_line( char const*, FILE* );
  * @param pipe The pipe to close.
  */
 static inline void close_pipe( int pipe[const static 2] ) {
-  PJL_IGNORE_RV( close( pipe[ STDIN_FILENO ] ) );
-  PJL_IGNORE_RV( close( pipe[ STDOUT_FILENO ] ) );
+  close( pipe[ STDIN_FILENO ] );
+  close( pipe[ STDOUT_FILENO ] );
 }
 
 /**
@@ -399,7 +399,7 @@ static pid_t read_source_write_wrap( void ) {
   // We don't use these here.
   //
   close_pipe( pipes[ FROM_WRAP ] );
-  PJL_IGNORE_RV( close( pipes[ TO_WRAP ][ STDIN_FILENO ] ) );
+  close( pipes[ TO_WRAP ][ STDIN_FILENO ] );
   //
   // Read from stdin and write to pipes[TO_WRAP] (wrap).
   //
@@ -435,7 +435,7 @@ static pid_t read_source_write_wrap( void ) {
     //
     // In order to know when a comment ends, we have to peek at the next line.
     //
-    PJL_IGNORE_RV( check_readline( NEXT, stdin ) );
+    PJL_DISCARD_RV( check_readline( NEXT, stdin ) );
 
     if ( proto_is_comment && is_line_comment( CURR ) == NULL ) {
       //
@@ -545,7 +545,7 @@ static void read_wrap_write_stdout( void ) {
   // We don't use these here.
   //
   close_pipe( pipes[ TO_WRAP ] );
-  PJL_IGNORE_RV( close( pipes[ FROM_WRAP ][ STDOUT_FILENO ] ) );
+  close( pipes[ FROM_WRAP ][ STDOUT_FILENO ] );
   //
   // Read from pipes[FROM_WRAP] (wrap) and write to stdout.
   //
@@ -1060,7 +1060,7 @@ static void read_prototype( void ) {
     // + The first line should not be altered.
     // + The second line becomes the prototype.
     //
-    PJL_IGNORE_RV( check_readline( NEXT, stdin ) );
+    PJL_DISCARD_RV( check_readline( NEXT, stdin ) );
     proto = NEXT;
   }
 

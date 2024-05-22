@@ -132,7 +132,7 @@ int main( int argc, char const *argv[] ) {
   regex_free( &re );
 
   FERROR( fin );
-  PJL_IGNORE_RV( fclose( fin ) );
+  fclose( fin );
 
   printf( "%u mismatches\n", mismatches );
   exit( mismatches > 0 ? EX_SOFTWARE : EX_OK );
