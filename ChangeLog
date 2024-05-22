@@ -1,3 +1,8 @@
+2024-05-22  Paul J. Lucas <paul@lucasmail.org>
+
+   * pjl_config.h, read_conf.c, regex_test.c, util.c, wrap.c, wrapc.c,
+     wregex.c: s/PJL_IGNORE_RV/PJL_DISCARD_RV/
+
 2024-03-03  Paul J. Lucas <paul@lucasmail.org>
 
    * markdown.c, util.c, util.h: s/bsearch_str_strptr_cmp/str_ptr_cmp/
@@ -37,7 +42,6 @@
 
 2023-10-03  Paul J. Lucas <paul@lucasmail.org>
 
-   * wrap.c: Renaming.
    * markdown.c, wrap.c, wrapc.c: Now using NO_OP for declarations after case
      labels.
 
@@ -129,11 +133,6 @@
      new digit length.
    * markdown.c: Now using s[0].
    * cc_map.c: Now using STATIC_CAST.
-   * align.c: Renaming.
-
-2023-08-05  Paul J. Lucas <paul@lucasmail.org>
-
-   * wregex.c: Renaming.
 
 2023-05-21  Paul J. Lucas <paul@lucasmail.org>
 
@@ -144,7 +143,6 @@
    * options.c: Consolidated long options.
    * wrap.1, wrapc.1: Sorted options.
    * options.c: Added {}.
-   * options.c: Renaming.
    * options.c: Sorted long options.
    * configure.ac, wrap.1, wrapc.1, options.c, options.h, wrap.c, wrapc.c:
      Added --help/-h option.
@@ -196,7 +194,6 @@
 
 2023-01-26  Paul J. Lucas <paul@lucasmail.org>
 
-   * doxygen.c, util.c: Renaming.
    * markdown.c: c/cur_/curr_/
 
 2022-12-06  Paul J. Lucas <paul@lucasmail.org>
@@ -436,7 +433,6 @@
 2019-04-04  Paul J. Lucas <paul@lucasmail.org>
 
    * run_test.sh: Now ensuring that debugger environment variables are unset.
-   * markdown.c: Renaming.
 
 2019-04-03  Paul J. Lucas <paul@lucasmail.org>
 
