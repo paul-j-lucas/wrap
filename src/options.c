@@ -314,7 +314,7 @@ static struct option const *const OPTS_LONG[] = {
  *
  * @param opt The option to check for.
  */
-static void opt_check_exclusive( char opt ) {
+static void check_opt_exclusive( char opt ) {
   if ( !opts_given[ STATIC_CAST( unsigned, opt ) ] )
     return;
   for ( size_t i = 0; i < ARRAY_SIZE( opts_given ); ++i ) {
@@ -336,9 +336,9 @@ static void opt_check_exclusive( char opt ) {
  * @param opt The option.
  * @param opts The set of options.
  *
- * @sa opt_check_s_mutually_exclusive()
+ * @sa check_opt_s_mutually_exclusive()
  */
-static void opt_check_mutually_exclusive( char opt, char const *opts ) {
+static void check_opt_mutually_exclusive( char opt, char const *opts ) {
   assert( opts != NULL );
   if ( !opts_given[ STATIC_CAST( unsigned, opt ) ] )
     return;
@@ -362,13 +362,13 @@ static void opt_check_mutually_exclusive( char opt, char const *opts ) {
  * @param opts1 The first set of short options.
  * @param opts2 The second set of short options.
  *
- * @sa opt_check_mutually_exclusive()
+ * @sa check_opt_mutually_exclusive()
  */
-static void opt_check_s_mutually_exclusive( char const *opts1,
+static void check_opt_s_mutually_exclusive( char const *opts1,
                                             char const *opts2 ) {
   assert( opts1 != NULL );
   for ( ; *opts1 != '\0'; ++opts1 )
-    opt_check_mutually_exclusive( *opts1, opts2 );
+    check_opt_mutually_exclusive( *opts1, opts2 );
 }
 
 /**
@@ -378,7 +378,7 @@ static void opt_check_s_mutually_exclusive( char const *opts1,
  * @return Returns the said option or the empty string if none.
  */
 NODISCARD
-static char const* opt_get_long( char short_opt ) {
+static char const* get_opt_long( char short_opt ) {
   for ( struct option const *long_opt = OPTS_LONG[ is_wrapc ];
         long_opt->name != NULL;
         ++long_opt ) {
@@ -698,7 +698,7 @@ static void parse_options( int argc, char const *argv[],
     //
     // Check for mutually exclusive options only when parsing the command-line.
     //
-    opt_check_mutually_exclusive( COPT(ALIGN_COLUMN),
+    check_opt_mutually_exclusive( COPT(ALIGN_COLUMN),
       SOPT(ALIAS)
       SOPT(ALL_NEWLINES_DELIMIT)
       SOPT(BLOCK_REGEX)
@@ -722,15 +722,15 @@ static void parse_options( int argc, char const *argv[],
       SOPT(WHITESPACE_DELIMIT)
       SOPT(WIDTH)
     );
-    opt_check_mutually_exclusive( COPT(ALL_NEWLINES_DELIMIT),
+    check_opt_mutually_exclusive( COPT(ALL_NEWLINES_DELIMIT),
       SOPT(NO_NEWLINES_DELIMIT)
     );
-    opt_check_mutually_exclusive( COPT(FILE), SOPT(FILE_NAME) );
-    opt_check_mutually_exclusive( COPT(MARKDOWN),
+    check_opt_mutually_exclusive( COPT(FILE), SOPT(FILE_NAME) );
+    check_opt_mutually_exclusive( COPT(MARKDOWN),
       SOPT(TAB_SPACES)
       SOPT(TITLE_LINE)
     );
-    opt_check_s_mutually_exclusive( SOPT(MARKDOWN) SOPT(PROTOTYPE),
+    check_opt_s_mutually_exclusive( SOPT(MARKDOWN) SOPT(PROTOTYPE),
       SOPT(DOT_IGNORE)
       SOPT(HANG_SPACES)
       SOPT(HANG_TABS)
@@ -743,7 +743,7 @@ static void parse_options( int argc, char const *argv[],
       SOPT(MIRROR_TABS)
       SOPT(WHITESPACE_DELIMIT)
     );
-    opt_check_exclusive( COPT(VERSION) );
+    check_opt_exclusive( COPT(VERSION) );
   }
 
   if ( opt_help ) {
@@ -834,7 +834,7 @@ char const* opt_format( char short_opt ) {
   static unsigned buf_index;
   char *const buf = bufs[ buf_index++ % 2 ];
 
-  char const *const long_opt = opt_get_long( short_opt );
+  char const *const long_opt = get_opt_long( short_opt );
   snprintf(
     buf, OPT_BUF_SIZE, "%s%s%s-%c",
     long_opt[0] != '\0' ? "--" : "", long_opt,
