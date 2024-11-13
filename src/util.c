@@ -48,11 +48,11 @@
 
 #ifdef WITH_WIDTH_TERM
 # include <fcntl.h>                     /* for open(2) */
-# if defined(HAVE_CURSES_H)
-#   define _BOOL                        /* prevents clash of bool on Solaris */
+# if HAVE_CURSES_H
+#   define _BOOL /* nothing */          /* prevent bool clash on AIX/Solaris */
 #   include <curses.h>
 #   undef _BOOL
-# elif defined(HAVE_NCURSES_H)
+# elif HAVE_NCURSES_H
 #   include <ncurses.h>
 # endif
 # include <term.h>                      /* for setupterm(3) */
