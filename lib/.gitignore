@@ -9,12 +9,10 @@
 /inttypes..h
 /limits.h
 /locale.h
-/stdbool.h
 /stdckdint.h
 /stddef.h
 /stdint.h
 /stdlib.h
-/stdnoreturn.h
 /string.h
 /sys
 /sysexits.h
@@ -27,5 +25,3 @@
 /unitypes.h
 /wchar.h
 /wctype.h
-/iswpunct.c
-/stdlib.c
