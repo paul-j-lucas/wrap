@@ -28,3 +28,4 @@
 /wchar.h
 /wctype.h
 /iswpunct.c
+/stdlib.c

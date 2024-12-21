@@ -1,5 +1,5 @@
 # malloc.m4
-# serial 40
+# serial 43
 dnl Copyright (C) 2007, 2009-2024 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
@@ -7,11 +7,16 @@ dnl with or without modifications, as long as this notice is preserved.
 dnl This file is offered as-is, without any warranty.
 
 m4_version_prereq([2.73], [], [
+# Modules that use this macro directly or indirectly should depend
+# on extensions-aix, so that _LINUX_SOURCE_COMPAT gets defined
+# before this macro gets invoked.  This helps on AIX 7.2 and earlier
+# if !(__VEC__ || __AIXVEC), and doesn't hurt otherwise.
+#
 # This is copied from upstream Autoconf here:
-# https://git.savannah.gnu.org/cgit/autoconf.git/tree/lib/autoconf/functions.m4?id=f8c82d292699fbce6d60abb46259a3781578f7fc#n971
+# https://git.savannah.gnu.org/cgit/autoconf.git/tree/lib/autoconf/functions.m4?id=1f38316f6af7bf63e5e7dd187ff6456e07ad743e#n971
 # _AC_FUNC_MALLOC_IF(IF-WORKS, IF-NOT[, UNKNOWN-ASSUME])
 # ------------------------------------------------------
-# If 'malloc (0, 0)' returns nonnull, run IF-WORKS, otherwise, IF-NOT.
+# If 'malloc (0)' returns nonnull, run IF-WORKS, otherwise, IF-NOT.
 # If it is not known whether it works, assume the shell word UNKNOWN-ASSUME,
 # which should end in "yes" or in something else (the latter is the default).
 AC_DEFUN([_AC_FUNC_MALLOC_IF],
@@ -43,39 +48,60 @@ AC_DEFUN([_AC_FUNC_MALLOC_IF],
 ])# _AC_FUNC_MALLOC_IF
 ])
 
+# gl_FUNC_MALLOC_0_NONNULL
+# ------------------------
+# If 'malloc (0)' returns nonnull define HAVE_MALLOC_0_NONNULL.
+# Also, set ac_cv_func_malloc_0_nonnull to a string that ends in
+# "yes", otherwise set it to something else.  If unknown whether
+# malloc (0) works, guess as normal for cross-builds.
+AC_DEFUN([gl_FUNC_MALLOC_0_NONNULL],
+[
+  _AC_FUNC_MALLOC_IF(
+    [AC_DEFINE([HAVE_MALLOC_0_NONNULL], [1],
+       [Define to 1 if malloc (0) returns nonnull.])],
+    [],
+    ["$gl_cross_guess_normal"])
+])
+
 # gl_FUNC_MALLOC_GNU
 # ------------------
-# Replace malloc if it is not compatible with GNU libc.
+# Test whether malloc (0) is compatible with GNU libc.
+# Replace malloc if not.
+# Define HAVE_MALLOC_0_NONNULL if malloc (0) returns nonnull (except upon
+# out-of-memory).
+# Define HAVE_MALLOC_PTRDIFF if malloc (N) reliably fails when N exceeds
+# PTRDIFF_MAX.
 AC_DEFUN([gl_FUNC_MALLOC_GNU],
 [
   AC_REQUIRE([gl_STDLIB_H_DEFAULTS])
   AC_REQUIRE([gl_FUNC_MALLOC_POSIX])
+  AC_REQUIRE([gl_FUNC_MALLOC_0_NONNULL])
 
-  dnl Through the dependency on module extensions-aix, _LINUX_SOURCE_COMPAT
-  dnl gets defined already before this macro gets invoked.  This helps
-  dnl if !(__VEC__ || __AIXVEC), and doesn't hurt otherwise.
-
-  REPLACE_MALLOC_FOR_MALLOC_GNU="$REPLACE_MALLOC_FOR_MALLOC_POSIX"
-  if test $REPLACE_MALLOC_FOR_MALLOC_GNU = 0; then
-    _AC_FUNC_MALLOC_IF([], [REPLACE_MALLOC_FOR_MALLOC_GNU=1],
-      ["$gl_cross_guess_normal"])
-  fi
+  AS_CASE([$ac_cv_func_malloc_0_nonnull],
+    [*yes],
+      [REPLACE_MALLOC_FOR_MALLOC_GNU=$REPLACE_MALLOC_FOR_MALLOC_POSIX],
+    [REPLACE_MALLOC_FOR_MALLOC_GNU=1])
 ])
 
 # gl_FUNC_MALLOC_PTRDIFF
 # ----------------------
-# Test whether malloc (N) reliably fails when N exceeds PTRDIFF_MAX,
-# and replace malloc otherwise.
+# Test whether malloc (N) reliably fails when N exceeds PTRDIFF_MAX.
+# Define HAVE_MALLOC_PTRDIFF if yes.
+# Replace malloc if not.
 AC_DEFUN([gl_FUNC_MALLOC_PTRDIFF],
 [
   AC_REQUIRE([gl_STDLIB_H_DEFAULTS])
   AC_REQUIRE([gl_CHECK_MALLOC_PTRDIFF])
-  test "$gl_cv_malloc_ptrdiff" = yes || REPLACE_MALLOC_FOR_MALLOC_POSIX=1
+  AS_IF([test "$gl_cv_malloc_ptrdiff" = yes],
+    [AC_DEFINE([HAVE_MALLOC_PTRDIFF], 1,
+       [Define to 1 if malloc-like functions do not allocate objects
+        larger than PTRDIFF_MAX bytes.])],
+    [REPLACE_MALLOC_FOR_MALLOC_POSIX=1])
 ])
 
 # Test whether malloc, realloc, calloc refuse to create objects
 # larger than what can be expressed in ptrdiff_t.
-# Set gl_cv_func_malloc_gnu to yes or no accordingly.
+# Set gl_cv_func_malloc_gnu.
 AC_DEFUN([gl_CHECK_MALLOC_PTRDIFF],
 [
   AC_CACHE_CHECK([whether malloc is ptrdiff_t safe],

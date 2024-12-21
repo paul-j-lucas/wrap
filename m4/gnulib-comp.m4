@@ -80,6 +80,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module getopt-gnu:
   # Code from module getopt-posix:
   # Code from module gettext-h:
+  # Code from module gnulib-i18n:
   # Code from module hard-locale:
   # Code from module idx:
   # Code from module include_next:
@@ -163,7 +164,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module wctype-h:
   # Code from module wmemchr:
   # Code from module wmempcpy:
-  # Code from module xalloc-oversized:
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -330,6 +330,7 @@ AC_DEFUN([gl_INIT],
   gl_UNISTD_MODULE_INDICATOR([getopt-posix])
   AC_SUBST([LIBINTL])
   AC_SUBST([LTLIBINTL])
+  GNULIB_I18N
   AC_REQUIRE([gl_FUNC_SETLOCALE_NULL])
   HARD_LOCALE_LIB="$SETLOCALE_NULL_LIB"
   AC_SUBST([HARD_LOCALE_LIB])
@@ -857,6 +858,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stdckdint.in.h
   lib/stddef.in.h
   lib/stdint.in.h
+  lib/stdlib.c
   lib/stdlib.in.h
   lib/strdup.c
   lib/streq.h
@@ -926,13 +928,13 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/wmemchr-impl.h
   lib/wmemchr.c
   lib/wmempcpy.c
-  lib/xalloc-oversized.h
   m4/00gnulib.m4
   m4/__inline.m4
   m4/absolute-header.m4
   m4/alloca.m4
   m4/assert_h.m4
   m4/btowc.m4
+  m4/build-to-host.m4
   m4/builtin-expect.m4
   m4/c-bool.m4
   m4/c32rtomb.m4
@@ -947,6 +949,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fnmatch_h.m4
   m4/getopt.m4
   m4/gnulib-common.m4
+  m4/gnulib-i18n.m4
   m4/include_next.m4
   m4/inline.m4
   m4/inttypes.m4

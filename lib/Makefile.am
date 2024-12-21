@@ -904,9 +904,8 @@ EXTRA_DIST += stdint.in.h
 ## begin gnulib module stdlib
 
 BUILT_SOURCES += stdlib.h
+libgnu_a_SOURCES += stdlib.c
 
-# We need the following in order to create <stdlib.h> when the system
-# doesn't have one that works with the given compiler.
 stdlib.h: stdlib.in.h $(top_builddir)/config.status $(CXXDEFS_H) \
   $(_NORETURN_H) $(ARG_NONNULL_H) $(WARN_ON_USE_H)
 	$(gl_V_at)$(SED_HEADER_STDOUT) \
@@ -2123,6 +2122,7 @@ wchar.h: wchar.in.h $(top_builddir)/config.status $(CXXDEFS_H) $(ARG_NONNULL_H) 
 	      -e 's|@''REPLACE_WCSWIDTH''@|$(REPLACE_WCSWIDTH)|g' \
 	      -e 's|@''REPLACE_WCSFTIME''@|$(REPLACE_WCSFTIME)|g' \
 	      -e 's|@''REPLACE_WCSCMP''@|$(REPLACE_WCSCMP)|g' \
+	      -e 's|@''REPLACE_WCSNCAT''@|$(REPLACE_WCSNCAT)|g' \
 	      -e 's|@''REPLACE_WCSNCMP''@|$(REPLACE_WCSNCMP)|g' \
 	      -e 's|@''REPLACE_WCSSTR''@|$(REPLACE_WCSSTR)|g' \
 	      -e 's|@''REPLACE_WCSTOK''@|$(REPLACE_WCSTOK)|g' \
@@ -2216,13 +2216,6 @@ libgnu_a_SOURCES += wmempcpy.c
 endif
 
 ## end   gnulib module wmempcpy
-
-## begin gnulib module xalloc-oversized
-
-
-EXTRA_DIST += xalloc-oversized.h
-
-## end   gnulib module xalloc-oversized
 
 
 mostlyclean-local: mostlyclean-generic
