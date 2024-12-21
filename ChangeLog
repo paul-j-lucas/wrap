@@ -1,5 +1,6 @@
 2024-12-21  Paul J. Lucas <paul@lucasmail.org>
 
+   * iswpunct.c, stdlib.c: Fixed lib.
    * pjl_compile.m4: Removed extraneous '$' -- don't know how it ever worked.
 
 2024-11-13  Paul J. Lucas <paul@lucasmail.org>
