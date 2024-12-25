@@ -1,3 +1,7 @@
+2024-12-24  Paul J. Lucas <paul@lucasmail.org>
+
+   * pjl_compile.m4: Added missing $.
+
 2024-12-21  Paul J. Lucas <paul@lucasmail.org>
 
    * iswpunct.c, stdlib.c: Fixed lib.
