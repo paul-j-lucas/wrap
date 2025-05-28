@@ -307,8 +307,9 @@ void perror_exit( int status ) {
 
 void setlocale_utf8( void ) {
   static char const *const UTF8_LOCALES[] = {
-    "UTF-8", "UTF8",
-    "en_US.UTF-8", "en_US.UTF8",
+    "UTF-8",        "UTF8",
+    "en_US.UTF-8",  "en_US.UTF8",
+    "C.UTF-8",      "C.UTF8",
     NULL
   };
   for ( char const *const *loc = UTF8_LOCALES; *loc != NULL; ++loc ) {
