@@ -5,6 +5,12 @@ See the end of the file for license conditions.
 
 -------------------------------------------------------------------------------
 
+* Changes in Wrap 5.9.2
+
+** Fixed patterns allocation bug
+A long-standing bug when there are more than 10 patterns was fixed.
+
+
 * Changes in Wrap 5.9.1
 
 ** Blank line after Doxygen EOL command

@@ -49,12 +49,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // local constant definitions
-static size_t const PATTERN_ALLOC_DEFAULT   = 10;
-static size_t const PATTERN_ALLOC_INCREMENT = 10;
+static size_t const PATTERN_ALLOC_SIZE = 10;
 
 // local variable definitions
-static size_t       n_patterns = 0;     // number of patterns
 static pattern_t   *patterns = NULL;    // global list of patterns
+static size_t       patterns_size = 0;  // number of patterns
 
 // local functions
 static void   pattern_cleanup( void );
@@ -81,25 +80,22 @@ NODISCARD
 static pattern_t* pattern_alloc( void ) {
   RUN_ONCE ATEXIT( &pattern_cleanup );
 
-  static size_t n_patterns_alloc = 0;   // number of patterns allocated
+  static size_t patterns_cap = 0;       // number of patterns allocated
 
-  if ( n_patterns_alloc == 0 ) {
-    n_patterns_alloc = PATTERN_ALLOC_DEFAULT;
-    patterns = MALLOC( pattern_t, n_patterns_alloc );
-  } else if ( n_patterns > n_patterns_alloc ) {
-    n_patterns_alloc += PATTERN_ALLOC_INCREMENT;
-    REALLOC( patterns, pattern_t, n_patterns_alloc );
+  if ( patterns_size + 1 > patterns_cap ) {
+    patterns_cap += PATTERN_ALLOC_SIZE;
+    REALLOC( patterns, pattern_t, patterns_cap );
   }
   PERROR_EXIT_IF( patterns == NULL, EX_OSERR );
-  return &patterns[ n_patterns++ ];
+  return &patterns[ patterns_size++ ];
 }
 
 /**
  * Cleans-up all pattern data.
  */
 static void pattern_cleanup( void ) {
-  while ( n_patterns > 0 )
-    pattern_free( &patterns[ --n_patterns ] );
+  while ( patterns_size > 0 )
+    pattern_free( &patterns[ --patterns_size ] );
   free( patterns );
 }
 
@@ -107,7 +103,7 @@ static void pattern_cleanup( void ) {
 
 #ifndef NDEBUG
 void dump_patterns( void ) {
-  for ( size_t i = 0; i < n_patterns; ++i ) {
+  for ( size_t i = 0; i < patterns_size; ++i ) {
     if ( i == 0 )
       printf( "[PATTERNS]\n" );
     pattern_t const *const pattern = &patterns[i];
@@ -118,7 +114,7 @@ void dump_patterns( void ) {
 
 alias_t const* pattern_find( char const *file_name ) {
   assert( file_name != NULL );
-  for ( size_t i = 0; i < n_patterns; ++i )
+  for ( size_t i = 0; i < patterns_size; ++i )
     if ( fnmatch( patterns[i].pattern, file_name, 0 ) == 0 )
       return patterns[i].alias;
   return NULL;
