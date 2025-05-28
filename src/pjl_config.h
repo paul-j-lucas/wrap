@@ -32,7 +32,11 @@
 #endif
 
 // local
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wundef"
 #include "config.h"                     /* must go first */
+#pragma GCC diagnostic pop
+
 #ifdef VERSION
   // Undefine this since it clashes with our VERSION command-line option.  We
   // don't need this since PACKAGE_VERSION is also defined.
