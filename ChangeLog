@@ -1,3 +1,20 @@
+2025-05-27  Paul J. Lucas <paul@lucasmail.org>
+
+   * pattern.c: Added assert().
+   * configure.ac, pattern.c: Fixed patterns allocation bug.
+   * cc_map.c: s/W_CC_MAP_INLINE/W_CC_MAP_H_INLINE/
+
+2025-05-13  Paul J. Lucas <paul@lucasmail.org>
+
+   * attribute.h, cdefs.h, getopt-pfx-ext.h, getopt.in.h, stddef.in.h,
+     stdlib.in.h, streq.h, string.in.h, unistd.in.h, wchar.in.h,
+     builtin-expect.m4, gnulib-common.m4, gnulib-comp.m4, stddef_h.m4,
+     threadlib.m4, unitypes_h.m4: Updated GNUlib.
+
+2025-02-25  Paul J. Lucas <paul@lucasmail.org>
+
+   * util.c: base_name() now returns path_name if it doesn't contain /.
+
 2024-12-24  Paul J. Lucas <paul@lucasmail.org>
 
    * pjl_compile.m4: Added missing $.
