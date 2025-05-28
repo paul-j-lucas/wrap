@@ -885,6 +885,15 @@ BUILT_SOURCES += $(STDCKDINT_H)
 if GL_GENERATE_STDCKDINT_H
 stdckdint.h: stdckdint.in.h $(top_builddir)/config.status
 	$(gl_V_at)$(SED_HEADER_STDOUT) \
+	      -e 's|@''GUARD_PREFIX''@|GL|g' \
+	      -e 's|@''INCLUDE_NEXT''@|$(INCLUDE_NEXT)|g' \
+	      -e 's|@''PRAGMA_SYSTEM_HEADER''@|@PRAGMA_SYSTEM_HEADER@|g' \
+	      -e 's|@''PRAGMA_COLUMNS''@|@PRAGMA_COLUMNS@|g' \
+	      -e 's|@''NEXT_STDCKDINT_H''@|$(NEXT_STDCKDINT_H)|g' \
+	      -e 's|@''HAVE_C_STDCKDINT_H''@|$(HAVE_C_STDCKDINT_H)|g' \
+	      -e 's|@''HAVE_WORKING_C_STDCKDINT_H''@|$(HAVE_WORKING_C_STDCKDINT_H)|g' \
+	      -e 's|@''HAVE_CXX_STDCKDINT_H''@|$(HAVE_CXX_STDCKDINT_H)|g' \
+	      -e 's|@''HAVE_WORKING_CXX_STDCKDINT_H''@|$(HAVE_WORKING_CXX_STDCKDINT_H)|g' \
 	  $(srcdir)/stdckdint.in.h > $@-t
 	$(AM_V_at)mv $@-t $@
 else
