@@ -999,8 +999,8 @@ static md_line_t md_nested_within( void ) {
  */
 NODISCARD
 static unsigned md_ol_digits( md_ol_t n ) {
-  char c;
-  int const len = snprintf( &c, 1, "%u", n );
+  char s[2];
+  int const len = snprintf( s, sizeof s, "%u", n );
   PERROR_EXIT_IF( len < 0, EX_IOERR );
   return STATIC_CAST( unsigned, len );
 }
