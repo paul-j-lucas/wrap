@@ -360,7 +360,9 @@ size_t strrspn( char const *s, char const *set ) {
 void wait_for_debugger_attach( char const *env_var ) {
   assert( env_var != NULL );
   if ( is_affirmative( getenv( env_var ) ) ) {
-    EPRINTF( "pid=%u: waiting for debugger to attach...\n", getpid() );
+    EPRINTF(
+      "pid=%u: waiting for debugger to attach...\n", (unsigned)getpid()
+    );
     PERROR_EXIT_IF( raise( SIGSTOP ) == -1, EX_OSERR );
   }
 }
