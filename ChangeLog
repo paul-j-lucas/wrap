@@ -1,3 +1,10 @@
+2025-05-28  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c: Silenced warning.
+   * pjl_config.h: Silencing -Wundef.
+   * util.c: Silenced warning.
+   * util.c: Added C.UTF-8 locale.
+
 2025-05-27  Paul J. Lucas <paul@lucasmail.org>
 
    * pattern.c: Added assert().
