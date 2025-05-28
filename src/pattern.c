@@ -133,6 +133,7 @@ void pattern_parse( char const *line, char const *conf_file,
 
   // part 1: pattern
   size_t const span = strcspn( line, " \t=" );
+  assert( span > 0 );
   pattern->pattern = strndup( line, span );
   line += span;
 
