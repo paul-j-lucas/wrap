@@ -5,6 +5,13 @@ See the end of the file for license conditions.
 
 -------------------------------------------------------------------------------
 
+* Changes in Wrap 5.9.3
+
+** Fixed UTF-8 local cp_is_control() bug
+Apparently, iswcntrl() returns true for 0xAD (soft hyphen) in the UTF-8 locale
+which seems wrong.  Rewrite cp_is_control() to work around this.
+
+
 * Changes in Wrap 5.9.2
 
 ** Fixed patterns allocation bug

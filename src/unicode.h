@@ -128,7 +128,7 @@ bool cp_is_ascii( char32_t cp ) {
  */
 NODISCARD W_UNICODE_H_INLINE
 bool cp_is_control( char32_t cp ) {
-  return iswcntrl( STATIC_CAST( wint_t, cp ) );
+  return cp <= 127 && iscntrl( STATIC_CAST( int, cp ) );
 }
 
 /**
