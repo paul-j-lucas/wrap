@@ -313,8 +313,10 @@ void setlocale_utf8( void ) {
     NULL
   };
   for ( char const *const *loc = UTF8_LOCALES; *loc != NULL; ++loc ) {
-    if ( setlocale( LC_COLLATE, *loc ) && setlocale( LC_CTYPE, *loc ) )
+    if ( setlocale( LC_COLLATE, *loc ) != NULL &&
+         setlocale( LC_CTYPE, *loc ) != NULL ) {
       return;
+    }
   } // for
 
   EPRINTF( "%s: could not set locale to UTF-8; tried: ", me );
