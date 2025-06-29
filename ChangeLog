@@ -1,3 +1,8 @@
+2025-06-29  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac, unicode.h: Fixed UTF-8 local cp_is_control() bug.
+   * util.c: Added != NULL.
+
 2025-05-28  Paul J. Lucas <paul@lucasmail.org>
 
    * markdown.c: Silenced warning.
