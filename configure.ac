@@ -119,6 +119,7 @@ AX_C___ATTRIBUTE__
 
 # Compiler warnings.
 AC_SUBST([WRAP_CFLAGS])
+WRAP_CFLAGS="-D_ISOC11_SOURCE"
 AX_CFLAGS_WARN_ALL([WRAP_CFLAGS])
 AX_CHECK_COMPILE_FLAG([-Wcast-align], [WRAP_CFLAGS="$WRAP_CFLAGS -Wcast-align"], [], [-Werror])
 AX_CHECK_COMPILE_FLAG([-Wcast-function-type], [WRAP_CFLAGS="$WRAP_CFLAGS -Wcast-function-type"], [], [-Werror])
@@ -142,7 +143,6 @@ AX_CHECK_COMPILE_FLAG([-Wimplicit-fallthrough], [WRAP_CFLAGS="$WRAP_CFLAGS -Wimp
 AX_CHECK_COMPILE_FLAG([-Wlogical-op-parentheses], [WRAP_CFLAGS="$WRAP_CFLAGS -Wlogical-op-parentheses"], [], [-Werror])
 AX_CHECK_COMPILE_FLAG([-Wmisleading-indentation], [WRAP_CFLAGS="$WRAP_CFLAGS -Wmisleading-indentation"], [], [-Werror])
 AX_CHECK_COMPILE_FLAG([-Wnewline-eof], [WRAP_CFLAGS="$WRAP_CFLAGS -Wnewline-eof"], [], [-Werror])
-AX_CHECK_COMPILE_FLAG([-Wpedantic], [WRAP_CFLAGS="$WRAP_CFLAGS -Wpedantic"], [], [-Werror])
 AX_CHECK_COMPILE_FLAG([-Wredundant-decls], [WRAP_CFLAGS="$WRAP_CFLAGS -Wredundant-decls"], [], [-Werror])
 AX_CHECK_COMPILE_FLAG([-Wreserved-identifier], [WRAP_CFLAGS="$WRAP_CFLAGS -Wreserved-identifier"], [], [-Werror])
 AX_CHECK_COMPILE_FLAG([-Wshadow], [WRAP_CFLAGS="$WRAP_CFLAGS -Wshadow"], [], [-Werror])
