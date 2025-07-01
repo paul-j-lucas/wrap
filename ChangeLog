@@ -1,5 +1,13 @@
+2025-07-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrapc.c: Now ignoring -Wformat for opt_eol.
+   * configure.ac: Added -D_ISOC11_SOURCE; removed -Wpedantic.
+   * configure.ac, wrap.1, common.h, options.c: --version now also prints the
+     license; if given twice, also prints configure feature & package options.
+
 2025-06-29  Paul J. Lucas <paul@lucasmail.org>
 
+   * unicode.h: Now using cp_is_ascii().
    * configure.ac, unicode.h: Fixed UTF-8 local cp_is_control() bug.
    * util.c: Added != NULL.
 
