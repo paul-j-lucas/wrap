@@ -55,6 +55,30 @@ _GL_INLINE_HEADER_BEGIN
 #define TAB_SPACES_DEFAULT        8     /* number of spaces a tab equals */
 
 /**
+ * **wrap** primary author.
+ */
+#define WRAP_AUTHOR               "Paul J. Lucas"
+
+/**
+ * **wrap** latest copyright year.
+ */
+#define WRAP_COPYRIGHT_YEAR       "2025"
+
+/**
+ * **wrap** license.
+ *
+ * @sa #WRAP_LICENSE_URL
+ */
+#define WRAP_LICENSE              "GPLv3+: GNU GPL version 3 or later"
+
+/**
+ * **wrap** license URL.
+ *
+ * @sa #WRAP_LICENSE
+ */
+#define WRAP_LICENSE_URL          "https://gnu.org/licenses/gpl.html"
+
+/**
  * Line buffer.
  */
 typedef char line_buf_t[ LINE_BUF_SIZE ];

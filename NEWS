@@ -5,6 +5,13 @@ See the end of the file for license conditions.
 
 -------------------------------------------------------------------------------
 
+* Changes in Wrap 5.10
+
+** `configure` options
+The `--version` or `-v` options now also prints the license information.  If
+given twice, also prints the set of configure feature & package options.
+
+
 * Changes in Wrap 5.9.3
 
 ** Fixed UTF-8 local cp_is_control() bug

@@ -129,6 +129,8 @@ static bool         opts_given[ 128 ];  ///< Options given indexed by `char`.
 NODISCARD
 static unsigned     parse_width( char const* );
 
+static void         print_version( bool );
+
 ///////////////////////////////////////////////////////////////////////////////
 
 /// @cond DOXYGEN_IGNORE
@@ -520,7 +522,7 @@ static void parse_options( int argc, char const *argv[],
 
   int opt;
   bool opt_help = false;
-  bool opt_version = false;
+  unsigned opt_version = 0;
   MEM_ZERO( &opts_given );
 
   for (;;) {
@@ -668,7 +670,7 @@ static void parse_options( int argc, char const *argv[],
         opt_title_line = true;
         break;
       case COPT(VERSION):
-        opt_version = true;
+        ++opt_version;
         break;
       case COPT(WHITESPACE_DELIMIT):
         opt_lead_ws_delimit = true;
@@ -751,8 +753,8 @@ static void parse_options( int argc, char const *argv[],
     unreachable();
   }
 
-  if ( opt_version ) {
-    puts( PACKAGE_STRING );
+  if ( opt_version > 0 ) {
+    print_version( /*verbose=*/opt_version > 1 );
     exit( EX_OK );
   }
 
@@ -825,6 +827,41 @@ static unsigned parse_width( char const *s ) {
 #else
   return check_atou( s );
 #endif /* WITH_WIDTH_TERM */
+}
+
+/**
+ * Convenience macro for printing a `configure` option.
+ *
+ * @param OPT The option string literal to print (without the leading `--`).
+ */
+#define PUT_CONFIG_OPT(OPT) BLOCK( \
+  fputs( "\n  --" OPT, stdout ); printed_opt = true; )
+
+/**
+ * Prints the **wrap** version and possibly configure feature &amp; package
+ * options.
+ *
+ * @param verbose If `true`, prints configure feature &amp; package options.
+ */
+static void print_version( bool verbose ) {
+  PUTS(
+    PACKAGE_STRING "\n"
+    "Copyright (C) " WRAP_COPYRIGHT_YEAR " " WRAP_AUTHOR "\n"
+    "License " WRAP_LICENSE " <" WRAP_LICENSE_URL ">.\n"
+    "This is free software: you are free to change and redistribute it.\n"
+    "There is NO WARRANTY to the extent permitted by law.\n"
+  );
+  if ( !verbose )
+    return;
+
+  PUTS( "\nconfigure feature & package options:" );
+  bool printed_opt = false;
+#ifdef WITH_WIDTH_TERM
+  PUT_CONFIG_OPT( "disable-width" );
+#endif /* WITH_WIDTH_TERM */
+  if ( !printed_opt )
+    PUTS( " none" );
+  putchar( '\n' );
 }
 
 ////////// extern functions ///////////////////////////////////////////////////

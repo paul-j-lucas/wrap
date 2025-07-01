@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\fP 1 "May 20, 2023" "PJL TOOLS"
+.TH \f3wrap\fP 1 "July 1, 2025" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -392,9 +392,12 @@ Treats the first line of every paragraph as a title
 and puts it on a line by itself.
 .TP
 .BR \-\-version " | " \-v
-Prints the version number to
-.I stderr
-and exit.
+Prints the version number
+and exits.
+If given twice,
+additionally prints
+the set of configure
+feature & package options.
 .TP
 .BR \-\-whitespace-delimit " | " \-W
 Treats a line beginning with whitespace as a paragraph delimiter.
