@@ -356,7 +356,10 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   /*  5 */ IF_ARG_DUP( opt_eos_delimit, "-" SOPT(EOS_DELIMIT)       );
   /*  6 */ IF_ARG_FMT( opt_eos_spaces , "-" SOPT(EOS_SPACES)  "%zu" );
   /*  7 */ IF_ARG_FMT( opt_fin_name   , "-" SOPT(FILE_NAME)   "%s"  );
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat"
   /*  8 */    ARG_FMT( opt_eol        , "-" SOPT(EOL)         "%c"  );
+#pragma GCC diagnostic pop
   /*  9 */ IF_ARG_FMT( opt_para_delims, "-" SOPT(PARA_CHARS)  "%s"  );
   /* 10 */ IF_ARG_DUP( opt_markdown   , "-" SOPT(MARKDOWN)          );
          else ARG_FMT( opt_tab_spaces , "-" SOPT(TAB_SPACES)  "%zu" );
