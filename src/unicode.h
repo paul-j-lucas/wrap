@@ -34,6 +34,7 @@
 /// @cond DOXYGEN_IGNORE
 
 // standard
+#include <ctype.h>
 #include <inttypes.h>                   /* for uint*_t */
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
