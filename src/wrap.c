@@ -902,6 +902,8 @@ static bool markdown_adjust( void ) {
       markdown_reset();
       return true;
   } // switch
+
+  UNEXPECTED_INT_VALUE( md->line_type );
 }
 
 /**

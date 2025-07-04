@@ -593,6 +593,23 @@ _GL_INLINE_HEADER_BEGIN
 #define STRINGIFY(X)              STRINGIFY_IMPL(X)
 
 /**
+ * A special-case of #INTERNAL_ERROR() that prints an unexpected integer value.
+ *
+ * @param EXPR The expression having the unexpected value.
+ *
+ * @sa fatal_error()
+ * @sa #INTERNAL_ERROR()
+ * @sa perror_exit()
+ * @sa #PERROR_EXIT_IF()
+ */
+#define UNEXPECTED_INT_VALUE(EXPR)                      \
+  INTERNAL_ERROR(                                       \
+    "%lld (0x%llX): unexpected value for " #EXPR "\n",  \
+    STATIC_CAST( long long, (EXPR) ),                   \
+    STATIC_CAST( unsigned long long, (EXPR) )           \
+  )
+
+/**
  * Synthesises a name prefixed by \a PREFIX unique to the line on which it's
  * used.
  *
