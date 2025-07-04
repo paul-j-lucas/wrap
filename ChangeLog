@@ -1,3 +1,8 @@
+2025-07-04  Paul J. Lucas <paul@lucasmail.org>
+
+   * util.h, wrap.c: Added UNEXPECTED_INT_VALUE.
+   * unicode.h: Added #include <ctype.h>
+
 2025-07-01  Paul J. Lucas <paul@lucasmail.org>
 
    * wrapc.c: Now ignoring -Wformat for opt_eol.
