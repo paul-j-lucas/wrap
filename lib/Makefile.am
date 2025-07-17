@@ -32,14 +32,14 @@
 #  --no-conditional-dependencies \
 #  --no-libtool \
 #  --macro-prefix=gl \
+#  bool \
 #  extern-inline \
 #  fnmatch \
 #  getopt-gnu \
-#  stdbool \
 #  strdup-posix \
 #  strerror \
 #  strndup \
-#  sysexits
+#  sysexits-h
 
 AUTOMAKE_OPTIONS = 1.14 gnits subdir-objects
 
