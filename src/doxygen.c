@@ -284,14 +284,14 @@ static dox_cmd_t const DOX_COMMANDS[] = {
 ////////// local functions ////////////////////////////////////////////////////
 
 /**
- * Comparison function for **bsearch**(3) that compares a string key against an
- * element of array of dox_cmd_t.
+ * Comparison function for \ref dox_cmd.
  *
- * @param key A pointer to the string being searched for.
- * @param elt A pointer to the current element to compare against.
- * @return Returns an integer less than zero, zero, or greater thatn zero if
- * the key is less than, equal to, or greater than the element's name,
- * respectively.
+ * @param i_dox The first \ref dox_cmd.
+ * @param j_dox The second \ref dox_cmd.
+ * @return Returns an integer less than, equal to, or greater than 0, according
+ * to whether the data pointed to by \a i_dox is less than, equal to, or
+ * greater than the data pointed to by \a j_dox.
+
  */
 NODISCARD
 static int dox_cmd_cmp( dox_cmd_t const *i_dox, dox_cmd_t const *j_dox ) {
