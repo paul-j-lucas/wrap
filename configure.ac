@@ -82,6 +82,7 @@ gl_INIT
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
+AC_C_TYPEOF
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
@@ -97,7 +98,6 @@ PJL_CHECK_TYPEDEF(char32_t,[uchar.h],
 AC_CHECK_MEMBERS([struct passwd.pw_dir],[],[],[[#include <pwd.h>]])
 PJL_COMPILE([__builtin_expect],[], [(void)__builtin_expect(1,1);])
 PJL_COMPILE([__builtin_types_compatible_p],[], [(void)__builtin_types_compatible_p(int,int);])
-PJL_COMPILE([__typeof__],[],[__typeof__(1) x __attribute((unused)) = 1;])
 
 # Checks for library functions.
 AC_FUNC_FNMATCH

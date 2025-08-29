@@ -32,6 +32,7 @@ COMMON_SOURCES = \
 	options.c options.h \
 	pattern.c pattern.h \
 	read_conf.c read_conf.h \
+	type_traits.h \
 	util.c util.h
 
 wrap_SOURCES = $(COMMON_SOURCES) \
@@ -49,6 +50,7 @@ wrapc_SOURCES = $(COMMON_SOURCES) \
 regex_test_SOURCES = \
 	pjl_config.h \
 	regex_test.c \
+	type_traits.h \
 	unicode.c unicode.h \
 	util.c util.h \
 	wregex.c wregex.h

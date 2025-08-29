@@ -28,6 +28,7 @@
 
 // local
 #include "pjl_config.h"                 /* must go first */
+#include "type_traits.h"
 
 /// @cond DOXYGEN_IGNORE
 
@@ -45,10 +46,6 @@ _GL_INLINE_HEADER_BEGIN
 #ifndef W_UTIL_H_INLINE
 # define W_UTIL_H_INLINE _GL_INLINE
 #endif /* W_UTIL_H_INLINE */
-
-#if HAVE___BUILTIN_TYPES_COMPATIBLE_P && HAVE___TYPEOF__
-# define WITH_IS_SAME_TYPE
-#endif
 
 /// @endcond
 
@@ -140,7 +137,7 @@ _GL_INLINE_HEADER_BEGIN
  */
 #define ARRAY_SIZE(A) (     \
   sizeof(A) / sizeof(0[A])  \
-  * STATIC_ASSERT_EXPR( IS_ARRAY(A), #A " must be an array" ))
+  * STATIC_ASSERT_EXPR( IS_ARRAY_EXPR(A), #A " must be an array" ))
 
 #ifndef NDEBUG
 /**
@@ -322,47 +319,6 @@ _GL_INLINE_HEADER_BEGIN
 #define INTERNAL_ERROR(FORMAT,...) \
   fatal_error( EX_SOFTWARE, "%s:%d: internal error: " FORMAT, __FILE__, __LINE__, __VA_ARGS__ )
 
-/**
- * Checks (at compile-time) whether \a A is an array.
- *
- * @param A The alleged array to check.
- * @return Returns 1 (true) only if \a A is an array; 0 (false) otherwise.
- *
- * @sa #IS_POINTER()
- */
-#ifdef WITH_IS_SAME_TYPE
-# define IS_ARRAY(A)              !IS_SAME_TYPE( (A), &(A)[0] )
-#else
-# define IS_ARRAY(A)              1
-#endif /* WITH_IS_SAME_TYPE */
-
-/**
- * Checks (at compile-time) whether \a P is a pointer.
- *
- * @param P The alleged pointer to check.
- * @return Returns 1 (true) only if \a P is a pointer; 0 (false) otherwise.
- *
- * @sa #IS_ARRAY()
- */
-#ifdef WITH_IS_SAME_TYPE
-# define IS_POINTER(P)            IS_SAME_TYPE( (P), &(P)[0] )
-#else
-# define IS_POINTER(P)            1
-#endif /* WITH_IS_SAME_TYPE */
-
-/**
- * Checks (at compile-time) whether \a T1 and \a T2 are the same type.
- *
- * @param T1 The first type or expression.
- * @param T2 The second type or expression.
- * @return Returns 1 (true) only if \a T1 and \a T2 are the same type; 0
- * (false) otherwise.
- */
-#ifdef WITH_IS_SAME_TYPE
-# define IS_SAME_TYPE(T1,T2) \
-    __builtin_types_compatible_p( __typeof__(T1), __typeof__(T2) )
-#endif /* WITH_IS_SAME_TYPE */
-
 #ifdef HAVE___BUILTIN_EXPECT
 
 /**
@@ -407,8 +363,8 @@ _GL_INLINE_HEADER_BEGIN
  * @param PTR The pointer to the start of memory to zero.  \a PTR must be a
  * pointer.  If it's an array, it'll generate a compile-time error.
  */
-#define MEM_ZERO(PTR) BLOCK(                                    \
-  static_assert( IS_POINTER(PTR), #PTR " must be a pointer" );  \
+#define MEM_ZERO(PTR) BLOCK(                                        \
+  static_assert( IS_POINTER_EXPR(PTR), #PTR " must be a pointer" ); \
   memset( (PTR), 0, sizeof *(PTR) ); )
 
 /// @cond DOXYGEN_IGNORE
@@ -547,17 +503,6 @@ _GL_INLINE_HEADER_BEGIN
  * @return Returns the updated \a S.
  */
 #define SKIP_CHARS(S,CHARS)       ((S) += strspn( (S), (CHARS) ))
-
-/**
- * Like C11's `_Static_assert()` except that is can be used in an expression.
- *
- * @param EXPR The expression to check.
- * @param MSG The string literal of the error message to print only if \a EXPR
- * evaluates to 0 (false).
- * @return Always returns 1.
- */
-#define STATIC_ASSERT_EXPR(EXPR,MSG) \
-  (!!sizeof( struct { static_assert( (EXPR), MSG ); int required; } ))
 
 /**
  * C version of C++'s `static_cast`.
