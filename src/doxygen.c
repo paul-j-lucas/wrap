@@ -301,9 +301,8 @@ static int dox_cmd_cmp( dox_cmd_t const *i_dox, dox_cmd_t const *j_dox ) {
 ////////// extern functions ///////////////////////////////////////////////////
 
 dox_cmd_t const* dox_find_cmd( char const *s ) {
-  dox_cmd_t const find_dox = { .name = s };
   return bsearch(
-    &find_dox, DOX_COMMANDS,
+    &(dox_cmd_t){ .name = s }, DOX_COMMANDS,
     ARRAY_SIZE( DOX_COMMANDS ), sizeof( DOX_COMMANDS[0] ),
     POINTER_CAST( bsearch_cmp_fn_t, &dox_cmd_cmp )
   );
