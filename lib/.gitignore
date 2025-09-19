@@ -26,3 +26,4 @@
 /unitypes.h
 /wchar.h
 /wctype.h
+/string.c

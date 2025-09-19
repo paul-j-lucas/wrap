@@ -128,6 +128,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module strerror:
   # Code from module strerror-override:
   # Code from module string-h:
+  # Code from module stringeq:
   # Code from module strndup:
   # Code from module strnlen:
   # Code from module strnlen1:
@@ -334,8 +335,7 @@ AC_DEFUN([gl_INIT],
   ])
   gl_UNISTD_MODULE_INDICATOR([getopt-posix])
   gl_MUSL_LIBC
-  AC_SUBST([LIBINTL])
-  AC_SUBST([LTLIBINTL])
+  gl_GETTEXT_H
   GNULIB_I18N
   AC_REQUIRE([gl_FUNC_SETLOCALE_NULL])
   HARD_LOCALE_LIB="$SETLOCALE_NULL_LIB"
@@ -497,6 +497,9 @@ AC_DEFUN([gl_INIT],
   gl_STRING_H
   gl_STRING_H_REQUIRE_DEFAULTS
   AC_PROG_MKDIR_P
+  gl_FUNC_STREQ
+  gl_FUNC_MEMEQ
+  gl_STRING_MODULE_INDICATOR([stringeq])
   gl_FUNC_STRNDUP
   gl_CONDITIONAL([GL_COND_OBJ_STRNDUP],
                  [test $HAVE_STRNDUP = 0 || test $REPLACE_STRNDUP = 1])
@@ -868,6 +871,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strerror-override.c
   lib/strerror-override.h
   lib/strerror.c
+  lib/string.c
   lib/string.in.h
   lib/strndup.c
   lib/strnlen.c
@@ -953,6 +957,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fnmatch.m4
   m4/fnmatch_h.m4
   m4/getopt.m4
+  m4/gettext_h.m4
   m4/gnulib-common.m4
   m4/gnulib-i18n.m4
   m4/include_next.m4
@@ -998,6 +1003,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strdup.m4
   m4/strerror.m4
   m4/string_h.m4
+  m4/stringeq.m4
   m4/strndup.m4
   m4/strnlen.m4
   m4/sys_cdefs_h.m4
