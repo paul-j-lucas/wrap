@@ -47,7 +47,6 @@ AS_IF([test "x$enable_width_term" = xyes],
 # Checks for libraries.
 
 # Checks for header files.
-AC_CHECK_HEADERS([ctype.h])
 AS_IF([test "x$enable_width_term" = xyes],
   [
     AC_CHECK_HEADERS([curses.h ncurses.h], [],
@@ -62,20 +61,12 @@ AS_IF([test "x$enable_width_term" = xyes],
     ])
   ]
 )
-AC_CHECK_HEADERS([errno.h])
-AC_CHECK_HEADERS([fcntl.h])
 AC_CHECK_HEADERS([fnmatch.h])
 AC_CHECK_HEADERS([getopt.h])
-AC_CHECK_HEADERS([inttypes.h])
-AC_CHECK_HEADERS([limits.h])
-AC_CHECK_HEADERS([locale.h])
 AC_CHECK_HEADERS([pwd.h])
-AC_CHECK_HEADERS([regex.h])
-AC_CHECK_HEADERS([signal.h])
-AC_CHECK_HEADERS([stddef.h])
+AC_CHECK_HEADERS([regex.h], [],
+  [AC_MSG_ERROR([regex.h required header not found])])
 AC_CHECK_HEADERS([sysexits.h])
-AC_CHECK_HEADERS([unistd.h])
-AC_CHECK_HEADERS([wctype.h])
 AC_HEADER_ASSERT
 AC_HEADER_STDBOOL
 gl_INIT
@@ -100,7 +91,7 @@ PJL_COMPILE([__builtin_expect],[], [(void)__builtin_expect(1,1);])
 PJL_COMPILE([__builtin_types_compatible_p],[], [(void)__builtin_types_compatible_p(int,int);])
 
 # Checks for library functions.
-AC_FUNC_FNMATCH
+AC_REPLACE_FNMATCH
 AC_FUNC_FORK
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([geteuid getpwuid perror strerror strndup])
