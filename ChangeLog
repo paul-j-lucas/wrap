@@ -1,3 +1,8 @@
+2025-10-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac: Removed unneeded AC_CHECK_HEADERS; now using
+     AC_REPACE_FNMATCH.
+
 2025-10-01  Paul J. Lucas <paul@lucasmail.org>
 
    * cc_map.c, cc_map.h, common.c, common.h, unicode.c, unicode.h, util.c,
