@@ -1,3 +1,19 @@
+2025-10-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * cc_map.c, cc_map.h, common.c, common.h, unicode.c, unicode.h, util.c,
+     util.h: Now using standard C99 inline.
+
+2025-09-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * Makefile.am, bootstrap, configure.ac, pjl_check_typedef.m4,
+     pjl_compile.m4, makedoc.sh, man/Makefile.am, man/man1/Makefile.am, wrap.1,
+     wrapc.1, man/man5/Makefile.am, wraprc.5, alias.c, alias.h, align.c,
+     cc_map.c, cc_map.h, common.c, common.h, doxygen.c, doxygen.h, markdown.c,
+     markdown.h, options.c, options.h, pattern.c, pattern.h, pjl_config.h,
+     read_conf.c, read_conf.h, regex_test.c, type_traits.h, unicode.c,
+     unicode.h, util.c, util.h, wrap.c, wrapc.c, wregex.c, wregex.h,
+     test/Makefile.am, run_test.sh, wrap.css: Updated copyright year.
+
 2025-08-29  Paul J. Lucas <paul@lucasmail.org>
 
    * configure.ac, src/Makefile.am, type_traits.h, util.h: Split out type
