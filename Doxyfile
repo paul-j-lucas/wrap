@@ -2,7 +2,7 @@
 #       wrap -- text reformatter
 #       Doxyfile
 #
-#       Copyright (C) 2023  Paul J. Lucas
+#       Copyright (C) 2023-2025  Paul J. Lucas
 #
 #       This program is free software: you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -23,10 +23,12 @@ PROJECT_BRIEF           = "A filter for reformatting text by wrapping and fillin
 
 INPUT                   = README.md src
 FILE_PATTERNS           = *.c *.h *.md
-FILTER_PATTERNS         = "*.h=sed s/[A-Z][A-Z_]*[A-Z]_H_INLINE/inline/"
+FILTER_PATTERNS         = "*.[ch]=sed  -f Doxygen.sed"
 PREDEFINED              = __GNUC__ \
                           WITH_IS_SAME_TYPE
 EXCLUDE                 = src/config.h
+EXCLUDE_PATTERNS        = *_test.c
+
 OUTPUT_DIRECTORY        = docs
 HTML_EXTRA_STYLESHEET   = wrap.css
 HTML_OUTPUT             = .
@@ -60,6 +62,7 @@ STRIP_CODE_COMMENTS     = NO
 TAB_SIZE                = 2
 TYPEDEF_HIDES_STRUCT    = YES
 USE_MDFILE_AS_MAINPAGE  = README.md
+WARN_IF_UNDOC_ENUM_VAL  = YES
 WARN_NO_PARAMDOC        = YES
 
 # vim:set et sw=4 ts=4:
