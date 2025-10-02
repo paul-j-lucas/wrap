@@ -25,9 +25,6 @@
 
 // local
 #include "pjl_config.h"                 /* must go first */
-/// @cond DOXYGEN_IGNORE
-#define W_CC_MAP_H_INLINE _GL_EXTERN_INLINE
-/// @endcond
 #include "cc_map.h"
 #include "options.h"
 #include "util.h"
@@ -196,5 +193,8 @@ char const* cc_map_compile( char const *in_cc ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 /** @} */
+
+extern inline bool cc_is_single( char const* );
+extern inline char const* cc_map_get( char );
 
 /* vim:set et sw=2 ts=2: */

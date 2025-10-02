@@ -25,7 +25,6 @@
 
 // local
 #include "pjl_config.h"                 /* must go first */
-#define W_COMMON_H_INLINE _GL_EXTERN_INLINE
 #include "common.h"
 #include "util.h"
 
@@ -51,4 +50,8 @@ void common_cleanup( void ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+extern inline size_t char_width( char, size_t );
+extern inline char const* eol( void );
+
 /* vim:set et sw=2 ts=2: */

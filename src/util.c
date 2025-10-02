@@ -25,7 +25,6 @@
 
 // local
 #include "pjl_config.h"                 /* must go first */
-#define W_UTIL_H_INLINE _GL_EXTERN_INLINE
 #include "util.h"
 
 /// @cond DOXYGEN_IGNORE
@@ -373,5 +372,13 @@ void wait_for_debugger_attach( char const *env_var ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 /** @} */
+
+extern inline bool is_blank_line( char const* );
+extern inline bool is_digits( char const* );
+extern inline bool is_eol( char );
+extern inline bool is_space( char );
+extern inline bool is_windows_eol( char const [const], size_t );
+extern inline bool true_or_set( bool* );
+extern inline bool true_clear( bool* );
 
 /* vim:set et sw=2 ts=2: */

@@ -26,7 +26,6 @@
 
 // local
 #include "pjl_config.h"                 /* must go first */
-#define W_UNICODE_H_INLINE _GL_EXTERN_INLINE
 #include "unicode.h"
 
 /// @cond DOXYGEN_IGNORE
@@ -262,5 +261,17 @@ char const* utf8_rsync_impl( char const *buf, char const *pos ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 /** @} */
+
+extern inline bool cp_is_alpha( char32_t );
+extern inline bool cp_is_ascii( char32_t );
+extern inline bool cp_is_control( char32_t );
+extern inline bool cp_is_hyphen_adjacent( char32_t );
+extern inline bool cp_is_space( char32_t );
+extern inline char32_t utf8_decode( char const* );
+extern inline bool utf8_is_cont( char );
+extern inline bool utf8_is_start( char );
+extern inline size_t utf8_len( char );
+extern inline size_t utf8_copy_char( char*, char const* );
+extern inline char const* utf8_rsync( char const*, char const* );
 
 /* vim:set et sw=2 ts=2: */

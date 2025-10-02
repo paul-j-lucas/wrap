@@ -46,11 +46,6 @@
 
 /// @endcond
 
-_GL_INLINE_HEADER_BEGIN
-#ifndef W_UNICODE_H_INLINE
-# define W_UNICODE_H_INLINE _GL_INLINE
-#endif /* W_UNICODE_H_INLINE */
-
 #if !HAVE_CHAR8_T
 /// 8-bit character type (borrowed from C23).
 typedef uint8_t char8_t;
@@ -97,8 +92,8 @@ typedef char utf8c_t[ UTF8_CHAR_SIZE_MAX ];
  * @sa cp_is_control()
  * @sa cp_is_space()
  */
-NODISCARD W_UNICODE_H_INLINE
-bool cp_is_alpha( char32_t cp ) {
+NODISCARD
+inline bool cp_is_alpha( char32_t cp ) {
   return iswalpha( STATIC_CAST( wint_t, cp ) );
 }
 
@@ -112,8 +107,8 @@ bool cp_is_alpha( char32_t cp ) {
  * @sa cp_is_control()
  * @sa cp_is_space()
  */
-NODISCARD W_UNICODE_H_INLINE
-bool cp_is_ascii( char32_t cp ) {
+NODISCARD
+inline bool cp_is_ascii( char32_t cp ) {
   return cp <= 0x7F;
 }
 
@@ -127,8 +122,8 @@ bool cp_is_ascii( char32_t cp ) {
  * @sa cp_is_ascii()
  * @sa cp_is_space()
  */
-NODISCARD W_UNICODE_H_INLINE
-bool cp_is_control( char32_t cp ) {
+NODISCARD
+inline bool cp_is_control( char32_t cp ) {
   return cp_is_ascii( cp ) && iscntrl( STATIC_CAST( int, cp ) );
 }
 
@@ -177,8 +172,8 @@ bool cp_is_hyphen( char32_t cp );
  *
  * @sa cp_is_hyphen()
  */
-NODISCARD W_UNICODE_H_INLINE
-bool cp_is_hyphen_adjacent( char32_t cp ) {
+NODISCARD
+inline bool cp_is_hyphen_adjacent( char32_t cp ) {
   return cp_is_alpha( cp );
 }
 
@@ -192,8 +187,8 @@ bool cp_is_hyphen_adjacent( char32_t cp ) {
  * @sa cp_is_ascii()
  * @sa cp_is_control()
  */
-NODISCARD W_UNICODE_H_INLINE
-bool cp_is_space( char32_t cp ) {
+NODISCARD
+inline bool cp_is_space( char32_t cp ) {
   return iswspace( STATIC_CAST( wint_t, cp ) );
 }
 
@@ -208,8 +203,8 @@ bool cp_is_space( char32_t cp ) {
  *
  * @sa utf8_decode_impl()
  */
-NODISCARD W_UNICODE_H_INLINE
-char32_t utf8_decode( char const *s ) {
+NODISCARD
+inline char32_t utf8_decode( char const *s ) {
   extern char32_t utf8_decode_impl( char const* );
   char32_t const cp = STATIC_CAST( char8_t, *s );
   return cp_is_ascii( cp ) ? cp : utf8_decode_impl( s );
@@ -225,8 +220,8 @@ char32_t utf8_decode( char const *s ) {
  *
  * @sa utf8_is_start()
  */
-NODISCARD W_UNICODE_H_INLINE
-bool utf8_is_cont( char c ) {
+NODISCARD
+inline bool utf8_is_cont( char c ) {
   char8_t const c8 = STATIC_CAST( char8_t, c );
   return c8 >= 0x80 && c8 < 0xC0;
 }
@@ -241,8 +236,8 @@ bool utf8_is_cont( char c ) {
  *
  * @sa utf8_is_cont()
  */
-NODISCARD W_UNICODE_H_INLINE
-bool utf8_is_start( char c ) {
+NODISCARD
+inline bool utf8_is_start( char c ) {
   char8_t const c8 = STATIC_CAST( char8_t, c );
   return c8 <= 0x7F || (c8 >= 0xC2 && c8 < 0xFE);
 }
@@ -254,8 +249,8 @@ bool utf8_is_start( char c ) {
  * @param c The first byte of the UTF-8 encoded code-point.
  * @return Returns 1-6, or 0 if \a c is invalid.
  */
-NODISCARD W_UNICODE_H_INLINE
-size_t utf8_len( char c ) {
+NODISCARD
+inline size_t utf8_len( char c ) {
   extern char8_t const UTF8_LEN_TABLE[];
   return (size_t)UTF8_LEN_TABLE[ STATIC_CAST( char8_t, c ) ];
 }
@@ -267,8 +262,8 @@ size_t utf8_len( char c ) {
  * @param src A pointer to the source.
  * @return Returns the number of bytes copied.
  */
-PJL_DISCARD W_UNICODE_H_INLINE
-size_t utf8_copy_char( char *dest, char const *src ) {
+PJL_DISCARD
+inline size_t utf8_copy_char( char *dest, char const *src ) {
   size_t const len = utf8_len( src[0] );
   memmove( dest, src, len );
   return len;
@@ -289,16 +284,14 @@ size_t utf8_copy_char( char *dest, char const *src ) {
  *
  * @sa utf8_rsync_impl()
  */
-NODISCARD W_UNICODE_H_INLINE
-char const* utf8_rsync( char const *buf, char const *pos ) {
+NODISCARD
+inline char const* utf8_rsync( char const *buf, char const *pos ) {
   extern char const* utf8_rsync_impl( char const*, char const* );
   char32_t const cp = STATIC_CAST( char8_t, *pos );
   return cp_is_ascii( cp ) ? pos : utf8_rsync_impl( buf, pos );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
-_GL_INLINE_HEADER_END
 
 /** @} */
 
