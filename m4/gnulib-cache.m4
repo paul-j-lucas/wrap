@@ -38,7 +38,6 @@
 #  --no-libtool \
 #  --macro-prefix=gl \
 #  bool \
-#  extern-inline \
 #  fnmatch \
 #  getopt-gnu \
 #  strdup-posix \
@@ -50,7 +49,6 @@
 gl_LOCAL_DIR([])
 gl_MODULES([
   bool
-  extern-inline
   fnmatch
   getopt-gnu
   strdup-posix
