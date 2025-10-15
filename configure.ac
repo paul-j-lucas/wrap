@@ -33,7 +33,7 @@ AS_IF([test "x$ac_cv_prog_cc_c11" = xno],
 gl_EARLY
 AC_PROG_INSTALL
 
-# Program feature: --width-term (enabled by default)
+# Program feature: --width=term (enabled by default)
 AC_ARG_ENABLE([width-term],
   AS_HELP_STRING([--disable-width-term], [disable support for --width=term]),
   [],
