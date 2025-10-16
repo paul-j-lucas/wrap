@@ -1,3 +1,12 @@
+2025-10-15  Paul J. Lucas <paul@lucasmail.org>
+
+   * configure.ac, pjl_check_compile_flag.m4: Added PJL_CHECK_COMPILE_FLAG.
+
+2025-10-05  Paul J. Lucas <paul@lucasmail.org>
+
+   * ax_cflags_warn_all.m4: Updated.
+   * ax_check_compile_flag.m4: Updated.
+
 2025-10-02  Paul J. Lucas <paul@lucasmail.org>
 
    * configure.ac: Eliminated AM_INIT_AUTOMAKE arguments and INSTALL.
