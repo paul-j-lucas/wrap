@@ -152,7 +152,6 @@ PJL_CHECK_COMPILE_FLAG([-Wunreachable-code-return], [WRAP_CFLAGS])
 PJL_CHECK_COMPILE_FLAG([-Wunreachable-code], [WRAP_CFLAGS])
 PJL_CHECK_COMPILE_FLAG([-Wunused], [WRAP_CFLAGS])
 PJL_CHECK_COMPILE_FLAG([-Wwrite-strings], [WRAP_CFLAGS])
-PJL_CHECK_COMPILE_FLAG([-Wzero-as-null-pointer-constant], [WRAP_CFLAGS])
 
 # Generate files.
 AH_TOP([#ifndef wrap_config_H
