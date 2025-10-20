@@ -70,7 +70,7 @@
 
 #endif /* HAVE___ATTRIBUTE__ */
 
-#ifdef HAVE___TYPEOF__
+#ifdef HAVE_TYPEOF
 /**
  * Discard the return value of a function even if it was declared with
  * `NODISCARD`.
@@ -78,8 +78,8 @@
  * @param FN_CALL The function call.
  */
 #define PJL_DISCARD_RV(FN_CALL) \
-  do { MAYBE_UNUSED __typeof__(FN_CALL) _rv = (FN_CALL); } while (0)
-#endif /* HAVE___TYPEOF__ */
+  do { MAYBE_UNUSED typeof(FN_CALL) _rv = (FN_CALL); } while (0)
+#endif /* HAVE_TYPEOF */
 
 ///////////////////////////////////////////////////////////////////////////////
 
