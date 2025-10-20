@@ -103,8 +103,8 @@ char const* regex_error( wregex_t *re, int err_code ) {
 }
 
 void regex_free( wregex_t *re ) {
-  assert( re != NULL );
-  regfree( re );
+  if ( re != NULL )
+    regfree( re );
 }
 
 bool regex_match( wregex_t *re, char const *s, size_t offset, size_t *range ) {

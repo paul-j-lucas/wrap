@@ -142,7 +142,7 @@ char const* regex_error( wregex_t *re, int err_code );
 /**
  * Frees all memory used by a wregex_t.
  *
- * @param re A pointer to the wregex_t to free.
+ * @param re A pointer to the wregex_t to free.  If NULL, does nothing.
  */
 void regex_free( wregex_t *re );
 
