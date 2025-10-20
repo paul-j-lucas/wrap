@@ -1,3 +1,7 @@
+2025-10-19  Paul J. Lucas <paul@lucasmail.org>
+
+   * pjl_compile.m4: Removed AC_REQUIRE.
+
 2025-10-18  Paul J. Lucas <paul@lucasmail.org>
 
    * string.c: Added missing files.
