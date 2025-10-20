@@ -32,6 +32,7 @@
 // standard
 #include <assert.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <sysexits.h>
 #include <wctype.h>
 
@@ -110,27 +111,32 @@ bool regex_match( wregex_t *re, char const *s, size_t offset, size_t *range ) {
   assert( re != NULL );
   assert( s != NULL );
 
+  regmatch_t *const match = MALLOC( regmatch_t, re->re_nsub + 1 );
+  bool matched = false;
   char const *const so = s + offset;
-  regmatch_t match[ re->re_nsub + 1 ];
 
   int const err_code = regexec( re, so, re->re_nsub + 1, match, /*eflags=*/0 );
 
   if ( err_code == REG_NOMATCH )
-    return false;
-  if ( err_code < 0 ) {
+    goto done;
+  if ( unlikely( err_code < 0 ) ) {
     fatal_error( EX_SOFTWARE,
       "regular expression error (%d): %s\n",
       err_code, regex_error( re, err_code )
     );
   }
   if ( !is_begin_word_boundary( so, so + match[0].rm_so ) )
-    return false;
+    goto done;
+  matched = true;
 
   if ( range != NULL ) {
     range[0] = STATIC_CAST( size_t, match[0].rm_so ) + offset;
     range[1] = STATIC_CAST( size_t, match[0].rm_eo ) + offset;
   }
-  return true;
+
+done:
+  free( match );
+  return matched;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
