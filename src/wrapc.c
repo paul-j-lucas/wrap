@@ -323,7 +323,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
 
   arg_buf_t   arg_opt_alias;
   arg_buf_t   arg_opt_block_regex;
-  arg_buf_t   arg_opt_conf_file;
+  arg_buf_t   arg_opt_config_path;
   arg_buf_t   arg_opt_eol;
   arg_buf_t   arg_opt_eos_spaces;
   path_buf_t  arg_opt_fin_name;
@@ -351,7 +351,7 @@ static void fork_exec_wrap( pid_t read_source_write_wrap_pid ) {
   /*  0 */    ARG_DUP(                  PACKAGE );
   /*  1 */ IF_ARG_FMT( opt_alias      , "-" SOPT(ALIAS)       "%s"  );
   /*  2 */ IF_ARG_FMT( opt_block_regex, "-" SOPT(BLOCK_REGEX) "%s"  );
-  /*  3 */ IF_ARG_FMT( opt_conf_file  , "-" SOPT(CONFIG)      "%s"  );
+  /*  3 */ IF_ARG_FMT( opt_config_path, "-" SOPT(CONFIG)      "%s"  );
   /*  4 */ IF_ARG_DUP( opt_no_conf    , "-" SOPT(NO_CONFIG)         );
   /*  5 */ IF_ARG_DUP( opt_eos_delimit, "-" SOPT(EOS_DELIMIT)       );
   /*  6 */ IF_ARG_FMT( opt_eos_spaces , "-" SOPT(EOS_SPACES)  "%zu" );

@@ -114,6 +114,8 @@ static void path_append( char *path, char const *component ) {
  */
 NODISCARD
 static section_t section_parse( char const *s ) {
+  assert( s != NULL );
+
   if ( strcmp( s, "[ALIASES]" ) == 0 )
     return SECTION_ALIASES;
   if ( strcmp( s, "[PATTERNS]" ) == 0 )

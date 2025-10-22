@@ -89,7 +89,7 @@ char                opt_align_char;
 size_t              opt_align_column;
 char const         *opt_block_regex;
 char const         *opt_comment_chars = COMMENT_CHARS_DEFAULT;
-char const         *opt_conf_file;
+char const         *opt_config_path;
 bool                opt_doxygen;
 eol_t               opt_eol = EOL_INPUT;
 bool                opt_eos_delimit;
@@ -537,7 +537,7 @@ static void parse_options( int argc, char const *argv[],
         if ( strchr( CONF_FORBIDDEN_OPTS_SHORT, opt ) != NULL ) {
           fatal_error( EX_CONFIG,
             "%s:%u: %s option not allowed in configuration file\n",
-            opt_conf_file, line_no, opt_format( STATIC_CAST( char, opt ) )
+            opt_config_path, line_no, opt_format( STATIC_CAST( char, opt ) )
           );
         }
       }
@@ -571,7 +571,7 @@ static void parse_options( int argc, char const *argv[],
       case COPT(CONFIG):
         if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
           goto missing_arg;
-        opt_conf_file = optarg;
+        opt_config_path = optarg;
         break;
       case COPT(DOT_IGNORE):
         opt_lead_dot_ignore = true;
@@ -900,12 +900,12 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
 
   if ( !opt_no_conf && (opt_alias != NULL || opt_fin_name != NULL) ) {
     alias_t const *alias = NULL;
-    opt_conf_file = read_conf( opt_conf_file );
+    opt_config_path = read_conf( opt_config_path );
     if ( opt_alias != NULL ) {
       if ( (alias = alias_find( opt_alias )) == NULL ) {
         fatal_error( EX_USAGE,
           "\"%s\": no such alias in %s\n",
-          opt_alias, opt_conf_file
+          opt_alias, opt_config_path
         );
       }
     }

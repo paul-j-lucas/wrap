@@ -111,7 +111,7 @@ extern char         opt_align_char;     ///< Use this to pad comment alignment.
 extern size_t       opt_align_column;   ///< Align comment on given column.
 extern char const  *opt_block_regex;    ///< Block regular expression.
 extern char const  *opt_comment_chars;  ///< Chars that delimit comments.
-extern char const  *opt_conf_file;      ///< Configuration file path.
+extern char const  *opt_config_path;    ///< Configuration file path.
 extern bool         opt_data_link_esc;  ///< Respond to in-band control?
 extern bool         opt_doxygen;        ///< Handle Doxygen commands?
 extern eol_t        opt_eol;            ///< End-of-line treatment.
