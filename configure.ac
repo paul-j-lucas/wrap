@@ -72,7 +72,6 @@ AC_HEADER_STDBOOL
 gl_INIT
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_C_INLINE
 AC_C_TYPEOF
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
