@@ -590,8 +590,8 @@
  */
 typedef int (*bsearch_cmp_fn_t)( void const *i_data, void const *j_data );
 
-// extern variable definitions
-extern char const  *me;                 ///< Program name.
+// extern variables
+extern char const  *prog_name;          ///< Program name.
 
 ////////// extern functions ///////////////////////////////////////////////////
 

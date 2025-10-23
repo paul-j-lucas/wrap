@@ -134,7 +134,7 @@ struct dual_line {
 typedef struct dual_line dual_line_t;
 
 // extern variable definitions
-char const         *me;                 // executable name
+char const         *prog_name;
 
 // local variable definitions
 static char         close_cc[2];        ///< Closing comment delimiter char(s).

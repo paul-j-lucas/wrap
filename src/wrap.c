@@ -88,7 +88,7 @@ enum indent {
 typedef enum indent indent_t;
 
 // extern variable definitions
-char const         *me;                 // executable name
+char const         *prog_name;
 
 // local variable definitions
 static wregex_t     block_regex;        ///< Compiled from opt_block_regex.

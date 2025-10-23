@@ -764,7 +764,7 @@ invalid_opt:
   NO_OP;
   // Determine whether the invalid option was short or long.
   char const *const invalid_opt = argv[ optind - 1 ];
-  EPRINTF( "%s: ", me );
+  EPRINTF( "%s: ", prog_name );
   if ( invalid_opt != NULL && strncmp( invalid_opt, "--", 2 ) == 0 )
     EPRINTF( "\"%s\"", invalid_opt + 2/*skip over "--"*/ );
   else
@@ -884,8 +884,8 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
   ASSERT_RUN_ONCE();
   assert( usage != NULL );
 
-  me = base_name( argv[0] );
-  is_wrapc = strcmp( me, PACKAGE "c" ) == 0;
+  prog_name = base_name( argv[0] );
+  is_wrapc = strcmp( prog_name, PACKAGE "c" ) == 0;
 
   parse_options(
     argc, argv, OPTS_SHORT[ is_wrapc ], OPTS_LONG[ is_wrapc ],

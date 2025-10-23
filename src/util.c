@@ -134,7 +134,7 @@ char closing_char( char c ) {
 }
 
 void fatal_error( int status, char const *format, ... ) {
-  EPRINTF( "%s: ", me );
+  EPRINTF( "%s: ", prog_name );
   va_list args;
   va_start( args, format );
   vfprintf( stderr, format, args );
@@ -300,7 +300,7 @@ bool is_any( char const *s, char const *const matches[const static 2] ) {
 }
 
 void perror_exit( int status ) {
-  perror( me );
+  perror( prog_name );
   exit( status );
 }
 
@@ -318,7 +318,7 @@ void setlocale_utf8( void ) {
     }
   } // for
 
-  EPRINTF( "%s: could not set locale to UTF-8; tried: ", me );
+  EPRINTF( "%s: could not set locale to UTF-8; tried: ", prog_name );
   bool comma = false;
   for ( char const *const *loc = UTF8_LOCALES; *loc != NULL; ++loc ) {
     EPRINTF( "%s%s", (comma ? ", " : ""), *loc );

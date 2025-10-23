@@ -36,20 +36,20 @@
 static char const TEST_SEP = ' ';
 
 // extern variable definitions
-char const       *me;                   ///< Program name.
+char const       *prog_name;            ///< Program name.
 
 ////////// local functions ////////////////////////////////////////////////////
 
 _Noreturn
 static void usage( void ) {
-  EPRINTF( "usage: %s test\n", me );
+  EPRINTF( "usage: %s test\n", prog_name );
   exit( EX_USAGE );
 }
 
 ////////// main ///////////////////////////////////////////////////////////////
 
 int main( int argc, char const *argv[] ) {
-  me = base_name( argv[0] );
+  prog_name = base_name( argv[0] );
   if ( --argc != 1 )
     usage();
 
