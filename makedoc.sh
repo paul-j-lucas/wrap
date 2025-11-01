@@ -1,9 +1,9 @@
-#! /bin/sh
+#! /usr/bin/env bash
 ##
 #       wrap -- text reformatter
 #       makedoc.sh
 #
-#       Copyright (C) 2023-2025  Paul J. Lucas
+#       Copyright (C) 2021-2025  Paul J. Lucas
 #
 #       This program is free software: you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -30,15 +30,38 @@ is_remote_login() {
   [ "$SSH_CLIENT" -o "$SSH_CONNECTION" -o "$SSH_TTY" ]
 }
 
+local_basename() {
+  ##
+  # Autoconf, 11.15:
+  #
+  # basename
+  #   Not all hosts have a working basename. You can use expr instead.
+  ##
+  expr "//$1" : '.*/\(.*\)'
+}
+
+usage() {
+  cat >&2 <<END
+usage: $ME package-name docs-dir
+END
+  exit 1
+}
+
+########## Process command-line ###############################################
+
+ME=$(local_basename "$0")
+
+(( $# == 2 )) || usage
+PACKAGE=$1
+DOCS_DIR=$2
+
 ########## Begin ##############################################################
 
-echo "Generating documentation..."
+INDEX_HTML="$DOCS_DIR/index.html"
+
+echo "Generating $PACKAGE documentation ..."
 doxygen
-
-INDEX_HTML="docs/index.html"
-
-echo
-echo "HTML documentation generated at: $INDEX_HTML"
+echo "... HTML documentation generated at: $INDEX_HTML"
 
 is_remote_login && exit 0
 
