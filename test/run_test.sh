@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /usr/bin/env bash
 ##
 #       wrap -- text reformatter
 #       test/run_test.sh
@@ -43,39 +43,39 @@ pass() {
 }
 
 fail() {
-  RESULT=$1
-  [ "$RESULT" ] || RESULT=FAIL
-  print_result $RESULT $TEST_NAME
+  result=$1; shift; [ -n "$result" ] || result=FAIL
+  print_result $result $TEST_NAME $*
   {
-    echo ":test-result: $RESULT"
+    echo ":test-result: $result"
     echo ":copy-in-global-log: yes"
   } > $TRS_FILE
 }
 
 print_result() {
-  RESULT=$1; shift
-  COLOR=`eval echo \\$COLOR_$RESULT`
+  result=$1; shift
+  COLOR=`eval echo \\$COLOR_$result`
   if [ "$COLOR" ]
-  then echo $COLOR$RESULT$COLOR_NONE: $*
-  else echo $RESULT: $*
+  then echo $COLOR$result$COLOR_NONE: $*
+  else echo $result: $*
   fi
 }
 
 usage() {
   [ "$1" ] && { echo "$ME: $*" >&2; usage; }
   cat >&2 <<END
-usage: $ME --test-name=NAME --log-file=PATH --trs-file=PATH [options] TEST-COMMAND
+usage: $ME --test-name NAME --log-file PATH --trs-file PATH [options] TEST-FILE
 options:
-  --color-tests={yes|no}
-  --enable-hard-errors={yes|no}
-  --expect-failure={yes|no}
+  --collect-skipped-logs {yes|no}
+  --color-tests {yes|no}
+  --enable-hard-errors {yes|no}
+  --expect-failure {yes|no}
 END
   exit 1
 }
 
 ########## Begin ##############################################################
 
-ME=`local_basename "$0"`
+ME=$(local_basename "$0")
 
 [ "$BUILD_SRC" ] || {
   echo "$ME: \$BUILD_SRC not set" >&2
@@ -87,23 +87,17 @@ ME=`local_basename "$0"`
 while [ $# -gt 0 ]
 do
   case $1 in
+  --collect-skipped-logs)
+    COLLECT_SKIPPED_LOGS=$2; shift
+    ;;
   --color-tests)
     COLOR_TESTS=$2; shift
-    ;;
-  --color-tests=*)
-    COLOR_TESTS=`expr "x$1" : 'x--color-tests=\(.*\)'`
     ;;
   --enable-hard-errors)
     ENABLE_HARD_ERRORS=$2; shift
     ;;
-  --enable-hard-errors=*)
-    ENABLE_HARD_ERRORS=`expr "x$1" : 'x--enable-hard-errors=\(.*\)'`
-    ;;
   --expect-failure)
     EXPECT_FAILURE=$2; shift
-    ;;
-  --expect-failure=*)
-    EXPECT_FAILURE=`expr "x$1" : 'x--expect-failure=\(.*\)'`
     ;;
   --help)
     usage
@@ -111,20 +105,11 @@ do
   --log-file)
     LOG_FILE=$2; shift
     ;;
-  --log-file=*)
-    LOG_FILE=`expr "x$1" : 'x--log-file=\(.*\)'`
-    ;;
   --test-name)
     TEST_NAME=$2; shift
     ;;
-  --test-name=*)
-    TEST_NAME=`expr "x$1" : 'x--test-name=\(.*\)'`
-    ;;
   --trs-file)
     TRS_FILE=$2; shift
-    ;;
-  --trs-file=*)
-    TRS_FILE=`expr "x$1" : 'x--trs-file=\(.*\)'`
     ;;
   --)
     shift
@@ -140,15 +125,15 @@ do
   shift
 done
 
-[ "$TEST_NAME" ] || usage "required --test-name not given"
+TEST=$1
+[ "$TEST_NAME" ] || TEST_NAME=$TEST
 [ "$LOG_FILE"  ] || usage "required --log-file not given"
 [ "$TRS_FILE"  ] || usage "required --trs-file not given"
-[ $# -ge 1     ] || usage "required test-command not given"
-TEST=$1
+[ $# -ge 1     ] || usage "required test-file not given"
 
 ########## Initialize #########################################################
 
-if [ "$COLOR_TESTS" = yes ]
+if [ "$COLOR_TESTS" = yes -a -t 1 ]
 then
   COLOR_BLUE="[1;34m"
   COLOR_GREEN="[0;32m"
@@ -170,16 +155,19 @@ yes) EXPECT_FAILURE=1 ;;
   *) EXPECT_FAILURE=0 ;;
 esac
 
+[ -n "$TMPDIR" ] || TMPDIR=/tmp
+trap "x=$?; rm -f $TMPDIR/*_$$_* 2>/dev/null; exit $x" EXIT HUP INT TERM
+
 ##
 # The automake framework sets $srcdir. If it's empty, it means this script was
 # called by hand, so set it ourselves.
 ##
 [ "$srcdir" ] || srcdir="."
 
-DATA_DIR=$srcdir/data
-EXPECTED_DIR=$srcdir/expected
+DATA_DIR="$srcdir/data"
+EXPECTED_DIR="$srcdir/expected"
 TEST_NAME=`local_basename "$TEST_NAME"`
-OUTPUT=/tmp/wrap_test_output_$$_
+ACTUAL_OUTPUT="$TMPDIR/wrap_test_output_$$_"
 
 ########## Run test ###########################################################
 
@@ -206,13 +194,13 @@ run_wrap_file() {
   esac
   EXPECTED_OUTPUT="$EXPECTED_DIR/`echo $TEST_NAME | sed s/test$/$EXT/`"
 
-  #echo $COMMAND -c $CONFIG "$OPTIONS" -f $INPUT -o $OUTPUT
-  if $COMMAND -c $CONFIG $OPTIONS -f $INPUT -o $OUTPUT 2> $LOG_FILE
+  #echo $COMMAND -c $CONFIG "$OPTIONS" -f $INPUT -o $ACTUAL_OUTPUT
+  if $COMMAND -c $CONFIG $OPTIONS -f $INPUT -o $ACTUAL_OUTPUT 2> $LOG_FILE
   then
     if [ 0 -eq $EXPECTED_EXIT ]
     then
-      if diff $EXPECTED_OUTPUT $OUTPUT > $LOG_FILE
-      then pass; mv $OUTPUT $LOG_FILE
+      if diff $EXPECTED_OUTPUT $ACTUAL_OUTPUT > $LOG_FILE
+      then pass; mv $ACTUAL_OUTPUT $LOG_FILE
       else fail
       fi
     else
