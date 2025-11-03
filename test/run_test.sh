@@ -166,13 +166,24 @@ trap "x=$?; rm -f $TMPDIR/*_$$_* 2>/dev/null; exit $x" EXIT HUP INT TERM
 
 DATA_DIR="$srcdir/data"
 EXPECTED_DIR="$srcdir/expected"
-TEST_NAME=`local_basename "$TEST_NAME"`
+TEST_NAME=$(local_basename "$TEST_NAME")
 ACTUAL_OUTPUT="$TMPDIR/wrap_test_output_$$_"
+
+##
+# Must put BUILD_SRC first in PATH so we get the correct version of wrap/wrapc.
+##
+PATH="$BUILD_SRC:$PATH"
+
+##
+# Disable core dumps so we won't fill up the disk with them if a bunch of tests
+# crash.
+##
+ulimit -c 0
 
 ########## Run test ###########################################################
 
 run_regex_file() {
-  if regex_test $TEST > $LOG_FILE 2>&1
+  if regex_test "$TEST" > "$LOG_FILE" 2>&1
   then pass
   else fail
   fi
@@ -183,24 +194,25 @@ run_wrap_file() {
   IFS='|'; read COMMAND CONFIG OPTIONS INPUT EXPECTED_EXIT < $TEST
   [ "$IFS_old" ] && IFS=$IFS_old
 
-  COMMAND=`echo $COMMAND`               # trims whitespace
-  CONFIG=`echo $CONFIG`                 # trims whitespace
-  [ "$CONFIG" != /dev/null ] && CONFIG=$DATA_DIR/$CONFIG
-  INPUT=$DATA_DIR/`echo $INPUT`         # trims whitespace
-  EXPECTED_EXIT=`echo $EXPECTED_EXIT`   # trims whitespace
-  case $TEST in
+  COMMAND=$(echo $COMMAND)              # trims whitespace
+  CONFIG=$(echo $CONFIG)                # trims whitespace
+  [ "$CONFIG" != /dev/null ] && CONFIG="$DATA_DIR/$CONFIG"
+  INPUT=$DATA_DIR/$(echo $INPUT)        # trims whitespace
+  EXPECTED_EXIT=$(echo $EXPECTED_EXIT)  # trims whitespace
+
+  case "$TEST" in
   *crlf*) EXT=crlf ;;
   *)      EXT=txt ;;
   esac
-  EXPECTED_OUTPUT="$EXPECTED_DIR/`echo $TEST_NAME | sed s/test$/$EXT/`"
+  EXPECTED_OUTPUT="$EXPECTED_DIR/$(echo $TEST_NAME | sed s/test$/$EXT/)"
 
   #echo $COMMAND -c $CONFIG "$OPTIONS" -f $INPUT -o $ACTUAL_OUTPUT
-  if $COMMAND -c $CONFIG $OPTIONS -f $INPUT -o $ACTUAL_OUTPUT 2> $LOG_FILE
+  if $COMMAND -c"$CONFIG" $OPTIONS -f"$INPUT" -o"$ACTUAL_OUTPUT" 2> "$LOG_FILE"
   then
     if [ 0 -eq $EXPECTED_EXIT ]
     then
-      if diff $EXPECTED_OUTPUT $ACTUAL_OUTPUT > $LOG_FILE
-      then pass; mv $ACTUAL_OUTPUT $LOG_FILE
+      if diff "$EXPECTED_OUTPUT" "$ACTUAL_OUTPUT" > "$LOG_FILE"
+      then pass; mv "$ACTUAL_OUTPUT" "$LOG_FILE"
       else fail
       fi
     else
@@ -221,19 +233,12 @@ run_wrap_file() {
 }
 
 ##
-# Must put BUILD_SRC first in PATH so we get the correct version of wrap/wrapc.
-##
-PATH=$BUILD_SRC:$PATH
-
-##
 # Must ensure these are unset so neither process will wait for a debugger.
 ##
 unset WRAP_DEBUG
 unset WRAPC_DEBUG
 unset WRAPC_DEBUG_RSRW
 unset WRAPC_DEBUG_RW
-
-trap "x=$?; rm -f /tmp/*_$$_* 2>/dev/null; exit $x" EXIT HUP INT TERM
 
 case $TEST in
 *.regex)  run_regex_file ;;
