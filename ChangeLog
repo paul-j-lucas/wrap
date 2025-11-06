@@ -1,3 +1,24 @@
+2025-11-06  Paul J. Lucas <paul@lucasmail.org>
+
+   * type_traits.h: Added 0 initializer for C < C23.
+
+2025-11-05  Paul J. Lucas <paul@lucasmail.org>
+
+   * run_test.sh: Eliminated EXPECT_FAILURE -- not used.
+
+2025-11-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * run_test.sh: Added quotes; clean-up.
+
+2025-11-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * run_test.sh: Argument processing clean-up; added --collect-skipped-logs.
+
+2025-11-01  Paul J. Lucas <paul@lucasmail.org>
+
+   * Makefile.am, makedoc.sh: makedoc.sh now takes parameters (copied from
+     cdecl).
+
 2025-10-23  Paul J. Lucas <paul@lucasmail.org>
 
    * configure.ac: No longer need AC_C_INLINE.
