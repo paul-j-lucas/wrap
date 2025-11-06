@@ -74,10 +74,10 @@
  * @sa #IS_ARRAY_EXPR()
  */
 #ifdef HAVE_TYPEOF
-#define IS_POINTER_EXPR(P)      \
-  _Generic( &(typeof((P))){ },  \
-    typeof(*(P)) ** : 1,        \
-    default         : 0         \
+#define IS_POINTER_EXPR(P)        \
+  _Generic( &(typeof((P))){ 0 },  \
+    typeof(*(P)) ** : 1,          \
+    default         : 0           \
   )
 #else
 # define IS_POINTER_EXPR(P)       1
