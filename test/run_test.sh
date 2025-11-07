@@ -237,7 +237,7 @@ run_wrap_file() {
   esac
   EXPECTED_OUTPUT="$EXPECTED_DIR/$(echo $TEST_NAME | sed s/test$/$EXT/)"
 
-  #echo $COMMAND -c $CONFIG "$OPTIONS" -f $INPUT -o $ACTUAL_OUTPUT
+  #echo $COMMAND -c $CONFIG $OPTIONS -f $INPUT -o $ACTUAL_OUTPUT
   if $COMMAND -c"$CONFIG" $OPTIONS -f"$INPUT" -o"$ACTUAL_OUTPUT" 2> "$LOG_FILE"
   then
     if [ 0 -eq $EXPECTED_EXIT ]
