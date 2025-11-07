@@ -267,10 +267,7 @@ run_wrap_file() {
 ##
 # Must ensure these are unset so neither process will wait for a debugger.
 ##
-unset WRAP_DEBUG
-unset WRAPC_DEBUG
-unset WRAPC_DEBUG_RSRW
-unset WRAPC_DEBUG_RW
+unset WRAP_DEBUG WRAPC_DEBUG WRAPC_DEBUG_RSRW WRAPC_DEBUG_RW
 
 case $TEST in
 *.regex)  run_regex_file ;;
