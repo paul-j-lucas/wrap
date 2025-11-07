@@ -1,3 +1,7 @@
+2025-11-07  Paul J. Lucas <paul@lucasmail.org>
+
+   * run_test.sh: Now checking option arguments; clean-up.
+
 2025-11-06  Paul J. Lucas <paul@lucasmail.org>
 
    * type_traits.h: Added 0 initializer for C < C23.
