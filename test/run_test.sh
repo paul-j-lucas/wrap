@@ -166,6 +166,7 @@ TEST=$1
 [ "$TRS_FILE"  ] || usage "required --trs-file not given"
 [ $# -ge 1     ] || usage "required test-file not given"
 
+assert_path_exists "$TEST"
 TEST_NAME=$(local_basename "$TEST_NAME")
 
 ########## Initialize #########################################################
