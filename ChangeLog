@@ -1,5 +1,6 @@
 2025-11-07  Paul J. Lucas <paul@lucasmail.org>
 
+   * run_test.sh: Added call to assert_path_exists.
    * run_test.sh: Now checking option arguments; clean-up.
 
 2025-11-06  Paul J. Lucas <paul@lucasmail.org>
