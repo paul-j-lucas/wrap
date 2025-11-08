@@ -213,14 +213,14 @@ ulimit -c 0
 
 ########## Run test ###########################################################
 
-run_regex_file() {
+run_regex_test() {
   if regex_test "$TEST" > "$LOG_FILE" 2>&1
   then pass
   else fail
   fi
 }
 
-run_wrap_file() {
+run_wrap_test() {
   [ "$IFS" ] && IFS_old=$IFS
   IFS='|'; read COMMAND CONFIG OPTIONS INPUT EXPECTED_EXIT < $TEST
   [ "$IFS_old" ] && IFS=$IFS_old
@@ -270,8 +270,8 @@ run_wrap_file() {
 unset WRAP_DEBUG WRAPC_DEBUG WRAPC_DEBUG_RSRW WRAPC_DEBUG_RW
 
 case $TEST in
-*.regex)  run_regex_file ;;
-*.test)   run_wrap_file ;;
+*.regex)  run_regex_test ;;
+*.test)   run_wrap_test ;;
 esac
 
 # vim:set et sw=2 ts=2:
