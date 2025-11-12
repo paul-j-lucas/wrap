@@ -1,3 +1,8 @@
+2025-11-12  Paul J. Lucas <paul@lucasmail.org>
+
+   * Doxyfile, configure.ac, type_traits.h: Eliminated IS_SAME_TYPE -- not
+     used.
+
 2025-11-07  Paul J. Lucas <paul@lucasmail.org>
 
    * run_test.sh: Added call to assert_path_exists.
