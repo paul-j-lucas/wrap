@@ -87,7 +87,6 @@ PJL_CHECK_TYPEDEF(char32_t,[uchar.h],
 )
 AC_CHECK_MEMBERS([struct passwd.pw_dir],[],[],[[#include <pwd.h>]])
 PJL_COMPILE([__builtin_expect],[], [(void)__builtin_expect(1,1);])
-PJL_COMPILE([__builtin_types_compatible_p],[], [(void)__builtin_types_compatible_p(int,int);])
 
 # Checks for library functions.
 AC_REPLACE_FNMATCH

@@ -29,14 +29,6 @@
 // local
 #include "pjl_config.h"                 /* must go first */
 
-/// @cond DOXYGEN_IGNORE
-
-#if HAVE___BUILTIN_TYPES_COMPATIBLE_P && HAVE_TYPEOF
-# define WITH_IS_SAME_TYPE
-#endif
-
-/// @endcond
-
 /**
  * @defgroup type-traits-group Type Traits
  * Macros for type traits.
@@ -82,19 +74,6 @@
 #else
 # define IS_POINTER_EXPR(P)       1
 #endif /* HAVE_TYPEOF */
-
-/**
- * Checks (at compile-time) whether \a T1 and \a T2 are the same type.
- *
- * @param T1 The first type or expression.
- * @param T2 The second type or expression.
- * @return Returns 1 (true) only if \a T1 and \a T2 are the same type; 0
- * (false) otherwise.
- */
-#ifdef WITH_IS_SAME_TYPE
-# define IS_SAME_TYPE(T1,T2) \
-    __builtin_types_compatible_p( __typeof__(T1), __typeof__(T2) )
-#endif /* WITH_IS_SAME_TYPE */
 
 /**
  * Like C11's `_Static_assert()` except that is can be used in an expression.
