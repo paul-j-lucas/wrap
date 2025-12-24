@@ -198,6 +198,16 @@
 #define _GL_FUNCDECL_RPL_1(rpl_func,rettype,parameters,...) \
   _GL_EXTERN_C_FUNC __VA_ARGS__ rettype rpl_func parameters
 
+/* _GL_FUNCDECL_SYS_NAME (func) expands to plain func if C++, and to
+   parenthesized func otherwise.  Parenthesization is needed in C23 if
+   the function is like strchr and so is a qualifier-generic macro
+   that expands to something more complicated.  */
+#ifdef __cplusplus
+# define _GL_FUNCDECL_SYS_NAME(func) func
+#else
+# define _GL_FUNCDECL_SYS_NAME(func) (func)
+#endif
+
 /* _GL_FUNCDECL_SYS (func, rettype, parameters, [attributes]);
    declares the system function, named func, with the given prototype,
    consisting of return type, parameters, and attributes.
@@ -210,7 +220,7 @@
      _GL_FUNCDECL_SYS (posix_openpt, int, (int flags), _GL_ATTRIBUTE_NODISCARD);
  */
 #define _GL_FUNCDECL_SYS(func,rettype,parameters,...) \
-  _GL_EXTERN_C_FUNC __VA_ARGS__ rettype func parameters
+  _GL_EXTERN_C_FUNC __VA_ARGS__ rettype _GL_FUNCDECL_SYS_NAME (func) parameters
 
 /* _GL_CXXALIAS_RPL (func, rettype, parameters);
    declares a C++ alias called GNULIB_NAMESPACE::func
@@ -1462,7 +1472,6 @@ _GL_CXXALIAS_SYS (imaxabs, intmax_t, (intmax_t x));
 _GL_CXXALIASWARN (imaxabs);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef imaxabs
 # if HAVE_RAW_DECL_IMAXABS
 _GL_WARN_ON_USE (imaxabs, "imaxabs is unportable - "
                  "use gnulib module imaxabs for portability");
@@ -1493,7 +1502,6 @@ _GL_CXXALIAS_SYS (imaxdiv, imaxdiv_t, (intmax_t numer, intmax_t denom));
 _GL_CXXALIASWARN (imaxdiv);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef imaxdiv
 # if HAVE_RAW_DECL_IMAXDIV
 _GL_WARN_ON_USE (imaxdiv, "imaxdiv is unportable - "
                  "use gnulib module imaxdiv for portability");
@@ -1523,7 +1531,6 @@ _GL_CXXALIAS_SYS (strtoimax, intmax_t,
 # endif
 _GL_CXXALIASWARN (strtoimax);
 #elif defined GNULIB_POSIXCHECK
-# undef strtoimax
 # if HAVE_RAW_DECL_STRTOIMAX
 _GL_WARN_ON_USE (strtoimax, "strtoimax is unportable - "
                  "use gnulib module strtoimax for portability");
@@ -1553,7 +1560,6 @@ _GL_CXXALIAS_SYS (strtoumax, uintmax_t,
 # endif
 _GL_CXXALIASWARN (strtoumax);
 #elif defined GNULIB_POSIXCHECK
-# undef strtoumax
 # if HAVE_RAW_DECL_STRTOUMAX
 _GL_WARN_ON_USE (strtoumax, "strtoumax is unportable - "
                  "use gnulib module strtoumax for portability");
