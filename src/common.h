@@ -2,7 +2,7 @@
 **      wrap -- text reformatter
 **      src/common.h
 **
-**      Copyright (C) 1996-2025  Paul J. Lucas
+**      Copyright (C) 1996-2026  Paul J. Lucas
 **
 **      This program is free software: you can redistribute it and/or modify
 **      it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@
 /**
  * **wrap** latest copyright year.
  */
-#define WRAP_COPYRIGHT_YEAR       "2025"
+#define WRAP_COPYRIGHT_YEAR       "2026"
 
 /**
  * **wrap** license.
