@@ -1,5 +1,5 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
-/* Copyright (C) 2006-2025 Free Software Foundation, Inc.
+/* Copyright (C) 2006-2026 Free Software Foundation, Inc.
    Written by Paul Eggert, Bruno Haible, Derek Price.
    This file is part of gnulib.
 
@@ -70,7 +70,7 @@
 
 /* The definitions of _GL_FUNCDECL_RPL etc. are copied here.  */
 /* C++ compatible function declaration macros.
-   Copyright (C) 2010-2025 Free Software Foundation, Inc.
+   Copyright (C) 2010-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify it
    under the terms of the GNU Lesser General Public License as published
@@ -439,7 +439,7 @@
 
 /* The definition of _GL_ARG_NONNULL is copied here.  */
 /* A C macro for declaring that specific arguments must not be NULL.
-   Copyright (C) 2009-2025 Free Software Foundation, Inc.
+   Copyright (C) 2009-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify it
    under the terms of the GNU Lesser General Public License as published
@@ -467,7 +467,7 @@
 
 /* The definition of _GL_WARN_ON_USE is copied here.  */
 /* A C macro for emitting warnings if a function is used.
-   Copyright (C) 2010-2025 Free Software Foundation, Inc.
+   Copyright (C) 2010-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify it
    under the terms of the GNU Lesser General Public License as published
