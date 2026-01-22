@@ -65,7 +65,7 @@ enum dox_cmd_type {
    * [`\b`](https://www.doxygen.nl/manual/commands.html#cmdb), and
    * [`\c`](https://www.doxygen.nl/manual/commands.html#cmdc).
    */
-  DOX_INLINE  = (1u << 0),
+  DOX_INLINE  = 1u << 0,
 
   /**
    * Doxygen command should be at the beginning of a line (but isn't forced to
@@ -98,7 +98,7 @@ enum dox_cmd_type {
    *    subsequent lines will be wrapped normally.
    * @endparblock
    */
-  DOX_BOL     = (1u << 1),
+  DOX_BOL     = 1u << 1,
 
   /**
    * Like #DOX_BOL, but the Doxygen command continues until the end of the
@@ -137,7 +137,7 @@ enum dox_cmd_type {
    *    the `\def` line, but otherwise will be wrapped normally.
    * @endparblock
    */
-  DOX_EOL     = (1u << 2),
+  DOX_EOL     = 1u << 2,
 
   /**
    * Like #DOX_BOL, but the Doxygen command continues until either the end of
@@ -150,7 +150,7 @@ enum dox_cmd_type {
    * @remarks This is a conceptually different command type, but it's treated
    * exactly the same as #DOX_BOL.
    */
-  DOX_PAR     = (1u << 3),
+  DOX_PAR     = 1u << 3,
 
   /**
    * Like #DOX_PAR, but the Doxygen command continues until its corresponding
@@ -195,7 +195,7 @@ enum dox_cmd_type {
    *    (including those lines themselves) will _not_ be wrapped at all and
    *    passed through verbatim.
    */
-  DOX_PRE     = (1u << 4),
+  DOX_PRE     = 1u << 4,
 };
 typedef enum dox_cmd_type dox_cmd_type_t;
 
