@@ -496,8 +496,20 @@
  * @param S The string pointer to advance.
  * @param CHARS A string containing the characters to skip over.
  * @return Returns the updated \a S.
+ *
+ * @sa #SKIP_WS()
  */
 #define SKIP_CHARS(S,CHARS)       ((S) += strspn( (S), (CHARS) ))
+
+/**
+ * Advances \a S over all whitespace.
+ *
+ * @param S The string pointer to advance.
+ * @return Returns the updated \a S.
+ *
+ * @sa #SKIP_CHARS()
+ */
+#define SKIP_WS(S)                SKIP_CHARS( (S), WS_CHARS )
 
 /**
  * C version of C++'s `static_cast`.
@@ -592,6 +604,11 @@ typedef int (*bsearch_cmp_fn_t)( void const *i_data, void const *j_data );
 
 // extern variables
 extern char const  *prog_name;          ///< Program name.
+
+/**
+ * Whitespace characters.
+ */
+extern char const WS_CHARS[];
 
 ////////// extern functions ///////////////////////////////////////////////////
 
@@ -801,6 +818,19 @@ inline bool is_space( char c ) {
 NODISCARD
 inline bool is_windows_eol( char const buf[const], size_t buf_len ) {
   return buf_len >= 2 && buf[ buf_len - 2 ] == '\r';
+}
+
+/**
+ * Checks whether \a s is null, an empty string, or consists only of
+ * whitespace.
+ *
+ * @param s The null-terminated string to check.
+ * @return If \a s is either null or the empty string, returns NULL; otherwise
+ * returns a pointer to the first non-whitespace character in \a s.
+ */
+NODISCARD
+inline char const* null_if_empty( char const *s ) {
+  return s != NULL && *SKIP_WS( s ) == '\0' ? NULL : s;
 }
 
 /**

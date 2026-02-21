@@ -57,6 +57,8 @@
 # include <term.h>                      /* for setupterm(3) */
 #endif /* WITH_WIDTH_TERM */
 
+char const WS_CHARS[] = " \n\t\r\f\v";
+
 /// @endcond
 
 /**

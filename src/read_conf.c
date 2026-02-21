@@ -76,14 +76,19 @@ typedef enum section section_t;
  */
 NODISCARD
 static char const* home_dir( void ) {
-  char const *home = getenv( "HOME" );
+  static char const *home;
+
+  RUN_ONCE {
+    home = null_if_empty( getenv( "HOME" ) );
 #if HAVE_GETEUID && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR
-  if ( home == NULL ) {
-    struct passwd *const pw = getpwuid( geteuid() );
-    if ( pw != NULL )
-      home = pw->pw_dir;
-  }
+    if ( home == NULL ) {
+      struct passwd const *const pw = getpwuid( geteuid() );
+      if ( pw != NULL )
+        home = null_if_empty( pw->pw_dir );
+    }
 #endif /* HAVE_GETEUID && && HAVE_GETPWUID && HAVE_STRUCT_PASSWD_PW_DIR */
+  }
+
   return home;
 }
 
