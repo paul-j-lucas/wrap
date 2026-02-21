@@ -31,7 +31,7 @@ COMMON_SOURCES = \
 	common.c common.h \
 	options.c options.h \
 	pattern.c pattern.h \
-	read_conf.c read_conf.h \
+	read_conf.c \
 	type_traits.h \
 	util.c util.h
 

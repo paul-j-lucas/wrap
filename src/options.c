@@ -30,7 +30,6 @@
 #include "alias.h"
 #include "common.h"
 #include "pattern.h"
-#include "read_conf.h"
 #include "util.h"
 
 /// @cond DOXYGEN_IGNORE
@@ -899,8 +898,9 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
   }
 
   if ( !opt_no_conf && (opt_alias != NULL || opt_fin_name != NULL) ) {
-    alias_t const *alias = NULL;
+    char const* read_conf( char const *conf_file );
     opt_config_path = read_conf( opt_config_path );
+    alias_t const *alias = NULL;
     if ( opt_alias != NULL ) {
       if ( (alias = alias_find( opt_alias )) == NULL ) {
         fatal_error( EX_USAGE,

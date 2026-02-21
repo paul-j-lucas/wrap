@@ -175,6 +175,15 @@ static char* trim_ws( char *s ) {
 
 ////////// extern functions ///////////////////////////////////////////////////
 
+/**
+ * Reads a **wrap**(1) configuration file.
+ *
+ * @param conf_file The full path of the configuration file to read.  If NULL,
+ * then the user's home directory is checked for the presence of the default
+ * configuration file.  If found, that file is read.
+ * @return Returns the full path of the configuration file that was read or
+ * NULL if none.
+ */
 char const* read_conf( char const *conf_file ) {
   bool const is_explicit_conf_file = (conf_file != NULL);
 
