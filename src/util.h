@@ -496,20 +496,8 @@
  * @param S The string pointer to advance.
  * @param CHARS A string containing the characters to skip over.
  * @return Returns the updated \a S.
- *
- * @sa #SKIP_WS()
  */
 #define SKIP_CHARS(S,CHARS)       ((S) += strspn( (S), (CHARS) ))
-
-/**
- * Advances \a S over all whitespace.
- *
- * @param S The string pointer to advance.
- * @return Returns the updated \a S.
- *
- * @sa #SKIP_CHARS()
- */
-#define SKIP_WS(S)                SKIP_CHARS( (S), WS_CHARS )
 
 /**
  * C version of C++'s `static_cast`.
@@ -830,7 +818,7 @@ inline bool is_windows_eol( char const buf[const], size_t buf_len ) {
  */
 NODISCARD
 inline char const* null_if_empty( char const *s ) {
-  return s != NULL && *SKIP_WS( s ) == '\0' ? NULL : s;
+  return s != NULL && *SKIP_CHARS( s, WS_STRN ) == '\0' ? NULL : s;
 }
 
 /**
