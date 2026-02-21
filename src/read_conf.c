@@ -50,7 +50,8 @@
 /// @endcond
 
 /**
- * @addtogroup config-file-group
+ * @defgroup config-file-group Configuration File
+ * Function to read **wrap**(1) a configuration file.
  * @{
  */
 
