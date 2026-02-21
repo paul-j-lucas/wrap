@@ -1,3 +1,15 @@
+2026-02-20  Paul J. Lucas <paul@lucasmail.org>
+
+   * markdown.c, options.c, wrap.c, wrapc.c: Replaced NO_OP by ; in most cases.
+   * util.h: Removed SKIP_WS().
+   * read_conf.c, util.c, util.h: Added null_if_empty().
+   * src/Makefile.am, options.c, read_conf.c: Removed read_conf.h.
+
+2025-11-15  Paul J. Lucas <paul@lucasmail.org>
+
+   * Makefile.am: Added update_m4.sh to EXTRA_DIST.
+   * update_m4.sh: New script.
+
 2025-11-12  Paul J. Lucas <paul@lucasmail.org>
 
    * Doxyfile, configure.ac, type_traits.h: Eliminated IS_SAME_TYPE -- not
@@ -79,17 +91,6 @@
 
    * cc_map.c, cc_map.h, common.c, common.h, unicode.c, unicode.h, util.c,
      util.h: Now using standard C99 inline.
-
-2025-09-03  Paul J. Lucas <paul@lucasmail.org>
-
-   * Makefile.am, bootstrap, configure.ac, pjl_check_typedef.m4,
-     pjl_compile.m4, makedoc.sh, man/Makefile.am, man/man1/Makefile.am, wrap.1,
-     wrapc.1, man/man5/Makefile.am, wraprc.5, alias.c, alias.h, align.c,
-     cc_map.c, cc_map.h, common.c, common.h, doxygen.c, doxygen.h, markdown.c,
-     markdown.h, options.c, options.h, pattern.c, pattern.h, pjl_config.h,
-     read_conf.c, read_conf.h, regex_test.c, type_traits.h, unicode.c,
-     unicode.h, util.c, util.h, wrap.c, wrapc.c, wregex.c, wregex.h,
-     test/Makefile.am, run_test.sh, wrap.css: Updated copyright year.
 
 2025-08-29  Paul J. Lucas <paul@lucasmail.org>
 
@@ -193,14 +194,6 @@
 
    * markdown.c, util.c, util.h: s/bsearch_str_strptr_cmp/str_ptr_cmp/
    * doxygen.c, util.h: s/bsearch_str_dox_cmp/dox_cmd_cmp/
-   * Makefile.am, bootstrap, configure.ac, pjl_check_typedef.m4,
-     pjl_compile.m4, makedoc.sh, man/Makefile.am, man/man1/Makefile.am, wrap.1,
-     wrapc.1, man/man5/Makefile.am, wraprc.5, alias.c, alias.h, align.c,
-     cc_map.c, cc_map.h, common.c, common.h, doxygen.c, doxygen.h, markdown.c,
-     markdown.h, options.c, options.h, pattern.c, pattern.h, pjl_config.h,
-     read_conf.c, read_conf.h, regex_test.c, unicode.c, unicode.h, util.c,
-     util.h, wrap.c, wrapc.c, wregex.c, wregex.h, test/Makefile.am,
-     run_test.sh, wrap.css: Updated copyright year.
 
 2024-02-07  Paul J. Lucas <paul@lucasmail.org>
 
@@ -304,13 +297,6 @@
 
 2023-09-07  Paul J. Lucas <paul@lucasmail.org>
 
-   * Makefile.am, bootstrap, configure.ac, man/Makefile.am,
-     man/man1/Makefile.am, wrap.1, wrapc.1, man/man5/Makefile.am, wraprc.5,
-     src/Makefile.am, alias.c, alias.h, align.c, cc_map.c, cc_map.h, common.c,
-     common.h, doxygen.c, doxygen.h, markdown.c, markdown.h, options.c,
-     options.h, pattern.c, pattern.h, pjl_config.h, read_conf.c, read_conf.h,
-     regex_test.c, unicode.c, unicode.h, util.c, util.h, wrap.c, wrapc.c,
-     wregex.c, wregex.h: Updated copyright year.
    * configure.ac: Upped version.
 
 2023-08-06  Paul J. Lucas <paul@lucasmail.org>
@@ -671,13 +657,6 @@
 
 2019-01-11  Paul J. Lucas <paul@lucasmail.org>
 
-   * doxygen.c, doxygen.h, wrap.h: Updated copyright year to 2019, part 2.
-   * Makefile.am, configure.ac, man/Makefile.am, man/man1/Makefile.am, wrap.1,
-     man/man5/Makefile.am, wraprc.5, src/Makefile.am, alias.c, alias.h,
-     common.c, common.h, markdown.c, markdown.h, options.c, options.h,
-     pattern.c, pattern.h, read_conf.c, read_conf.h, unicode.h, util.c, util.h,
-     wrap.c, wrapc.c, test/Makefile.am, run_test.sh: Updated copyright year to
-     2019.
    * read_conf.c: Added comment.
 
 2019-01-10  Paul J. Lucas <paul@lucasmail.org>
@@ -1125,12 +1104,6 @@
 
    * wrap.c: s/read_line()/wrap_readline()/
    * wrap.c: s/ps/ppc/
-   * Makefile.am, configure.ac, man/Makefile.am, man/man1/Makefile.am, wrap.1,
-     wrapc.1, man/man5/Makefile.am, wraprc.5, src/Makefile.am, alias.c,
-     alias.h, common.c, common.h, markdown.c, markdown.h, options.c, options.h,
-     pattern.c, pattern.h, read_conf.c, read_conf.h, unicode.c, unicode.h,
-     util.c, util.h, wrap.c, wrapc.c, test/Makefile.am, run_test.sh: Updated
-     copyright year to 2017.
    * common.c, common.h, read_conf.c, util.c, util.h: util.[ch] are now
      wrap-free.
    * alias.h, pattern.h: s/_s//
@@ -2177,9 +2150,6 @@
 
 2015-09-13  Paul J. Lucas <paul@lucasmail.org>
 
-   * Makefile.am, configure.ac, man/Makefile.am, man/man1/Makefile.am, wrap.1,
-     wrapc.1, man/man5/Makefile.am, wraprc.5, test/Makefile.am, run_test.sh:
-     Updated copyright year.
    * src/Makefile.am, options.c, options.h, util.c, util.h, wrap.c, wrapc.c,
      test/Makefile.am, wrap-f-F.test, wrap-n-N.test: Added option
      mutually-exclusive checking and tests.
@@ -2365,12 +2335,6 @@
 
 2014-01-18  Paul J. Lucas <paul@lucasmail.org>
 
-   * Makefile.am, Makefile.in, configure.ac, man/Makefile.am, man/Makefile.in,
-     man/man1/Makefile.am, man/man1/Makefile.in, wrapc.1, man/man5/Makefile.am,
-     man/man5/Makefile.in, wraprc.5, src/Makefile.am, src/Makefile.in, alias.c,
-     alias.h, common.c, common.h, getopt.c, getopt.h, pattern.c, pattern.h,
-     read_conf.c, read_conf.h, wrap.c, wrapc.c, test/Makefile.am,
-     test/Makefile.in, run_test.sh: Updated copyright year to 2014.
    * Makefile.in, aclocal.m4, man/Makefile.in, man/man1/Makefile.in, wrap.1,
      man/man5/Makefile.in, src/Makefile.in, wrap.c, test/Makefile.am,
      test/Makefile.in, wrap-I2-W.test: Changed -b to -W.
@@ -2622,11 +2586,9 @@
    * wrapc.c: Added tab_spaces; clean-up.
    * wrap.c: Added tab_spaces.
    * version.h: Updated version.
-   * Makefile: 1. Updated copyright year. 2. Added $(MR)
 
 2013-10-03  Paul J. Lucas <paul@lucasmail.org>
 
-   * c_compat.h, wrap.c: Updated copyright year.
    * README: Updated e-mail address.
    * wrapc.1: Added ":" for XQuery comment.
 
@@ -2638,21 +2600,13 @@
 
    * wrapc.1: 1. s/2009/2012/ 2. s/pauljlucas@mac.com/paul@lucasmail.org/
 
-2009-10-15  Paul J. Lucas <paul@lucasmail.org>
-
-   * wrap.1: 1. Changed e-mail address. 2. Added missing '.'. 3. Updated
-     copyright year.
-
 2005-07-03  Paul J. Lucas <paul@lucasmail.org>
 
-   * c_compat.h, version.h, wrap.c: Updated copyright notice to include "2005".
    * wrap.1, wrapc.1: Updated e-mail address.
    * wrapc.1: 1. Added '!'. 2. Updated date.
    * wrapc.c: Added '!' to leading characters.
    * Makefile: s/-O/-O2/
    * Makefile: Removed SHELL.
-   * Makefile: 1. Added vim line. 2. Added "2005" to copyright.
-   * README: 1. Updated e-mail address. 2. Added "2005" to copyright.
    * c_compat.h: Converted tabs to spaces.
    * version.h: 1. Changed to 2.10. 2. Changed tabs to spaces.
    * wrap.c: 1. s/VERSION/WRAP_VERSION/ 2. Converted tabs to spaces.
