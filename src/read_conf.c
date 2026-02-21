@@ -184,32 +184,32 @@ static char* trim_ws( char *s ) {
 /**
  * Reads a **wrap**(1) configuration file.
  *
- * @param conf_file The full path of the configuration file to read.  If NULL,
+ * @param config_path The full path of the configuration file to read.  If NULL,
  * then the user's home directory is checked for the presence of the default
  * configuration file.  If found, that file is read.
  * @return Returns the full path of the configuration file that was read or
  * NULL if none.
  */
-char const* read_conf( char const *conf_file ) {
-  bool const is_explicit_conf_file = (conf_file != NULL);
+char const* read_conf( char const *config_path ) {
+  bool const is_explicit_config_path = (config_path != NULL);
 
   section_t section = SECTION_NONE;     // section we're in
 
-  if ( !is_explicit_conf_file ) {       // no explicit conf file: use default
+  if ( !is_explicit_config_path ) {     // no explicit conf file: use default
     char const *const home = home_dir();
     if ( home == NULL )
       return NULL;
-    static char conf_path_buf[ PATH_MAX ];
-    strcpy( conf_path_buf, home );
-    path_append( conf_path_buf, CONF_FILE_NAME_DEFAULT );
-    conf_file = conf_path_buf;
+    static char config_path_buf[ PATH_MAX ];
+    strcpy( config_path_buf, home );
+    path_append( config_path_buf, CONF_FILE_NAME_DEFAULT );
+    config_path = config_path_buf;
   }
 
   // open configuration file
-  FILE *const fconf = fopen( conf_file, "r" );
+  FILE *const fconf = fopen( config_path, "r" );
   if ( fconf == NULL ) {
-    if ( is_explicit_conf_file )
-      fatal_error( EX_NOINPUT, "%s: %s\n", conf_file, STRERROR() );
+    if ( is_explicit_config_path )
+      fatal_error( EX_NOINPUT, "%s: %s\n", config_path, STRERROR() );
     return NULL;
   }
 
@@ -222,7 +222,7 @@ char const* read_conf( char const *conf_file ) {
     if ( line == NULL ) {
       fatal_error( EX_CONFIG,
         "%s:%u: \"%s\": unclosed quote\n",
-        conf_file, line_no, trim_ws( line_buf )
+        config_path, line_no, trim_ws( line_buf )
       );
     }
     line = trim_ws( line );
@@ -235,7 +235,7 @@ char const* read_conf( char const *conf_file ) {
       if ( section == SECTION_NONE ) {
         fatal_error( EX_CONFIG,
           "%s:%u: \"%s\": invalid section\n",
-          conf_file, line_no, line
+          config_path, line_no, line
         );
       }
       continue;
@@ -246,19 +246,19 @@ char const* read_conf( char const *conf_file ) {
       case SECTION_NONE:
         fatal_error( EX_CONFIG,
           "%s:%u: \"%s\": line not within any section\n",
-          conf_file, line_no, line
+          config_path, line_no, line
         );
       case SECTION_ALIASES:
-        alias_parse( line, conf_file, line_no );
+        alias_parse( line, config_path, line_no );
         break;
       case SECTION_PATTERNS:
-        pattern_parse( line, conf_file, line_no );
+        pattern_parse( line, config_path, line_no );
         break;
     } // switch
   } // while
 
   if ( unlikely( ferror( fconf ) ) )
-    fatal_error( EX_IOERR, "%s: %s\n", conf_file, STRERROR() );
+    fatal_error( EX_IOERR, "%s: %s\n", config_path, STRERROR() );
   fclose( fconf );
 
 #ifndef NDEBUG
@@ -269,7 +269,7 @@ char const* read_conf( char const *conf_file ) {
   }
 #endif /* NDEBUG */
 
-  return conf_file;
+  return config_path;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
