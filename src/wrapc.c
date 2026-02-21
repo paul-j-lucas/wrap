@@ -591,8 +591,7 @@ static void read_wrap_write_stdout( void ) {
         case WIPC_CODE_HELLO:           // shouldn't happen
           break;
 
-        case WIPC_CODE_NEW_LEADER:
-          NO_OP;
+        case WIPC_CODE_NEW_LEADER:;
           //
           // We've been told by child 1 (read_source_write_wrap(), via child 2,
           // wrap) that the leading comment delimiter characters and/or
@@ -716,8 +715,7 @@ static void chop_suffix( char *s ) {
 
   for ( ; (cc = strchr( cc, suffix_buf[0] )) != NULL; ++cc ) {
     switch ( delim ) {
-      case DELIM_EOL:
-        NO_OP;
+      case DELIM_EOL:;
         //
         // We've found the terminator character, but it may be the first in a
         // sequence of them, e.g.:

@@ -1351,8 +1351,7 @@ md_state_t const* markdown_parse( char *s ) {
       break;
 
     // Block-level HTML.
-    case '<':
-      NO_OP;
+    case '<':;
       bool is_end_tag;
       curr_html_state = md_is_html_tag( nws, &is_end_tag );
       if ( curr_html_state != HTML_NONE ) {
@@ -1456,8 +1455,7 @@ md_state_t const* markdown_parse( char *s ) {
       }
       break;
 
-    case MD_OL:
-      NO_OP;
+    case MD_OL:;
       bool const ol_same_char = MD_TOP.ol_c == ol_c;
       if ( is_same_type_not_nested && ol_same_char ) {
         MD_TOP.seq_num = ++next_seq_num;  // reuse current state

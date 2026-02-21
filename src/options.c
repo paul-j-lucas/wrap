@@ -759,8 +759,7 @@ static void parse_options( int argc, char const *argv[],
 
   return;
 
-invalid_opt:
-  NO_OP;
+invalid_opt:;
   // Determine whether the invalid option was short or long.
   char const *const invalid_opt = argv[ optind - 1 ];
   EPRINTF( "%s: ", prog_name );

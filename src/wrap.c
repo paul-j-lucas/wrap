@@ -1066,8 +1066,7 @@ static void wipc_parse( char const **ppc ) {
       WIPC_SEND( stdout, WIPC_CODE_DELIMIT_PARAGRAPH );
       break;
 
-    case WIPC_CODE_NEW_LEADER:
-      NO_OP;
+    case WIPC_CODE_NEW_LEADER:;
       //
       // We've been told by wrapc (child 1) that the comment characters and/or
       // leading whitespace has changed: we have to echo it back to the other
