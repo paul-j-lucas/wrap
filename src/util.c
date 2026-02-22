@@ -380,6 +380,7 @@ extern inline bool is_digits( char const* );
 extern inline bool is_eol( char );
 extern inline bool is_space( char );
 extern inline bool is_windows_eol( char const [const], size_t );
+extern inline char const* null_if_empty( char const* );
 extern inline bool true_or_set( bool* );
 extern inline bool true_clear( bool* );
 
