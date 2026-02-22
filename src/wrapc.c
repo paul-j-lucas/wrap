@@ -1210,7 +1210,7 @@ static void usage( int status ) {
 "  --comment-chars=STR    " UOPT(COMMENT_CHARS)
                           "Comment delimiter characters.\n"
 "  --config=FILE          " UOPT(CONFIG)
-                          "The configuration file [default: ~/" CONF_FILE_NAME_DEFAULT "].\n"
+                          "Configuration file path.\n"
 "  --doxygen              " UOPT(DOXYGEN)
                           "Format Doxygen.\n"
 "  --eol=STR              " UOPT(EOL) "\n"

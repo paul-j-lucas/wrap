@@ -896,7 +896,7 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
     unreachable();
   }
 
-  if ( !opt_no_conf && (opt_alias != NULL || opt_fin_name != NULL) ) {
+  if ( !opt_no_conf ) {
     char const* read_conf( char const *conf_file );
     opt_config_path = read_conf( opt_config_path );
     alias_t const *alias = NULL;

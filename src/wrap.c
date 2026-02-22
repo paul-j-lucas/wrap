@@ -978,7 +978,7 @@ static void usage( int status ) {
 "  --block-regex=REGEX    " UOPT(BLOCK_REGEX)
                           "Block leading regular expression.\n"
 "  --config=FILE          " UOPT(CONFIG)
-                          "Configuration file path [default: ~/" CONF_FILE_NAME_DEFAULT "].\n"
+                          "Configuration file path.\n"
 "  --dot-ignore           " UOPT(DOT_IGNORE)
                           "Do not alter lines that begin with '.' (dot).\n"
 "  --eol=STR              " UOPT(EOL) "\n"

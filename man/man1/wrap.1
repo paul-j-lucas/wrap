@@ -33,7 +33,7 @@
 .if !'\\$1'0' .sp
 ..
 .\" ---------------------------------------------------------------------------
-.TH \f3wrap\fP 1 "July 1, 2025" "PJL TOOLS"
+.TH \f3wrap\fP 1 "February 22, 2026" "PJL TOOLS"
 .SH NAME
 wrap \- text reformatter
 .SH SYNOPSIS
@@ -854,13 +854,15 @@ Takes precedence over the number of columns specified by the
 variable.
 .TP
 .B HOME
-The user's home directory:
-used to locate the default configuration file.
+Used to locate a default configuration file
+under the user's home directory.
 If unset,
 the home directory is obtained from the password database entry
 for the effective user.
 If that fails,
-no default configuration file is read.
+no default configuration file
+under the user's home directory
+is read.
 .TP
 .B TERM
 The type of the terminal on which
@@ -874,6 +876,29 @@ option
 (unless
 .B COLUMNS
 is set and exported).
+.TP
+.B XDG_CONFIG_DIRS
+If set to a colon separated list of paths,
+then for each
+.I path
+in it,
+the first of
+.IB path /wrap
+to exist
+and be readable
+is used as the configuration file
+(see
+.BR wraprc (5)).
+.TP
+.B XDG_CONFIG_HOME
+If set to a path
+of a directory
+and
+.B $XDG_CONFIG_HOME/wrap
+exists and is readable,
+then that used as the configuration file
+(see
+.BR wraprc (5)).
 .SH BUGS
 PHP Markdown Extra allows multiple terms to share the same a definition;
 however,
@@ -882,24 +907,15 @@ does not support this.
 .SH FILES
 .TP
 .B ~/.wraprc
+.PD 0
+.TP
+.B $XDG_CONFIG_HOME/wrap
+.TP
+.B ~/.config/wrap
+.TP
+.B /etc/xdg/wrap
+.PD
 The default configuration file.
-A configuration file,
-even one explicitly specified via either
-.B \-\-config
-or
-.BR \-c ,
-is neither actually checked for existence nor read
-unless one of the
-.BR \-\-alias ,
-.BR \-a ,
-.BR \-\-file ,
-.BR \-f ,
-.BR \-\-file-name ,
-or
-.B \-F
-options
-is specified
-since it doesn't affect the result.
 .SH EXAMPLE
 Wrap text into paragraphs having a line width of 64 characters,
 indenting one tab-stop,
