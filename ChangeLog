@@ -1,3 +1,8 @@
+2026-02-22  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.1, wrapc.1, wraprc.5, common.h, options.c, read_conf.c, wrap.c,
+     wrapc.c: Added support for the XDG Base Directory Specification.
+
 2026-02-21  Paul J. Lucas <paul@lucasmail.org>
 
    * util.c: Added missing extern inline for null_if_empty().
