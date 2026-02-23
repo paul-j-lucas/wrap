@@ -1,3 +1,7 @@
+2026-02-23  Paul J. Lucas <paul@lucasmail.org>
+
+   * options.c, options.h, wrap.c, wrapc.c: s/opt_no_conf/opt_no_read_config/
+
 2026-02-22  Paul J. Lucas <paul@lucasmail.org>
 
    * wrap.1, wrapc.1, wraprc.5, common.h, options.c, read_conf.c, wrap.c,
