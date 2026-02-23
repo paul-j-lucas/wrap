@@ -897,8 +897,8 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
   }
 
   if ( !opt_no_conf ) {
-    char const* read_conf( char const *conf_file );
-    opt_config_path = read_conf( opt_config_path );
+    char const* config_init( char const *conf_file );
+    opt_config_path = config_init( opt_config_path );
     alias_t const *alias = NULL;
     if ( opt_alias != NULL ) {
       if ( (alias = alias_find( opt_alias )) == NULL ) {

@@ -1,6 +1,6 @@
 /*
 **      wrap -- text reformatter
-**      src/read_conf.c
+**      src/config_file.c
 **
 **      Copyright (C) 2013-2026  Paul J. Lucas
 **
@@ -220,7 +220,7 @@ static char* strip_comment( char *s ) {
  * @return Returns a pointer to within \a s having all whitespace trimmed.
  */
 NODISCARD
-static char* trim_ws( char *s ) {
+static char* str_trim( char *s ) {
   assert( s != NULL );
   SKIP_CHARS( s, WS_STR );
   for ( size_t len = strlen( s ); len > 0 && isspace( s[ --len ] ); )
@@ -231,7 +231,7 @@ static char* trim_ws( char *s ) {
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
- * Reads a **wrap**(1) configuration file.
+ * Reads a **wrap**(1) configuration file, if any.
  *
  * @param config_path The full path of the configuration file to read.  If NULL,
  * then path of the configuration file is determined as follows (in priority
@@ -245,7 +245,7 @@ static char* trim_ws( char *s ) {
  * @return Returns the full path of the configuration file that was read or
  * NULL if none.
  */
-char const* read_conf( char const *config_path ) {
+char const* config_init( char const *config_path ) {
   ASSERT_RUN_ONCE();
 
   char const *home = NULL;
@@ -319,10 +319,10 @@ char const* read_conf( char const *config_path ) {
     if ( line == NULL ) {
       fatal_error( EX_CONFIG,
         "%s:%u: \"%s\": unclosed quote\n",
-        config_path, line_no, trim_ws( line_buf )
+        config_path, line_no, str_trim( line_buf )
       );
     }
-    line = trim_ws( line );
+    line = str_trim( line );
     if ( *line == '\0' )                // line was entirely whitespace
       continue;
 

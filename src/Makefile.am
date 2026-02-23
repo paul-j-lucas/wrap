@@ -29,9 +29,9 @@ COMMON_SOURCES = \
 	pjl_config.h \
 	alias.c alias.h \
 	common.c common.h \
+	config_file.c \
 	options.c options.h \
 	pattern.c pattern.h \
-	read_conf.c \
 	type_traits.h \
 	util.c util.h
 
