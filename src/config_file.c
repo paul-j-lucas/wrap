@@ -403,6 +403,9 @@ static char* str_trim( char *s ) {
  * NULL.
  * @return Returns the full path of the configuration file that was read or
  * NULL if none.
+
+ *
+ * @note This function must be called at most once.
  */
 char const* config_init( char const *config_path ) {
   ASSERT_RUN_ONCE();
