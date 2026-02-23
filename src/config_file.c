@@ -103,6 +103,7 @@ static char*            str_trim( char* );
  * @parblock
  * The path of the configuration file is determined as follows (in priority
  * order):
+ *
  *  1. The value of either the `--config` or `-c` command-line option; or:
  *  2. `~/.wraprc`; or:
  *  3. `$XDG_CONFIG_HOME/wrap` or `~/.config/wrap`; or:
