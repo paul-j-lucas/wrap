@@ -399,15 +399,8 @@ static char* str_trim( char *s ) {
 /**
  * Reads a **wrap**(1) configuration file, if any.
  *
- * @param config_path The full path of the configuration file to read.  If NULL,
- * then path of the configuration file is determined as follows (in priority
- * order):
- * @parblock
- *  1. The value of either the `--config` or `-c` command-line option; or:
- *  2. `~/.wraprc`; or:
- *  3. `$XDG_CONFIG_HOME/wrap` or `~/.config/wrap`; or:
- *  4. `$XDG_CONFIG_DIRS/wrap` for each path or `/etc/xdg/wrap`.
- * @endparblock
+ * @param config_path The full path of the configuration file to read. May be
+ * NULL.
  * @return Returns the full path of the configuration file that was read or
  * NULL if none.
  */
