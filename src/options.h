@@ -42,7 +42,7 @@
 #define OPT_ALIGN_COLUMN          A
 #define OPT_BLOCK_REGEX           b
 #define OPT_CONFIG                c
-#define OPT_NO_CONFIG             C
+#define OPT_NO_READ_CONFIG        C
 #define OPT_DOT_IGNORE            d
 #define OPT_COMMENT_CHARS         D
 #define OPT_EOS_DELIMIT           e
@@ -135,8 +135,8 @@ extern size_t       opt_mirror_tabs;    ///< Mirror tabs?
 /// Number of consecutive newlines that delimit a paragraph.
 extern size_t       opt_newlines_delimit;
 
-extern bool         opt_no_conf;        ///< Do not read configuration file.
 extern bool         opt_no_hyphen;      ///< Do not treat hyphens specially.
+extern bool         opt_no_read_config; ///< Do not read configuration file.
 extern char const  *opt_para_delims;    ///< Additional para delimiter chars.
 extern bool         opt_prototype;      ///< First line whitespace is prototype?
 extern size_t       opt_tab_spaces;     ///< Number of spaces 1 tab equals.

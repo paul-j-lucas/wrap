@@ -1013,7 +1013,7 @@ static void usage( int status ) {
                           "Mirror spaces.\n"
 "  --mirror-tabs=NUM      " UOPT(MIRROR_TABS)
                           "Mirror tabs.\n"
-"  --no-config            " UOPT(NO_CONFIG)
+"  --no-config            " UOPT(NO_READ_CONFIG)
                           "Suppress reading configuration file.\n"
 "  --no-hyphen            " UOPT(NO_HYPHEN)
                           "Suppress wrapping at hyphen characters.\n"

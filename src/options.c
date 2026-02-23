@@ -109,8 +109,8 @@ bool                opt_markdown;
 size_t              opt_mirror_spaces;
 size_t              opt_mirror_tabs;
 size_t              opt_newlines_delimit = NEWLINES_DELIMIT_DEFAULT;
-bool                opt_no_conf;
 bool                opt_no_hyphen;
+bool                opt_no_read_config;
 char const         *opt_para_delims;
 bool                opt_prototype;
 size_t              opt_tab_spaces = TAB_SPACES_DEFAULT;
@@ -153,8 +153,8 @@ static void         print_version( bool );
   SOPT(FILE_NAME)             SOPT_REQUIRED_ARGUMENT  \
   SOPT(HELP)                  SOPT_OPTIONAL_ARGUMENT  \
   SOPT(MARKDOWN)              SOPT_NO_ARGUMENT        \
-  SOPT(NO_CONFIG)             SOPT_NO_ARGUMENT        \
   SOPT(NO_HYPHEN)             SOPT_NO_ARGUMENT        \
+  SOPT(NO_READ_CONFIG)        SOPT_NO_ARGUMENT        \
   SOPT(OUTPUT)                SOPT_REQUIRED_ARGUMENT  \
   SOPT(PARA_CHARS)            SOPT_REQUIRED_ARGUMENT  \
   SOPT(TAB_SPACES)            SOPT_REQUIRED_ARGUMENT  \
@@ -170,7 +170,7 @@ static void         print_version( bool );
   SOPT(CONFIG)                    \
   SOPT(FILE)                      \
   SOPT(FILE_NAME)                 \
-  SOPT(NO_CONFIG)                 \
+  SOPT(NO_READ_CONFIG)            \
   SOPT(OUTPUT)                    \
   SOPT(VERSION)
 
@@ -243,7 +243,7 @@ static char const *const OPTS_SHORT[] = {
   { "file-name",            required_argument,  NULL, COPT(FILE_NAME)     },  \
   { "help",                 no_argument,        NULL, COPT(HELP)          },  \
   { "markdown",             no_argument,        NULL, COPT(MARKDOWN)      },  \
-  { "no-config",            no_argument,        NULL, COPT(NO_CONFIG)     },  \
+  { "no-config",            no_argument,        NULL, COPT(NO_READ_CONFIG)},  \
   { "no-hyphen",            no_argument,        NULL, COPT(NO_HYPHEN)     },  \
   { "output",               required_argument,  NULL, COPT(OUTPUT)        },  \
   { "para-chars",           required_argument,  NULL, COPT(PARA_CHARS)    },  \
@@ -640,14 +640,14 @@ static void parse_options( int argc, char const *argv[],
       case COPT(MIRROR_TABS):
         opt_mirror_tabs = check_atou( optarg );
         break;
-      case COPT(NO_CONFIG):
-        opt_no_conf = true;
-        break;
       case COPT(NO_HYPHEN):
         opt_no_hyphen = true;
         break;
       case COPT(NO_NEWLINES_DELIMIT):
         opt_newlines_delimit = SIZE_MAX;
+        break;
+      case COPT(NO_READ_CONFIG):
+        opt_no_read_config = true;
         break;
       case COPT(OUTPUT):
         if ( SKIP_CHARS( optarg, WS_ST )[0] == '\0' )
@@ -896,7 +896,7 @@ void options_init( int argc, char const *argv[], void (*usage)(int) ) {
     unreachable();
   }
 
-  if ( !opt_no_conf ) {
+  if ( !opt_no_read_config ) {
     char const* config_init( char const *conf_file );
     opt_config_path = config_init( opt_config_path );
     alias_t const *alias = NULL;
