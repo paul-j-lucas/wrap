@@ -70,12 +70,12 @@ typedef enum config_opts config_opts_t;
 /** 
  * Configuration file section.
  */
-enum section {
-  SECTION_NONE,                         ///< No section.
-  SECTION_ALIASES,                      ///< `[ALIASES]` section.
-  SECTION_PATTERNS                      ///< `[PATTERNS]` section.
+enum config_section {
+  CONFIG_SECTION_NONE,                  ///< No section.
+  CONFIG_SECTION_ALIASES,               ///< `[ALIASES]` section.
+  CONFIG_SECTION_PATTERNS               ///< `[PATTERNS]` section.
 };
-typedef enum section section_t;
+typedef enum config_section config_section_t;
 
 ////////// local functions ////////////////////////////////////////////////////
 
@@ -165,17 +165,17 @@ static void path_append( char *path, size_t path_len, char const *component ) {
  * Parses a section name.
  *
  * @param s The line containing the section name to parse.
- * @return Returns the corresponding section name or #SECTION_NONE.
+ * @return Returns the corresponding section name or #CONFIG_SECTION_NONE.
  */
 NODISCARD
-static section_t section_parse( char const *s ) {
+static config_section_t section_parse( char const *s ) {
   assert( s != NULL );
 
   if ( strcmp( s, "[ALIASES]" ) == 0 )
-    return SECTION_ALIASES;
+    return CONFIG_SECTION_ALIASES;
   if ( strcmp( s, "[PATTERNS]" ) == 0 )
-    return SECTION_PATTERNS;
-  return SECTION_NONE;
+    return CONFIG_SECTION_PATTERNS;
+  return CONFIG_SECTION_NONE;
 }
 
 /**
@@ -308,7 +308,7 @@ char const* config_init( char const *config_path ) {
     } // for
   }
 
-  section_t section = SECTION_NONE;     // section we're in
+  config_section_t curr_section = CONFIG_SECTION_NONE;
 
   // parse configuration file
   line_buf_t line_buf;
@@ -328,8 +328,8 @@ char const* config_init( char const *config_path ) {
 
     // parse section line
     if ( line[0] == '[' ) {
-      section = section_parse( line );
-      if ( section == SECTION_NONE ) {
+      curr_section = section_parse( line );
+      if ( curr_section == CONFIG_SECTION_NONE ) {
         fatal_error( EX_CONFIG,
           "%s:%u: \"%s\": invalid section\n",
           config_path, line_no, line
@@ -339,16 +339,16 @@ char const* config_init( char const *config_path ) {
     }
 
     // parse line within section
-    switch ( section ) {
-      case SECTION_NONE:
+    switch ( curr_section ) {
+      case CONFIG_SECTION_NONE:
         fatal_error( EX_CONFIG,
           "%s:%u: \"%s\": line not within any section\n",
           config_path, line_no, line
         );
-      case SECTION_ALIASES:
+      case CONFIG_SECTION_ALIASES:
         alias_parse( line, config_path, line_no );
         break;
-      case SECTION_PATTERNS:
+      case CONFIG_SECTION_PATTERNS:
         pattern_parse( line, config_path, line_no );
         break;
     } // switch
