@@ -77,7 +77,111 @@ enum config_section {
 };
 typedef enum config_section config_section_t;
 
+NODISCARD
+static FILE*            config_open( char const*, config_opts_t );
+
+NODISCARD
+static char const*      home_dir( void );
+
+static void             path_append( char*, size_t, char const* );
+
+NODISCARD
+static config_section_t section_parse( char const* );
+
+NODISCARD
+static char*            strip_comment( char* );
+
+NODISCARD
+static char*            str_trim( char* );
+
 ////////// local functions ////////////////////////////////////////////////////
+
+/**
+ * Finds and opens the configuration file.
+ *
+ * @remarks
+ * @parblock
+ * The path of the configuration file is determined as follows (in priority
+ * order):
+ *  1. The value of either the `--config` or `-c` command-line option; or:
+ *  2. `~/.wraprc`; or:
+ *  3. `$XDG_CONFIG_HOME/wrap` or `~/.config/wrap`; or:
+ *  4. `$XDG_CONFIG_DIRS/wrap` for each path or `/etc/xdg/wrap`.
+ * @endparblock
+ *
+ * @param pconfig_path A pointer to the full path of the configuration file
+ * presumed to be the value of either the `--config` or `-c` command-line
+ * option, if any.  If a configuration file is found, it is updated to point to
+ * the full path of the file found.
+ * @return Returns the `FILE*` for the configuration file if found or NULL if
+ * not.
+ */
+NODISCARD
+static FILE* config_find( char const **pconfig_path ) {
+  assert( pconfig_path != NULL );
+
+  char const *home = NULL;
+  static char path_buf[ PATH_MAX ];
+
+  // 1. Try --config/-c command-line option.
+  FILE *config_file = config_open( *pconfig_path, CONFIG_OPT_ERROR_IS_FATAL );
+
+  // 2. Try $HOME/.wraprc.
+  if ( config_file == NULL ) {
+    *pconfig_path = path_buf;
+    home = home_dir();
+    if ( home != NULL ) {
+      strcpy( path_buf, home );
+      path_append( path_buf, SIZE_MAX, "." PACKAGE "rc" );
+      config_file = config_open( path_buf, CONFIG_OPT_IGNORE_NOT_FOUND );
+    }
+  }
+
+  // 3. Try $XDG_CONFIG_HOME/cdecl and $HOME/.config/cdecl.
+  if ( config_file == NULL ) {
+    char const *const config_dir = null_if_empty( getenv( "XDG_CONFIG_HOME" ) );
+    if ( config_dir != NULL ) {
+      strcpy( path_buf, config_dir );
+    }
+    else if ( home != NULL ) {
+      // LCOV_EXCL_START
+      strcpy( path_buf, home );
+      path_append( path_buf, SIZE_MAX, ".config" );
+      // LCOV_EXCL_STOP
+    }
+    if ( path_buf[0] != '\0' ) {
+      path_append( path_buf, SIZE_MAX, PACKAGE );
+      config_file = config_open( path_buf, CONFIG_OPT_IGNORE_NOT_FOUND );
+      path_buf[0] = '\0';
+    }
+  }
+
+  // 4. Try $XDG_CONFIG_DIRS/cdecl and /etc/xdg/cdecl.
+  if ( config_file == NULL ) {
+    char const *config_dirs = null_if_empty( getenv( "XDG_CONFIG_DIRS" ) );
+    if ( config_dirs == NULL )
+      config_dirs = "/etc/xdg";         // LCOV_EXCL_LINE
+    for (;;) {
+      char const *const next_sep = strchr( config_dirs, ':' );
+      size_t const dir_len = next_sep != NULL ?
+        STATIC_CAST( size_t, next_sep - config_dirs ) : strlen( config_dirs );
+      if ( dir_len > 0 ) {
+        strncpy( path_buf, config_dirs, dir_len );
+        path_buf[ dir_len ] = '\0';
+        path_append( path_buf, dir_len, PACKAGE );
+        config_file = config_open( path_buf, CONFIG_OPT_IGNORE_NOT_FOUND );
+        path_buf[0] = '\0';
+        if ( config_file != NULL )
+          break;
+      }
+      if ( next_sep == NULL )
+        break;
+      config_dirs = next_sep + 1;
+    } // for
+  }
+
+  return config_file;
+}
 
 /**
  * Tries to open a configuration file given by \a path.
@@ -112,6 +216,67 @@ static FILE* config_open( char const *path, config_opts_t opts ) {
     } // switch
   }
   return config_file;
+}
+
+/**
+ * Parses a configuration file.
+ *
+ * @param config_path The full path to the configurarion file.
+ * @param config_file The `FILE*` corresponding to \a config_path.
+ */
+static void config_parse( char const *config_path, FILE *config_file ) {
+  assert( config_path != NULL );
+  assert( config_file != NULL );
+
+  config_section_t curr_section = CONFIG_SECTION_NONE;
+
+  // parse configuration file
+  line_buf_t line_buf;
+  unsigned line_no = 0;
+  while ( fgets( line_buf, sizeof line_buf, config_file ) != NULL ) {
+    ++line_no;
+    char *line = strip_comment( line_buf );
+    if ( line == NULL ) {
+      fatal_error( EX_CONFIG,
+        "%s:%u: \"%s\": unclosed quote\n",
+        config_path, line_no, str_trim( line_buf )
+      );
+    }
+    line = str_trim( line );
+
+    switch ( line[0] ) {
+      case '\0':                        // line was entirely whitespace
+        continue;
+      case '[':                         // parse section line
+        curr_section = section_parse( line );
+        if ( curr_section == CONFIG_SECTION_NONE ) {
+          fatal_error( EX_CONFIG,
+            "%s:%u: \"%s\": invalid section\n",
+            config_path, line_no, line
+          );
+        }
+        continue;
+    } // switch
+
+    // parse line within section
+    switch ( curr_section ) {
+      case CONFIG_SECTION_NONE:
+        fatal_error( EX_CONFIG,
+          "%s:%u: \"%s\": line not within any section\n",
+          config_path, line_no, line
+        );
+      case CONFIG_SECTION_ALIASES:
+        alias_parse( line, config_path, line_no );
+        break;
+      case CONFIG_SECTION_PATTERNS:
+        pattern_parse( line, config_path, line_no );
+        break;
+    } // switch
+  } // while
+
+  if ( unlikely( ferror( config_file ) ) )
+    fatal_error( EX_IOERR, "%s: %s\n", config_path, STRERROR() );
+  fclose( config_file );
 }
 
 /**
@@ -248,115 +413,9 @@ static char* str_trim( char *s ) {
 char const* config_init( char const *config_path ) {
   ASSERT_RUN_ONCE();
 
-  char const *home = NULL;
-  static char path_buf[ PATH_MAX ];
-
-  // 1. Try --config/-c command-line option.
-  FILE *config_file = config_open( config_path, CONFIG_OPT_ERROR_IS_FATAL );
-
-  // 2. Try $HOME/.wraprc.
-  if ( config_file == NULL ) {
-    config_path = path_buf;
-    home = home_dir();
-    if ( home != NULL ) {
-      strcpy( path_buf, home );
-      path_append( path_buf, SIZE_MAX, "." PACKAGE "rc" );
-      config_file = config_open( path_buf, CONFIG_OPT_IGNORE_NOT_FOUND );
-    }
-  }
-
-  // 3. Try $XDG_CONFIG_HOME/cdecl and $HOME/.config/cdecl.
-  if ( config_file == NULL ) {
-    char const *const config_dir = null_if_empty( getenv( "XDG_CONFIG_HOME" ) );
-    if ( config_dir != NULL ) {
-      strcpy( path_buf, config_dir );
-    }
-    else if ( home != NULL ) {
-      // LCOV_EXCL_START
-      strcpy( path_buf, home );
-      path_append( path_buf, SIZE_MAX, ".config" );
-      // LCOV_EXCL_STOP
-    }
-    if ( path_buf[0] != '\0' ) {
-      path_append( path_buf, SIZE_MAX, PACKAGE );
-      config_file = config_open( path_buf, CONFIG_OPT_IGNORE_NOT_FOUND );
-      path_buf[0] = '\0';
-    }
-  }
-
-  // 4. Try $XDG_CONFIG_DIRS/cdecl and /etc/xdg/cdecl.
-  if ( config_file == NULL ) {
-    char const *config_dirs = null_if_empty( getenv( "XDG_CONFIG_DIRS" ) );
-    if ( config_dirs == NULL )
-      config_dirs = "/etc/xdg";         // LCOV_EXCL_LINE
-    for (;;) {
-      char const *const next_sep = strchr( config_dirs, ':' );
-      size_t const dir_len = next_sep != NULL ?
-        STATIC_CAST( size_t, next_sep - config_dirs ) : strlen( config_dirs );
-      if ( dir_len > 0 ) {
-        strncpy( path_buf, config_dirs, dir_len );
-        path_buf[ dir_len ] = '\0';
-        path_append( path_buf, dir_len, PACKAGE );
-        config_file = config_open( path_buf, CONFIG_OPT_IGNORE_NOT_FOUND );
-        path_buf[0] = '\0';
-        if ( config_file != NULL )
-          break;
-      }
-      if ( next_sep == NULL )
-        break;
-      config_dirs = next_sep + 1;
-    } // for
-  }
-
-  config_section_t curr_section = CONFIG_SECTION_NONE;
-
-  // parse configuration file
-  line_buf_t line_buf;
-  unsigned line_no = 0;
-  while ( fgets( line_buf, sizeof line_buf, config_file ) != NULL ) {
-    ++line_no;
-    char *line = strip_comment( line_buf );
-    if ( line == NULL ) {
-      fatal_error( EX_CONFIG,
-        "%s:%u: \"%s\": unclosed quote\n",
-        config_path, line_no, str_trim( line_buf )
-      );
-    }
-    line = str_trim( line );
-
-    switch ( line[0] ) {
-      case '\0':                        // line was entirely whitespace
-        continue;
-      case '[':                         // parse section line
-        curr_section = section_parse( line );
-        if ( curr_section == CONFIG_SECTION_NONE ) {
-          fatal_error( EX_CONFIG,
-            "%s:%u: \"%s\": invalid section\n",
-            config_path, line_no, line
-          );
-        }
-        continue;
-    } // switch
-
-    // parse line within section
-    switch ( curr_section ) {
-      case CONFIG_SECTION_NONE:
-        fatal_error( EX_CONFIG,
-          "%s:%u: \"%s\": line not within any section\n",
-          config_path, line_no, line
-        );
-      case CONFIG_SECTION_ALIASES:
-        alias_parse( line, config_path, line_no );
-        break;
-      case CONFIG_SECTION_PATTERNS:
-        pattern_parse( line, config_path, line_no );
-        break;
-    } // switch
-  } // while
-
-  if ( unlikely( ferror( config_file ) ) )
-    fatal_error( EX_IOERR, "%s: %s\n", config_path, STRERROR() );
-  fclose( config_file );
+  FILE *const config_file = config_find( &config_path );
+  if ( config_file != NULL )
+    config_parse( config_path, config_file );
 
 #ifndef NDEBUG
   if ( is_affirmative( getenv( "WRAP_DUMP_CONF" ) ) ) {
