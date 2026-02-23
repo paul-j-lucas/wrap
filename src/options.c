@@ -519,9 +519,10 @@ static void parse_options( int argc, char const *argv[],
   opterr = 0;
   optind = 1;
 
-  int opt;
-  bool opt_help = false;
-  unsigned opt_version = 0;
+  int       opt;
+  bool      opt_help = false;
+  unsigned  opt_version = 0;
+
   MEM_ZERO( &opts_given );
 
   for (;;) {
