@@ -323,20 +323,20 @@ char const* config_init( char const *config_path ) {
       );
     }
     line = str_trim( line );
-    if ( *line == '\0' )                // line was entirely whitespace
-      continue;
 
-    // parse section line
-    if ( line[0] == '[' ) {
-      curr_section = section_parse( line );
-      if ( curr_section == CONFIG_SECTION_NONE ) {
-        fatal_error( EX_CONFIG,
-          "%s:%u: \"%s\": invalid section\n",
-          config_path, line_no, line
-        );
-      }
-      continue;
-    }
+    switch ( line[0] ) {
+      case '\0':                        // line was entirely whitespace
+        continue;
+      case '[':                         // parse section line
+        curr_section = section_parse( line );
+        if ( curr_section == CONFIG_SECTION_NONE ) {
+          fatal_error( EX_CONFIG,
+            "%s:%u: \"%s\": invalid section\n",
+            config_path, line_no, line
+          );
+        }
+        continue;
+    } // switch
 
     // parse line within section
     switch ( curr_section ) {
