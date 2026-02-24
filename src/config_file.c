@@ -24,7 +24,7 @@
  */
 
 // local
-#include "pjl_config.h"                 /* must go first */
+#include "pjl_config.h"                 /* IWYU pragma: keep */
 #include "alias.h"
 #include "common.h"
 #include "pattern.h"
@@ -40,11 +40,11 @@
 #if HAVE_PWD_H
 # include <pwd.h>                       /* for getpwuid() */
 #endif /* HAVE_PWD_H */
-#include <stdbool.h>
-#include <stddef.h>                     /* for size_t */
+#include <stdint.h>                     /* for SIZE_MAX */
 #include <stdio.h>
 #include <stdlib.h>                     /* for getenv(), ... */
 #include <string.h>
+#include <sysexits.h>
 #include <unistd.h>                     /* for geteuid() */
 
 /// @endcond

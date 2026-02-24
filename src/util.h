@@ -27,7 +27,7 @@
  */
 
 // local
-#include "pjl_config.h"                 /* must go first */
+#include "pjl_config.h"                 /* IWYU pragma: keep */
 #include "type_traits.h"
 
 /// @cond DOXYGEN_IGNORE
@@ -35,8 +35,7 @@
 // standard
 #include <errno.h>
 #include <stdbool.h>
-#include <stddef.h>                     /* for size_t */
-#include <stdint.h>                     /* for uintptr_t */
+#include <stdint.h>                     /* IWYU pragma: keep */
 #include <stdio.h>                      /* for FILE */
 #include <stdlib.h>                     /* for exit(3) */
 #include <string.h>                     /* for strspn(3) */

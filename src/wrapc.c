@@ -24,14 +24,11 @@
  */
 
 // local
-#include "pjl_config.h"                 /* must go first */
-#include "alias.h"
+#include "pjl_config.h"                 /* IWYU pragma: keep */
 #include "cc_map.h"
 #include "common.h"
 #include "doxygen.h"
-#include "markdown.h"
 #include "options.h"
-#include "pattern.h"
 #include "util.h"
 
 /// @cond DOXYGEN_IGNORE
@@ -42,10 +39,10 @@
 #include <limits.h>                     /* for PATH_MAX */
 #include <signal.h>                     /* for kill() */
 #include <stdbool.h>
-#include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit() */
 #include <string.h>                     /* for str...() */
+#include <sys/types.h>                  /* for pid_t */
 #include <sys/wait.h>                   /* for wait() */
 #include <sysexits.h>
 #include <unistd.h>                     /* for close(), fork(), ... */

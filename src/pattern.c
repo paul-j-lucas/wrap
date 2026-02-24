@@ -24,9 +24,8 @@
  */
 
 // local
-#include "pjl_config.h"                 /* must go first */
+#include "pjl_config.h"                 /* IWYU pragma: keep */
 #include "pattern.h"
-#include "common.h"
 #include "util.h"
 
 /// @cond DOXYGEN_IGNORE
@@ -34,10 +33,10 @@
 // standard
 #include <assert.h>
 #include <fnmatch.h>
-#include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sysexits.h>
 
 /// @endcond
 

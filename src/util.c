@@ -24,14 +24,13 @@
  */
 
 // local
-#include "pjl_config.h"                 /* must go first */
+#include "pjl_config.h"                 /* IWYU pragma: keep */
 #include "util.h"
 
 /// @cond DOXYGEN_IGNORE
 
 // standard
 #include <assert.h>
-#include <ctype.h>
 #include <errno.h>
 #include <locale.h>
 #ifndef NDEBUG
@@ -42,6 +41,7 @@
 #include <stdio.h>
 #include <stdlib.h>                     /* for malloc(), ... */
 #include <string.h>
+#include <strings.h>                    /* for strcasecmp(3) */
 #include <sysexits.h>
 #include <unistd.h>                     /* for close(2), getpid(3) */
 

@@ -28,7 +28,7 @@
  */
 
 // local
-#include "pjl_config.h"                 /* must go first */
+#include "pjl_config.h"                 /* IWYU pragma: keep */
 #include "util.h"
 
 /// @cond DOXYGEN_IGNORE
@@ -37,11 +37,12 @@
 #include <ctype.h>
 #include <inttypes.h>                   /* for uint*_t */
 #include <stdbool.h>
-#include <stddef.h>                     /* for size_t */
+#include <stdio.h>
 #include <string.h>                     /* for memmove(3) */
 #if HAVE_CHAR8_T || HAVE_CHAR32_T
 #include <uchar.h>
 #endif /* HAVE_CHAR8_T || HAVE_CHAR32_T */
+#include <wchar.h>
 #include <wctype.h>
 
 /// @endcond

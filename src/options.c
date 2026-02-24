@@ -25,7 +25,7 @@
  */
 
 // local
-#include "pjl_config.h"                 /* must go first */
+#include "pjl_config.h"                 /* IWYU pragma: keep */
 #include "options.h"
 #include "alias.h"
 #include "common.h"
@@ -41,6 +41,12 @@
 #include <getopt.h>
 #include <inttypes.h>                   /* for SIZE_MAX */
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>                    /* for strcasecmp(3) */
+#include <sysexits.h>
 
 /// @endcond
 

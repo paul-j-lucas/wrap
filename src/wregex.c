@@ -24,7 +24,7 @@
  */
 
 // local
-#include "pjl_config.h"                 /* must go first */
+#include "pjl_config.h"                 /* IWYU pragma: keep */
 #include "wregex.h"
 #include "unicode.h"
 #include "util.h"
@@ -34,6 +34,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <sysexits.h>
+#include <wchar.h>                      /* for wint_t */
 #include <wctype.h>
 
 ///////////////////////////////////////////////////////////////////////////////

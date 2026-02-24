@@ -25,7 +25,7 @@
  */
 
 // local
-#include "pjl_config.h"                 /* must go first */
+#include "pjl_config.h"                 /* IWYU pragma: keep */
 #include "doxygen.h"
 #include "util.h"
 
@@ -33,6 +33,8 @@
 
 // standard
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define DOX_INIT_INLINE            DOX_INLINE
 #define DOX_INIT_BOL               DOX_BOL

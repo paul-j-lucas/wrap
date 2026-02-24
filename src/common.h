@@ -28,13 +28,12 @@
  */
 
 // local
-#include "pjl_config.h"                 /* must go first */
+#include "pjl_config.h"                 /* IWYU pragma: keep */
 #include "options.h"                    /* for opt_eol */
 
 /// @cond DOXYGEN_IGNORE
 
 // standard
-#include <stddef.h>                     /* for size_t */
 #include <stdio.h>                      /* for FILE */
 
 /// @endcond

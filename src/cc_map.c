@@ -24,7 +24,7 @@
  */
 
 // local
-#include "pjl_config.h"                 /* must go first */
+#include "pjl_config.h"                 /* IWYU pragma: keep */
 #include "cc_map.h"
 #include "options.h"
 #include "util.h"
@@ -35,9 +35,9 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include <stddef.h>                     /* for size_t */
-#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>                     /* for str...() */
+#include <sysexits.h>
 
 /// @endcond
 

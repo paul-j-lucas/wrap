@@ -24,12 +24,10 @@
  */
 
 // local
-#include "pjl_config.h"                 /* must go first */
-#include "alias.h"
+#include "pjl_config.h"                 /* IWYU pragma: keep */
 #include "common.h"
 #include "markdown.h"
 #include "options.h"
-#include "pattern.h"
 #include "unicode.h"
 #include "util.h"
 #include "wregex.h"
@@ -38,14 +36,11 @@
 
 // standard
 #include <assert.h>
-#include <ctype.h>
 #include <stdbool.h>
-#include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit(), ... */
 #include <string.h>
 #include <sysexits.h>
-#include <unistd.h>
 
 /// @endcond
 
