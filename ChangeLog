@@ -1,5 +1,10 @@
 2026-02-23  Paul J. Lucas <paul@lucasmail.org>
 
+   * alias.c, alias.h, align.c, cc_map.c, cc_map.h, common.c, common.h,
+     config_file.c, doxygen.c, doxygen.h, markdown.c, markdown.h, options.c,
+     options.h, pattern.c, pattern.h, pjl_config.h, regex_test.c,
+     type_traits.h, unicode.c, unicode.h, util.c, util.h, wrap.c, wrapc.c,
+     wregex.c, wregex.h: Fixed up #includes.
    * configure.ac: Updated version.
    * options.c, options.h, wrap.c, wrapc.c: s/opt_no_conf/opt_no_read_config/
 
