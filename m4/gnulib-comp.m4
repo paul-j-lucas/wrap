@@ -124,7 +124,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module stdint-h:
   # Code from module stdlib-h:
   # Code from module strdup-posix:
-  # Code from module streq:
+  # Code from module streq-opt:
   # Code from module strerror:
   # Code from module strerror-override:
   # Code from module string-h:
@@ -867,7 +867,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stdlib.c
   lib/stdlib.in.h
   lib/strdup.c
-  lib/streq.h
+  lib/streq-opt.h
   lib/strerror-override.c
   lib/strerror-override.h
   lib/strerror.c
