@@ -108,8 +108,7 @@ int main( int argc, char const *argv[] ) {
     char const *const match_begin = subject + match_range[0];
     size_t const match_len = match_range[1] - match_range[0];
     char match[ 128 ];
-    strncpy( match, match_begin, match_len );
-    match[ match_len ] = '\0';
+    strncpy_0( match, match_begin, match_len );
 
     if ( expected_len == 0 ) {
       EPRINTF(

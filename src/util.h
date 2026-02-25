@@ -856,6 +856,21 @@ NODISCARD
 size_t strcpy_len( char *dst, char const *src );
 
 /**
+ * A variant of **strncpy**(3) that always null-terminates \a dst.
+ *
+ * @param dst A pointer to receive the copy of \a src.
+ * @param src The null-terminated string to copy.
+ * @param n The number of bytes at most to copy.
+ * @return Returns \a dst.
+ */
+PJL_DISCARD
+inline char* strncpy_0( char *dst, char const *src, size_t n ) {
+  strncpy( dst, src, n );
+  dst[ n ] = '\0';
+  return dst;
+}
+
+/**
  * Reverse **strspn**(3): spans the trailing part of \a s as long as characters
  * from \a s occur in \a set.
  *

@@ -320,8 +320,7 @@ bool dox_parse_cmd_name( char const *s, char *dox_cmd_name ) {
 
   size_t const len = strspn( ++s, DOX_CMD_CHARS );
   if ( len > 0 && len <= DOX_CMD_NAME_SIZE_MAX ) {
-    strncpy( dox_cmd_name, s, len );
-    dox_cmd_name[ len ] = '\0';
+    strncpy_0( dox_cmd_name, s, len );
     return true;
   }
 

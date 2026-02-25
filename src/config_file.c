@@ -167,8 +167,7 @@ static FILE* config_find( char const **pconfig_path ) {
       size_t const dir_len = next_sep != NULL ?
         STATIC_CAST( size_t, next_sep - config_dirs ) : strlen( config_dirs );
       if ( dir_len > 0 ) {
-        strncpy( path_buf, config_dirs, dir_len );
-        path_buf[ dir_len ] = '\0';
+        strncpy_0( path_buf, config_dirs, dir_len );
         path_append( path_buf, dir_len, PACKAGE );
         config_file = config_open( path_buf, CONFIG_OPT_IGNORE_NOT_FOUND );
         path_buf[0] = '\0';
