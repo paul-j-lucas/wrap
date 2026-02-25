@@ -1,3 +1,7 @@
+2026-02-25  Paul J. Lucas <paul@lucasmail.org>
+
+   * config_file.c, doxygen.c, regex_test.c, util.c, util.h: Added strncpy_0.
+
 2026-02-23  Paul J. Lucas <paul@lucasmail.org>
 
    * alias.c, alias.h, align.c, cc_map.c, cc_map.h, common.c, common.h,
