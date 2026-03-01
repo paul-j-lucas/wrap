@@ -21,7 +21,7 @@
 ##
 
 AC_PREREQ([2.69])
-AC_INIT([wrap], [5.11], [https://github.com/paul-j-lucas/wrap/issues],,[https://github.com/paul-j-lucas/wrap])
+AC_INIT([wrap], [5.11.1], [https://github.com/paul-j-lucas/wrap/issues],,[https://github.com/paul-j-lucas/wrap])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
 
@@ -35,11 +35,9 @@ AC_PROG_INSTALL
 
 # Program feature: --width=term (enabled by default)
 AC_ARG_ENABLE([width-term],
-  AS_HELP_STRING([--disable-width-term], [disable support for --width=term]),
-  [],
-  [enable_width_term=yes]
+  AS_HELP_STRING([--disable-width-term], [disable support for --width=term])
 )
-AS_IF([test "x$enable_width_term" = xyes],
+AS_IF([test "x$enable_width_term" != xno],
   [AC_DEFINE([WITH_WIDTH_TERM], [1],
     [Define to 1 if --width=term is enabled.])]
 )
@@ -47,7 +45,7 @@ AS_IF([test "x$enable_width_term" = xyes],
 # Checks for libraries.
 
 # Checks for header files.
-AS_IF([test "x$enable_width_term" = xyes],
+AS_IF([test "x$enable_width_term" != xno],
   [
     AC_CHECK_HEADERS([curses.h ncurses.h], [],
       [AC_MSG_ERROR([curses library for --width=term not found; use --disable-width-term])]
@@ -93,13 +91,14 @@ AC_REPLACE_FNMATCH
 AC_FUNC_FORK
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([geteuid getpwuid perror strerror strndup])
-AS_IF([test "x$enable_width_term" = xyes],
-  [
-    AC_SEARCH_LIBS([endwin],[curses ncurses], [],
-      [AC_MSG_ERROR([curses library for --width=term not found; use --disable-width-term])]
-    )
-  ]
-)
+AS_IF([test "x$enable_width_term" != xno], [
+  AC_SEARCH_LIBS([endwin],[curses ncurses], [],
+    [AC_MSG_ERROR([curses library for --width=term not found; use --disable-width-term])]
+  )
+  AC_SEARCH_LIBS([tigetnum],[curses ncurses tinfo], [],
+    [AC_MSG_ERROR([curses library for --width=term not found; use --disable-width-term])]
+  )
+])
 
 # Makefile conditionals.
 

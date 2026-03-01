@@ -5,6 +5,12 @@ See the end of the file for license conditions.
 
 -------------------------------------------------------------------------------
 
+* Changes in Wrap 5.11.1
+
+** Verbose version
+Specifying `-vv` now prints when `--disable-width` when actually disabled.
+
+
 * Changes in Wrap 5.11
 
 ** XDG Base Directory Specification

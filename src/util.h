@@ -715,16 +715,6 @@ void* free_later( void *p );
  */
 void free_now( void );
 
-#ifdef WITH_WIDTH_TERM
-/**
- * Gets the number of columns of the terminal.
- *
- * @return Returns said number of columns or 0 if it can not be determined.
- */
-NODISCARD
-unsigned get_term_columns( void );
-#endif /* WITH_WIDTH_TERM */
-
 #ifndef NDEBUG
 /**
  * Checks whether \a s is an affirmative value.  An affirmative value is one of
@@ -880,6 +870,16 @@ inline char* strncpy_0( char *dst, char const *src, size_t n ) {
  */
 NODISCARD
 size_t strrspn( char const *s, char const *set );
+
+#ifdef WITH_WIDTH_TERM
+/**
+ * Gets the number of columns of the terminal.
+ *
+ * @return Returns said number of columns or 0 if it can not be determined.
+ */
+NODISCARD
+unsigned term_get_columns( void );
+#endif /* WITH_WIDTH_TERM */
 
 /**
  * Checks \a flag: if `false`, sets it to `true`.

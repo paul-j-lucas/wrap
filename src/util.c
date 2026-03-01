@@ -198,7 +198,7 @@ void free_now( void ) {
 }
 
 #ifdef WITH_WIDTH_TERM
-unsigned get_term_columns( void ) {
+unsigned term_get_columns( void ) {
   static unsigned const UNSET = STATIC_CAST( unsigned, -1 );
   static unsigned cols = UNSET;
 

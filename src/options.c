@@ -808,7 +808,7 @@ static unsigned parse_width( char const *s ) {
   size_t values_buf_size = 1;           // for trailing null
   for ( char const *const *t = TERM; *t != NULL; ++t ) {
     if ( strcasecmp( s, *t ) == 0 )
-      return get_term_columns();
+      return term_get_columns();
     // sum sizes of values in case we need to construct an error message
     values_buf_size += strlen( *t ) + 2 /* ", " */;
   } // for
@@ -861,7 +861,7 @@ static void print_version( bool verbose ) {
 
   PUTS( "\nconfigure feature & package options:" );
   bool printed_opt = false;
-#ifdef WITH_WIDTH_TERM
+#ifndef WITH_WIDTH_TERM
   PUT_CONFIG_OPT( "disable-width" );
 #endif /* WITH_WIDTH_TERM */
   if ( !printed_opt )
