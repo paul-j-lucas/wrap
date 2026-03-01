@@ -31,6 +31,9 @@
 #include "common.h"
 #include "pattern.h"
 #include "util.h"
+#ifdef ENABLE_WIDTH_TERM
+#include "wrap_term.h"
+#endif /* ENABLE_WIDTH_TERM */
 
 /// @cond DOXYGEN_IGNORE
 
@@ -793,7 +796,7 @@ missing_arg:
  */
 NODISCARD
 static unsigned parse_width( char const *s ) {
-#ifdef WITH_WIDTH_TERM
+#ifdef ENABLE_WIDTH_TERM
   static char const *const TERM[] = {
     "t",
     "term",
@@ -831,7 +834,7 @@ static unsigned parse_width( char const *s ) {
   );
 #else
   return check_atou( s );
-#endif /* WITH_WIDTH_TERM */
+#endif /* ENABLE_WIDTH_TERM */
 }
 
 /**
@@ -861,9 +864,9 @@ static void print_version( bool verbose ) {
 
   PUTS( "\nconfigure feature & package options:" );
   bool printed_opt = false;
-#ifndef WITH_WIDTH_TERM
+#ifndef ENABLE_WIDTH_TERM
   PUT_CONFIG_OPT( "disable-width" );
-#endif /* WITH_WIDTH_TERM */
+#endif /* ENABLE_WIDTH_TERM */
   if ( !printed_opt )
     PUTS( " none" );
   putchar( '\n' );

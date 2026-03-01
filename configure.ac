@@ -38,7 +38,7 @@ AC_ARG_ENABLE([width-term],
   AS_HELP_STRING([--disable-width-term], [disable support for --width=term])
 )
 AS_IF([test "x$enable_width_term" != xno],
-  [AC_DEFINE([WITH_WIDTH_TERM], [1],
+  [AC_DEFINE([ENABLE_WIDTH_TERM], [1],
     [Define to 1 if --width=term is enabled.])]
 )
 
@@ -101,6 +101,7 @@ AS_IF([test "x$enable_width_term" != xno], [
 ])
 
 # Makefile conditionals.
+AM_CONDITIONAL([ENABLE_WIDTH_TERM], [test "x$enable_width_term" != xno ])
 
 # Miscellaneous.
 AX_C___ATTRIBUTE__

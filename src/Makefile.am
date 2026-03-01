@@ -35,6 +35,10 @@ COMMON_SOURCES = \
 	type_traits.h \
 	util.c util.h
 
+if ENABLE_WIDTH_TERM
+COMMON_SOURCES += wrap_term.c wrap_term.h
+endif
+
 wrap_SOURCES = $(COMMON_SOURCES) \
 	markdown.c markdown.h \
 	unicode.c unicode.h \

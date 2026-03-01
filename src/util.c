@@ -45,18 +45,6 @@
 #include <sysexits.h>
 #include <unistd.h>                     /* for close(2), getpid(3) */
 
-#ifdef WITH_WIDTH_TERM
-# include <fcntl.h>                     /* for open(2) */
-# if HAVE_CURSES_H
-#   define _BOOL /* nothing */          /* prevent bool clash on AIX/Solaris */
-#   include <curses.h>
-#   undef _BOOL
-# elif HAVE_NCURSES_H
-#   include <ncurses.h>
-# endif
-# include <term.h>                      /* for setupterm(3) */
-#endif /* WITH_WIDTH_TERM */
-
 char const WS_CHARS[] = " \n\t\r\f\v";
 
 /// @endcond
@@ -196,86 +184,6 @@ void free_now( void ) {
   } // for
   free_head = NULL;
 }
-
-#ifdef WITH_WIDTH_TERM
-unsigned term_get_columns( void ) {
-  static unsigned const UNSET = STATIC_CAST( unsigned, -1 );
-  static unsigned cols = UNSET;
-
-  if ( cols == UNSET ) {
-    cols = 0;
-
-    int         cterm_fd = -1;
-    char        reason_buf[ 128 ];
-    char const *reason = NULL;
-
-    char const *const term = getenv( "TERM" );
-    if ( unlikely( term == NULL ) ) {
-      reason = "TERM environment variable not set";
-      goto error;
-    }
-
-    char const *const cterm_path = ctermid( NULL );
-    if ( unlikely( cterm_path == NULL || *cterm_path == '\0' ) ) {
-      reason = "ctermid(3) failed to get controlling terminal";
-      goto error;
-    }
-
-    if ( unlikely( (cterm_fd = open( cterm_path, O_RDWR )) == -1 ) ) {
-      reason = STRERROR();
-      goto error;
-    }
-
-    int sut_err;
-    if ( setupterm( CONST_CAST( char*, term ), cterm_fd, &sut_err ) == ERR ) {
-      reason = reason_buf;
-      switch ( sut_err ) {
-        case -1:
-          reason = "terminfo database not found";
-          break;
-        case 0:
-          snprintf(
-            reason_buf, sizeof reason_buf,
-            "TERM=%s not found in database or too generic", term
-          );
-          break;
-        case 1:
-          reason = "terminal is harcopy";
-          break;
-        default:
-          snprintf(
-            reason_buf, sizeof reason_buf,
-            "setupterm(3) returned error code %d", sut_err
-          );
-      } // switch
-      goto error;
-    }
-
-    int const ti_cols = tigetnum( CONST_CAST( char*, "cols" ) );
-    if ( unlikely( ti_cols < 0 ) ) {
-      snprintf(
-        reason_buf, sizeof reason_buf,
-        "tigetnum(\"cols\") returned error code %d", ti_cols
-      );
-      goto error;
-    }
-
-    cols = STATIC_CAST( unsigned, ti_cols );
-
-error:
-    if ( likely( cterm_fd != -1 ) )
-      close( cterm_fd );
-    if ( unlikely( reason != NULL ) ) {
-      fatal_error( EX_UNAVAILABLE,
-        "failed to determine number of columns in terminal: %s\n",
-        reason
-      );
-    }
-  }
-
-  return cols;
-}
-#endif /* WITH_WIDTH_TERM */
 
 #ifndef NDEBUG
 bool is_affirmative( char const *s ) {
