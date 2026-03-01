@@ -101,7 +101,7 @@
  * @return Returns `true` only if \a S equals \a STRLIT.
  */
 #define STRN_EQ_LIT(S,STRLIT) \
-  (strncmp( (S), (STRLIT ""), sizeof( STRLIT "" ) - 1 ) == 0)
+  (strncmp( (S), (STRLIT ""), sizeof STRLIT "" - 1 ) == 0)
 
 /**
  * HTML markup types.
@@ -258,7 +258,7 @@ NODISCARD
 static inline bool is_html_block_element( char const *s ) {
   return NULL != bsearch(
     &s, HTML_BLOCK_ELEMENT, ARRAY_SIZE( HTML_BLOCK_ELEMENT ),
-    sizeof( HTML_BLOCK_ELEMENT[0] ),
+    sizeof HTML_BLOCK_ELEMENT[0],
     POINTER_CAST( bsearch_cmp_fn_t, &str_ptr_cmp )
   );
 }
