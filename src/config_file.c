@@ -110,32 +110,32 @@ static char*            str_trim( char* );
  *  4. `$XDG_CONFIG_DIRS/wrap` for each path or `/etc/xdg/wrap`.
  * @endparblock
  *
- * @param pconfig_path A pointer to the full path of the configuration file
- * presumed to be the value of either the `--config` or `-c` command-line
- * option, if any.  If a configuration file is found, it is updated to point to
- * the full path of the file found.
+ * @param config_path The full path to a configuration file.  May be NULL.
+ * @param path_buf A path buffer to use.  It _must_ be initialized to the empty
+ * string.  Upon return, it contains the full path of the configuration file
+ * that was found, if any.
  * @return Returns the `FILE*` for the configuration file if found or NULL if
  * not.
  */
 NODISCARD
-static FILE* config_find( char const **pconfig_path ) {
-  assert( pconfig_path != NULL );
+static FILE* config_find( char const *config_path,
+                          char path_buf[static PATH_MAX] ) {
+  assert( config_path != NULL );
 
   char const *home = NULL;
-  static char path_buf[ PATH_MAX ];
 
   // 1. Try --config/-c command-line option.
-  FILE *config_file = config_open( *pconfig_path, CONFIG_OPT_ERROR_IS_FATAL );
+  FILE *config_file = config_open( config_path, CONFIG_OPT_ERROR_IS_FATAL );
+  if ( config_file != NULL )
+    strcpy( path_buf, config_path );
 
   // 2. Try $HOME/.wraprc.
-  if ( config_file == NULL ) {
-    *pconfig_path = path_buf;
-    home = home_dir();
-    if ( home != NULL ) {
-      strcpy( path_buf, home );
-      path_append( path_buf, SIZE_MAX, "." PACKAGE "rc" );
-      config_file = config_open( path_buf, CONFIG_OPT_IGNORE_NOT_FOUND );
-    }
+  if ( config_file == NULL && (home = home_dir()) != NULL ) {
+    // LCOV_EXCL_START
+    strcpy( path_buf, home );
+    path_append( path_buf, SIZE_MAX, "." PACKAGE "rc" );
+    config_file = config_open( path_buf, CONFIG_OPT_IGNORE_NOT_FOUND );
+    // LCOV_EXCL_STOP
   }
 
   // 3. Try $XDG_CONFIG_HOME/cdecl and $HOME/.config/cdecl.
@@ -402,16 +402,19 @@ static char* str_trim( char *s ) {
  * NULL.
  * @return Returns the full path of the configuration file that was read or
  * NULL if none.
-
  *
  * @note This function must be called at most once.
  */
 char const* config_init( char const *config_path ) {
   ASSERT_RUN_ONCE();
 
-  FILE *const config_file = config_find( &config_path );
-  if ( config_file != NULL )
-    config_parse( config_path, config_file );
+  static char path_buf[ PATH_MAX ];
+
+  FILE *const config_file = config_find( config_path, path_buf );
+  if ( config_file == NULL )
+    return NULL;
+
+  config_parse( path_buf, config_file );
 
 #ifndef NDEBUG
   if ( is_affirmative( getenv( "WRAP_DUMP_CONF" ) ) ) {
@@ -421,7 +424,7 @@ char const* config_init( char const *config_path ) {
   }
 #endif /* NDEBUG */
 
-  return config_path;
+  return path_buf;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
