@@ -1,5 +1,7 @@
 2026-03-01  Paul J. Lucas <paul@lucasmail.org>
 
+   * configure.ac, src/Makefile.am, options.c, util.c, util.h, wrap_term.c,
+     wrap_term.h: Split out term_get_columns() into wrap_term.c.
    * configure.ac, options.c, util.c, util.h: Specifying `-vv` now prints when
      `--disable-width` when actually disabled.
    * config_file.c: config_init() is now more in-line with that in cdecl.
