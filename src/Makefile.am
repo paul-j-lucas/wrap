@@ -18,45 +18,43 @@
 #	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-bin_PROGRAMS = wrap wrapc
-check_PROGRAMS = regex_test
+bin_PROGRAMS =		wrap wrapc
+check_PROGRAMS =	regex_test
 
-AM_CFLAGS = $(WRAP_CFLAGS)
-AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_builddir)/lib
-LDADD = $(top_builddir)/lib/libgnu.a
+AM_CFLAGS =		$(WRAP_CFLAGS)
+AM_CPPFLAGS =		-I$(top_srcdir)/lib -I$(top_builddir)/lib
+LDADD =			$(top_builddir)/lib/libgnu.a
 
-COMMON_SOURCES = \
-	pjl_config.h \
-	alias.c alias.h \
-	common.c common.h \
-	config_file.c \
-	options.c options.h \
-	pattern.c pattern.h \
-	type_traits.h \
-	util.c util.h
+COMMON_SOURCES =	pjl_config.h \
+			alias.c alias.h \
+			common.c common.h \
+			config_file.c \
+			options.c options.h \
+			pattern.c pattern.h \
+			type_traits.h \
+			util.c util.h
 
 if ENABLE_WIDTH_TERM
-COMMON_SOURCES += wrap_term.c wrap_term.h
+COMMON_SOURCES +=	wrap_term.c wrap_term.h
 endif
 
-wrap_SOURCES = $(COMMON_SOURCES) \
-	markdown.c markdown.h \
-	unicode.c unicode.h \
-	wrap.c \
-	wregex.c wregex.h
+wrap_SOURCES =		$(COMMON_SOURCES) \
+			markdown.c markdown.h \
+			unicode.c unicode.h \
+			wrap.c \
+			wregex.c wregex.h
 
-wrapc_SOURCES = $(COMMON_SOURCES) \
-	align.c \
-	cc_map.c cc_map.h \
-	doxygen.c doxygen.h \
-	wrapc.c
+wrapc_SOURCES =		$(COMMON_SOURCES) \
+			align.c \
+			cc_map.c cc_map.h \
+			doxygen.c doxygen.h \
+			wrapc.c
 
-regex_test_SOURCES = \
-	pjl_config.h \
-	regex_test.c \
-	type_traits.h \
-	unicode.c unicode.h \
-	util.c util.h \
-	wregex.c wregex.h
+regex_test_SOURCES =	pjl_config.h \
+			regex_test.c \
+			type_traits.h \
+			unicode.c unicode.h \
+			util.c util.h \
+			wregex.c wregex.h
 
 # vim:set noet sw=8 ts=8:
