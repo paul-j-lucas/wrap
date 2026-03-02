@@ -55,7 +55,11 @@
 #define CC_SINGLE_CHAR            ' '
 
 /**
- * Comment delimiter character map indexed by character.  If an entry is:
+ * Comment delimiter character map indexed by character.
+ *
+ * @remarks
+ * @parblock
+ * If an entry is:
  *
  *  + NULL, that character is not a comment delimiter character.
  *
@@ -63,6 +67,7 @@
  *    space) in said string forms a two-character comment delimiter, e.g., `//`
  *    or `(*`.  A space means it forms a single comment character delimiter,
  *    e.g., `#`.
+ * @endparblock
  */
 typedef char* cc_map_t[128];
 

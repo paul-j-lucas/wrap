@@ -30,12 +30,25 @@
 // local
 #include "pjl_config.h"                 /* IWYU pragma: keep */
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <regex.h>
 #include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
 
+/// @endcond
+
+/**
+ * @defgroup regex-group Regular Expressions
+ * Declares macros for e-mail and URI regular expressions as well as a wrapper
+ * API around POSIX regex.
+ * @{
+ */
+
 ///////////////////////////////////////////////////////////////////////////////
+
+/// @cond DOXYGEN_IGNORE
 
 // general
 #define RE_ALNUM    "[:alnum:]"         /* matches Unicode letters */
@@ -64,11 +77,14 @@
 #define RE_QUERY    "\\?" RE_Q_OR_F "*"
 #define RE_Q_OR_F   "([" RE_SUBDELIM "/:?@" RE_UNRESERV "]" "|" RE_PCT_ENC ")"
 
+/// @endcond
+
 /**
- * Regular expression for an e-mail address.  Note that this regular expression
- * isn't complete in that it doesn't match a quoted string for the local-part
- * nor an IP address for the domain, but it will work for most e-mail
- * addresses.
+ * Regular expression for an e-mail address.
+ *
+ * @note This regular expression isn't complete in that it doesn't match a
+ * quoted string for the local-part nor an IP address for the domain, but it
+ * will work for most e-mail addresses.
  *
  * @sa [RFC 5322: Internet Message Format, Section 3.4.1, Addr-Spec
  * Specification](https://datatracker.ietf.org/doc/html/rfc5322#section-3.4.1)
@@ -115,7 +131,7 @@
   "(" WRAP_RE_FTP_URI ")"   "|"   \
   "(" WRAP_RE_HTTP_URI ")"
 
-typedef regex_t wregex_t;
+typedef regex_t wregex_t;               ///< Wrap regular expression.
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -163,6 +179,8 @@ bool regex_match( wregex_t *re, char const *s, size_t offset,
                   size_t *range );
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
 
 #endif /* wrap_wregex_H */
 /* vim:set et sw=2 ts=2: */

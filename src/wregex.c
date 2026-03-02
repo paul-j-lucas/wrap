@@ -29,6 +29,8 @@
 #include "unicode.h"
 #include "util.h"
 
+/// @cond DOXYGEN_IGNORE
+
 // standard
 #include <assert.h>
 #include <stdbool.h>
@@ -36,6 +38,13 @@
 #include <sysexits.h>
 #include <wchar.h>                      /* for wint_t */
 #include <wctype.h>
+
+/// @endcond
+
+/**
+ * @addtogroup regex-group
+ * @{
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -141,4 +150,7 @@ done:
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/** @} */
+
 /* vim:set et sw=2 ts=2: */

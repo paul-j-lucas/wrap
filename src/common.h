@@ -40,12 +40,12 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define EOS_SPACES_DEFAULT        2     /* # spaces after end-of-sentence */
-#define LINE_BUF_SIZE             8192  /* hopefully, no one will exceed this */
-#define LINE_WIDTH_DEFAULT        80    /* wrap text to this line width */
-#define LINE_WIDTH_MINIMUM        1
-#define NEWLINES_DELIMIT_DEFAULT  2     /* # newlines that delimit a para */
-#define TAB_SPACES_DEFAULT        8     /* number of spaces a tab equals */
+#define EOS_SPACES_DEFAULT        2     ///< Spaces after end-of-sentence.
+#define LINE_BUF_SIZE             8192  ///< Buffer size.
+#define LINE_WIDTH_DEFAULT        80    ///< Default line width.
+#define LINE_WIDTH_MINIMUM        1     ///< Minimum line width.
+#define NEWLINES_DELIMIT_DEFAULT  2     ///< Newlines that delimit a paragraph.
+#define TAB_SPACES_DEFAULT        8     ///< Number of spaces a tab equals.
 
 /**
  * **wrap** primary author.
@@ -100,24 +100,36 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
 #define ASCII_DC3                 '\x13'
 
 /**
- * From Wikipedia: The data link escape character (DLE) was intended to be a
- * signal to the other end of a data link that the following character is a
- * control character such as STX or ETX. For example, a packet may be
+ * Data Linke Escape.
+ *
+ * @remarks From Wikipedia: The data link escape character (DLE) was intended
+ * to be a signal to the other end of a data link that the following character
+ * is a control character such as STX or ETX. For example, a packet may be
  * structured in the following way: (DLE)(STX) _payload_ (DLE)(ETX).
+ *
+ * @sa https://en.wikipedia.org/wiki/Control_character
  */
 #define ASCII_DLE                 '\x10'
 
 /**
- * From Wikipedia: The end of transmission block character (ETB) was used to
- * indicate the end of a block of data, where data was divided into such blocks
- * for transmission purposes.
+ * End of Transmission Block.
+ *
+ * @remarks From Wikipedia: The end of transmission block character (ETB) was
+ * used to indicate the end of a block of data, where data was divided into
+ * such blocks for transmission purposes.
+ *
+ * @sa https://en.wikipedia.org/wiki/Control_character
  */
 #define ASCII_ETB                 '\x17'
 
 /**
- * From Wikipedia: The start of heading (SOH) character was to mark a non-data
- * section of a data stream—the part of a stream containing addresses and other
- * housekeeping data.
+ * Start of Heading.
+ *
+ * @remarks From Wikipedia: The start of heading (SOH) character was to mark a
+ * non-data section of a data stream—the part of a stream containing addresses
+ * and other housekeeping data.
+ *
+ * @sa https://en.wikipedia.org/wiki/Control_character
  */
 #define ASCII_SOH                 '\x01'
 
@@ -160,9 +172,11 @@ typedef char line_buf_t[ LINE_BUF_SIZE ];
  */
 enum wipc_code {
   /**
-   * IPC code to signal the start of an IPC message.  It _must_ be immediately
-   * followed by another IPC code that indicates the type of message.  All IPC
-   * messages _must_ be terminated by a newline.
+   * IPC code to signal the start of an IPC message.
+   *
+   * @remarks It _must_ be immediately followed by another IPC code that
+   * indicates the type of message.  All IPC messages _must_ be terminated by a
+   * newline.
    */
   WIPC_CODE_HELLO                 = ASCII_DLE,
   
@@ -175,12 +189,15 @@ enum wipc_code {
    * IPC code to signal a change in the leading comment characters and/or
    * whitespace.
    *
+   * @remarks
+   * @parblock
    * It has two parameters:
    *
    *  1. _line-width_
    *  2. _line-prefix_
    *
    * Parameters are separated by #WIPC_PARAM_SEP.
+   * @endparblock
    *
    * @sa #WIPC_PARAM_SEP
    */
@@ -199,8 +216,9 @@ enum wipc_code {
   WIPC_CODE_PREFORMATTED_END      = ASCII_DC1,
   
   /**
-   * IPC code to signal the end of the block of text to be wrapped.  Any text
-   * sent after this is passed through verbatim.
+   * IPC code to signal the end of the block of text to be wrapped.
+   *
+   * @remarks Any text sent after this is passed through verbatim.
    */
   WIPC_CODE_WRAP_END              = ASCII_ETB
 };
@@ -211,9 +229,9 @@ typedef enum wipc_code wipc_code_t;
 ////////// extern functions ///////////////////////////////////////////////////
 
 /**
- * Computes the width of a character where tabs have a width of
- * \ref opt_tab_spaces spaces minus the number of spaces we're into a tab-stop;
- * all others characters have a width of 1.
+ * Computes the width of a character where tabs have a width of \ref
+ * opt_tab_spaces spaces minus the number of spaces we're into a tab-stop; all
+ * others characters have a width of 1.
  *
  * @param c The character to get the width of.
  * @param width The line width so far.
@@ -225,8 +243,8 @@ inline size_t char_width( char c, size_t width ) {
 }
 
 /**
- * Reads a newline-terminated line from \a ffrom.
- * If reading fails, prints an error message and exits.
+ * Reads a newline-terminated line from \a ffrom; if reading fails, prints an
+ * error message and exits.
  *
  * @param line The line buffer to read into.
  * @param ffrom The `FILE` to read from.
