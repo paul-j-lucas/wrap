@@ -287,7 +287,7 @@ inline size_t utf8_copy_char( char *dest, char const *src ) {
  */
 NODISCARD
 inline char const* utf8_rsync( char const *buf, char const *pos ) {
-  extern char const* utf8_rsync_impl( char const*, char const* );
+  char const* utf8_rsync_impl( char const*, char const* );
   char32_t const cp = STATIC_CAST( char8_t, *pos );
   return cp_is_ascii( cp ) ? pos : utf8_rsync_impl( buf, pos );
 }
