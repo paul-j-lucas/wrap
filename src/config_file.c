@@ -120,8 +120,6 @@ static char*            str_trim( char* );
 NODISCARD
 static FILE* config_find( char const *config_path,
                           char path_buf[static PATH_MAX] ) {
-  assert( config_path != NULL );
-
   char const *home = NULL;
 
   // 1. Try --config/-c command-line option.
