@@ -25,12 +25,12 @@ AM_CFLAGS =		$(WRAP_CFLAGS)
 AM_CPPFLAGS =		-I$(top_srcdir)/lib -I$(top_builddir)/lib
 LDADD =			$(top_builddir)/lib/libgnu.a
 
-COMMON_SOURCES =	config.h pjl_config.h \
-			alias.c alias.h \
+COMMON_SOURCES =	alias.c alias.h \
 			common.c common.h \
 			config_file.c \
 			options.c options.h \
 			pattern.c pattern.h \
+			pjl_config.h config.h \
 			type_traits.h \
 			util.c util.h
 
@@ -50,7 +50,7 @@ wrapc_SOURCES =		$(COMMON_SOURCES) \
 			doxygen.c doxygen.h \
 			wrapc.c
 
-regex_test_SOURCES =	config.h pjl_config.h \
+regex_test_SOURCES =	pjl_config.h config.h \
 			regex_test.c \
 			type_traits.h \
 			unicode.c unicode.h \
