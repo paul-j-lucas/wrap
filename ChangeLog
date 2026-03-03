@@ -1,3 +1,11 @@
+2026-03-03  Paul J. Lucas <paul@lucasmail.org>
+
+   * src/Makefile.am: Added config.h.
+
+2026-03-02  Paul J. Lucas <paul@lucasmail.org>
+
+   * config_file.c: Removed incorrect assert.
+
 2026-03-01  Paul J. Lucas <paul@lucasmail.org>
 
    * doxygen.c, markdown.c: Removed unnecessary () for sizeof.
