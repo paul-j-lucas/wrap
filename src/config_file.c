@@ -20,7 +20,7 @@
 
 /**
  * @file
- * Defines the function to read a **wrap**(1) configuration file.
+ * Defines functions to read a **wrap**(1) configuration file.
  */
 
 // local
@@ -136,7 +136,7 @@ static FILE* config_find( char const *config_path,
     // LCOV_EXCL_STOP
   }
 
-  // 3. Try $XDG_CONFIG_HOME/cdecl and $HOME/.config/cdecl.
+  // 3. Try $XDG_CONFIG_HOME/wrap and $HOME/.config/wrap.
   if ( config_file == NULL ) {
     char const *const config_dir = null_if_empty( getenv( "XDG_CONFIG_HOME" ) );
     if ( config_dir != NULL ) {
@@ -155,7 +155,7 @@ static FILE* config_find( char const *config_path,
     }
   }
 
-  // 4. Try $XDG_CONFIG_DIRS/cdecl and /etc/xdg/cdecl.
+  // 4. Try $XDG_CONFIG_DIRS/wrap and /etc/xdg/wrap.
   if ( config_file == NULL ) {
     char const *config_dirs = null_if_empty( getenv( "XDG_CONFIG_DIRS" ) );
     if ( config_dirs == NULL )
