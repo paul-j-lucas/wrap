@@ -34,7 +34,7 @@
 // local
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wundef"
-#include "config.h"                     /* IWYU pragma: export */
+#include "config.h"
 #pragma GCC diagnostic pop
 
 #ifdef VERSION
@@ -44,7 +44,7 @@
 #endif /* VERSION */
 
 // standard
-#include <attribute.h>                  /* IWYU pragma: export */
+#include <attribute.h>
 
 ////////// compiler attributes ////////////////////////////////////////////////
 

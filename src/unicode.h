@@ -28,15 +28,15 @@
  */
 
 // local
-#include "pjl_config.h"                 /* IWYU pragma: keep */
+#include "pjl_config.h"                 /* must go first */
 #include "util.h"
 
 /// @cond DOXYGEN_IGNORE
 
 // standard
 #include <ctype.h>
-#include <inttypes.h>                   /* for uint*_t */
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>                     /* for memmove(3) */
 #if HAVE_CHAR8_T || HAVE_CHAR32_T

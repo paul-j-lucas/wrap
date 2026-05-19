@@ -25,7 +25,7 @@
  */
 
 // local
-#include "pjl_config.h"                 /* IWYU pragma: keep */
+#include "pjl_config.h"                 /* must go first */
 #include "markdown.h"
 #include "common.h"
 #include "options.h"
@@ -36,11 +36,11 @@
 // standard
 #include <assert.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include <stddef.h>                     /* for size_t */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>                  /* for ssize_t */
 #include <sysexits.h>
 
 /// @endcond

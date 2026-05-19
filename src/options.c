@@ -25,7 +25,7 @@
  */
 
 // local
-#include "pjl_config.h"                 /* IWYU pragma: keep */
+#include "pjl_config.h"                 /* must go first */
 #include "options.h"
 #include "alias.h"
 #include "common.h"
@@ -42,9 +42,9 @@
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
-#include <inttypes.h>                   /* for SIZE_MAX */
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>                     /* for SIZE_MAX */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

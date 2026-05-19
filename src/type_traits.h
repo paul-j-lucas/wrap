@@ -27,7 +27,10 @@
  */
 
 // local
-#include "pjl_config.h"                 /* IWYU pragma: keep */
+#include "pjl_config.h"                 /* must go first */
+
+// standard
+#include <assert.h>
 
 /**
  * @defgroup type-traits-group Type Traits

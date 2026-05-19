@@ -24,7 +24,7 @@
  */
 
 // local
-#include "pjl_config.h"                 /* IWYU pragma: keep */
+#include "pjl_config.h"                 /* must go first */
 #include "util.h"
 
 /// @cond DOXYGEN_IGNORE
@@ -38,7 +38,6 @@
 #endif /* NDEBUG */
 #include <stdarg.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>                     /* for malloc(), ... */
 #include <string.h>
 #include <strings.h>                    /* for strcasecmp(3) */

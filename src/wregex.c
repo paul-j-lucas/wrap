@@ -24,7 +24,7 @@
  */
 
 // local
-#include "pjl_config.h"                 /* IWYU pragma: keep */
+#include "pjl_config.h"                 /* must go first */
 #include "wregex.h"
 #include "unicode.h"
 #include "util.h"
@@ -33,6 +33,7 @@
 
 // standard
 #include <assert.h>
+#include <regex.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <sysexits.h>

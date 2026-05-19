@@ -24,7 +24,7 @@
  */
 
 // local
-#include "pjl_config.h"                 /* IWYU pragma: keep */
+#include "pjl_config.h"                 /* must go first */
 #include "cc_map.h"
 #include "common.h"
 #include "doxygen.h"
@@ -42,7 +42,6 @@
 #include <stdio.h>
 #include <stdlib.h>                     /* for exit() */
 #include <string.h>                     /* for str...() */
-#include <sys/types.h>                  /* for pid_t */
 #include <sys/wait.h>                   /* for wait() */
 #include <sysexits.h>
 #include <unistd.h>                     /* for close(), fork(), ... */
