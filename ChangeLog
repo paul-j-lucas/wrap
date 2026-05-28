@@ -1,3 +1,11 @@
+2026-05-28  Paul J. Lucas <paul@lucasmail.org>
+
+   * wrap.1, wrapc.1: Code blocks are now smaller.
+
+2026-05-26  Paul J. Lucas <paul@lucasmail.org>
+
+   * src/Makefile.am: Better way to invoke include-tidy from a Makefile.
+
 2026-05-19  Paul J. Lucas <paul@lucasmail.org>
 
    * src/Makefile.am, alias.c, alias.h, align.c, cc_map.c, cc_map.h, common.c,
