@@ -1162,6 +1162,12 @@ endif
 
 ## end   gnulib module strdup-posix
 
+## begin gnulib module streq
+
+libgnu_a_SOURCES += streq.c
+
+## end   gnulib module streq
+
 ## begin gnulib module streq-opt
 
 
@@ -1220,6 +1226,7 @@ string.h: string.in.h $(top_builddir)/config.status $(CXXDEFS_H) $(ARG_NONNULL_H
 	      -e 's/@''GNULIB_MBS_ENDSWITH''@/$(GL_GNULIB_MBS_ENDSWITH)/g' \
 	      -e 's/@''GNULIB_MBS_STARTSWITH''@/$(GL_GNULIB_MBS_STARTSWITH)/g' \
 	      -e 's/@''GNULIB_MEMCHR''@/$(GL_GNULIB_MEMCHR)/g' \
+	      -e 's/@''GNULIB_MEMEQ''@/$(GL_GNULIB_MEMEQ)/g' \
 	      -e 's/@''GNULIB_MEMMEM''@/$(GL_GNULIB_MEMMEM)/g' \
 	      -e 's/@''GNULIB_MEMPCPY''@/$(GL_GNULIB_MEMPCPY)/g' \
 	      -e 's/@''GNULIB_MEMRCHR''@/$(GL_GNULIB_MEMRCHR)/g' \
@@ -1229,7 +1236,7 @@ string.h: string.in.h $(top_builddir)/config.status $(CXXDEFS_H) $(ARG_NONNULL_H
 	      -e 's/@''GNULIB_STPNCPY''@/$(GL_GNULIB_STPNCPY)/g' \
 	      -e 's/@''GNULIB_STRCHRNUL''@/$(GL_GNULIB_STRCHRNUL)/g' \
 	      -e 's/@''GNULIB_STRDUP''@/$(GL_GNULIB_STRDUP)/g' \
-	      -e 's/@''GNULIB_STRINGEQ''@/$(GL_GNULIB_STRINGEQ)/g' \
+	      -e 's/@''GNULIB_STREQ''@/$(GL_GNULIB_STREQ)/g' \
 	      -e 's/@''GNULIB_STRNCAT''@/$(GL_GNULIB_STRNCAT)/g' \
 	      -e 's/@''GNULIB_STRNCPY''@/$(GL_GNULIB_STRNCPY)/g' \
 	      -e 's/@''GNULIB_STRNDUP''@/$(GL_GNULIB_STRNDUP)/g' \
@@ -1318,12 +1325,6 @@ MOSTLYCLEANFILES += string.h string.h-t1 string.h-t2
 EXTRA_DIST += string.in.h
 
 ## end   gnulib module string-h
-
-## begin gnulib module stringeq
-
-libgnu_a_SOURCES += string.c
-
-## end   gnulib module stringeq
 
 ## begin gnulib module strndup
 

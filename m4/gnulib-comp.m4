@@ -124,11 +124,11 @@ AC_DEFUN([gl_EARLY],
   # Code from module stdint-h:
   # Code from module stdlib-h:
   # Code from module strdup-posix:
+  # Code from module streq:
   # Code from module streq-opt:
   # Code from module strerror:
   # Code from module strerror-override:
   # Code from module string-h:
-  # Code from module stringeq:
   # Code from module strndup:
   # Code from module strnlen:
   # Code from module strnlen1:
@@ -483,6 +483,8 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_STRDUP
   ])
   gl_STRING_MODULE_INDICATOR([strdup])
+  gl_FUNC_STREQ
+  gl_STRING_MODULE_INDICATOR([streq])
   gl_FUNC_STRERROR
   gl_CONDITIONAL([GL_COND_OBJ_STRERROR], [test $REPLACE_STRERROR = 1])
   gl_MODULE_INDICATOR([strerror])
@@ -497,9 +499,6 @@ AC_DEFUN([gl_INIT],
   gl_STRING_H
   gl_STRING_H_REQUIRE_DEFAULTS
   AC_PROG_MKDIR_P
-  gl_FUNC_STREQ
-  gl_FUNC_MEMEQ
-  gl_STRING_MODULE_INDICATOR([stringeq])
   gl_FUNC_STRNDUP
   gl_CONDITIONAL([GL_COND_OBJ_STRNDUP],
                  [test $HAVE_STRNDUP = 0 || test $REPLACE_STRNDUP = 1])
@@ -525,7 +524,7 @@ AC_DEFUN([gl_INIT],
   gl_UNICASE_H_REQUIRE_DEFAULTS
   AC_PROG_MKDIR_P
   gl_LIBUNISTRING_MODULE([1.4], [unicase/tolower])
-  gl_LIBUNISTRING_LIBHEADER([1.3], [unictype.h])
+  gl_LIBUNISTRING_LIBHEADER([1.4], [unictype.h])
   gl_UNICTYPE_H
   gl_UNICTYPE_H_REQUIRE_DEFAULTS
   AC_PROG_MKDIR_P
@@ -868,10 +867,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stdlib.in.h
   lib/strdup.c
   lib/streq-opt.h
+  lib/streq.c
   lib/strerror-override.c
   lib/strerror-override.h
   lib/strerror.c
-  lib/string.c
   lib/string.in.h
   lib/strndup.c
   lib/strnlen.c
@@ -1001,9 +1000,9 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/stdint.m4
   m4/stdlib_h.m4
   m4/strdup.m4
+  m4/streq.m4
   m4/strerror.m4
   m4/string_h.m4
-  m4/stringeq.m4
   m4/strndup.m4
   m4/strnlen.m4
   m4/sys_cdefs_h.m4
