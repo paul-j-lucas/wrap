@@ -93,7 +93,7 @@
  * @{
  */
 
-///////////////////////////////////////////////////////////////////////////////
+////////// enums //////////////////////////////////////////////////////////////
 
 /**
  * End-of-Line formats.
@@ -103,9 +103,13 @@ enum eol {
   EOL_UNIX    = 'u',                    ///< Unix newlines: `\n`.
   EOL_WINDOWS = 'w'                     ///< Windows newlines: `\r\n`.
 };
+
+////////// typedefs ///////////////////////////////////////////////////////////
+
 typedef enum eol eol_t;
 
-// extern option variables
+////////// extern variables ///////////////////////////////////////////////////
+
 extern char const  *opt_alias;          ///< Alias name to use.
 extern char         opt_align_char;     ///< Use this to pad comment alignment.
 extern size_t       opt_align_column;   ///< Align comment on given column.

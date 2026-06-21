@@ -103,6 +103,8 @@
 #define STRN_EQ_LIT(S,STRLIT) \
   (strncmp( (S), (STRLIT ""), sizeof STRLIT "" - 1 ) == 0)
 
+////////// enumerations ///////////////////////////////////////////////////////
+
 /**
  * HTML markup types.
  *
@@ -134,7 +136,14 @@ enum html_state {
   /// Ending HTML block.
   HTML_END
 };
-typedef enum html_state html_state_t;
+
+////////// typedefs ///////////////////////////////////////////////////////////
+
+typedef enum    html_state    html_state_t;
+typedef struct  md_code_fence md_code_fence_t;
+typedef ssize_t               md_stack_pos_t; ///< Markdown stack position type.
+
+////////// structures /////////////////////////////////////////////////////////
 
 /**
  * PHP Markdown Extra code fence info.
@@ -143,11 +152,8 @@ struct md_code_fence {
   char    cf_c;                 ///< Character of the fence: `~` or <tt>`</tt>.
   size_t  cf_len;               ///< Length of the fence.
 };
-typedef struct md_code_fence md_code_fence_t;
 
-typedef ssize_t md_stack_pos_t;         ///< Markdown stack position type.
-
-// local constant definitions
+////////// local constants ////////////////////////////////////////////////////
 
 /// HTML element name maximum length.
 #define HTML_ELEMENT_CHAR_MAX    10
@@ -212,7 +218,8 @@ static char const *const HTML_BLOCK_ELEMENT[] = {
   "video"
 };
 
-// local variable definitions
+////////// local variables ////////////////////////////////////////////////////
+
 static html_state_t   curr_html_state;  ///< Current HTML state.
 static md_state_t    *md_stack;         ///< Global stack of Markdown states.
 static md_stack_pos_t md_stack_top;     ///< Top of \ref md_stack.
@@ -225,7 +232,8 @@ static bool           prev_code_fence_end;
 /// Previous value for `link_lable_has_title` in markdown_parse().
 static bool           prev_link_label_has_title;
 
-// local functions
+////////// local functions ////////////////////////////////////////////////////
+
 NODISCARD
 static bool           md_is_code_fence( char const*, md_code_fence_t* ),
                       md_is_dl_ul_helper( char const*, md_indent_t* );

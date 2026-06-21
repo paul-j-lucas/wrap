@@ -39,7 +39,11 @@
  * @{
  */
 
-///////////////////////////////////////////////////////////////////////////////
+////////// typedefs ///////////////////////////////////////////////////////////
+
+typedef struct pattern pattern_t;
+
+////////// structs ////////////////////////////////////////////////////////////
 
 /**
  * Contains a **wrap**(1) configuration file filename pattern and the \ref
@@ -49,7 +53,6 @@ struct pattern {
   char const     *pattern;              ///< File-name pattern.
   alias_t const  *alias;                ///< Alias to which the pattern maps.
 };
-typedef struct pattern pattern_t;
 
 ////////// extern functions ///////////////////////////////////////////////////
 

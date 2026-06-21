@@ -60,9 +60,8 @@
 
 #define OPT_BUF_SIZE              32    /**< Used by opt_format(). */
 
-///////////////////////////////////////////////////////////////////////////////
+////////// local constants ////////////////////////////////////////////////////
 
-// local constants
 static char const   COMMENT_CHARS_DEFAULT[] =
   "!"  ","  // Fortran, Simula
   "#"  ","  // AWK, CMake, Crystal, Julia, Make, Nim, Octave, Perl, Python, R,
@@ -88,10 +87,11 @@ static char const   COMMENT_CHARS_DEFAULT[] =
   "\\" ","  // Forth
   ;
 
+////////// extern variables ///////////////////////////////////////////////////
+
 /// @cond DOXYGEN_IGNORE
 /// Otherwise Doxygen generates two entries for each option.
 
-// extern option variables
 char const         *opt_alias;
 char                opt_align_char;
 size_t              opt_align_column;
@@ -127,19 +127,7 @@ bool                opt_title_line;
 
 /// @endcond
 
-// local variables
-static char const  *fin_path = "-";     ///< File in path.
-static char const  *fout_path = "-";    ///< File out path.
-static bool         is_wrapc;           ///< Are we **wrapc**(1)?
-static bool         opts_given[ 128 ];  ///< Options given indexed by `char`.
-
-// local functions
-NODISCARD
-static unsigned     parse_width( char const* );
-
-static void         print_version( bool );
-
-///////////////////////////////////////////////////////////////////////////////
+////////// local constants ////////////////////////////////////////////////////
 
 /// @cond DOXYGEN_IGNORE
 #define SOPT_NO_ARGUMENT          /* nothing */
@@ -315,6 +303,20 @@ static struct option const *const OPTS_LONG[] = {
   WRAP_OPTS_LONG,
   WRAPC_OPTS_LONG
 };
+
+////////// local variables ////////////////////////////////////////////////////
+
+static char const  *fin_path = "-";     ///< File in path.
+static char const  *fout_path = "-";    ///< File out path.
+static bool         is_wrapc;           ///< Are we **wrapc**(1)?
+static bool         opts_given[ 128 ];  ///< Options given indexed by `char`.
+
+////////// local functions ////////////////////////////////////////////////////
+
+NODISCARD
+static unsigned     parse_width( char const* );
+
+static void         print_version( bool );
 
 ////////// local functions ////////////////////////////////////////////////////
 

@@ -71,6 +71,8 @@
  */
 #define WRAP_LICENSE_URL          "https://gnu.org/licenses/gpl.html"
 
+////////// typedefs ///////////////////////////////////////////////////////////
+
 /**
  * Line buffer.
  */

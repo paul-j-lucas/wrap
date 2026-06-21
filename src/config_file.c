@@ -55,7 +55,7 @@
  * @{
  */
 
-///////////////////////////////////////////////////////////////////////////////
+////////// enumerations ///////////////////////////////////////////////////////
 
 /**
  * Options for the config_open() function.
@@ -65,7 +65,6 @@ enum config_opts {
   CONFIG_OPT_ERROR_IS_FATAL    = 1 << 0,  ///< An error is fatal.
   CONFIG_OPT_IGNORE_NOT_FOUND  = 1 << 1   ///< Ignore file not found.
 };
-typedef enum config_opts config_opts_t;
 
 /** 
  * Configuration file section.
@@ -75,7 +74,13 @@ enum config_section {
   CONFIG_SECTION_ALIASES,               ///< `[ALIASES]` section.
   CONFIG_SECTION_PATTERNS               ///< `[PATTERNS]` section.
 };
+
+////////// typedefs ///////////////////////////////////////////////////////////
+
+typedef enum config_opts    config_opts_t;
 typedef enum config_section config_section_t;
+
+////////// local functions ////////////////////////////////////////////////////
 
 NODISCARD
 static FILE*            config_open( char const*, config_opts_t );

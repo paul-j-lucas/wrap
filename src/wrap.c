@@ -58,6 +58,8 @@
 #define WIPC_DEFERF(BUF,SIZE,CODE,FORMAT,...) \
   snprintf( (BUF), (SIZE), ("%c" FORMAT), (CODE), __VA_ARGS__ )
 
+////////// enums //////////////////////////////////////////////////////////////
+
 /**
  * Hyphenation states.
  */
@@ -66,7 +68,6 @@ enum hyphen {                           // H = hyphen-adjacent char
   HYPHEN_MAYBE,                         ///< Encountered `H-`.
   HYPHEN_YES                            ///< Encountered `H-H`.
 };
-typedef enum hyphen hyphen_t;
 
 /**
  * Line indentation type.
@@ -80,12 +81,18 @@ enum indent {
   /// Indent all lines but first of a paragraph.
   INDENT_HANG
 };
+
+////////// typedefs ///////////////////////////////////////////////////////////
+
+typedef enum hyphen hyphen_t;
 typedef enum indent indent_t;
 
-// extern variable definitions
+////////// extern variables ///////////////////////////////////////////////////
+
 char const         *prog_name;
 
-// local variable definitions
+////////// local variables ////////////////////////////////////////////////////
+
 static wregex_t     block_regex;        ///< Compiled from opt_block_regex.
 static size_t       consec_newlines;    ///< Number of consecutive newlines.
 static bool         encountered_nonws;  ///< Encountered a non-whitespace char?
@@ -107,7 +114,8 @@ static line_buf_t   proto_tws;          // prototype trailing whitespace, if any
 static size_t       put_spaces;         ///< Spaces to put between words.
 static bool         was_eos_char;       ///< Prev char an end-of-sentence char?
 
-// local functions
+////////// local functions ////////////////////////////////////////////////////
+
 NODISCARD
 static char32_t     buf_getcp( char const**, utf8c_t );
 

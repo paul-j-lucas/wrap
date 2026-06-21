@@ -54,6 +54,8 @@
  */
 #define CC_SINGLE_CHAR            ' '
 
+////////// typedefs ///////////////////////////////////////////////////////////
+
 /**
  * Comment delimiter character map indexed by character.
  *

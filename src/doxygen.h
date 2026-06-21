@@ -54,6 +54,8 @@
  */
 #define DOX_CMD_NAME_SIZE_MAX     22
 
+////////// enums //////////////////////////////////////////////////////////////
+
 /**
  * Doxygen command type.
  */
@@ -196,7 +198,13 @@ enum dox_cmd_type {
    */
   DOX_PRE     = 1u << 4,
 };
-typedef enum dox_cmd_type dox_cmd_type_t;
+
+////////// typedefs ///////////////////////////////////////////////////////////
+
+typedef struct  dox_cmd       dox_cmd_t;
+typedef enum    dox_cmd_type  dox_cmd_type_t;
+
+////////// structs ////////////////////////////////////////////////////////////
 
 /**
  * Contains information about a [Doxygen](http://www.doxygen.org/) command.
@@ -208,9 +216,8 @@ struct dox_cmd {
   dox_cmd_type_t  type;                 ///< Command's type.
   char const     *end_name;             ///< Corresponding end command, if any.
 };
-typedef struct dox_cmd dox_cmd_t;
 
-///////////////////////////////////////////////////////////////////////////////
+////////// extern functions ///////////////////////////////////////////////////
 
 /**
  * Attempts to find \a s among Doxygen's set of commands.

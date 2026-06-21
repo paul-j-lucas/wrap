@@ -76,6 +76,8 @@ typedef uint32_t char32_t;
 /// Max number of bytes needed for a UTF-8 character.
 #define UTF8_CHAR_SIZE_MAX        6
 
+////////// typedefs ///////////////////////////////////////////////////////////
+
 /**
  * UTF-8 character.
  */

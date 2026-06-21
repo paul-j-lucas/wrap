@@ -49,6 +49,8 @@
 #define MD_SEQ_NUM_INIT           1u    /**< First Markdown state seq number. */
 #define MD_TAB_SPACES             4u    /**< Number of spaces a tab equals. */
 
+////////// enums //////////////////////////////////////////////////////////////
+
 /**
  * Markdown line types.
  *
@@ -71,12 +73,17 @@ enum md_line {
   MD_TEXT         = 'T',                ///< Plain text.
   MD_UL           = '*',                ///< Unordered list: `*`, `+`, or `-`.
 };
-typedef enum md_line md_line_t;
 
-typedef size_t   md_depth_t;            ///< How nested we are.
-typedef unsigned md_seq_t;              ///< Parser state sequence number.
-typedef size_t   md_indent_t;           ///< Indentation amount (in spaces).
-typedef unsigned md_ol_t;               ///< Ordered list number.
+////////// typedefs ///////////////////////////////////////////////////////////
+
+typedef size_t            md_depth_t;   ///< How nested we are.
+typedef size_t            md_indent_t;  ///< Indentation amount (in spaces).
+typedef enum    md_line   md_line_t;
+typedef unsigned          md_ol_t;      ///< Ordered list number.
+typedef unsigned          md_seq_t;     ///< Parser state sequence number.
+typedef struct  md_state  md_state_t;
+
+////////// structs ////////////////////////////////////////////////////////////
 
 /**
  * Markdown parser state.
@@ -134,7 +141,6 @@ struct md_state {
   char        ol_c;                     ///< Ordered list character: `.` or `)`.
   md_ol_t     ol_num;                   ///< Ordered list number.
 };
-typedef struct md_state md_state_t;
 
 ////////// extern functions ///////////////////////////////////////////////////
 

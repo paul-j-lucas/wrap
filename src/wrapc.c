@@ -86,7 +86,7 @@
  */
 void align_eol_comments( char input_buf[const] );
 
-///////////////////////////////////////////////////////////////////////////////
+////////// enums //////////////////////////////////////////////////////////////
 
 /**
  * Types of comment delimiters.
@@ -116,7 +116,13 @@ enum delim {
   ///
   DELIM_DOUBLE,
 };
-typedef enum delim delim_t;
+
+////////// typedefs ///////////////////////////////////////////////////////////
+
+typedef enum    delim     delim_t;
+typedef struct  dual_line dual_line_t;
+
+////////// structs ////////////////////////////////////////////////////////////
 
 /**
  * Contains the current and next lines of input so the next line can be peeked
@@ -127,12 +133,13 @@ struct dual_line {
   char       *dl_curr;                  ///< Pointer to current line.
   char       *dl_next;                  ///< Pointer to next line.
 };
-typedef struct dual_line dual_line_t;
 
-// extern variable definitions
+////////// extern variables ///////////////////////////////////////////////////
+
 char const         *prog_name;
 
-// local variable definitions
+////////// local variables ////////////////////////////////////////////////////
+
 static char         close_cc[2];        ///< Closing comment delimiter char(s).
 static delim_t      delim;              ///< Comment delimiter type.
 static dual_line_t  input_lines;        ///< Input lines.
@@ -174,7 +181,8 @@ static int          pipes[2][2];
 #define TO_WRAP     0                   /**< To refer to \ref pipes[0]. */
 #define FROM_WRAP   1                   /**< To refer to \ref pipes[1]. */
 
-// local functions
+////////// local functions ////////////////////////////////////////////////////
+
 static void         adjust_comment_width( char* );
 static void         chop_suffix( char* );
 static void         fork_exec_wrap( pid_t );

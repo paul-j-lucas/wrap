@@ -44,9 +44,7 @@
  * @{
  */
 
-///////////////////////////////////////////////////////////////////////////////
-
-// local constant definitions
+////////// local constants ////////////////////////////////////////////////////
 
 /// Number of aliases to allocate by default.
 static size_t const ALIAS_ALLOC_DEFAULT         = 10;
@@ -65,11 +63,13 @@ static char const   ALIAS_NAME_CHARS[]          = "abcdefghijklmnopqrstuvwxyz"
                                                   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                                   "0123456789+-.:_";
 
-// local variable definitions
-static alias_t     *aliases = NULL;     ///< Global list of aliases.
-static size_t       n_aliases = 0;      ///< Number of aliases in global list.
+////////// local variables ////////////////////////////////////////////////////
 
-// local functions
+static alias_t *aliases = NULL;         ///< Global list of aliases.
+static size_t   n_aliases = 0;          ///< Number of aliases in global list.
+
+////////// local functions ////////////////////////////////////////////////////
+
 static void   alias_cleanup( void );
 static void   alias_free( alias_t* );
 
