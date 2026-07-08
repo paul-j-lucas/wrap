@@ -1,3 +1,8 @@
+2026-07-08  Paul J. Lucas <paul@lucasmail.org>
+
+   * pjl_compile.m4: PJL_COMPILE now accepts 1st arg with whitespace (that's
+     converted to _); no longer defines any macro in failure case.
+
 2026-05-28  Paul J. Lucas <paul@lucasmail.org>
 
    * wrap.1, wrapc.1: Code blocks are now smaller.
