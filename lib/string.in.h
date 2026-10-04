@@ -312,7 +312,8 @@ _GL_EXTERN_C void *memset_explicit (void *__s, int __c, size_t __n)
 #if @GNULIB_EXPLICIT_BZERO@
 # if ! @HAVE_EXPLICIT_BZERO@
 _GL_FUNCDECL_SYS (explicit_bzero, void,
-                  (void *__dest, size_t __n), _GL_ARG_NONNULL ((1)));
+                  (void *__dest, size_t __n),
+                  _GL_ATTRIBUTE_NONNULL_IF_NONZERO (1, 2));
 # endif
 _GL_CXXALIAS_SYS (explicit_bzero, void, (void *__dest, size_t __n));
 _GL_CXXALIASWARN (explicit_bzero);
@@ -482,7 +483,8 @@ _GL_WARN_ON_USE (memmem, "memmem is unportable and often quadratic - "
 _GL_FUNCDECL_RPL (mempcpy, void *,
                   (void *restrict __dest, void const *restrict __src,
                    size_t __n),
-                  _GL_ARG_NONNULL ((1, 2)));
+                  _GL_ATTRIBUTE_NONNULL_IF_NONZERO (1, 3)
+                  _GL_ATTRIBUTE_NONNULL_IF_NONZERO (2, 3));
 _GL_CXXALIAS_RPL (mempcpy, void *,
                   (void *restrict __dest, void const *restrict __src,
                    size_t __n));
@@ -491,7 +493,8 @@ _GL_CXXALIAS_RPL (mempcpy, void *,
 _GL_FUNCDECL_SYS (mempcpy, void *,
                   (void *restrict __dest, void const *restrict __src,
                    size_t __n),
-                  _GL_ARG_NONNULL ((1, 2)));
+                  _GL_ATTRIBUTE_NONNULL_IF_NONZERO (1, 3)
+                  _GL_ATTRIBUTE_NONNULL_IF_NONZERO (2, 3));
 #  endif
 _GL_CXXALIAS_SYS (mempcpy, void *,
                   (void *restrict __dest, void const *restrict __src,
@@ -645,7 +648,8 @@ _GL_WARN_ON_USE (stpcpy, "stpcpy is unportable - "
 _GL_FUNCDECL_RPL (stpncpy, char *,
                   (char *restrict __dst, char const *restrict __src,
                    size_t __n),
-                  _GL_ARG_NONNULL ((1, 2)));
+                  _GL_ATTRIBUTE_NONNULL_IF_NONZERO (1, 3)
+                  _GL_ATTRIBUTE_NONNULL_IF_NONZERO (2, 3));
 _GL_CXXALIAS_RPL (stpncpy, char *,
                   (char *restrict __dst, char const *restrict __src,
                    size_t __n));
@@ -654,7 +658,8 @@ _GL_CXXALIAS_RPL (stpncpy, char *,
 _GL_FUNCDECL_SYS (stpncpy, char *,
                   (char *restrict __dst, char const *restrict __src,
                    size_t __n),
-                  _GL_ARG_NONNULL ((1, 2)));
+                  _GL_ATTRIBUTE_NONNULL_IF_NONZERO (1, 3)
+                  _GL_ATTRIBUTE_NONNULL_IF_NONZERO (2, 3));
 #  endif
 _GL_CXXALIAS_SYS (stpncpy, char *,
                   (char *restrict __dst, char const *restrict __src,
@@ -861,7 +866,8 @@ _GL_WARN_ON_USE (strncat, "strncat is unportable - "
 _GL_FUNCDECL_RPL (strncpy, char *,
                   (char *restrict __dst, char const *restrict __src,
                    size_t __n),
-                  _GL_ARG_NONNULL ((1, 2)));
+                  _GL_ATTRIBUTE_NONNULL_IF_NONZERO (1, 3)
+                  _GL_ATTRIBUTE_NONNULL_IF_NONZERO (2, 3));
 _GL_CXXALIAS_RPL (strncpy, char *,
                   (char *restrict __dst, char const *restrict __src,
                    size_t __n));
@@ -946,13 +952,13 @@ _GL_WARN_ON_USE (strndup, "strndup is unportable - "
 #  endif
 _GL_FUNCDECL_RPL (strnlen, size_t, (char const *__s, size_t __maxlen),
                                    _GL_ATTRIBUTE_PURE
-                                   _GL_ARG_NONNULL ((1)));
+                                   _GL_ATTRIBUTE_NONNULL_IF_NONZERO (1, 2));
 _GL_CXXALIAS_RPL (strnlen, size_t, (char const *__s, size_t __maxlen));
 # else
 #  if ! @HAVE_DECL_STRNLEN@
 _GL_FUNCDECL_SYS (strnlen, size_t, (char const *__s, size_t __maxlen),
                                    _GL_ATTRIBUTE_PURE
-                                   _GL_ARG_NONNULL ((1)));
+                                   _GL_ATTRIBUTE_NONNULL_IF_NONZERO (1, 2));
 #  endif
 _GL_CXXALIAS_SYS (strnlen, size_t, (char const *__s, size_t __maxlen));
 # endif
@@ -1352,7 +1358,7 @@ _GL_CXXALIASWARN (mbslen);
    at STRING and ending at STRING + LEN.  */
 _GL_EXTERN_C size_t mbsnlen (const char *string, size_t len)
      _GL_ATTRIBUTE_PURE
-     _GL_ARG_NONNULL ((1));
+     _GL_ATTRIBUTE_NONNULL_IF_NONZERO (1, 2);
 #endif
 
 #if @GNULIB_MBSCHR@
@@ -1460,7 +1466,8 @@ _GL_EXTERN_C int mbscasecmp (const char *s1, const char *s2)
    But beware that N is not a byte count but a character count!  */
 _GL_EXTERN_C int mbsncasecmp (const char *s1, const char *s2, size_t n)
      _GL_ATTRIBUTE_PURE
-     _GL_ARG_NONNULL ((1, 2));
+     _GL_ATTRIBUTE_NONNULL_IF_NONZERO (1, 3)
+     _GL_ATTRIBUTE_NONNULL_IF_NONZERO (2, 3);
 #endif
 
 #if @GNULIB_MBSPCASECMP@
@@ -1647,15 +1654,21 @@ _GL_EXTERN_C bool mbs_endswith (const char *string, const char *suffix)
 
 /* Map any int, typically from errno, into an error message.  */
 #if @GNULIB_STRERROR@
+/* The return type 'const char *' serves the purpose of producing warnings
+   for invalid uses of the value returned from this function.  */
 # if @REPLACE_STRERROR@
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef strerror
 #   define strerror rpl_strerror
+#   define GNULIB_defined_strerror 1
 #  endif
-_GL_FUNCDECL_RPL (strerror, char *, (int), );
-_GL_CXXALIAS_RPL (strerror, char *, (int));
+_GL_FUNCDECL_RPL (strerror, const char *, (int), );
+_GL_CXXALIAS_RPL (strerror, const char *, (int));
 # else
-_GL_CXXALIAS_SYS (strerror, char *, (int));
+_GL_CXXALIAS_SYS_CAST (strerror, const char *, (int));
+#  if !defined strerror && !defined __cplusplus
+#   define strerror(...) ((const char *) strerror (__VA_ARGS__))
+#  endif
 # endif
 # if __GLIBC__ >= 2
 _GL_CXXALIASWARN (strerror);
