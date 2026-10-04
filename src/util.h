@@ -314,31 +314,6 @@
 #define INTERNAL_ERROR(FORMAT,...) \
   fatal_error( EX_SOFTWARE, "%s:%d: internal error: " FORMAT, __FILE__, __LINE__, __VA_ARGS__ )
 
-#ifdef HAVE___BUILTIN_EXPECT
-
-/**
- * Specifies that \a EXPR is \e very likely (as in 99.99% of the time) to be
- * non-zero (true) allowing the compiler to better order code blocks for
- * magrinally better performance.
- *
- * @sa [Memory part 5: What programmers can do](http://lwn.net/Articles/255364/)
- */
-#define likely(EXPR)              __builtin_expect( !!(EXPR), 1 )
-
-/**
- * Specifies that \a EXPR is \e very unlikely (as in .01% of the time) to be
- * non-zero (true) allowing the compiler to better order code blocks for
- * magrinally better performance.
- *
- * @sa [Memory part 5: What programmers can do](http://lwn.net/Articles/255364/)
- */
-#define unlikely(EXPR)            __builtin_expect( !!(EXPR), 0 )
-
-#else
-# define likely(EXPR)             (EXPR)
-# define unlikely(EXPR)           (EXPR)
-#endif /* HAVE___BUILTIN_EXPECT */
-
 /**
  * Convenience macro for calling check_realloc().
  *
