@@ -1126,9 +1126,10 @@ static void md_stack_push( md_line_t line_type, md_indent_t indent_left,
   if ( md_stack_capacity == 0 ) {
     md_stack_capacity = MD_STATE_ALLOC_DEFAULT;
     md_stack = MALLOC( md_state_t, md_stack_capacity );
-  } else if ( STATIC_CAST( size_t, md_stack_top ) >= md_stack_capacity ) {
+  }
+  else if ( STATIC_CAST( size_t, md_stack_top ) >= md_stack_capacity ) {
     md_stack_capacity += MD_STATE_ALLOC_INCREMENT;
-    REALLOC( md_stack, md_state_t, md_stack_capacity );
+    REALLOC( md_stack, md_stack_capacity );
   }
   PERROR_EXIT_IF( md_stack == NULL, EX_OSERR );
 

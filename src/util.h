@@ -315,16 +315,16 @@
   fatal_error( EX_SOFTWARE, "%s:%d: internal error: " FORMAT, __FILE__, __LINE__, __VA_ARGS__ )
 
 /**
- * Convenience macro for calling check_realloc().
+ * Convenience macro for calling realloc_or_exit().
  *
  * @param TYPE The type to allocate.
  * @param N The number of objects of \a TYPE to allocate.  It _must_ be &gt; 0.
  * @return Returns a pointer to \a N uninitialized objects of \a TYPE.
  *
- * @sa check_realloc()
  * @sa #REALLOC()
+ * @sa realloc_or_exit()
  */
-#define MALLOC(TYPE,N)            check_realloc( NULL, sizeof(TYPE) * (N) )
+#define MALLOC(TYPE,N)            realloc_or_exit( NULL, sizeof(TYPE) * (N) )
 
 /**
  * Zeros the memory pointed to by \a PTR.  The number of bytes to zero is given
@@ -434,18 +434,19 @@
 #define PUTS(S)                   FPUTS( (S), stdout )
 
 /**
- * Convenience macro for calling check_realloc().
+ * Convenience macro for calling realloc_or_exit().
  *
  * @param PTR The pointer to memory to reallocate.  It is set to the newly
  * reallocated memory.
  * @param TYPE The type of object to reallocate.
  * @param N The number of objects of \a TYPE to reallocate.
  *
- * @sa check_realloc()
  * @sa #MALLOC()
+ * @sa realloc_or_exit()
  */
-#define REALLOC(PTR,TYPE,N) \
-  (PTR) = check_realloc( (PTR), sizeof(TYPE) * (size_t)(N) )
+#define REALLOC(PTR,N) ((PTR) = realloc_or_exit(                      \
+    (PTR), sizeof *VOID_TO_CHAR_PTR(PTR) * STATIC_CAST( size_t, (N) ) \
+  ))
 
 /**
  * Runs a statement at most once even if control passes through it more than
@@ -538,6 +539,20 @@
 #define UNIQUE_NAME(PREFIX)       NAME2(NAME2(PREFIX,_),__LINE__)
 
 /**
+ * Casts a `void` pointer to a `char` pointer.
+ *
+ * @param PTR The pointer.
+ * @return If \a PTR is a `void*` or `void const*`, returns it cast to either
+ * `char*` or `char const*`, respectively; otherwise returns \a PTR as-is.
+ */
+#define VOID_TO_CHAR_PTR(PTR)         \
+  _Generic( (PTR),                    \
+    void*       : (char      *)(PTR), \
+    void const* : (char const*)(PTR), \
+    default     :              (PTR)  \
+  )
+
+/**
  * Whitespace string: space and tab only.
  */
 #define WS_ST                     " \t"
@@ -600,17 +615,6 @@ char const* base_name( char const *path_name );
  */
 NODISCARD
 unsigned check_atou( char const *s );
-
-/**
- * Calls **realloc**(3) and checks for failure.
- * If reallocation fails, prints an error message and exits.
- *
- * @param p The pointer to reallocate.  If NULL, new memory is allocated.
- * @param size The number of bytes to allocate.
- * @return Returns a pointer to the allocated memory.
- */
-NODISCARD
-void* check_realloc( void *p, size_t size );
 
 /**
  * Calls **strdup**(3) and checks for failure.
@@ -792,6 +796,17 @@ inline char const* null_if_empty( char const *s ) {
  * @param status The exit status code.
  */
 _Noreturn void perror_exit( int status );
+
+/**
+ * Calls **realloc**(3) and checks for failure.
+ * If reallocation fails, prints an error message and exits.
+ *
+ * @param p The pointer to reallocate.  If NULL, new memory is allocated.
+ * @param size The number of bytes to allocate.
+ * @return Returns a pointer to the allocated memory.
+ */
+NODISCARD
+void* realloc_or_exit( void *p, size_t size );
 
 /**
  * Sets the locale for the `LC_COLLATE` and `LC_CTYPE` categories to UTF-8.

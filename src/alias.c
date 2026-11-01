@@ -92,9 +92,10 @@ static alias_t* alias_alloc( void ) {
   if ( n_aliases_alloc == 0 ) {
     n_aliases_alloc = ALIAS_ALLOC_DEFAULT;
     aliases = MALLOC( alias_t, n_aliases_alloc );
-  } else if ( n_aliases > n_aliases_alloc ) {
+  }
+  else if ( n_aliases > n_aliases_alloc ) {
     n_aliases_alloc += ALIAS_ALLOC_INCREMENT;
-    REALLOC( aliases, alias_t, n_aliases_alloc );
+    REALLOC( aliases, n_aliases_alloc );
   }
   PERROR_EXIT_IF( aliases == NULL, EX_OSERR );
   return &aliases[ n_aliases++ ];
@@ -313,7 +314,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
 
     if ( STATIC_CAST( size_t, alias->argc ) == n_argv_alloc ) {
       n_argv_alloc += ALIAS_ARGV_ALLOC_INCREMENT;
-      REALLOC( alias->argv, char const*, n_argv_alloc );
+      REALLOC( alias->argv, n_argv_alloc );
     }
 
     if ( *line == '@' )
@@ -323,7 +324,7 @@ void alias_parse( char const *line, char const *conf_file, unsigned line_no ) {
   } // for
 
   if ( n_argv_alloc > STATIC_CAST( size_t, alias->argc ) + 1 )
-    REALLOC( alias->argv, char const*, alias->argc + 1 );
+    REALLOC( alias->argv, alias->argc + 1 );
   alias->argv[ alias->argc ] = NULL;
 }
 

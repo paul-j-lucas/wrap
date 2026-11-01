@@ -150,7 +150,7 @@ char const* cc_map_compile( char const *in_cc ) {
       // there.
       //
       size_t const len = strlen( cc_map_entry );
-      REALLOC( cc_map_entry, char, len + 1 + 1/*\0*/ );
+      REALLOC( cc_map_entry, len + 1 + 1/*\0*/ );
       cc_map_entry[ len ] = cc1;
       cc_map_entry[ len + 1 ] = '\0';
     }

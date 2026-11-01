@@ -92,13 +92,6 @@ unsigned check_atou( char const *s ) {
   return STATIC_CAST( unsigned, rv );
 }
 
-void* check_realloc( void *p, size_t size ) {
-  assert( size > 0 );
-  p = p != NULL ? realloc( p, size ) : malloc( size );
-  PERROR_EXIT_IF( p == NULL, EX_OSERR );
-  return p;
-}
-
 char* check_strdup( char const *s ) {
   assert( s != NULL );
   char *const dup = strdup( s );
@@ -215,6 +208,13 @@ bool is_any( char const *s, char const *const matches[const static 2] ) {
 void perror_exit( int status ) {
   perror( prog_name );
   exit( status );
+}
+
+void* realloc_or_exit( void *p, size_t size ) {
+  assert( size > 0 );
+  p = p != NULL ? realloc( p, size ) : malloc( size );
+  PERROR_EXIT_IF( p == NULL, EX_OSERR );
+  return p;
 }
 
 void setlocale_utf8( void ) {

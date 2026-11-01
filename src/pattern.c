@@ -85,7 +85,7 @@ static pattern_t* pattern_alloc( void ) {
 
   if ( patterns_size + 1 > patterns_cap ) {
     patterns_cap += PATTERN_ALLOC_SIZE;
-    REALLOC( patterns, pattern_t, patterns_cap );
+    REALLOC( patterns, patterns_cap );
   }
   PERROR_EXIT_IF( patterns == NULL, EX_OSERR );
   return &patterns[ patterns_size++ ];
