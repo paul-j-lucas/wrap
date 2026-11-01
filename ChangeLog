@@ -1,17 +1,31 @@
-2026-07-08  Paul J. Lucas <paul@lucasmail.org>
+2026-11-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
+
+   * configure.ac, alias.c, cc_map.c, markdown.c, pattern.c, util.c, util.h:
+     Added -Werror=pointer-arith, VOID_TO_CHAR_PTR.
+
+2026-10-04  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
+
+   * pjl_config.h, util.h: Moved likely and unlikely.
+
+2026-08-22  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
+
+   * SECURITY.md: Fix URL.
+   * SECURITY.md: Placate pedantic repository-scanning-and-reporting tools.
+
+2026-07-08  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * pjl_compile.m4: PJL_COMPILE now accepts 1st arg with whitespace (that's
      converted to _); no longer defines any macro in failure case.
 
-2026-05-28  Paul J. Lucas <paul@lucasmail.org>
+2026-05-28  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1, wrapc.1: Code blocks are now smaller.
 
-2026-05-26  Paul J. Lucas <paul@lucasmail.org>
+2026-05-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * src/Makefile.am: Better way to invoke include-tidy from a Makefile.
 
-2026-05-19  Paul J. Lucas <paul@lucasmail.org>
+2026-05-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * src/Makefile.am, alias.c, alias.h, align.c, cc_map.c, cc_map.h, common.c,
      common.h, config_file.c, doxygen.c, doxygen.h, include-tidy.toml,
@@ -20,15 +34,15 @@
      util.h, wrap.c, wrap_term.c, wrap_term.h, wrapc.c, wregex.c, wregex.h: Now
      using include-tidy.
 
-2026-03-03  Paul J. Lucas <paul@lucasmail.org>
+2026-03-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * src/Makefile.am: Added config.h.
 
-2026-03-02  Paul J. Lucas <paul@lucasmail.org>
+2026-03-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * config_file.c: Removed incorrect assert.
 
-2026-03-01  Paul J. Lucas <paul@lucasmail.org>
+2026-03-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * doxygen.c, markdown.c: Removed unnecessary () for sizeof.
    * configure.ac, src/Makefile.am, options.c, util.c, util.h, wrap_term.c,
@@ -37,11 +51,11 @@
      `--disable-width` when actually disabled.
    * config_file.c: config_init() is now more in-line with that in cdecl.
 
-2026-02-25  Paul J. Lucas <paul@lucasmail.org>
+2026-02-25  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * config_file.c, doxygen.c, regex_test.c, util.c, util.h: Added strncpy_0.
 
-2026-02-23  Paul J. Lucas <paul@lucasmail.org>
+2026-02-23  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.c, alias.h, align.c, cc_map.c, cc_map.h, common.c, common.h,
      config_file.c, doxygen.c, doxygen.h, markdown.c, markdown.h, options.c,
@@ -51,170 +65,170 @@
    * configure.ac: Updated version.
    * options.c, options.h, wrap.c, wrapc.c: s/opt_no_conf/opt_no_read_config/
 
-2026-02-22  Paul J. Lucas <paul@lucasmail.org>
+2026-02-22  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1, wrapc.1, wraprc.5, common.h, options.c, read_conf.c, wrap.c,
      wrapc.c: Added support for the XDG Base Directory Specification.
 
-2026-02-21  Paul J. Lucas <paul@lucasmail.org>
+2026-02-21  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * util.c: Added missing extern inline for null_if_empty().
 
-2026-02-20  Paul J. Lucas <paul@lucasmail.org>
+2026-02-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c, options.c, wrap.c, wrapc.c: Replaced NO_OP by ; in most cases.
    * util.h: Removed SKIP_WS().
    * read_conf.c, util.c, util.h: Added null_if_empty().
    * src/Makefile.am, options.c, read_conf.c: Removed read_conf.h.
 
-2025-11-15  Paul J. Lucas <paul@lucasmail.org>
+2025-11-15  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * Makefile.am: Added update_m4.sh to EXTRA_DIST.
    * update_m4.sh: New script.
 
-2025-11-12  Paul J. Lucas <paul@lucasmail.org>
+2025-11-12  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * Doxyfile, configure.ac, type_traits.h: Eliminated IS_SAME_TYPE -- not
      used.
 
-2025-11-07  Paul J. Lucas <paul@lucasmail.org>
+2025-11-07  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_test.sh: Added call to assert_path_exists.
    * run_test.sh: Now checking option arguments; clean-up.
 
-2025-11-06  Paul J. Lucas <paul@lucasmail.org>
+2025-11-06  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * type_traits.h: Added 0 initializer for C < C23.
 
-2025-11-05  Paul J. Lucas <paul@lucasmail.org>
+2025-11-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_test.sh: Eliminated EXPECT_FAILURE -- not used.
 
-2025-11-03  Paul J. Lucas <paul@lucasmail.org>
+2025-11-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_test.sh: Added quotes; clean-up.
 
-2025-11-02  Paul J. Lucas <paul@lucasmail.org>
+2025-11-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_test.sh: Argument processing clean-up; added --collect-skipped-logs.
 
-2025-11-01  Paul J. Lucas <paul@lucasmail.org>
+2025-11-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * Makefile.am, makedoc.sh: makedoc.sh now takes parameters (copied from
      cdecl).
 
-2025-10-23  Paul J. Lucas <paul@lucasmail.org>
+2025-10-23  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: No longer need AC_C_INLINE.
    * options.c, regex_test.c, util.c, util.h, wrap.c, wrapc.c: s/me/prog_name/
 
-2025-10-22  Paul J. Lucas <paul@lucasmail.org>
+2025-10-22  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c, options.h, read_conf.c, wrapc.c:
      s/opt_conf_file/opt_config_path/
 
-2025-10-20  Paul J. Lucas <paul@lucasmail.org>
+2025-10-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * pjl_config.h: s/HAVE___TYPEOF__/HAVE_TYPEOF/
    * wregex.c, wregex.h: regex_free() now does nothing on NULL.
    * wregex.c: Eliminated VLA.
 
-2025-10-19  Paul J. Lucas <paul@lucasmail.org>
+2025-10-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * pjl_compile.m4: Removed AC_REQUIRE.
 
-2025-10-18  Paul J. Lucas <paul@lucasmail.org>
+2025-10-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * string.c: Added missing files.
    * ax_compiler_vendor.m4, ax_prepend_flag.m4, ax_require_defined.m4:
      Apparently, these are required now.
    * configure.ac: Removed -Wzero-as-null-pointer-constant -- not valid for C.
 
-2025-10-17  Paul J. Lucas <paul@lucasmail.org>
+2025-10-17  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * Makefile.am: Now using --no-vc-files option.
 
-2025-10-15  Paul J. Lucas <paul@lucasmail.org>
+2025-10-15  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, pjl_check_compile_flag.m4: Added PJL_CHECK_COMPILE_FLAG.
 
-2025-10-05  Paul J. Lucas <paul@lucasmail.org>
+2025-10-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * ax_cflags_warn_all.m4: Updated.
    * ax_check_compile_flag.m4: Updated.
 
-2025-10-02  Paul J. Lucas <paul@lucasmail.org>
+2025-10-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Eliminated AM_INIT_AUTOMAKE arguments and INSTALL.
    * configure.ac: Removed unneeded AC_CHECK_HEADERS; now using
      AC_REPACE_FNMATCH.
 
-2025-10-01  Paul J. Lucas <paul@lucasmail.org>
+2025-10-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * cc_map.c, cc_map.h, common.c, common.h, unicode.c, unicode.h, util.c,
      util.h: Now using standard C99 inline.
 
-2025-08-29  Paul J. Lucas <paul@lucasmail.org>
+2025-08-29  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, src/Makefile.am, type_traits.h, util.h: Split out type
      traits into type_traits.h.
 
-2025-07-04  Paul J. Lucas <paul@lucasmail.org>
+2025-07-04  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * util.h, wrap.c: Added UNEXPECTED_INT_VALUE.
    * unicode.h: Added #include <ctype.h>
 
-2025-07-01  Paul J. Lucas <paul@lucasmail.org>
+2025-07-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Now ignoring -Wformat for opt_eol.
    * configure.ac: Added -D_ISOC11_SOURCE; removed -Wpedantic.
    * configure.ac, wrap.1, common.h, options.c: --version now also prints the
      license; if given twice, also prints configure feature & package options.
 
-2025-06-29  Paul J. Lucas <paul@lucasmail.org>
+2025-06-29  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * unicode.h: Now using cp_is_ascii().
    * configure.ac, unicode.h: Fixed UTF-8 local cp_is_control() bug.
    * util.c: Added != NULL.
 
-2025-05-28  Paul J. Lucas <paul@lucasmail.org>
+2025-05-28  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: Silenced warning.
    * pjl_config.h: Silencing -Wundef.
    * util.c: Silenced warning.
    * util.c: Added C.UTF-8 locale.
 
-2025-05-27  Paul J. Lucas <paul@lucasmail.org>
+2025-05-27  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * pattern.c: Added assert().
    * configure.ac, pattern.c: Fixed patterns allocation bug.
    * cc_map.c: s/W_CC_MAP_INLINE/W_CC_MAP_H_INLINE/
 
-2025-05-13  Paul J. Lucas <paul@lucasmail.org>
+2025-05-13  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * attribute.h, cdefs.h, getopt-pfx-ext.h, getopt.in.h, stddef.in.h,
      stdlib.in.h, streq.h, string.in.h, unistd.in.h, wchar.in.h,
      builtin-expect.m4, gnulib-common.m4, gnulib-comp.m4, stddef_h.m4,
      threadlib.m4, unitypes_h.m4: Updated GNUlib.
 
-2025-02-25  Paul J. Lucas <paul@lucasmail.org>
+2025-02-25  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * util.c: base_name() now returns path_name if it doesn't contain /.
 
-2024-12-24  Paul J. Lucas <paul@lucasmail.org>
+2024-12-24  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * pjl_compile.m4: Added missing $.
 
-2024-12-21  Paul J. Lucas <paul@lucasmail.org>
+2024-12-21  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * iswpunct.c, stdlib.c: Fixed lib.
    * pjl_compile.m4: Removed extraneous '$' -- don't know how it ever worked.
 
-2024-11-13  Paul J. Lucas <paul@lucasmail.org>
+2024-11-13  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * util.c, util.h: Eliminated use of defined.
 
-2024-11-03  Paul J. Lucas <paul@lucasmail.org>
+2024-11-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * lib/Makefile.am, _Noreturn.h, attribute.h, btoc32.c, c++defs.h,
      c32is-impl.h, c32to-impl.h, cdefs.h, errno.in.h, fnmatch.in.h,
@@ -247,29 +261,29 @@
      wctype.m4, wctype_h.m4, wint_t.m4, wmemchr.m4, wmempcpy.m4, zzgnulib.m4:
      Updated GNUlib.
 
-2024-05-22  Paul J. Lucas <paul@lucasmail.org>
+2024-05-22  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * pjl_config.h, read_conf.c, regex_test.c, util.c, wrap.c, wrapc.c,
      wregex.c: s/PJL_IGNORE_RV/PJL_DISCARD_RV/
 
-2024-03-03  Paul J. Lucas <paul@lucasmail.org>
+2024-03-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c, util.c, util.h: s/bsearch_str_strptr_cmp/str_ptr_cmp/
    * doxygen.c, util.h: s/bsearch_str_dox_cmp/dox_cmd_cmp/
 
-2024-02-07  Paul J. Lucas <paul@lucasmail.org>
+2024-02-07  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Now using simpler freopen().
 
-2024-01-10  Paul J. Lucas <paul@lucasmail.org>
+2024-01-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * Doxyfile, util.h: Better handling of IS_SAME_TYPE().
 
-2023-12-03  larryhynes <larryhynes@users.noreply.github.com>
+2023-12-03  larryhynes <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1: wrapc.1: correct tiny typo
 
-2023-10-10  Paul J. Lucas <paul@lucasmail.org>
+2023-10-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Added #ifdef DEBUG_MARKDOWN.
    * util.c, util.h: Eliminated check_atexit().
@@ -277,20 +291,20 @@
    * options.c, util.h: Added EPUTS().
    * options.c: Added ASSERT_RUN_ONCE().
 
-2023-10-09  Paul J. Lucas <paul@lucasmail.org>
+2023-10-09  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Added missing #include <unistd.h> for dup2(); fixes #6.
 
-2023-10-03  Paul J. Lucas <paul@lucasmail.org>
+2023-10-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c, wrap.c, wrapc.c: Now using NO_OP for declarations after case
      labels.
 
-2023-09-23  Paul J. Lucas <paul@lucasmail.org>
+2023-09-23  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Now using SOPT(xxx) in fork_exec_wrap().
 
-2023-09-22  Paul J. Lucas <paul@lucasmail.org>
+2023-09-22  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * util.h: Added explicit != 0 check.
    * util.h: Removed DUP().
@@ -299,7 +313,7 @@
    * wrapc.c: Now using dup2().
    * wrapc.c: Eliminated DELIM_NONE.
 
-2023-09-21  Paul J. Lucas <paul@lucasmail.org>
+2023-09-21  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Factored out wipc_parse().
    * wrap.c: Now ignoring unknown IPC codes.
@@ -310,7 +324,7 @@
    * markdown.h: Added 'u' suffix.
    * markdown.c, markdown.h, wrap.c: s/TAB_SPACES_MARKDOWN/MD_TAB_SPACES/
 
-2023-09-20  Paul J. Lucas <paul@lucasmail.org>
+2023-09-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * cc_map.c, cc_map.h: s/'D'/COPT(COMMENT_CHARS)/
    * cc_map.h, common.c, common.h, options.h, unicode.c, unicode.h, util.c,
@@ -320,7 +334,7 @@
    * configure.ac: Added check for __builtin_expect.
    * util.h: Now using HAVE___BUILTIN_EXPECT.
 
-2023-09-19  Paul J. Lucas <paul@lucasmail.org>
+2023-09-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.c, alias.h, common.c, pattern.c, pattern.h: Now using atexit() to
      automatically call alias_cleanup() and pattern_cleanup().
@@ -338,7 +352,7 @@
      and FREE_STRBUF_LATER().
    * options.c: Eliminated VLA.
 
-2023-09-18  Paul J. Lucas <paul@lucasmail.org>
+2023-09-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Added `static 2` and assert().
    * options.c: Added comment; added unreachable.
@@ -357,22 +371,22 @@
    * alias.c, cc_map.c, pattern.c, read_conf.c, regex_test.c, util.c, wrap.c,
      wrapc.c, wregex.c: Added braces and other cosmetic changes.
 
-2023-09-07  Paul J. Lucas <paul@lucasmail.org>
+2023-09-07  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Upped version.
 
-2023-08-06  Paul J. Lucas <paul@lucasmail.org>
+2023-08-06  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: Added md_ol_digits(); now using snprintf() return value for
      new digit length.
    * markdown.c: Now using s[0].
    * cc_map.c: Now using STATIC_CAST.
 
-2023-05-21  Paul J. Lucas <paul@lucasmail.org>
+2023-05-21  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Added "; use --help or -h for help".
 
-2023-05-20  Paul J. Lucas <paul@lucasmail.org>
+2023-05-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Consolidated long options.
    * wrap.1, wrapc.1: Sorted options.
@@ -388,97 +402,97 @@
    * markdown.c, wrap.c: Replaced default: with explicit cases.
    * markdown.c: s/return NULL/break/
 
-2023-05-19  Paul J. Lucas <paul@lucasmail.org>
+2023-05-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * lib/Makefile.am, gnulib-cache.m4, gnulib-common.m4, gnulib-comp.m4,
      regex_test.c, util.h, wrap.c, wrapc.c: No longer using deprecated
      stdnoreturn.h.
 
-2023-05-18  Paul J. Lucas <paul@lucasmail.org>
+2023-05-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.c, align.c, cc_map.c, markdown.c, options.c, regex_test.c,
      unicode.h, util.c, wrap.c, wrapc.c, wregex.c: Using STATIC_CAST more.
    * markdown.c: Added ().
    * markdown.c: Ensure that STRLIT is really a string literal.
 
-2023-05-11  Paul J. Lucas <paul@lucasmail.org>
+2023-05-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Added opt_check_s_mutually_exclusive().
 
-2023-05-07  Paul J. Lucas <paul@lucasmail.org>
+2023-05-07  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Now using PACKAGE_STRING.
    * cc_map.c, options.c, options.h: opt_format() now uses internal buffers.
 
-2023-05-03  Paul J. Lucas <paul@lucasmail.org>
+2023-05-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Eliminated *_OPTION() macros.
    * options.c: Added opt_check_exclusive().
    * doxygen.c: Made @par be EOL.
 
-2023-04-12  Paul J. Lucas <paul@lucasmail.org>
+2023-04-12  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.c, cc_map.c, options.c, pattern.c, pjl_config.h, read_conf.c,
      regex_test.c, util.c, util.h, wrap.c, wrapc.c, wregex.c:
      s/FATAL_ERR()/fatal_error()/
 
-2023-04-05  Paul J. Lucas <paul@lucasmail.org>
+2023-04-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Added missing "void".
 
-2023-01-26  Paul J. Lucas <paul@lucasmail.org>
+2023-01-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: c/cur_/curr_/
 
-2022-12-06  Paul J. Lucas <paul@lucasmail.org>
+2022-12-06  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * align.c, options.c, options.h, util.c, util.h, wrapc.c: Added "const" to
      array parameters; added comments.
 
-2022-12-05  Paul J. Lucas <paul@lucasmail.org>
+2022-12-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.c, markdown.c, pattern.c, util.c, util.h, wrap.c, wrapc.c:
      s/perror_exit_if/PERROR_EXIT_IF; added check_atexit(); added
      initialize-checking code.
 
-2022-12-03  Paul J. Lucas <paul@lucasmail.org>
+2022-12-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * cc_map.c, options.c, options.h, util.h, wrap.c, wrapc.c: Reworked option
      parsing.
    * configure.ac: Now requiring C11.
 
-2022-11-15  Paul J. Lucas <paul@lucasmail.org>
+2022-11-15  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Added more compiler warnings.
 
-2022-11-08  Paul J. Lucas <paul@lucasmail.org>
+2022-11-08  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: s/for/while/
    * configure.ac: Reworked configure.ac to check for optional
      headers/libraries only when appropriate.
 
-2022-08-26  Paul J. Lucas <paul@lucasmail.org>
+2022-08-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1: Eliminated double blank lines.
 
-2022-08-18  Paul J. Lucas <paul@lucasmail.org>
+2022-08-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * util.c: Added PJL_IGNORE_RV().
 
-2022-08-17  Paul J. Lucas <paul@lucasmail.org>
+2022-08-17  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c, wrapc.c: Moved noreturn.
    * wrap.c, wrapc.c: Now only 1 space after ) in help.
 
-2022-07-26  Paul J. Lucas <paul@lucasmail.org>
+2022-07-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Explicit != 0.
 
-2022-07-22  Paul J. Lucas <paul@lucasmail.org>
+2022-07-22  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * bootstrap: Added bootstrap.
 
-2022-07-15  Paul J. Lucas <paul@lucasmail.org>
+2022-07-15  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * pjl_config.h: s/__attribute__((unused))/MAYBE_UNUSED/
    * alias.c, alias.h, align.c, cc_map.c, cc_map.h, common.h, doxygen.c,
@@ -486,42 +500,42 @@
      pattern.h, pjl_config.h, read_conf.c, read_conf.h, unicode.c, unicode.h,
      util.h, wrap.c, wrapc.c, wregex.c, wregex.h: Now using attribute.h.
 
-2021-09-04  Paul J. Lucas <paul@lucasmail.org>
+2021-09-04  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * doxygen.c, markdown.c, util.c, util.h: Replaced bin_search() with standard
      bsearch(3).
 
-2021-08-06  Paul J. Lucas <paul@lucasmail.org>
+2021-08-06  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_test.sh: Now distinguishing failed from error.
 
-2021-04-27  Paul J. Lucas <paul@lucasmail.org>
+2021-04-27  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Replaced obsolete AC_PROG_CC_C99 with AC_PROG_CC.
 
-2021-02-06  Paul J. Lucas <paul@lucasmail.org>
+2021-02-06  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Now using AX_CHECK_COMPILE_FLAG instead of
      AX_CFLAGS_GCC_OPTION.
 
-2020-12-21  Paul J. Lucas <paul@lucasmail.org>
+2020-12-21  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * idx.h: Added idx.h.
 
-2020-12-16  Paul J. Lucas <paul@lucasmail.org>
+2020-12-16  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.h: Fixed missing size_t.
 
-2020-12-11  Paul J. Lucas <paul@lucasmail.org>
+2020-12-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * Makefile.am: Added update-gnulib target.
    * markdown.c: Fixed #include order.
 
-2020-12-02  Paul J. Lucas <paul@lucasmail.org>
+2020-12-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * pjl_config.h: Removed do { ... } while (0)
 
-2020-11-28  Paul J. Lucas <paul@lucasmail.org>
+2020-11-28  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * pjl_config.h: Added #ifdef wrap_config_H.
    * alias.c, alias.h, align.c, cc_map.c, cc_map.h, common.c, common.h,
@@ -536,17 +550,17 @@
      s/wrap.h/pjl_config.h/
    * configure.ac, unicode.c, unicode.h: Now using char8_t.
 
-2020-10-11  Paul J. Lucas <paul@lucasmail.org>
+2020-10-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * ax_append_flag.m4, ax_check_compile_flag.m4: Updated m4 macros.
 
-2020-09-24  Paul J. Lucas <paul@lucasmail.org>
+2020-09-24  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * lib/Makefile.am, stdnoreturn.in.h, gnulib-cache.m4, gnulib-comp.m4,
      stdnoreturn.m4, regex_test.c, util.h, wrap.c, wrap.h, wrapc.c: Now using
      Gunlib's stdnoreturn.h.
 
-2020-08-26  Paul J. Lucas <paul@lucasmail.org>
+2020-08-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, wrapc.1, options.c, test/Makefile.am, hello_01.fs,
      hello_04.fs, wrapc--Forth-01.txt, wrapc--Forth-04.txt,
@@ -554,49 +568,49 @@
      comments.
    * man/man1/Makefile.am: Added show_wrap and show_wrapc targets.
 
-2020-08-02  Paul J. Lucas <paul@lucasmail.org>
+2020-08-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1: Added mention of Chapel and Dart.
 
-2020-06-10  Paul J. Lucas <paul@lucasmail.org>
+2020-06-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.c, read_conf.c, regex_test.c: s/(void)/W_IGNORE_RV()/
 
-2020-06-01  Paul J. Lucas <paul@lucasmail.org>
+2020-06-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Added AX_CFLAGS_WARN_ALL.
    * wrapc.c: Removed ARG_SPRINTF().
 
-2020-05-28  Paul J. Lucas <paul@lucasmail.org>
+2020-05-28  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c, wrapc.c: s/--eol=CHAR/--eol=STR/
 
-2020-05-26  Paul J. Lucas <paul@lucasmail.org>
+2020-05-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c, wrap.h, wrapc.c, wregex.c: s/C_IGNORE_RV/W_IGNORE_RV/
    * configure.ac, doxygen.c: Added support for docbookinclude, maninclude, and
      xmlinclude.
 
-2020-05-19  Paul J. Lucas <paul@lucasmail.org>
+2020-05-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Added assert() for wrap argument count.
    * wrapc.c: s/pre_dox_cmd/prev_dox_cmd/
 
-2020-05-14  Paul J. Lucas <paul@lucasmail.org>
+2020-05-14  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, markdown.c, options.c, unicode.c, wrap.h: Fixed fallthrough
      warning.
 
-2020-04-03  Paul J. Lucas <paul@lucasmail.org>
+2020-04-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.c, read_conf.c, regex_test.c: Added (void).
 
-2020-04-01  Paul J. Lucas <paul@lucasmail.org>
+2020-04-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, pjl_compile.m4, wrap.c, wrap.h, wrapc.c, wregex.c: Now using
      PJL_COMPILE macro.
 
-2020-03-26  Paul J. Lucas <paul@lucasmail.org>
+2020-03-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, ax_c___attribute__.m4, alias.c, alias.h, align.c, cc_map.c,
      cc_map.h, common.c, common.h, doxygen.c, doxygen.h, markdown.c,
@@ -604,17 +618,17 @@
      read_conf.h, regex_test.c, unicode.c, unicode.h, util.c, util.h, wrap.c,
      wrap.h, wrapc.c, wregex.c, wregex.h: Added gcc attributes.
 
-2020-01-22  Paul J. Lucas <paul@lucasmail.org>
+2020-01-22  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, alias.c, options.c: Added more warnings.
 
-2019-12-04  Paul J. Lucas <paul@lucasmail.org>
+2019-12-04  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Added (void).
    * wrapc.c: Made "if" explicit.
    * alias.c, markdown.c, pattern.c, util.c, util.h, wrapc.c: Added IF_EXIT().
 
-2019-12-03  Paul J. Lucas <paul@lucasmail.org>
+2019-12-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * lib/Makefile.am, _Noreturn.h, fnmatch.in.h, glthread/lock.c,
      glthread/lock.h, glthread/threadlib.c, intprops.h, stdlib.in.h,
@@ -625,16 +639,16 @@
      options.c, regex_test.c, unicode.h, util.c, util.h, wrap.c, wrapc.c,
      wregex.c: Added more -W options for gcc and fixed warnings.
 
-2019-11-15  Paul J. Lucas <paul@lucasmail.org>
+2019-11-15  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * unicode.c: Removed unneeded #include.
    * unicode.h: Fixed including of <uchar.h>.
 
-2019-10-29  Paul J. Lucas <paul@lucasmail.org>
+2019-10-29  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.h: s/Mac OS X/MacOS/
 
-2019-09-23  Paul J. Lucas <paul@lucasmail.org>
+2019-09-23  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * lib/Makefile.am, _Noreturn.h, flexmember.h, glthread/lock.c,
      glthread/lock.h, glthread/threadlib.c, intprops.h, localcharset.c,
@@ -650,30 +664,30 @@
    * configure.ac, ax_check_typedef.m4, pjl_check_typedef.m4, unicode.c,
      unicode.h, wrap.c, wregex.c: s/codepoint_t/char32_t/
 
-2019-07-15  Paul J. Lucas <paul@lucasmail.org>
+2019-07-15  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * util.c: s/'\0'/NULL/
 
-2019-07-01  Paul J. Lucas <paul@lucasmail.org>
+2019-07-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c, wrapc.c: Now printing help to stdout.
    * wrapc.c: Fixed spacing.
    * configure.ac, wrap.c, wrapc.c: Reworked help.
 
-2019-04-10  Paul J. Lucas <paul@lucasmail.org>
+2019-04-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Updated version to 5.4.1.
 
-2019-04-04  Paul J. Lucas <paul@lucasmail.org>
+2019-04-04  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_test.sh: Now ensuring that debugger environment variables are unset.
 
-2019-04-03  Paul J. Lucas <paul@lucasmail.org>
+2019-04-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1: s/B/BR/
    * wrap.c: s/pc/pb/
 
-2019-04-02  Paul J. Lucas <paul@lucasmail.org>
+2019-04-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c, test/Makefile.am, test_08.c, wrapc--C-08.txt, wrapc--C-08.test:
      Fixed additional blank comment line.
@@ -681,28 +695,28 @@
    * util.c: Added unlikely().
    * align.c, doxygen.c, unicode.c, wrap.c, wrapc.c: Added asserts.
 
-2019-04-01  Paul J. Lucas <paul@lucasmail.org>
+2019-04-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * unicode.h: Fixed comment.
    * unicode.h: FIxed typo.
 
-2019-03-30  Paul J. Lucas <paul@lucasmail.org>
+2019-03-30  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, markdown.c, test/Makefile.am, md-ol-12s.md,
      wrap--Markdown-ol-12s.txt, wrap--Markdown-ol-12s.test: Fixed hang-indent
      for ordered lists >= 10.
 
-2019-02-13  Paul J. Lucas <paul@lucasmail.org>
+2019-02-13  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * cc_map.c, util.c, util.h, wrapc.c: Added STATIC_CAST; using CONST_CAST
      more.
    * doxygen.c: Fixed @param.
 
-2019-02-05  Paul J. Lucas <paul@lucasmail.org>
+2019-02-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Now using C99 VLAs.
 
-2019-01-23  Paul J. Lucas <paul@lucasmail.org>
+2019-01-23  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: More explicit checks.
    * wrap.c: Made some checks explicit; clean-up.
@@ -710,42 +724,42 @@
    * options.c: Added braces.
    * options.c: Made more explicit.
 
-2019-01-22  Paul J. Lucas <paul@lucasmail.org>
+2019-01-22  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * cc_map.c: Made test explicit.
    * wrap.c: Added {}.
    * wrap.c: Added comments.
    * wrapc.c: More explicit about condition.
 
-2019-01-11  Paul J. Lucas <paul@lucasmail.org>
+2019-01-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * read_conf.c: Added comment.
 
-2019-01-10  Paul J. Lucas <paul@lucasmail.org>
+2019-01-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * read_conf.c: s/parse_section/section_parse/
    * read_conf.c: Added parse_section().
    * util.h: Added needed #include <stdint.h>.
 
-2018-12-19  Paul J. Lucas <paul@lucasmail.org>
+2018-12-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: Reordered bin_search_str_strptr_cmp().
    * markdown.c, util.c, util.h: Make bin_search() generic.
    * options.c: Fixed sorting of opt_eol.
 
-2018-12-18  Paul J. Lucas <paul@lucasmail.org>
+2018-12-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * src/Makefile.am: Added missing wregex.h.
    * regex_test.c, wrap.c, wregex.c, wregex.h: regex clean-up.
 
-2018-12-17  Paul J. Lucas <paul@lucasmail.org>
+2018-12-17  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c, data-01.1, wrap-a.txt, wrap-d.txt, wrap-dep.txt: Fixed bug with
      two consecutive . lines.
    * wrap.c: Added comment for bool args.
    * cc_map.c, options.c, util.h: Added FREE_* macros and more comments.
 
-2018-12-14  Paul J. Lucas <paul@lucasmail.org>
+2018-12-14  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * cc_map.c: Fixed inline.
    * options.c, options.h, wrap.c, wrapc.c: s/opt_block_chars/opt_block_delims/
@@ -753,7 +767,7 @@
    * options.c, options.h, wrap.c, wrapc.c:
      s/opt_lead_para_delims/opt_block_chars/
 
-2018-12-07  Paul J. Lucas <paul@lucasmail.org>
+2018-12-07  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Upped version to 5.2.1.
    * lib/Makefile.am, _Noreturn.h, intprops.h, stdlib.in.h, unistd.in.h,
@@ -764,48 +778,48 @@
      regex_test.c, unicode.c, unicode.h, util.c, util.h, wrap.c, wrap.h,
      wrapc.c, wregex.c, wregex.h: Now handling "inline" correctly on Mac OS X.
 
-2018-12-05  Paul J. Lucas <paul@lucasmail.org>
+2018-12-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: More explicit checks.
 
-2018-10-02  Paul J. Lucas <paul@lucasmail.org>
+2018-10-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Removed unnecessary cast.
 
-2018-09-10  Paul J. Lucas <paul@lucasmail.org>
+2018-09-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1: s/then the/the/
 
-2018-08-29  Paul J. Lucas <paul@lucasmail.org>
+2018-08-29  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1, options.c: Now mentioning Crystal.
 
-2018-08-13  Paul J. Lucas <paul@lucasmail.org>
+2018-08-13  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1, options.c: Added mention of Nim.
 
-2018-08-11  Paul J. Lucas <paul@lucasmail.org>
+2018-08-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * util.c: Made comparison more explicit.
    * wrapc.1, options.c: Added mention of more programming languages.
    * wraprc.5: Added mention that \ can be used to escape #.
 
-2018-07-27  Paul J. Lucas <paul@lucasmail.org>
+2018-07-27  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: s/its/it's/
 
-2018-06-28  Paul J. Lucas <paul@lucasmail.org>
+2018-06-28  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1: s/c/s/ for --align-column.
    * wrapc.1: s/comprised/composed/
    * wrapc.1, options.c: Added mention of Kotlin.
 
-2018-05-28  Paul J. Lucas <paul@lucasmail.org>
+2018-05-28  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c, options.c, read_conf.c, wrap.c, wrapc.c: Made more checks
      explicit.
 
-2018-05-19  Paul J. Lucas <paul@lucasmail.org>
+2018-05-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * lib/Makefile.am, alloca.in.h, arg-nonnull.h, c++defs.h, config.charset,
      errno.in.h, flexmember.h, fnmatch.c, fnmatch.in.h, fnmatch_loop.c,
@@ -843,48 +857,48 @@
      read_conf.c, regex_test.c, util.c, wrap.c, wrapc.c: Made comparisons more
      explicit.
 
-2018-05-18  Paul J. Lucas <paul@lucasmail.org>
+2018-05-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1, options.c: Added more languages that are covered by wrapc: C#,
      F#, Mathematica, PL/I, Pure, SQL, and Tcl.
 
-2018-04-24  Paul J. Lucas <paul@lucasmail.org>
+2018-04-24  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c, wrapc.c: s/an/and/ in usage messages.
 
-2018-04-07  Paul J. Lucas <paul@lucasmail.org>
+2018-04-07  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_test.sh: Made color output match standard test-driver.
 
-2018-03-24  Paul J. Lucas <paul@lucasmail.org>
+2018-03-24  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * util.h: Now doing explicit comparison == '\0'.
 
-2018-03-21  Paul J. Lucas <paul@lucasmail.org>
+2018-03-21  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.c, align.c, cc_map.c, common.c, markdown.c, options.c, pattern.c,
      read_conf.c, regex_test.c, util.c, wrap.c, wrapc.c, wregex.c: Added
      close_pipe(); made non-bool tests not use !.
 
-2018-03-10  Paul J. Lucas <paul@lucasmail.org>
+2018-03-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wraprc.5: Added *.go
 
-2018-02-20  Paul J. Lucas <paul@lucasmail.org>
+2018-02-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1: Fixed English.
    * wrap.1: s/--markdown/--no-hyphen/
 
-2018-02-18  Paul J. Lucas <paul@lucasmail.org>
+2018-02-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wraprc.5: Added missing backslash.
    * wrapc.c: Added path_buf_t.
 
-2017-12-04  Paul J. Lucas <paul@lucasmail.org>
+2017-12-04  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wraprc.5: Now correctly specify allowable characters in alias names.
 
-2017-08-26  Paul J. Lucas <paul@lucasmail.org>
+2017-08-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * lib/Makefile.am, flexmember.h, fnmatch.c, fnmatch_loop.c,
      getopt-pfx-core.h, getopt-pfx-ext.h, getopt.c, gettext.h, intprops.h,
@@ -894,12 +908,12 @@
      string_h.m4, sys_types_h.m4, unistd_h.m4, wchar_h.m4, wctype_h.m4,
      wint_t.m4: Updated gnulib.
 
-2017-07-19  Paul J. Lucas <paul@lucasmail.org>
+2017-07-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.c, markdown.c, pattern.c, util.c, util.h, wrapc.c: Made
      perror_exit() a function.
 
-2017-07-16  Paul J. Lucas <paul@lucasmail.org>
+2017-07-16  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.c, cc_map.c, common.c, markdown.c, options.c, pattern.c,
      read_conf.c, util.c, wrap.c, wrapc.c, wregex.c: Made assert conditions
@@ -910,12 +924,12 @@
    * alias.c, cc_map.c, markdown.c, pattern.c, util.c, util.h: Now using
      FREE().
 
-2017-04-27  Paul J. Lucas <paul@lucasmail.org>
+2017-04-27  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c, options.c: Changed "no break;" comment to "FALLTHROUGH" for
      gcc >= 7.
 
-2017-04-22  Paul J. Lucas <paul@lucasmail.org>
+2017-04-22  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * Makefile.am: Added README.md to EXTRA_DIST.
    * lib/Makefile.am, arg-nonnull.h, c++defs.h, getopt-cdefs.in.h,
@@ -926,16 +940,16 @@
      GNUlib.
    * src/Makefile.am: Added headers.
 
-2017-04-10  Paul J. Lucas <paul@lucasmail.org>
+2017-04-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Fixed typo in comment.
 
-2017-03-11  Paul J. Lucas <paul@lucasmail.org>
+2017-03-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1, align.c, test/Makefile.am, wrapc-A-08c.c, wrapc-A-08c.txt,
      wrapc-A-08c.test: Now special-casing # for align.
 
-2017-03-10  Paul J. Lucas <paul@lucasmail.org>
+2017-03-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1, align.c, test/Makefile.am, wrapc-A-08a.c, wrapc-A-08b.pas,
      wrapc-A-09a.c, wrapc-A-08a.txt, wrapc-A-08b.txt, wrapc-A-09a.txt,
@@ -944,7 +958,7 @@
    * align.c, test/Makefile.am, wrapc-A-07.c, wrapc-A-07.txt, wrapc-A-07.test:
      Fixed within-string comments.
 
-2017-03-05  Paul J. Lucas <paul@lucasmail.org>
+2017-03-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c, test/Makefile.am, hyphen-08.txt, wrap--hyphen-08.txt,
      wrap--hyphen-08.test: Fixed hyphen wrapping bug.
@@ -952,27 +966,27 @@
      read_conf.h, unicode.h, util.h, wregex.h: Added @file comments to header
      files.
 
-2017-03-03  Paul J. Lucas <paul@lucasmail.org>
+2017-03-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Fixed typo in comment.
    * alias.c, common.c, markdown.c, options.c, pattern.c, read_conf.c,
      regex_test.c, unicode.c, util.c, wrap.c, wrapc.c, wregex.c: #include
      clean-up.
 
-2017-03-02  Paul J. Lucas <paul@lucasmail.org>
+2017-03-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * read_conf.c: Replaced strcpy().
    * align.c, cc_map.h: Added cc_is_single() and cc_map_get().
    * src/Makefile.am, align.c, cc_map.c, cc_map.h, common.h, util.c, util.h,
      wrapc.c: Refactored some wrapc code into separate .c files.
 
-2017-03-01  Paul J. Lucas <paul@lucasmail.org>
+2017-03-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, wrapc.c, test/Makefile.am, wrapc-A-18.c, wrapc-A-19.pas,
      wrapc-A-18.txt, wrapc-A-19.txt, wrapc-A-18.test, wrapc-A-19.test: Now
      ignoring within-line comments for -A.
 
-2017-02-23  Paul J. Lucas <paul@lucasmail.org>
+2017-02-23  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * COPYING, Makefile.am, configure.ac, man/Makefile.am, man/man1/Makefile.am,
      wrap.1, wrapc.1, man/man5/Makefile.am, wraprc.5, src/Makefile.am, alias.c,
@@ -981,24 +995,24 @@
      unicode.h, util.c, util.h, wrap.c, wrapc.c, wregex.c, wregex.h,
      test/Makefile.am, run_test.sh: Updated to GPLv3.
 
-2017-02-13  Paul J. Lucas <paul@lucasmail.org>
+2017-02-13  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.h: Moved OPT_BUF_SIZE.
    * options.c, options.h, wrapc.c: Now using format_opt().
 
-2017-02-12  Paul J. Lucas <paul@lucasmail.org>
+2017-02-12  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wraprc.5: More examples in conf file.
 
-2017-02-11  Paul J. Lucas <paul@lucasmail.org>
+2017-02-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c, util.c, util.h: Removed tolower_s().
 
-2017-02-10  Paul J. Lucas <paul@lucasmail.org>
+2017-02-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1: Fixed line width.
 
-2017-02-09  Paul J. Lucas <paul@lucasmail.org>
+2017-02-09  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1: Added mention that comments on lines by themselves are passed
      through unaltered.
@@ -1007,7 +1021,7 @@
    * util.c, util.h, wrapc.c: Fixed --disable-assert build; added
      WRAP_DUMP_CC_MAP.
 
-2017-02-08  Paul J. Lucas <paul@lucasmail.org>
+2017-02-08  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Now using strcasecmp().
    * configure.ac, wrapc.1, wraprc.5, alias.c, alias.h, markdown.c, options.c,
@@ -1028,7 +1042,7 @@
      wrapc-A-14s.test, wrapc-A-15.test, wrapc-A-16.test, wrapc-Ax-01.test,
      wrapc-Ax-02.test, wrapc-D-02.test: Added --align-column.
 
-2017-02-05  Paul J. Lucas <paul@lucasmail.org>
+2017-02-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Added more EX_ exit codes.
    * markdown.h, options.h, wregex.h: Fixed linking at -O0.
@@ -1037,32 +1051,32 @@
    * wrapc.c: Simplified str_width().
    * wrapc.c: Added closing_char().
 
-2017-02-04  Paul J. Lucas <paul@lucasmail.org>
+2017-02-04  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.c, common.h, regex_test.c, util.c, util.h, wrap.c, wrapc.c: Renamed
      macros to match W_FWRITE.
 
-2017-02-03  Paul J. Lucas <paul@lucasmail.org>
+2017-02-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, wrap.1, wrapc.1, options.c, util.c, util.h: Added
      --width=term.
 
-2017-02-02  Paul J. Lucas <paul@lucasmail.org>
+2017-02-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Moved check_mutually_exclusive().
    * configure.ac, wrapc.1, options.c, options.h, test/Makefile.am,
      wrapc-D-02.test: Better handling of --comment-chars/-D value.
 
-2017-02-01  Paul J. Lucas <paul@lucasmail.org>
+2017-02-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Fixed typo in usage message.
 
-2017-01-30  Paul J. Lucas <paul@lucasmail.org>
+2017-01-30  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Can now support non-alpha options.
    * src/Makefile.am: Added COMMON_SOURCES.
 
-2017-01-27  Paul J. Lucas <paul@lucasmail.org>
+2017-01-27  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: s/int/unsigned/
    * unicode.h: Sorted unicode.h.
@@ -1070,23 +1084,23 @@
    * options.c, options.h, wrap.c, wrapc.c: s/init_options/options_init/
    * common.h, read_conf.c: Added missing "void".
 
-2017-01-25  Paul J. Lucas <paul@lucasmail.org>
+2017-01-25  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Variable renaming.
    * wrap.c: Removed unneeded #include.
    * wrap.c: Function renaming.
 
-2017-01-24  Paul J. Lucas <paul@lucasmail.org>
+2017-01-24  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * regex_test.c, util.c, util.h, wrap.c: Now setting locale for LC_COLLATE in
      addition to LC_CTYPE to UTF-8.
 
-2017-01-23  Paul J. Lucas <paul@lucasmail.org>
+2017-01-23  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * src/Makefile.am: Now using global LDADD; remove -L from AM_CPPFLAGS.
    * regex_test.c, wrap.c, wregex.c, wregex.h: Now using wregex_t typedef.
 
-2017-01-22  Paul J. Lucas <paul@lucasmail.org>
+2017-01-22  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.h: Removed tabs.
    * regex_test.c: Fixed tab.
@@ -1094,19 +1108,19 @@
    * wrap.1, wrapc.1, options.c: Changed --block to --block-chars.
    * wraprc.5: Updated to use long options.
 
-2017-01-21  Paul J. Lucas <paul@lucasmail.org>
+2017-01-21  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wraprc.5: Mention the characters comprising alias names.
    * configure.ac, wrap.1, wrapc.1, options.c: Added long command-line options.
    * wregex.c: Added missing header.
    * options.c, options.h: Made COMMENT_CHARS_DEFAULT a constant.
 
-2017-01-20  Paul J. Lucas <paul@lucasmail.org>
+2017-01-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * src/Makefile.am, unicode.c, unicode.h, wregex.c, http.regex:
      is_begin_word_boundary() now works with UTF-8.
 
-2017-01-19  Paul J. Lucas <paul@lucasmail.org>
+2017-01-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: AC_HEADER clean-up.
    * unicode.c, unicode.h: Replaced cp_is_alpha() and cp_is_space() with isw*()
@@ -1126,7 +1140,7 @@
      into wrap.c.
    * wregex.c: Now also trying en_US.UTF-8.
 
-2017-01-18  Paul J. Lucas <paul@lucasmail.org>
+2017-01-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: Made md_code_indent_min() actually be inline.
    * util.c, wrapc.c: Removed _s struct suffix.
@@ -1136,7 +1150,7 @@
      e-mail.regex, file.regex, ftp.regex, http.regex, wrap--regex-http-01.test,
      wrap--regex-http-02.test: No longer wrap at hyphens within URLs.
 
-2017-01-16  Paul J. Lucas <paul@lucasmail.org>
+2017-01-16  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * lib/Makefile.am, alloca.in.h, config.charset, flexmember.h, fnmatch.c,
      fnmatch.in.h, fnmatch_loop.c, getopt.c, getopt.in.h, getopt1.c,
@@ -1158,11 +1172,11 @@
      wint_t.m4, snippet/arg-nonnull.h, snippet/c++defs.h,
      snippet/warn-on-use.h: Updated GNUlib.
 
-2017-01-10  Paul J. Lucas <paul@lucasmail.org>
+2017-01-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.c, common.h, wrap.c, wrapc.c: s/clean_up/common_cleanup/
 
-2017-01-09  Paul J. Lucas <paul@lucasmail.org>
+2017-01-09  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: s/read_line()/wrap_readline()/
    * wrap.c: s/ps/ppc/
@@ -1170,14 +1184,14 @@
      wrap-free.
    * alias.h, pattern.h: s/_s//
 
-2017-01-06  Paul J. Lucas <paul@lucasmail.org>
+2017-01-06  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wraprc.5: Corrected documentation of multiple matches.
    * unicode.c: s/#define/static codepoint_t const/
    * wrap.c: Made 'pc' local to main().
    * unicode.h, wrap.c: Added utf8c_t.
 
-2016-12-28  Paul J. Lucas <paul@lucasmail.org>
+2016-12-28  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: wipc_send() no longer takes FILE*.
    * wrapc.c: Added -E to wrapc usage message.
@@ -1187,23 +1201,23 @@
    * configure.ac, wrap.1, wrapc.1, common.h, options.c, options.h, wrap.c,
      wrapc.c, test/Makefile.am, wrap-E1.txt, wrap-E1.test: Added -E option.
 
-2016-12-11  Paul J. Lucas <paul@lucasmail.org>
+2016-12-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.c, common.h, markdown.c, options.c, pattern.c, read_conf.c, util.c,
      util.h: #include file re-ordering.
 
-2016-11-24  Paul J. Lucas <paul@lucasmail.org>
+2016-11-24  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.c, common.h, util.c, util.h: Moved check_readline() from common.c
      to util.c.
 
-2016-11-21  Paul J. Lucas <paul@lucasmail.org>
+2016-11-21  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * unicode.h: Fixed cp_is_hyphen_adjacent().
    * unicode.c, unicode.h: Now accepting ISO-8859-1 alphabetic characters as
      hyphen-adjacent characters.
 
-2016-11-19  Paul J. Lucas <paul@lucasmail.org>
+2016-11-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * unicode.c: s/static/static inline/
    * wrap.c: Removed duplicate tyedef.
@@ -1212,13 +1226,13 @@
    * configure.ac, wrap.1, src/Makefile.am, unicode.c, unicode.h, wrap.c:
      Better Unicode support.
 
-2016-11-18  Paul J. Lucas <paul@lucasmail.org>
+2016-11-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Moved indent reset.
    * wrap.c: Simplified proto_len/proto_width.
    * wrap.c: Got rid of ignore_lead_dot variable.
 
-2016-11-17  Paul J. Lucas <paul@lucasmail.org>
+2016-11-17  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Removed "goto insert".
    * wrap.c: Don't need 'continue'.
@@ -1231,11 +1245,11 @@
    * wrap.c: Replaced was_para_delim_char by is_para_delim_char().
    * wrap.c, wrapc.c: Added missing ..
 
-2016-11-16  Paul J. Lucas <paul@lucasmail.org>
+2016-11-16  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.h: Added comment.
 
-2016-11-15  Paul J. Lucas <paul@lucasmail.org>
+2016-11-15  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c, test/Makefile.am, hyphen-05.txt, hyphen-06.txt,
      wrap--hyphen-05.txt, wrap--hyphen-06.txt, wrap-I2-w72.txt, wrap-t1.txt,
@@ -1244,22 +1258,22 @@
    * test/Makefile.am: Test renaming.
    * test/Makefile.am: Hyphen test renaming.
 
-2016-11-12  Paul J. Lucas <paul@lucasmail.org>
+2016-11-12  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Now using utf8_is_cont().
 
-2016-11-11  Paul J. Lucas <paul@lucasmail.org>
+2016-11-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_test.sh: Fixed IFS on Bourne Shell.
    * wrap.c: Added explicit initialization to eliminate warning.
    * options.c: Added #include <inttypes.h>.
 
-2016-11-10  Paul J. Lucas <paul@lucasmail.org>
+2016-11-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, alias.c, markdown.c, options.c, pattern.c, read_conf.c,
      wrap.c, wrapc.c: Header clean-up.
 
-2016-11-09  Paul J. Lucas <paul@lucasmail.org>
+2016-11-09  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, wrap.1, wrapc.1, options.c, options.h, wrap.c, wrapc.c,
      test/Makefile.am, hyphen-01.txt, hyphen-02.txt, hyphen-03.txt,
@@ -1276,20 +1290,20 @@
      at hyphenation.
    * wrap.c: s/Does/Do/
 
-2016-11-08  Paul J. Lucas <paul@lucasmail.org>
+2016-11-08  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Added missing AC_C_INLINE anf AC_TYPE_SSIZE_T.
 
-2016-11-07  Paul J. Lucas <paul@lucasmail.org>
+2016-11-07  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Fixed order of options in help message.
 
-2016-11-06  Paul J. Lucas <paul@lucasmail.org>
+2016-11-06  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Add comment.
    * wrap.c: Removed UTF8_BOM_LEN.
 
-2016-11-05  Paul J. Lucas <paul@lucasmail.org>
+2016-11-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * lib/Makefile.am, alloca.in.h, config.charset, flexmember.h, fnmatch.c,
      fnmatch.in.h, fnmatch_loop.c, getopt.c, getopt.in.h, getopt1.c,
@@ -1313,7 +1327,7 @@
    * wrapc.1: Added mention of indent(1).
    * markdown.c: No longer requireing any Markdown in column 1.
 
-2016-11-03  Paul J. Lucas <paul@lucasmail.org>
+2016-11-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c, markdown.h, test/Makefile.am, md-ol-09s.md, md-ol-ol-01s.md,
      md-ol-ol-02s.md, md-ol-ol-03s.md, wrap--Markdown-ol-09s.txt,
@@ -1326,7 +1340,7 @@
    * markdown.c: Better incrementing of indent hang for 99, 999, 9999, etc.
    * markdown.c: Now incrementing indent hang for 99, 999, 9999, etc.
 
-2016-11-02  Paul J. Lucas <paul@lucasmail.org>
+2016-11-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c, test/Makefile.am, md-html-06.md, md-html-07.md, md-html-08.md,
      md-html-09.md, md-html-style-02.md, wrap--Markdown-html-06.txt,
@@ -1337,7 +1351,7 @@
      wrap--Markdown-html-style-02.test: More tests; fixed bugs.
    * markdown.c: Fixed bin_search().
 
-2016-11-01  Paul J. Lucas <paul@lucasmail.org>
+2016-11-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c, test/Makefile.am, md-html-pre-01.md, md-html-script-01.md,
      md-html-style-01.md, wrap--Markdown-html-pre-01.txt,
@@ -1351,25 +1365,25 @@
      wrapc--Markdown-html-04.txt: CommonMark HTML handling.
    * options.c, util.c: Capitalized static char const arrays.
 
-2016-10-30  Paul J. Lucas <paul@lucasmail.org>
+2016-10-30  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: Moved comment.
 
-2016-10-29  Paul J. Lucas <paul@lucasmail.org>
+2016-10-29  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c, markdown.h, wrap.c, test/Makefile.am, md-ul-06.c,
      wrapc--Markdown-ul-06.txt, wrapc--Markdown-ul-06.test: Fixed interaction
      between Markdown and block paragraphs.
 
-2016-10-24  Paul J. Lucas <paul@lucasmail.org>
+2016-10-24  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: Fixed typo in comment.
 
-2016-10-19  Paul J. Lucas <paul@lucasmail.org>
+2016-10-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: Now setting is_end_tag on return for an XML end tag.
 
-2016-10-18  Paul J. Lucas <paul@lucasmail.org>
+2016-10-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: Now checking for XML terminating / only if !is_end_tag.
    * markdown.c: No longer allowing quotes in HTML end tags.
@@ -1378,7 +1392,7 @@
    * wrapc.c: Fixed typo in comment.
    * markdown.c: Added skip_html_element().
 
-2016-10-17  Paul J. Lucas <paul@lucasmail.org>
+2016-10-17  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c, test/Makefile.am, md-html-CDATA-01a.md, md-html-CDATA-01b.md,
      md-html-CDATA-01c.md, md-html-DOCTYPE-01a.md, md-html-DOCTYPE-01b.md,
@@ -1401,7 +1415,7 @@
      wrap--Markdown-html-comment-01c.test: Added better support for block HTML.
    * markdown.c: HTML clean-up.
 
-2016-10-15  Paul J. Lucas <paul@lucasmail.org>
+2016-10-15  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: Fixed comment.
    * md-ol-01s.c, md-ol-01s.md, md-ol-02s.c, md-ol-02s.md, md-ol-03s.c,
@@ -1419,7 +1433,7 @@
    * alias.h, markdown.c, markdown.h, options.c, pattern.h, util.c, wrapc.c:
      struct renaming.
 
-2016-10-14  Paul J. Lucas <paul@lucasmail.org>
+2016-10-14  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Updated version to 4.5.
    * markdown.c, test/Makefile.am, md-code-fence-03b.md, md-code-fence-03c.md,
@@ -1436,32 +1450,32 @@
      wrap--Markdown-atx-04.test, wrapc--Markdown-atx-04.test: Now requiring
      whitespace after # for Markdown ATX headers.
 
-2016-08-18  Paul J. Lucas <paul@lucasmail.org>
+2016-08-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1: Fixed typo: -q -> -w.
 
-2016-08-02  Paul J. Lucas <paul@lucasmail.org>
+2016-08-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Added missing @param usage.
 
-2016-08-01  Paul J. Lucas <paul@lucasmail.org>
+2016-08-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1: s/Format/Formats/
 
-2016-07-31  Paul J. Lucas <paul@lucasmail.org>
+2016-07-31  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c, test/Makefile.am, hello_08.cbl, wrapc--COBOL-08.txt,
      wrapc--COBOL-08.test: Fixed COBOL boxed comments.
    * wrapc.1: s/wrap/wrapc/
 
-2016-07-27  Paul J. Lucas <paul@lucasmail.org>
+2016-07-27  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * test/Makefile.am, hello_01.f90, hello_02.f90, hello_03.f90, hello_04.f90,
      wrapc--Fortran-01.txt, wrapc--Fortran-02.txt, wrapc--Fortran-03.txt,
      wrapc--Fortran-04.txt, wrapc--Fortran-01.test, wrapc--Fortran-02.test,
      wrapc--Fortran-03.test, wrapc--Fortran-04.test: Added Fortran 90 tests.
 
-2016-07-26  Paul J. Lucas <paul@lucasmail.org>
+2016-07-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, wrapc.1, options.h, wrapc.c, test/Makefile.am, hello_01.cbl,
      hello_02.cbl, hello_03.cbl, hello_04.cbl, hello_05.cbl, hello_06.cbl,
@@ -1472,55 +1486,55 @@
      wrapc--COBOL-05.test, wrapc--COBOL-06.test, wrapc--COBOL-07.test: Added
      COBOL comment support.
 
-2016-07-13  Paul J. Lucas <paul@lucasmail.org>
+2016-07-13  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Simplified.
 
-2016-07-12  Paul J. Lucas <paul@lucasmail.org>
+2016-07-12  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Removed -Winline.
    * wrapc.c: Added missing #include <ctype.h>.
 
-2016-06-25  Paul J. Lucas <paul@lucasmail.org>
+2016-06-25  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Split out delimit_paragraph().
 
-2016-06-24  Paul J. Lucas <paul@lucasmail.org>
+2016-06-24  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Reordering in init().
    * util.h, wrap.c: Added true_reset().
 
-2016-06-23  Paul J. Lucas <paul@lucasmail.org>
+2016-06-23  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * util.c: Fixed indent.
 
-2016-06-21  Paul J. Lucas <paul@lucasmail.org>
+2016-06-21  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: s/indentation/indent/
    * wrap.c: s/prev_c/was_newline/
 
-2016-06-20  Paul J. Lucas <paul@lucasmail.org>
+2016-06-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Sorted functions.
 
-2016-06-16  Paul J. Lucas <paul@lucasmail.org>
+2016-06-16  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: -Wc++-compat is implied by -Wall.
 
-2016-06-05  Paul J. Lucas <paul@lucasmail.org>
+2016-06-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * options.c: Fixed fin/fout error messages.
 
-2016-06-02  Paul J. Lucas <paul@lucasmail.org>
+2016-06-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1: Mentioned that the width of the string for -L is subtracted from
      line-width.
 
-2016-05-31  Paul J. Lucas <paul@lucasmail.org>
+2016-05-31  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.c, util.c: Added asserts.
 
-2016-05-29  Paul J. Lucas <paul@lucasmail.org>
+2016-05-29  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.h, wrap.c, wrapc.c, test/Makefile.am, md-ol-05s.c,
      wrapc--Markdown-ol-05s.txt, wrapc--Markdown-ol-05s.test: Fixed line_width
@@ -1553,28 +1567,28 @@
      wrapc--box-single-04.test, wrapc--box-single-05.test: Added support for
      boxed comments.
 
-2016-05-26  Paul J. Lucas <paul@lucasmail.org>
+2016-05-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: More consice use of SKIP_WS().
 
-2016-05-25  Paul J. Lucas <paul@lucasmail.org>
+2016-05-25  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Code reorganization.
    * util.h, wrap.c: Added eol() and is_windows().
 
-2016-05-21  Paul J. Lucas <paul@lucasmail.org>
+2016-05-21  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * util.h: Added (void)0 to eat semicolon.
 
-2016-05-20  Paul J. Lucas <paul@lucasmail.org>
+2016-05-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Added '[' ']' to get_close().
 
-2016-05-19  Paul J. Lucas <paul@lucasmail.org>
+2016-05-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Added get_close() that makes Pascal no longer be a special case.
 
-2016-05-16  Paul J. Lucas <paul@lucasmail.org>
+2016-05-16  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: Reversed check of md_is_footnote_def() and md_is_link_label()
      since the former is more specific.
@@ -1602,11 +1616,11 @@
      wrapc--Markdown-footnote-01.test, wrapc--Markdown-footnote-02.test: Added
      PHP Markdown Extra footnote support.
 
-2016-05-15  Paul J. Lucas <paul@lucasmail.org>
+2016-05-15  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: s/MD_UL_INDENT_MIN/MD_DL_UL_INDENT_MIN/
 
-2016-05-14  Paul J. Lucas <paul@lucasmail.org>
+2016-05-14  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, wrap.1, markdown.c, markdown.h, wrap.c, test/Makefile.am,
      md-dl-01s.md, md-dl-01s.xq, md-dl-02s.md, md-dl-02s.xq, md-dl-03s.md,
@@ -1620,11 +1634,11 @@
      Markdown Extra definition list support.
    * wrap.1: Moved Tables.
 
-2016-05-11  Paul J. Lucas <paul@lucasmail.org>
+2016-05-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1: s/Format/Formats/
 
-2016-05-07  Paul J. Lucas <paul@lucasmail.org>
+2016-05-07  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1: Added note about blank lines around tables; and nesting.
    * markdown.c: Fixed typo in comment.
@@ -1651,13 +1665,13 @@
    * wrap.1: More explicit about what Markdown is and is not currently
      supported.
 
-2016-05-05  Paul J. Lucas <paul@lucasmail.org>
+2016-05-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * lib/Makefile.am, gnulib-cache.m4, markdown.c, util.c, util.h, wrap.c:
      Changes for older C compilers.
    * wraprc.5: Removed .ta; fixed date.
 
-2016-05-04  Paul J. Lucas <paul@lucasmail.org>
+2016-05-04  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * markdown.c: Slight simplification in md_code_indent_min().
    * test/Makefile.am, md-html-01.c, md-html-02.c, md-html-03.c, md-html-04.c,
@@ -1677,7 +1691,7 @@
      wrapc--Markdown-ol-11s.test: Many more wrapc Markdown tests.
    * common.h, wrap.c, wrapc.c: Reworked IPC.
 
-2016-05-03  Paul J. Lucas <paul@lucasmail.org>
+2016-05-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.h, util.c, util.h, wrap.c, wrapc.c, test/Makefile.am,
      md-Setext-01.c, md-Setext-02.c, md-Setext-03.c, md-Setext-04.c,
@@ -1700,13 +1714,13 @@
      wrapc--Markdown-hr-01a.test, wrapc--Markdown-hr-01b.test,
      wrapc--Markdown-ul-05.test: Fixed several bugs; lots more tests.
 
-2016-05-02  Paul J. Lucas <paul@lucasmail.org>
+2016-05-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: pc is now pointer-to-const.
    * wrap.c: Moved interprocess messages into buf_getc().
    * common.h: Now using the right code for ETB.
 
-2016-05-01  Paul J. Lucas <paul@lucasmail.org>
+2016-05-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * test/Makefile.am, wrapc--Markdown-ul-03.test, wrapc--Markdown-ul-04.test:
      Some test renaming.
@@ -1724,7 +1738,7 @@
      wrap--Markdown-fence-03b.test: Added Markdown code fence support.
    * markdown.c: s/unsigned/size_t/
 
-2016-04-30  Paul J. Lucas <paul@lucasmail.org>
+2016-04-30  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1, options.c, options.h, util.c, util.h, wrap.c, wrapc.c,
      test/Makefile.am, wrap-L.wraprc, wrap-L-01.txt, wrap-L-01.test: Added wrap
@@ -1823,16 +1837,16 @@
      wrapc--Markdown-ul-01.test, wrapc--Markdown-ul-02.test: Added Markdown
      support.
 
-2016-04-20  Paul J. Lucas <paul@lucasmail.org>
+2016-04-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1, wrapc.1, options.c, util.c, util.h, wrap.c: Added more variants
      for -l option.
 
-2016-04-11  Paul J. Lucas <paul@lucasmail.org>
+2016-04-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Now using enum for indentation.
 
-2016-04-09  Paul J. Lucas <paul@lucasmail.org>
+2016-04-09  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1, wrapc.c: Add mention of Scala.
    * wrapc.1, wrapc.c, test/Makefile.am, hello_00.jl, hello_01.jl, hello_02.jl,
@@ -1845,17 +1859,17 @@
      wrapc--Ada-00.test, wrapc--Ada-01.test, wrapc--Ada-02.test: Added "--"
      comment support (Ada, AppleScript,Eiffel, Haskell, & Lua).
 
-2016-04-06  Paul J. Lucas <paul@lucasmail.org>
+2016-04-06  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Sorted -b option.
 
-2016-04-05  Paul J. Lucas <paul@lucasmail.org>
+2016-04-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Sorted opt_eol.
    * wrap.c: Added missing -m and -M from usage.
    * util.c: Added asserts.
 
-2016-04-03  Paul J. Lucas <paul@lucasmail.org>
+2016-04-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * util.c, util.h: Removed peekc() -- not used.
    * wrap.c: s/fl_getc/sgetc/
@@ -1883,7 +1897,7 @@
      wrapc--C++-01.txt, wrapc--C++-00.test, wrapc--C++-01.test: Other C++
      tests.
 
-2016-04-02  Paul J. Lucas <paul@lucasmail.org>
+2016-04-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * test/Makefile.am, hello_02.sh, wrapc--Bash-02.txt, wrapc--Bash-02.test:
      Another Bash test.
@@ -1916,7 +1930,7 @@
      wrapc--C-hello-04.test, wrapc--C-hello-05.test, wrapc--C-hello-06.test,
      wrapc--C-hello-07.test: Test rename.
 
-2016-04-01  Paul J. Lucas <paul@lucasmail.org>
+2016-04-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1, wrapc.1, options.c, options.h, util.c, util.h, wrap.c, wrapc.c,
      test/Makefile.am, data-01.crlf, data-01.txt, hello.c.crlf, crlf-01.crlf,
@@ -1929,11 +1943,11 @@
    * wrap.c, wrapc.c: Made fin & fout static.
    * configure.ac: Added -Winline.
 
-2016-03-31  Paul J. Lucas <paul@lucasmail.org>
+2016-03-31  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Fixed comment.
 
-2016-03-29  Paul J. Lucas <paul@lucasmail.org>
+2016-03-29  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1, wrapc.c: Removed deprecated -l option.
    * wrap.c: Removed deprecated -l option.
@@ -1941,7 +1955,7 @@
    * wrap.1: Now explicitly saying "non-whitespace" for -b.
    * wrap.1: Added fold(1).
 
-2016-03-28  Paul J. Lucas <paul@lucasmail.org>
+2016-03-28  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Shifted usage options left.
    * test/Makefile.am, hello_2.hs, wrapc--Haskell-02.txt,
@@ -1953,7 +1967,7 @@
    * wrapc.c, test/Makefile.am, hello_2.pas, wrapc--Pascal-02.txt,
      wrapc--Pascal-02.test: Now handling Pascal { } block comments.
 
-2016-03-27  Paul J. Lucas <paul@lucasmail.org>
+2016-03-27  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * hello.d, wrapc--D-01.txt, wrapc--D-01.test: Updated D test.
    * wrapc.c: s/leader/proto/
@@ -1974,7 +1988,7 @@
    * test/Makefile.am, wrapc-03.cpp, wrapc-03.txt, wrapc-01.test,
      wrapc-02.test, wrapc-03.test, wrapc-05.test: More test renaming.
 
-2016-03-26  Paul J. Lucas <paul@lucasmail.org>
+2016-03-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * test/Makefile.am, wrapc--D-01.test, wrapc--XQuery-01.test,
      wrapc--XQuery-02.test, wrapc--XQuery-03.test, wrapc--XQuery-04.test: Test
@@ -1996,13 +2010,13 @@
    * wraprc.5: 1. Added mention of what happens of a file matches more than one
      pattern. 2. Added 'c' example alias.
 
-2016-03-25  Paul J. Lucas <paul@lucasmail.org>
+2016-03-25  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c, test/Makefile.am, wrapc-C_style-06.txt, wrapc-C_style-06.txt,
      wrapc-C_style-06.test: Fixed # line following C-style comment.
    * wrapc.c: Added missing "break".
 
-2016-03-24  Paul J. Lucas <paul@lucasmail.org>
+2016-03-24  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1, wrapc.c: Removed HTML/XML comments; added ')' to man page for
      XQuery comments.
@@ -2021,14 +2035,14 @@
      wrapc-block-01.test, wrapc-block-02.test: Handling of block comments other
      than C-style.
 
-2016-03-23  Paul J. Lucas <paul@lucasmail.org>
+2016-03-23  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * devclean: Added $ECHO.
    * wrapc-01.txt: Better test data.
    * wrapc.c: Removed is_c_style_comment variable.
    * config.wraprc: Added "c" alias.
 
-2016-03-21  Paul J. Lucas <paul@lucasmail.org>
+2016-03-21  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Got rid of signed/unsigned comparison warning.
    * wrapc.1: Updated for C-style comments.
@@ -2041,7 +2055,7 @@
      wrap-b-h1.test, wrap-b-t1.test, wrap-b.test, wrapc-b.test: Added -b
      option.
 
-2016-03-20  Paul J. Lucas <paul@lucasmail.org>
+2016-03-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c, test/Makefile.am, wrap-t11.test: Fixed checking of too-small line
      width.
@@ -2055,23 +2069,23 @@
    * wrapc.1: Added mention of Objective C and Swift.
    * test/Makefile.am, wrapc-C_style-01.test: Renamed test.
 
-2016-03-18  Paul J. Lucas <paul@lucasmail.org>
+2016-03-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c, wrapc.c: s/Supress/Suppress/
    * wrapc.c: Made first_nws_is_comment() no longer inline.
 
-2016-03-17  Paul J. Lucas <paul@lucasmail.org>
+2016-03-17  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1: Added "s" to the description of the -D option.
    * wrap.1, wrapc.1: Added sysexits(3).
 
-2016-03-16  Paul J. Lucas <paul@lucasmail.org>
+2016-03-16  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1, wrapc.c, test/Makefile.am, wrapc-C_comment-01.txt,
      wrapc-C_comment-01.txt, wrapc-C_comment-01.test: Added special-case
      handling of */.
 
-2016-03-14  Paul J. Lucas <paul@lucasmail.org>
+2016-03-14  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Now calling init() sooner.
    * wrapc.c: s/from_wrap/fwrap/
@@ -2079,11 +2093,11 @@
    * wrapc.1, wrapc.c, test/Makefile.am, wrapc-D-01.txt, wrapc-D-01.txt,
      wrapc-D-01.test: Added wrapc -D option.
 
-2016-03-13  Paul J. Lucas <paul@lucasmail.org>
+2016-03-13  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Added FROM_WRAP & TO_WRAP.
 
-2016-03-12  Paul J. Lucas <paul@lucasmail.org>
+2016-03-12  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Function renaming/reordering.
    * alias.c, pattern.c: Added "void".
@@ -2095,11 +2109,11 @@
      src/Makefile.am, wrap.c, wrapc.c: Now using GNU getopt().
    * common.h, util.h: Moved #include <sysexits.h>.
 
-2016-03-11  Paul J. Lucas <paul@lucasmail.org>
+2016-03-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, wrapc.c: Now using inline function in wrapc.
 
-2016-03-10  Paul J. Lucas <paul@lucasmail.org>
+2016-03-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1, wrap.c, test/Makefile.am, wrap-P-01.txt, wrap-P-02.txt,
      wrap-P-03.txt, wrap-P-04.txt, wrap-P-01.txt, wrap-P-02.txt, wrap-P-03.txt,
@@ -2111,33 +2125,33 @@
      wrapc-no_options-05.txt, wrapc-no_options-05.test: wrapc now special-cases
      first line not being a comment.
 
-2016-03-09  Paul J. Lucas <paul@lucasmail.org>
+2016-03-09  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: s/buf/line_buf/
 
-2016-03-07  Paul J. Lucas <paul@lucasmail.org>
+2016-03-07  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: s/buf*/line*/
    * util.c: s/atoi/strtol/
    * read_conf.c: Updated comment.
 
-2016-03-04  Paul J. Lucas <paul@lucasmail.org>
+2016-03-04  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Sorted options in usage message.
 
-2016-02-26  Paul J. Lucas <paul@lucasmail.org>
+2016-02-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: s/to_wrap/fwrap/
 
-2016-01-18  Paul J. Lucas <paul@lucasmail.org>
+2016-01-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_test.sh: No longer exiting on fail.
 
-2016-01-01  Paul J. Lucas <paul@lucasmail.org>
+2016-01-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, ax_cflags_gcc_option.m4: Now using AX_CFLAGS_GCC_OPTION.
 
-2015-12-20  Paul J. Lucas <paul@lucasmail.org>
+2015-12-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * src/Makefile.am: Added wrapc_LDADD.
    * wrap.c: print_buf() now zeroing buf_count, buf_width; hang_indent() now
@@ -2146,18 +2160,18 @@
    * devclean: Fixed / ignore removal.
    * devclean: Now using / in .gitignore files; updated devclean to match.
 
-2015-12-17  Paul J. Lucas <paul@lucasmail.org>
+2015-12-17  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * lib/Makefile.am, stdlib.in.h, sys_types.in.h, sysexits.in.h, unistd.c,
      unistd.in.h, gnulib-cache.m4, gnulib-comp.m4, off_t.m4, ssize_t.m4,
      stdlib_h.m4, sys_types_h.m4, sysexits.m4, unistd_h.m4,
      snippet/_Noreturn.h, common.h: Now using GNUlib sysexits.
 
-2015-12-13  Paul J. Lucas <paul@lucasmail.org>
+2015-12-13  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * lib/Makefile.am, gnulib-cache.m4: Added missing stdbool in m4 cache.
 
-2015-12-11  Paul J. Lucas <paul@lucasmail.org>
+2015-12-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, lib/Makefile.am, alloca.c, alloca.in.h, config.charset,
      fnmatch.c, fnmatch.in.h, fnmatch_loop.c, localcharset.c, localcharset.h,
@@ -2171,28 +2185,28 @@
      wchar_h.m4, wctype_h.m4, wint_t.m4, src/Makefile.am, pattern.h,
      read_conf.c, util.h, wrap.c: Now using gnulib fnmatch().
 
-2015-11-10  Paul J. Lucas <paul@lucasmail.org>
+2015-11-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Removed trailing whitespace.
 
-2015-11-05  Paul J. Lucas <paul@lucasmail.org>
+2015-11-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Now using PMESSAGE_EXIT().
    * wrap.c: Removed unnecessary #include.
    * util.h, wrapc.c: Silenced dup() warning.
 
-2015-11-04  Paul J. Lucas <paul@lucasmail.org>
+2015-11-04  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * read_conf.c, util.c, wrap.c, wrapc.c: Now using sizeof().
 
-2015-10-28  Paul J. Lucas <paul@lucasmail.org>
+2015-10-28  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Improved leader handling.
    * configure.ac, wrapc.c, test/Makefile.am, bullets-01.txt,
      wrapc-no_options-04.txt, wrapc-no_options-04.test: Improved leader
      handling.
 
-2015-10-27  Paul J. Lucas <paul@lucasmail.org>
+2015-10-27  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Added wait_for_child_processes().
    * configure.ac, wrap.1, wrapc.1, alias.c, common.h, options.c, pattern.c,
@@ -2205,12 +2219,12 @@
      sysexits(3) exit codes.
    * common.h, read_conf.c, wrap.c, wrapc.c: Now printing more detailed help.
 
-2015-09-14  Paul J. Lucas <paul@lucasmail.org>
+2015-09-14  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1: Added mention of end of comment behavior.
    * wrapc.c: Now calling exit() directly.
 
-2015-09-13  Paul J. Lucas <paul@lucasmail.org>
+2015-09-13  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * src/Makefile.am, options.c, options.h, util.c, util.h, wrap.c, wrapc.c,
      test/Makefile.am, wrap-f-F.test, wrap-n-N.test: Added option
@@ -2219,13 +2233,13 @@
      ETB-02.txt, ETB-no_options-01.txt, ETB-no_options-02.txt,
      ETB-no_options-01.test, ETB-no_options-02.test: Initial ETB code.
 
-2015-09-03  Paul J. Lucas <paul@lucasmail.org>
+2015-09-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * src/Makefile.am, alias.c, alias.h, common.h, getopt.c, getopt.h,
      pattern.c, pattern.h, read_conf.c, read_conf.h, util.h, wrap.c, wrapc.c:
      Splunk common/util.
 
-2015-09-02  Paul J. Lucas <paul@lucasmail.org>
+2015-09-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Moved leader_tws code.
    * wrapc.c: Formatting change.
@@ -2234,7 +2248,7 @@
      wrapc-no_options-02.txt, wrapc-no_options-03.txt,
      wrapc-no_options-03.test: Fixed emitting trailing whitespace.
 
-2015-09-01  Paul J. Lucas <paul@lucasmail.org>
+2015-09-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: s/buf/leader/
    * wrapc.c, x, y: s/int/size_t/ where appropriate.
@@ -2244,98 +2258,98 @@
      whitespace.
    * common.h, wrap.c, wrapc.c: Minor clean-up.
 
-2015-08-13  Paul J. Lucas <paul@lucasmail.org>
+2015-08-13  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Fixed extra CFLAGS.
 
-2015-08-05  Paul J. Lucas <paul@lucasmail.org>
+2015-08-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * test/Makefile.am, wrap-i2.txt, wrap-i2.test: Added -i test.
 
-2015-07-13  Paul J. Lucas <paul@lucasmail.org>
+2015-07-13  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.h, wrap.c, wrapc.c: Now using EXIT_SUCCESS.
 
-2015-06-27  Paul J. Lucas <paul@lucasmail.org>
+2015-06-27  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Upped version.
 
-2015-06-26  Paul J. Lucas <paul@lucasmail.org>
+2015-06-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.c: Fixed alias_free().
 
-2015-06-20  Paul J. Lucas <paul@lucasmail.org>
+2015-06-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, alias.c, alias.h, common.c, common.h, getopt.c, getopt.h,
      pattern.c, pattern.h, read_conf.c, read_conf.h, wrap.c, wrapc.c: Now using
      C99.
 
-2015-06-17  Paul J. Lucas <paul@lucasmail.org>
+2015-06-17  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_test.sh: s/PROG/COMMAND/
 
-2015-06-14  Paul J. Lucas <paul@lucasmail.org>
+2015-06-14  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1, wrapc.1: Removed $ from HOME.
    * alias.c, alias.h, pattern.c, pattern.h, wrap.c, wrapc.c: Now using (void)
      rather than () for functions with no arguments.
 
-2015-06-05  Paul J. Lucas <paul@lucasmail.org>
+2015-06-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.c, common.c, getopt.c, pattern.c, read_conf.c, wrap.c, wrapc.c:
      Added asserts.
 
-2015-06-01  Paul J. Lucas <paul@lucasmail.org>
+2015-06-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * devclean: Better version.
    * devclean: Now using .gitignore.
    * configure.ac: Added perror().
 
-2015-05-19  Paul J. Lucas <paul@lucasmail.org>
+2015-05-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_test.sh: Fixed typo.
    * alias.c, common.c, getopt.c, pattern.c, read_conf.c, wrap.c, wrapc.c: Put
      system includes last.
 
-2015-02-16  Paul J. Lucas <paul@lucasmail.org>
+2015-02-16  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.h, pattern.h: Fixed comments.
    * wrap.c: Formatting fix.
    * wrap.c: Added comments.
    * wrapc.c: Added comment.
 
-2015-02-15  Paul J. Lucas <paul@lucasmail.org>
+2015-02-15  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * INSTALL.md: Fixed typos.
    * INSTALL.md: New file.
 
-2014-11-03  Paul J. Lucas <paul@lucasmail.org>
+2014-11-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_test.sh: Now using local_basename everywhere.
 
-2014-10-29  Paul J. Lucas <paul@lucasmail.org>
+2014-10-29  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wraprc.5, config.wraprc, pattern-alias_exp.wraprc,
      pattern-no_alias.wraprc, pattern-no_equal.wraprc,
      pattern-unexp_char.wraprc: Simplified man pattern.
 
-2014-10-14  Paul J. Lucas <paul@lucasmail.org>
+2014-10-14  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.c, common.h: Added comments.
 
-2014-07-21  Paul J. Lucas <paul@lucasmail.org>
+2014-07-21  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1: Replace \f with .I.
 
-2014-07-17  Paul J. Lucas <paul@lucasmail.org>
+2014-07-17  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1: Fixed typo: s/dicarded/discarded/
 
-2014-06-19  Paul J. Lucas <paul@lucasmail.org>
+2014-06-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac: Added PACKAGE_URL.
 
-2014-06-17  Paul J. Lucas <paul@lucasmail.org>
+2014-06-17  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * pattern.c: Fixed typos.
    * alias.c: Fixed typos.
@@ -2344,12 +2358,12 @@
      FPUTS. 2. Now checking that line_width doesn't become too small. 3. Now
      scanning for leading characters on every line.
 
-2014-06-16  Paul J. Lucas <paul@lucasmail.org>
+2014-06-16  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure.ac, wrapc.1, common.h, wrapc.c: Now handling ragged comment
      lines better.
 
-2014-06-14  Paul J. Lucas <paul@lucasmail.org>
+2014-06-14  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.h: Put LINE_BUF_SIZE to 8192.
    * wrapc.c: Now using BLOCK in wrapc.
@@ -2365,25 +2379,25 @@
    * configure.ac: Upped version to 3.0.1.
    * common.h, wrap.c, wrapc.c: New convenience macros.
 
-2014-06-12  Paul J. Lucas <paul@lucasmail.org>
+2014-06-12  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * test/Makefile.am, long_line-01.txt, long_line-02.txt,
      wrap-long_line-01.txt, wrap-long_line-02.txt, wrap-long_line-01.test,
      wrap-long_line-02.test: New tests, .gitignore files.
 
-2014-06-11  Paul J. Lucas <paul@lucasmail.org>
+2014-06-11  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1: Fixed -W by adding .TP.
 
-2014-05-26  Paul J. Lucas <paul@lucasmail.org>
+2014-05-26  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * LICENSE: Initial commit
 
-2014-05-20  Paul J. Lucas <paul@lucasmail.org>
+2014-05-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * devclean: Simplified.
 
-2014-05-19  Paul J. Lucas <paul@lucasmail.org>
+2014-05-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_test.sh: Added setting of PATH to get correct wrap/wrapc.
    * run_test.sh: Simpler version that doesn't use arrays since Bourne shell
@@ -2391,17 +2405,17 @@
    * devclean: Added devclean.
    * test/Makefile.am: Added AUTOMAKE_OPTIONS = 1.12
 
-2014-01-24  Paul J. Lucas <paul@lucasmail.org>
+2014-01-24  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * configure: Added configure.
 
-2014-01-18  Paul J. Lucas <paul@lucasmail.org>
+2014-01-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * Makefile.in, aclocal.m4, man/Makefile.in, man/man1/Makefile.in, wrap.1,
      man/man5/Makefile.in, src/Makefile.in, wrap.c, test/Makefile.am,
      test/Makefile.in, wrap-I2-W.test: Changed -b to -W.
 
-2013-11-18  Paul J. Lucas <paul@lucasmail.org>
+2013-11-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1: Added mention of leading characters being discarded bug.
    * wrap.c, wrapc.c: Now correstly testing for errors on putc(), fputs(), &
@@ -2415,7 +2429,7 @@
    * run_test.sh: 1. Added debugging echo line. 2. Flipped diff order so
      expected is on the left.
 
-2013-11-17  Paul J. Lucas <paul@lucasmail.org>
+2013-11-17  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1, wrapc.1: Clarifications.
    * wrap.1, wrapc.1: s/.)/)./
@@ -2430,7 +2444,7 @@
    * run_test.sh: Removed unnecessary quoting.
    * Makefile.in: COPYING is now in dist.
 
-2013-11-16  Paul J. Lucas <paul@lucasmail.org>
+2013-11-16  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1: Moved non-whitespace-discard paragraph.
    * test/Makefile.am, test/Makefile.in, wrapc-01.txt, wrapc-no_options-01.txt,
@@ -2446,7 +2460,7 @@
      Changed $WRAP to $BUILD_SRC in run_test.sh. 2. Added PROG field to tests.
      3. Added first wrapc test.
 
-2013-11-15  Paul J. Lucas <paul@lucasmail.org>
+2013-11-15  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.c, pattern.c, read_conf.c: More commentss.
    * wrapc.c: Added missing exit codes.
@@ -2462,7 +2476,7 @@
      wrap-H3-t1-T.txt, wrap-H3-t1-T.test: Added -T option.
    * wrap.c: Added proper UTF-8 code for sliding buffer.
 
-2013-11-14  Paul J. Lucas <paul@lucasmail.org>
+2013-11-14  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Fixed comment.
    * wrap.1: 1. Added .SS sections. 2. Added mention that control characters
@@ -2472,7 +2486,7 @@
    * wraprc.5: Removed blank lines between comment delimiters.
    * wrapc.1: Removed blank lines between comment delimiters.
 
-2013-11-12  Paul J. Lucas <paul@lucasmail.org>
+2013-11-12  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * test/Makefile.am, test/Makefile.in, wrap-h1-I5.txt, wrap-h1-I5.test:
      Another test.
@@ -2511,11 +2525,11 @@
      wrap-dep.test, wrap-no_options.test, wrap-t1.test: Now using GNU test
      driver mechanism.
 
-2013-11-10  Paul J. Lucas <paul@lucasmail.org>
+2013-11-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * run_tests.sh: INPUT now includes data/
 
-2013-11-09  Paul J. Lucas <paul@lucasmail.org>
+2013-11-09  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * Makefile.am, Makefile.in, aclocal.m4, configure.ac, ax_append_flag.m4,
      ax_cflags_warn_all.m4, ax_check_compile_flag.m4, man/Makefile.in,
@@ -2531,7 +2545,7 @@
    * run_tests.sh: Now doing PASS/FAIL.
    * Makefile: Added automake-required targets.
 
-2013-11-06  Paul J. Lucas <paul@lucasmail.org>
+2013-11-06  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1, wrapc.1: Now using .TP.
    * wrapc.1: Added BUGS.
@@ -2544,7 +2558,7 @@
    * test-dep.txt, test-dep: Another test.
    * data-01a.txt, test-b-I2.txt, test-b-I2: Another test.
 
-2013-11-05  Paul J. Lucas <paul@lucasmail.org>
+2013-11-05  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * Makefile, data-02.txt: Another test; s/test.sh/run_tests.sh/
    * test-H3.txt, test-H3: Another test.
@@ -2556,7 +2570,7 @@
    * configure.ac, src/Makefile.am, src/Makefile.in, config.h.in, pattern.h,
      read_conf.c, wrap.c: Now conditionally compiles pattern.c.
 
-2013-11-04  Paul J. Lucas <paul@lucasmail.org>
+2013-11-04  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c, wrapc.c: Fixed use of PACKAGE_STRING.
    * INSTALL, Makefile.am, Makefile.in, aclocal.m4, compile, configure.ac,
@@ -2566,7 +2580,7 @@
      common.h, config.h.in, read_conf.c, wrap.c, wrapc.c: Now build with
      configure.
 
-2013-11-02  Paul J. Lucas <paul@lucasmail.org>
+2013-11-02  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * AUTHORS: GNU compliance.
    * read_conf.c: Updated GPL with license URL.
@@ -2579,27 +2593,27 @@
    * common.c: 1. Updated GPL. 2. Made realloc compatible with non-POSIX.
    * wrap.1, wrapc.1, wraprc.5: Updated GPL with license URL.
 
-2013-10-30  Paul J. Lucas <paul@lucasmail.org>
+2013-10-30  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * alias.c, common.c, pattern.c, wrap.c: Fixed clean_up().
    * Makefile, alias.c, alias.h, common.h, pattern.c, pattern.h, wrap.c,
      wrapc.c: s/config/conf/
 
-2013-10-29  Paul J. Lucas <paul@lucasmail.org>
+2013-10-29  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * Makefile, alias.c, alias.h, common.c, common.h, config.c, config.h,
      getopt.c, getopt.h, pattern.c, pattern.h, wrap.1, wrap.c, wrapc.1,
      wrapc.c, wraprc.5: Aliases & patterns.
 
-2013-10-23  Paul J. Lucas <paul@lucasmail.org>
+2013-10-23  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.c, common.h, wrap.c, wrapc.c: s/atoi/atou/
 
-2013-10-22  Paul J. Lucas <paul@lucasmail.org>
+2013-10-22  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: Fixed -f and -o errors.
 
-2013-10-21  Paul J. Lucas <paul@lucasmail.org>
+2013-10-21  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1: Added . exception.
    * wrap.1, wrap.c: Added -d option.
@@ -2607,7 +2621,7 @@
    * wrap.c: Fixed eos-delimit bug.
    * wrap.1, wrap.c, wrapc.1, wrapc.c: Added -p option.
 
-2013-10-20  Paul J. Lucas <paul@lucasmail.org>
+2013-10-20  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1, wrapc.1: Better Synopsis formatting.
    * wrap.c, wrapc.c: 1. Now using "opt_" prefix for command-line options. 2.
@@ -2617,7 +2631,7 @@
    * Makefile: Removed -Wshadow.
    * Makefile: Now using gcc and warnings.
 
-2013-10-19  Paul J. Lucas <paul@lucasmail.org>
+2013-10-19  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: Fixed exit status.
    * wrapc.c: Now killing child 1.
@@ -2625,17 +2639,17 @@
      arguments.
    * wrapc.c: Added child process wait checking.
 
-2013-10-18  Paul J. Lucas <paul@lucasmail.org>
+2013-10-18  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.c: s/text-length/line-length/
    * common.h, wrap.1, wrap.c, wrapc.1, wrapc.c: Added: -f & -o options, stream
      error checking.
 
-2013-10-10  Paul J. Lucas <paul@lucasmail.org>
+2013-10-10  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.c: More efficient loop.
 
-2013-10-04  Paul J. Lucas <paul@lucasmail.org>
+2013-10-04  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * common.h: s/PJL_common_H/wrap_common_H/
    * README: Removed K&R C.
@@ -2649,20 +2663,20 @@
    * wrap.c: Added tab_spaces.
    * version.h: Updated version.
 
-2013-10-03  Paul J. Lucas <paul@lucasmail.org>
+2013-10-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * README: Updated e-mail address.
    * wrapc.1: Added ":" for XQuery comment.
 
-2013-01-24  Paul J. Lucas <paul@lucasmail.org>
+2013-01-24  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * Makefile, c_compat.h, version.h, wrap.1, wrap.c, wrapc.1, wrapc.c: Update.
 
-2012-07-17  Paul J. Lucas <paul@lucasmail.org>
+2012-07-17  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrapc.1: 1. s/2009/2012/ 2. s/pauljlucas@mac.com/paul@lucasmail.org/
 
-2005-07-03  Paul J. Lucas <paul@lucasmail.org>
+2005-07-03  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1, wrapc.1: Updated e-mail address.
    * wrapc.1: 1. Added '!'. 2. Updated date.
@@ -2673,11 +2687,11 @@
    * version.h: 1. Changed to 2.10. 2. Changed tabs to spaces.
    * wrap.c: 1. s/VERSION/WRAP_VERSION/ 2. Converted tabs to spaces.
 
-2001-02-01  Paul J. Lucas <paul@lucasmail.org>
+2001-02-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * Makefile: s/clobber/distclean/
 
-2000-07-01  Paul J. Lucas <paul@lucasmail.org>
+2000-07-01  Paul J. Lucas <7366785+paul-j-lucas@users.noreply.github.com>
 
    * wrap.1, wrapc.1: Fixed mistake in author line.
    * wrapc.c: 1. Added #include "version.h". 2. Performed substitution: s/int
